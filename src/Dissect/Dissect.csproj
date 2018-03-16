@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Parser\LALR1\Dumper\**" />
+    <EmbeddedResource Remove="Parser\LALR1\Dumper\**" />
+    <None Remove="Parser\LALR1\Dumper\**" />
+  </ItemGroup>
+
+</Project>

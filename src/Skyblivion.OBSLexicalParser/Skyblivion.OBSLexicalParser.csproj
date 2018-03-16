@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Commands\Dispatch\LoadAutoloader.cs" />
+    <Compile Remove="Utilities\AutoloadingTask.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Skyblivion.ESReader\Skyblivion.ESReader\Skyblivion.ESReader.csproj" />
+    <ProjectReference Include="..\Dissect\Dissect.csproj" />
+  </ItemGroup>
+
+</Project>
