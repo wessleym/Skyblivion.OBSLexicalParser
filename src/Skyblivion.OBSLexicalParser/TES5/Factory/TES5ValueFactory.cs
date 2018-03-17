@@ -136,7 +136,7 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                         {
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments();
                             inversedArgument.add(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope));
-                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.createObjectCall(this.referenceFactory.createReadReference((string)function.getArguments().getValue(0).getData(), globalScope, multipleScriptsScope, codeScope.getLocalScope()), "isDetectedBy", multipleScriptsScope, inversedArgument);
+                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.createObjectCall(this.referenceFactory.createReadReference(function.getArguments().getValue(0).StringValue, globalScope, multipleScriptsScope, codeScope.getLocalScope()), "isDetectedBy", multipleScriptsScope, inversedArgument);
                             TES5Integer getDetectedRightValue = new TES5Integer(((int)set.Item2.getData() == 0) ? 0 : 1);
                             return this.expressionFactory.createArithmeticExpression(getDetectedLeftValue, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, getDetectedRightValue);
                         }
@@ -156,7 +156,7 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
 
                             return this.expressionFactory.createArithmeticExpression
                                 (
-                                    this.objectCallFactory.createObjectCall(this.referenceFactory.createReadReference((string)function.getArguments().getValue(0).getData(), globalScope, multipleScriptsScope, codeScope.getLocalScope()), "isDetectedBy", multipleScriptsScope, inversedArgument),
+                                    this.objectCallFactory.createObjectCall(this.referenceFactory.createReadReference(function.getArguments().getValue(0).StringValue, globalScope, multipleScriptsScope, codeScope.getLocalScope()), "isDetectedBy", multipleScriptsScope, inversedArgument),
                                     TES5ArithmeticExpressionOperator.OPERATOR_EQUAL,
                                     tes5Bool
                                 );
@@ -380,19 +380,15 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
             ITES4Primitive primitive = value as ITES4Primitive;
             if (primitive != null) { return this.primitiveValueFactory.createValue(primitive); }
             ITES4Reference reference = value as ITES4Reference;
-            if (reference != null) { return this.referenceFactory.createReadReference((string)reference.getData(), globalScope, multipleScriptsScope, codeScope.getLocalScope()); }
+            if (reference != null) { return this.referenceFactory.createReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.getLocalScope()); }
             ITES4Callable callable = value as ITES4Callable;
-            if (callable != null)
-            {
-                TES5CodeChunkCollection chunks = this.createCodeChunk(callable, codeScope, globalScope, multipleScriptsScope);
-                return chunks.First();
-            }
+            if (callable != null) { return this.createCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
             ITES4Expression expression = value as ITES4Expression;
             if (expression != null) { return this.convertExpression(expression, codeScope, globalScope, multipleScriptsScope); }
             throw new ConversionException("Unknown ITES4Value: " + value.GetType().FullName);
         }
 
-        public TES5CodeChunkCollection createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Function function = chunk.getFunction();
             ITES5Referencer calledOnReference = this.createCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
@@ -403,18 +399,19 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
             ITES5CodeChunk codeChunk = this.functionFactories[functionKey].convertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
+            return codeChunk;
+        }
+
+        public TES5CodeChunkCollection createCodeChunks(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            ITES5CodeChunk codeChunk = createCodeChunk(chunk, codeScope, globalScope, multipleScriptsScope);
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             codeChunks.add(codeChunk);
-
             return codeChunks;
         }
 
         /*
         * Returns a called-on reference for the called function.
-        * 
-        * 
-        * 
-        * 
         * 
         * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
         */
@@ -423,7 +420,7 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
             TES4ApiToken calledOn = chunk.getCalledOn();
             if (calledOn != null)
             {
-                return this.referenceFactory.createReference((string)calledOn.getData(), globalScope, multipleScriptsScope, codeScope.getLocalScope());
+                return this.referenceFactory.createReference(calledOn.StringValue, globalScope, multipleScriptsScope, codeScope.getLocalScope());
             }
             else
             {

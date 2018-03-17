@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCall functionThis = this.objectCallFactory.createObjectCall(calledOn, "GetWorldSpace", multipleScriptsScope);
-            ITES5Referencer argument = this.referenceFactory.createReadReference((string)functionArguments.getValue(0).getData(), globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer argument = this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ArithmeticExpression expression = this.expressionFactory.createArithmeticExpression(functionThis, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, argument);
             return expression;
         }

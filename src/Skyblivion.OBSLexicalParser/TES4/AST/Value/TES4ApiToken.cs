@@ -13,8 +13,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value
 
         public object getData()
         {
-            return this.token;
+            return StringValue;
         }
+
+        public string StringValue => token;
 
         public bool hasFixedValue()
         {

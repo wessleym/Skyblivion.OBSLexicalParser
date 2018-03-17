@@ -49,8 +49,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;
-            ITES4Value firstArg = functionArguments.getValue(0);
-            string firstArgString = (string)firstArg.getData();
+            ITES4StringValue firstArg = functionArguments.getValue(0);
+            string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
             switch (firstArgStringLower)
             {

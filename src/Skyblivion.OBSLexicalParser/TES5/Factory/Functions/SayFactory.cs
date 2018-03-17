@@ -46,10 +46,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.add(calledOn);
             arguments.add(this.valueFactory.createValue(functionArguments.getValue(0), codeScope, globalScope, multipleScriptsScope));
-            ITES4Value optionalFlag = functionArguments.getValue(2);
+            ITES4StringValue optionalFlag = functionArguments.getValue(2);
             if (optionalFlag != null)
             {
-                string optionalFlagDataString = (string)optionalFlag.getData();
+                string optionalFlagDataString = optionalFlag.StringValue;
                 if (ESMAnalyzer._instance().getFormTypeByEDID(optionalFlagDataString).value() != TES4RecordType.REFR.Name)
                 {
                     this.metadataLogService.add("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });

@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //WARNING: This is not an exact implementation
             //According to cs.elderscrolls.com, its about being in the faction AND having an attack on them ( violent crime )
             //It"s similar but groups all violent wrongdoings ( including assaults, murders etc ).
-            ITES5Referencer factionReference = this.referenceFactory.createReadReference((string)functionArguments.getValue(0).getData(), globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer factionReference = this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.add(factionReference);
             TES5ObjectCall isInFaction = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToPlayer(), "IsInFaction", multipleScriptsScope, arguments);

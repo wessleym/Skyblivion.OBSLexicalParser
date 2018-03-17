@@ -97,7 +97,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                         FragmentLexer lexer = new FragmentLexer();
                         ArrayTokenStream tokens = lexer.lex(File.ReadAllText(path));
                         TES4VariableDeclarationList variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(inputFolder + scriptName + ".references");
-                        TES5MultipleScriptsScope AST = parser.ParseAs<TES5MultipleScriptsScope>(tokens);
+                        TES5MultipleScriptsScope AST = (TES5MultipleScriptsScope)parser.ParseWithFixLogic(tokens);
                         ASTTable[scriptPath] = AST;
                         TES5Target TES5AST = converter.convert(scriptName, variableList, AST);
                         string outputScript = TES5AST.output();

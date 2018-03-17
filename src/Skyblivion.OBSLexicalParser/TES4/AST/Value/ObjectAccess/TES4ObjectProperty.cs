@@ -15,8 +15,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
 
         public object getData()
         {
-            return this.parentReference.getData() + "." + this.accessField.getData();
+            return StringValue;
         }
+
+        public string StringValue => this.parentReference.StringValue + "." + this.accessField.StringValue;
 
         public bool hasFixedValue()
         {

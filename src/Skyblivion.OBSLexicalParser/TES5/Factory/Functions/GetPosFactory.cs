@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string dataString = (string)functionArguments.getValue(0).getData();
+            string dataString = functionArguments.getValue(0).StringValue;
             string functionName;
             switch (dataString.ToLower())
             {

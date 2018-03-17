@@ -9,8 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
     class TES4FunctionArguments
     {
-        private List<ITES4Value> values = new List<ITES4Value>();
-        public void add(ITES4Value declaration)
+        private List<ITES4StringValue> values = new List<ITES4StringValue>();
+        public void add(ITES4StringValue declaration)
         {
             this.values.Add(declaration);
         }
@@ -20,16 +20,16 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             return this.values.Count;
         }
 
-        public List<ITES4Value> getValues()
+        public List<ITES4StringValue> getValues()
         {
             return this.values;
         }
 
-        public ITES4Value popValue(int index)
+        public ITES4StringValue popValue(int index)
         {
-            ITES4Value[] valuesArray = values.ToArray();
-            List<ITES4Value> newValues = new List<ITES4Value>();
-            ITES4Value toReturn = null;
+            ITES4StringValue[] valuesArray = values.ToArray();
+            List<ITES4StringValue> newValues = new List<ITES4StringValue>();
+            ITES4StringValue toReturn = null;
             for (int i=0;i< valuesArray.Length;i++)
             {
                 var value = valuesArray[i];
@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             return toReturn;
         }
 
-        public ITES4Value getValue(int i)
+        public ITES4StringValue getValue(int i)
         {//previously isset
             try
             {
@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             }
         }
 
-        public void setValue(int i, ITES4Value value)
+        public void setValue(int i, ITES4StringValue value)
         {
             this.values[i] = value;
         }

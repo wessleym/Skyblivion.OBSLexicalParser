@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value

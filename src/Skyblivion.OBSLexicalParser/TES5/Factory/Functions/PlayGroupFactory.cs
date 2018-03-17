@@ -45,8 +45,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //this function does not use strings for the names, so i cant really understand what is it.
             //todo refactor
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            ITES4Value firstArg = functionArguments.getValue(0);
-            convertedArguments.add(new TES5String((string)firstArg.getData()));
+            ITES4StringValue firstArg = functionArguments.getValue(0);
+            convertedArguments.add(new TES5String(firstArg.StringValue));
             /*
             secondArg = functionArguments.getValue(1);
     

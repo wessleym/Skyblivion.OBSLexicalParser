@@ -1,9 +1,8 @@
-using Dissect.Parser.Exceptions;
 using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
-using System.Collections.Generic;
-using Skyblivion.OBSLexicalParser.TES4.AST;
+using Dissect.Parser.Exceptions;
 using Dissect.Parser.LALR1.Analysis;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
@@ -13,11 +12,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             : base(grammar, parseTable)
         { }
 
-        public T ParseAs<T>(ITokenStream stream)
+        public IToken ParseWithFixLogic(ITokenStream stream)
         {
             try
             {
-                return (T)base.parse(stream);
+                return base.parse(stream);
             }
             catch (UnexpectedTokenException e)
             {
@@ -65,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                     }
 
                     ArrayTokenStream newTokenStream = new ArrayTokenStream(tokens);
-                    T newAST = (T)this.parse(newTokenStream);
+                    IToken newAST = this.parse(newTokenStream);
                     return newAST;
                 }
                 else

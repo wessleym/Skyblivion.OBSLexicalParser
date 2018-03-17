@@ -258,13 +258,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("FunctionArguments")._is("FunctionArguments", "FunctionParameter").call((TES4FunctionArguments list, ITES4Value value)=>
+            __invoke("FunctionArguments")._is("FunctionArguments", "FunctionParameter").call((TES4FunctionArguments list, ITES4StringValue value)=>
             {
                 list.add(value);
                 return list;
             } ) .
 
-            _is("FunctionParameter").call((ITES4Value value)=>
+            _is("FunctionParameter").call((ITES4StringValue value)=>
             {
                 TES4FunctionArguments list = new TES4FunctionArguments();
                 list.add(value);

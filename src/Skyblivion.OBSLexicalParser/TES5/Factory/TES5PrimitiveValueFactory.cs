@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES4.Types;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -30,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             throw new ConversionException("Unknown value type to be factored from " + value.GetType().FullName);
         }
 
-        public TES5ConcatenatedValue createConcatenatedValue(TES5String[] concatenateValues)
+        public TES5ConcatenatedValue createConcatenatedValue(IList<ITES5Value> concatenateValues)
         {
             return new TES5ConcatenatedValue(concatenateValues);
         }

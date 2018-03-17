@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
-            string questName = (string)functionArguments.popValue(0).getData();
+            string questName = functionArguments.popValue(0).StringValue;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(questName, globalScope, multipleScriptsScope, localScope);
             /*
              * Basically, there are some ugly mechanics in Oblivion.

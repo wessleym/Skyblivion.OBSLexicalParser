@@ -42,8 +42,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES4Value apiToken = functionArguments.getValue(0);
-            string dataString = (string)apiToken.getData();
+            ITES4StringValue apiToken = functionArguments.getValue(0);
+            string dataString = apiToken.StringValue;
             int length = dataString.Length; //Get the length of the match
             TES5ObjectCallArguments argumentsList = new TES5ObjectCallArguments();
             argumentsList.add(this.objectCallFactory.createObjectCall(calledOn, "GetParentCell", multipleScriptsScope));

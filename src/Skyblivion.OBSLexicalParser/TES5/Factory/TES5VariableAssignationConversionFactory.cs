@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public TES5CodeChunkCollection createCodeChunk(TES4VariableAssignation chunk, TES5CodeScope codeScope,  TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5CodeChunkCollection codeChunkCollection = new TES5CodeChunkCollection();
-            string referenceName = (string)chunk.getReference().getData();
+            string referenceName = chunk.getReference().StringValue;
             ITES5Referencer reference = this.referenceFactory.createReference(referenceName, globalScope, multipleScriptsScope, codeScope.getLocalScope());
             ITES5Value value = this.valueFactory.createValue(chunk.getValue(), codeScope, globalScope, multipleScriptsScope);
             if (reference.getType() == TES5BasicType.T_GLOBALVARIABLE)

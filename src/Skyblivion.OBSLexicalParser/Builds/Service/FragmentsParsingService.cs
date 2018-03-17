@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
             {
                 FragmentLexer lexer = new FragmentLexer();
                 ArrayTokenStream tokens = lexer.lex(File.ReadAllText(scriptPath));
-                this.parsingCache.Add(scriptPath, this.parser.ParseAs<TES4CodeChunks>(tokens));
+                this.parsingCache.Add(scriptPath, (TES4CodeChunks)this.parser.ParseWithFixLogic(tokens));
             }
             return this.parsingCache[scriptPath];
         }

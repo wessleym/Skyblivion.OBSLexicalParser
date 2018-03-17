@@ -4,7 +4,7 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
-    class TES4Integer : ITES4Primitive
+    class TES4Integer : ITES4Primitive, ITES4StringValue
     {
         private int data;
         public TES4Integer(int data)
@@ -16,6 +16,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
         {
             return this.data;
         }
+
+        public string StringValue => data.ToString();
 
         public TES4Type getType()
         {

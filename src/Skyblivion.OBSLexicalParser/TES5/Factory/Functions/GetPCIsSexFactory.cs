@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCall functionThis = this.objectCallFactory.createObjectCall(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToPlayer(), "GetBaseObject", multipleScriptsScope), "GetSex", multipleScriptsScope);
             int operand;
-            switch (((string)functionArguments.getValue(0).getData()).ToLower())
+            switch ((functionArguments.getValue(0).StringValue).ToLower())
             {
                 case "male":
                 {

@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
-            string dataString = (string)functionArguments.getValue(0).getData();
+            string dataString = functionArguments.getValue(0).StringValue;
             ITES5Referencer targetReference = this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope);
             ITES5Type dataType = ESMAnalyzer._instance().getFormTypeByEDID(dataString);
             TES5ObjectCall owner;

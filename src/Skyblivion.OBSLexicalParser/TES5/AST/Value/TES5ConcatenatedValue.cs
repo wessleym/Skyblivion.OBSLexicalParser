@@ -5,8 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
 {
     class TES5ConcatenatedValue : ITES5Value
     {
-        private ITES5Value[] concatenatedValues;
-        public TES5ConcatenatedValue(ITES5Value[] concatenatedValues)
+        private IList<ITES5Value> concatenatedValues;
+        public TES5ConcatenatedValue(IList<ITES5Value> concatenatedValues)
         {
             this.concatenatedValues = concatenatedValues;
         }

@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5LocalScope localScope = codeScope.getLocalScope();
             int x = 0, y = 0, z = 0;
-            switch (((string)functionArguments.getValue(0).getData()).ToLower())
+            switch ((functionArguments.getValue(0).StringValue).ToLower())
             {
                 case "x":
                 {

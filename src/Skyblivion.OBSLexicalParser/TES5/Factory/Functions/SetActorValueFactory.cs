@@ -48,8 +48,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;
-            ITES4Value firstArg = functionArguments.getValue(0);
-            string firstArgData = (string)firstArg.getData();
+            ITES4StringValue firstArg = functionArguments.getValue(0);
+            string firstArgData = firstArg.StringValue;
             string firstArgDataLower = firstArgData.ToLower();
             switch (firstArgDataLower)
             {
@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         string functionName = "SetValue";
                         calledOn = this.referenceFactory.createReference("TES4Attr"+PHPFunction.UCWords(firstArgDataLower), globalScope, multipleScriptsScope, localScope);
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
@@ -77,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "speed":
                     {
                         string functionName = "ForceMovementSpeed";
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
@@ -101,7 +101,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "SetActorValue";
                         convertedArguments.add(new TES5String(actorValueMap[firstArgDataLower]));
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
@@ -109,7 +109,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "aggression":
                     {
                         string functionName = "SetActorValue";
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         int secondArgData = (int)secondArg.getData();
                         int newValue;
                         if (secondArgData == 0)
@@ -137,7 +137,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "confidence":
                     {
                         string functionName = "SetActorValue";
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         int secondArgData = (int)secondArg.getData();
                         int newValue;
                         if (secondArgData == 0)
@@ -172,7 +172,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "SetActorValue";
                         convertedArguments.add(new TES5String(firstArgData));
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }

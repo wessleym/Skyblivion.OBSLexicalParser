@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
-            string dataString = (string)functionArguments.getValue(0).getData();
+            string dataString = functionArguments.getValue(0).StringValue;
             newArgs.add(this.referenceFactory.createReference("Effect"+dataString, globalScope, multipleScriptsScope, localScope));
             /*switch (dataString)
             {

@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
             methodArguments.add(new TES5Bool(false)); //override different behaviour
-            ITES4Value lockAsOwner = functionArguments.getValue(1);
+            ITES4StringValue lockAsOwner = functionArguments.getValue(1);
             bool isLocked = false;
             if (lockAsOwner != null)
             {

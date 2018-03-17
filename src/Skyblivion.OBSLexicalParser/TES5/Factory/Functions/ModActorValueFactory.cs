@@ -58,7 +58,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
             var actorValueMap = ActorValueMap.Map;
-            string firstArgData = (string)functionArguments.getValue(0).getData();
+            string firstArgData = functionArguments.getValue(0).StringValue;
             string firstArgDataLower = firstArgData.ToLower();
             switch (firstArgDataLower)
             {
@@ -84,7 +84,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                          *  Switch out callee with the reference to attr
                          */
                         ITES5Referencer newCalledOn = this.referenceFactory.createReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         ITES5Value addedValue = this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope);
                         convertedArguments.add(this.expressionFactory.createBinaryExpression(addedValue, TES5BinaryExpressionOperator.OPERATOR_ADD, this.referenceFactory.createReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
                         return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, convertedArguments);
@@ -109,7 +109,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "ModActorValue";
                         convertedArguments.add(new TES5String(actorValueMap[firstArgDataLower]));
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
@@ -117,7 +117,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "aggression":
                     {
                         string functionName = "ModActorValue";
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         int secondArgData = (int)secondArg.getData();
                         int newValue;
                         if (secondArgData < -80)
@@ -158,7 +158,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "confidence":
                     {
                         string functionName = "ModActorValue";
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         int secondArgData = (int)secondArg.getData();
                         int newValue;
                         if (secondArgData == -100)
@@ -212,7 +212,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "ModActorValue";
                         convertedArguments.add(new TES5String(firstArgData));
-                        ITES4Value secondArg = functionArguments.getValue(1);
+                        ITES4StringValue secondArg = functionArguments.getValue(1);
                         convertedArguments.add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }

@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments();
             constantArgument.add(new TES5Integer(arg));
-            ITES5Referencer faction = this.referenceFactory.createReadReference((string)functionArguments.getValue(0).getData(), globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer faction = this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(faction, "SetCrimeGold", multipleScriptsScope, constantArgument);
             return newFunction;
         }

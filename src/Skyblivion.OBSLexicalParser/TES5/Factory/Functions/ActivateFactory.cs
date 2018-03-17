@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments();
             constantArgument.add(this.valueFactory.createValue(functionArguments.getValue(0), codeScope, globalScope, multipleScriptsScope));
-            ITES4Value blockOnActivate = functionArguments.getValue(1);
+            ITES4StringValue blockOnActivate = functionArguments.getValue(1);
             if (blockOnActivate != null)
             {
                 bool blockOnActivateVal = !(bool)blockOnActivate.getData();

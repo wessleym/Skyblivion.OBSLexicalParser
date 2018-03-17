@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             string functionName;
-            string dataString = (string)functionArguments.getValue(0).getData();
+            string dataString = functionArguments.getValue(0).StringValue;
             switch (dataString.ToLower())
             {
                 case "x":

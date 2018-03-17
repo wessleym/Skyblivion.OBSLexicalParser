@@ -28,8 +28,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
 
         public object getData()
         {
-            throw new ConversionException("TES4Function.getData() - not supported");
+            return StringValue;
         }
+
+        public string StringValue => throw new InvalidOperationException(nameof(TES4ObjectCall) + "." + nameof(StringValue) + " is not supported.");
 
         public bool hasFixedValue()
         {

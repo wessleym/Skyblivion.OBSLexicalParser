@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.count() > 0)
             {
                 args = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-                ITES5Type datatype = ESMAnalyzer._instance().getFormTypeByEDID((string)functionArguments.getValue(0).getData());
+                ITES5Type datatype = ESMAnalyzer._instance().getFormTypeByEDID(functionArguments.getValue(0).StringValue);
                 if (datatype == TES5BasicType.T_ACTOR)
                 {
                     functionName = "SetActorOwner";

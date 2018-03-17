@@ -43,15 +43,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.getLocalScope();
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES4Value value = functionArguments.getValue(0);
+            ITES4StringValue value = functionArguments.getValue(0);
             ITES5Referencer toBeMethodArgument = calledOn;
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference((string)value.getData(), globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
             methodArguments.add(toBeMethodArgument);
-            ITES4Value target = functionArguments.getValue(1);
+            ITES4StringValue target = functionArguments.getValue(1);
             if (target != null)
             {
-                methodArguments.add(this.referenceFactory.createReadReference((string)target.getData(), globalScope, multipleScriptsScope, localScope));
+                methodArguments.add(this.referenceFactory.createReadReference(target.StringValue, globalScope, multipleScriptsScope, localScope));
             }
 
             return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, methodArguments);

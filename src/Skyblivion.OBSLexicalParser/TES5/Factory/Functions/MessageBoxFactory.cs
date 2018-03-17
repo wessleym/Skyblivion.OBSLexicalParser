@@ -55,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 messageArguments.Add(edid);
                 for (int i = 0; i < functionArguments.count(); i++)
                 {
-                    messageArguments.Add((string)functionArguments.getValue(i).getData());
+                    messageArguments.Add(functionArguments.getValue(i).StringValue);
                 }
 
                 this.metadataLogService.add("ADD_MESSAGE", messageArguments);

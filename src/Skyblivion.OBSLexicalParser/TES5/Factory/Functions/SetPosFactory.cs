@@ -47,7 +47,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCall dummyY = this.objectCallFactory.createObjectCall(calledOn, "GetPositionY", multipleScriptsScope);
             TES5ObjectCall dummyZ = this.objectCallFactory.createObjectCall(calledOn, "GetPositionZ", multipleScriptsScope);
             ITES5Value[] argList;
-            switch (((string)functionArguments.getValue(0).getData()).ToLower())
+            switch ((functionArguments.getValue(0).StringValue).ToLower())
             {
                 case "x":
                     {

@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            arguments.add(this.referenceFactory.createReadReference((string)functionArguments.getValue(0).getData(), globalScope, multipleScriptsScope, localScope));
+            arguments.add(this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope));
             return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, arguments);
         }
     }

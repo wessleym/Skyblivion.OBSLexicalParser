@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
         {
             FragmentLexer lexer = new FragmentLexer();
             ArrayTokenStream tokens = lexer.lex(File.ReadAllText(sourcePath));
-            TES4Script AST = this.parser.ParseAs<TES4Script>(tokens);
+            TES4Script AST = (TES4Script)this.parser.ParseWithFixLogic(tokens);
             return AST;
         }
     }

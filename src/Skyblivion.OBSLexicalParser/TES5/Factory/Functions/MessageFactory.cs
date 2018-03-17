@@ -47,7 +47,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string messageString = (string)functionArguments.getValue(0).getData();
+            string messageString = functionArguments.getValue(0).StringValue;
             MatchCollection messageMatches = Regex.Matches(messageString, @"%([ +-0]*[1-9]*\.[0-9]+[ef]|g)");
             if (messageMatches.Cast<Match>().Any(m=>m.Success))
             {
@@ -99,9 +99,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     ++i;
                 }
 
-                List<string> combinedValues = new List<string>();
-                Stack<string> stringsStack = new Stack<string>(((IEnumerable<string>)stringsList).Reverse());
-                Stack<string> variablesStack = new Stack<string>(((IEnumerable<string>)variablesList).Reverse());
+                List<ITES5Value> combinedValues = new List<ITES5Value>();
+                Stack<TES5String> stringsStack = new Stack<TES5String>(stringsList.Select(kvp=>kvp).Reverse());
+                Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesList.Select(kvp=>kvp).Reverse());
                 if (startWithVariable)
                 {
                     if (variablesStack.Any())
@@ -121,7 +121,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                 calledOn = new TES5StaticReference("Debug");
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                arguments.add(this.primitiveValueFactory.createConcatenatedValue(combinedValues.Select(v=>new TES5String(v)).ToArray()));
+                arguments.add(this.primitiveValueFactory.createConcatenatedValue(combinedValues));
                 return this.objectCallFactory.createObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
             else

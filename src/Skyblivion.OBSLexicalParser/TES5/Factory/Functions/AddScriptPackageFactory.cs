@@ -41,8 +41,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
-            string md5 = "TES4SCENE_"+PHPFunction.MD5(calledOn.getName()+functionArguments.getValue(0).getData()).Substring(0, 16);
-            this.metadataLogService.add("ADD_SCRIPT_SCENE", new string[] { (string)functionArguments.getValue(0).getData(), md5 });
+            string dataString = functionArguments.getValue(0).StringValue;
+            string md5 = "TES4SCENE_"+PHPFunction.MD5(calledOn.getName()+ dataString).Substring(0, 16);
+            this.metadataLogService.add("ADD_SCRIPT_SCENE", new string[] { dataString, md5 });
             ITES5Referencer reference = this.referenceFactory.createReference(md5, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();
             /*

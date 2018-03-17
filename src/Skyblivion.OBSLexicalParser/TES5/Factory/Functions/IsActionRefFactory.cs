@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 throw new ConversionException("isActionRef called in a context where action ref should not be present");
             }
 
-            string dataString = (string)functionArguments.getValue(0).getData();
+            string dataString = functionArguments.getValue(0).StringValue;
             TES5ArithmeticExpression expression = this.expressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(activatorVariable), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope));
             return expression;
         }

@@ -70,7 +70,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 Dictionary<string, ITES5Type> preparedPropertiesTypes = new Dictionary<string, ITES5Type>();
                                 foreach (var property in propertiesAccesses)
                                 {
-                                    Match match = Regex.Match((string)property.getData(), @"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase);
+                                    Match match = Regex.Match(property.StringValue, @"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase);
                                     string propertyName = match.Groups[1].Value;
                                     string propertyKeyName = propertyName.ToLower();
                                     if (!preparedProperties.ContainsKey(propertyKeyName))
