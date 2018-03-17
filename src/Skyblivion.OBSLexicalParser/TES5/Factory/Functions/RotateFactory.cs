@@ -42,25 +42,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5LocalScope localScope = codeScope.getLocalScope();
             int x = 0, y = 0, z = 0;
+            int secondArgumentData = (int)functionArguments.getValue(1).getData();
             switch ((functionArguments.getValue(0).StringValue).ToLower())
             {
                 case "x":
-                {
-                    x = (int)functionArguments.getValue(1).getData();
-                    break;
-                }
-
+                    {
+                        x = secondArgumentData;
+                        break;
+                    }
                 case "y":
-                {
-                    y = (int)functionArguments.getValue(1).getData();
-                    break;
-                }
-
+                    {
+                        y = secondArgumentData;
+                        break;
+                    }
                 case "z":
-                {
-                    z = (int)functionArguments.getValue(1).getData();
-                    break;
-                }
+                    {
+                        z = secondArgumentData;
+                        break;
+                    }
             }
 
             TES5ObjectCallArguments rotateArguments = new TES5ObjectCallArguments();

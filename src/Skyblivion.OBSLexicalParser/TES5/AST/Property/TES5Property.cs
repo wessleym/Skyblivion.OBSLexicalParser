@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 
         public ITES5Type getPropertyType()
         {
-            return (this.trackedScript != null) ? this.trackedScript.getScriptType() : this.propertyType;
+            return this.trackedScript != null ? this.trackedScript.getScriptType() : this.propertyType;
         }
 
         public void setPropertyType(ITES5Type type)

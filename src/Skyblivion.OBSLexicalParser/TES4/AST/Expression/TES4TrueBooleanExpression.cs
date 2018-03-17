@@ -31,8 +31,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 
         public object getData()
         {
-            return ((bool)this.value.getData()) == true;
+            return BoolValue;
         }
+
+        public bool BoolValue => (bool)this.value.getData();
 
         public bool hasFixedValue()
         {

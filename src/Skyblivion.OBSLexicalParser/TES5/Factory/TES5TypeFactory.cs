@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5TypeFactory
     {
-        private static string scriptsPrefix = "TES4";
+        private const string scriptsPrefix = "TES4";
         public static ITES5Type _void()
         {
             return memberByValue("void");

@@ -116,7 +116,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 if (successRate < threshold)
                 {
                     float percent = (float)Math.Round(successRate * 100);
-                    Console.WriteLine("ERROR: Build failed on parsing step in " + mode + " mode. The rate is " + success + "/" + total + " ( " + percent + " %)");
+                    Console.WriteLine("ERROR: Build failed on parsing step in " + mode + " mode. The rate is " + success + "/" + total + " (" + percent + " %)");
                     return;
                 }
 

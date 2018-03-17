@@ -172,10 +172,8 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
 
                             switch ((int)set.Item2.getData())
                             {
-
                                 case 4:
                                     {
-
                                         //ref.getSleepState() == 3
                                         return this.expressionFactory.createArithmeticExpression(
                                             this.objectCallFactory.createObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer", multipleScriptsScope),
@@ -194,7 +192,6 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                                             new TES5Integer(3) //SLEEPSTATE_SLEEP
                                         );
                                     }
-
                                 case 13:
                                     {
 
@@ -214,12 +211,10 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                                         //@INCONSISTENCE Wander.. idk how to check it tbh. We return always true. Think about better representation
                                         return new TES5Bool(expression.getOperator() == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL);
                                     }
-
                                 default:
                                     {
                                         throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)set.Item2.getData()).ToString());
                                     }
-
                             }
                         }
 
@@ -330,7 +325,8 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                         }
                         else
                         {
-                            TES5ObjectCall tes5setNewItem1 = this.objectCallFactory.createObjectCall((ITES5Referencer)tes5set.Item1, "GetFormID", multipleScriptsScope);
+                            ITES5Referencer callable = (ITES5Referencer)tes5set.Item1;
+                            TES5ObjectCall tes5setNewItem1 = this.objectCallFactory.createObjectCall(callable, "GetFormID", multipleScriptsScope); 
                             return this.expressionFactory.createArithmeticExpression(tes5setNewItem1, op, tes5set.Item2);
                         }
                     }

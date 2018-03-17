@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using System;
@@ -9,7 +8,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.PF
     {
         public void initialize(Build build)
         {
-        // TODO: Implement initialize() method.
+            // TODO: Implement initialize() method.
+            throw new NotImplementedException();
         }
 
         public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

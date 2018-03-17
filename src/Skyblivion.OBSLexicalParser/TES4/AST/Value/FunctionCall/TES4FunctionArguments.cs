@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -27,12 +26,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public ITES4StringValue popValue(int index)
         {
-            ITES4StringValue[] valuesArray = values.ToArray();
             List<ITES4StringValue> newValues = new List<ITES4StringValue>();
             ITES4StringValue toReturn = null;
-            for (int i=0;i< valuesArray.Length;i++)
+            for (int i=0;i< values.Count;i++)
             {
-                var value = valuesArray[i];
+                var value = values[i];
                 if (i == index)
                 {
                     toReturn = value;
@@ -74,9 +72,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             return this.values.SelectMany(v => v.filter(predicate)).ToArray();
         }
 
-        internal bool Any()
+        public bool Any()
         {
-            throw new NotImplementedException();
+            return values.Any();
         }
     }
 }
