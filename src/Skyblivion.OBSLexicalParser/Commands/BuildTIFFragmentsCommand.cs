@@ -107,7 +107,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(scriptPath + "\r\n" + e.GetType().FullName + "\r\n" + e.Message + "\r\n");
+                        Console.WriteLine(scriptPath + "\r\n" + e.GetType().FullName + ":  " + e.Message + "\r\n");
                         continue;
                     }
                 }

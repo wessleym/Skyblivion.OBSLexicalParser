@@ -61,6 +61,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 //Add the static global scopes which are added by complimenting scripts..
                 List<TES5GlobalScope> staticGlobalScopes = this.staticGlobalScopesFactory.createGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
+                //But I don't think the scripts added below are ever used.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
                 {

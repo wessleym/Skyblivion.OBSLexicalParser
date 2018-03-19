@@ -93,8 +93,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Exception " + ex.GetType().FullName + " occurred in one of the threads while transpiling.");
-                        errorLog.WriteUTF8(ex.GetType().FullName + "\r\n" + ex.Message + "\r\n");
+                        Console.WriteLine("Exception occurred while transpiling:");
+                        errorLog.WriteUTF8(ex.GetType().FullName + ":  " + ex.Message);
                     }
                 }
             }

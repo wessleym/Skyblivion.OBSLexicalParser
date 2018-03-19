@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
-        protected void execute(LPCommandInput input, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
+        protected void execute(LPCommandInput input)
         {//WTM:  Change:  Below, transpileJob.run requires TES5GlobalScope and TES5MultipleScriptsScope.  I added them above.
             set_time_limit(60);
             try
@@ -37,11 +37,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 try
                 {
                     TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName);
-                    transpileJob.run(globalScope, compilingScope);
+                    transpileJob.run();
                 }
                 catch (ConversionException e)
                 {
-                    Console.WriteLine("Exception occured.\r\n" + e.GetType().FullName + "\r\n" + e.Message);
+                    Console.WriteLine("Exception occured.\r\n" + e.GetType().FullName + ":  " + e.Message);
                     return;
                 }
 
