@@ -1,3 +1,5 @@
+using Dissect.Extensions.IDictionaryExtensions;
+using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.graph = graph;
         }
 
-        public Dictionary<int, List<Dictionary<string, List<string>>>> createBuildPlan(BuildSourceFilesCollection scripts, int threads = 4)
+        public Dictionary<int, List<Dictionary<string, List<string>>>> createBuildPlan(BuildSourceFilesCollection scripts, int threads = BuildTargetCommand.DefaultThreads)
         {
             Dictionary<string, string> codeScripts = new Dictionary<string, string>();
             /*
@@ -28,8 +30,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 {
                     string scriptName = script.Substring(0, script.Length-4);
                     string scriptNameKey = scriptName.ToLower();
-                    codeScripts[scriptNameKey] = scriptName;
-                    scriptToBuild[scriptNameKey] = buildName;
+                    codeScripts.Add(scriptNameKey, scriptName);
+                    scriptToBuild.Add(scriptNameKey, buildName);
                 }
             }
 
@@ -52,17 +54,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     foreach (var chunkScript in preparedChunk)
                     {
                         string chunkScriptKey = chunkScript.ToLower();
-                        if (codeScripts.ContainsKey(chunkScriptKey))
-                        {
-                            codeScripts.Remove(chunkScriptKey);
-                        }
-
-                        if (!preparedMappedChunk.ContainsKey(scriptToBuild[chunkScriptKey]))
-                        {
-                            preparedMappedChunk[scriptToBuild[chunkScriptKey]] = new List<string>();
-                        }
-
-                        preparedMappedChunk[scriptToBuild[chunkScriptKey]].Add(chunkScript);
+                        codeScripts.Remove(chunkScriptKey);
+                        preparedMappedChunk.AddNewListIfNotContainsKeyAndAddValueToList(scriptToBuild[chunkScriptKey], chunkScript);
                     }
 
                     preparedChunks.Add(preparedMappedChunk);
@@ -72,10 +65,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     string nonpairedChunkScript = preparedChunk[0];
                     nonpairedScripts.Add(nonpairedChunkScript);
                     string nonpairedChunkScriptKey = nonpairedChunkScript.ToLower();
-                    if (codeScripts.ContainsKey(nonpairedChunkScriptKey))
-                    {
-                        codeScripts.Remove(nonpairedChunkScriptKey);
-                    }
+                    codeScripts.Remove(nonpairedChunkScriptKey);
                 }
 
                 if (codeScripts.Count >= previousCount)
@@ -93,16 +83,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
             int bucket = 0;
             foreach (var chunk in preparedChunks)
             {
-                if (!threadBucketsSizes.ContainsKey(bucket))
-                {
-                    threadBucketsSizes.Add(bucket, 0);
-                }
-                if (!threadBuckets.ContainsKey(bucket))
-                {
-                    threadBuckets.Add(bucket, new List<Dictionary<string, List<string>>>());
-                }
-
-                threadBuckets[bucket].Add(chunk);
+                threadBucketsSizes.AddIfNotContainsKey(bucket, 0);
+                threadBuckets.GetOrAddNewIfNotContainsKey(bucket).Add(chunk);
                 foreach (var kvp in chunk)
                 {
                     var chunkBuild = kvp.Key;
@@ -110,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     threadBucketsSizes[bucket] += chunkScripts.Count;
                 }
 
-                ++bucket;
+                bucket++;
                 if (bucket == threads)
                 {
                     bucket = 0;
@@ -130,12 +112,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     foreach (var nonpairedScript in nonpairedScripts)
                     {
                         string chunkScriptBuild = scriptToBuild[nonpairedScript.ToLower()];
-                        if (!eveningChunk.ContainsKey(chunkScriptBuild))
-                        {
-                            eveningChunk[chunkScriptBuild] = new List<string>();
-                        }
-
-                        eveningChunk[chunkScriptBuild].Add(nonpairedScript);
+                        eveningChunk.GetOrAddNewIfNotContainsKey(chunkScriptBuild).Add(nonpairedScript);
                     }
 
                     threadBuckets[bucketKey].Add(eveningChunk);
@@ -149,12 +126,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 foreach (var sliceOfNonpairedScript in sliceOfNonpairedScripts)
                 {
                     string chunkScriptBuild = scriptToBuild[sliceOfNonpairedScript.ToLower()];
-                    if (!eveningChunk.ContainsKey(chunkScriptBuild))
-                    {
-                        eveningChunk[chunkScriptBuild] = new List<string>();
-                    }
-
-                    eveningChunk[chunkScriptBuild].Add(sliceOfNonpairedScript);
+                    eveningChunk.GetOrAddNewIfNotContainsKey(chunkScriptBuild).Add(sliceOfNonpairedScript);
                 }
 
                 threadBuckets[bucketKey].Add(eveningChunk);
@@ -168,14 +140,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
             {
                 Dictionary<string, List<string>> singleScriptChunk = new Dictionary<string, List<string>>();
                 string chunkScriptBuild = scriptToBuild[nonpairedScript.ToLower()];
-                if (!singleScriptChunk.ContainsKey(chunkScriptBuild))
-                {
-                    singleScriptChunk.Add(chunkScriptBuild, new List<string>());
-                }
-                if (!restChunks.ContainsKey(restChunkBucket))
-                {
-                    restChunks.Add(restChunkBucket, new List<Dictionary<string, List<string>>>());
-                }
+                singleScriptChunk.AddNewListIfNotContainsKey(chunkScriptBuild);
+                restChunks.AddNewListIfNotContainsKey(restChunkBucket);
 
                 singleScriptChunk[chunkScriptBuild].Add(nonpairedScript);
                 restChunks[restChunkBucket].Add(singleScriptChunk);

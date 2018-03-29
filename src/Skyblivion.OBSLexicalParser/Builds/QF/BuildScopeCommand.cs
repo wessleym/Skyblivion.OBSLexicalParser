@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.IO;
+using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
@@ -23,12 +24,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
         public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
         {
-            string scriptName = Path.GetFileName(sourcePath);
-            string referencesPath = Path.GetDirectoryName(sourcePath) + "/" + scriptName + ".references";
+            string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
+            string referencesPath = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".references";
             //Create the header.
             TES5ScriptHeader scriptHeader = new TES5ScriptHeader(TES5NameTransformer.transform(scriptName, ""), scriptName, TES5BasicType.T_QUEST, "", true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
-            var variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(referencesPath);
+            TES4VariableDeclarationList variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(referencesPath);
             if (variableList != null)
             {
                 this.propertiesFactory.createProperties(variableList, globalScope, globalVariables);

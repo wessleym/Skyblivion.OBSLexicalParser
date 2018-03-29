@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST
 {
-    class TES4Script
+    class TES4Script : ITES4CodeFilterable
     {
         private TES4ScriptHeader scriptHeader;
         private TES4VariableDeclarationList variableDeclarationList;

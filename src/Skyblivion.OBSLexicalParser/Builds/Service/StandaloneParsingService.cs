@@ -1,4 +1,5 @@
 using Dissect.Lexer.TokenStream;
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Lexer;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
@@ -14,8 +15,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
      *
      * It was created because both BuildScopeCommand and TranspileCommand need the parsed TES4Script and we didn"t
      * want to parse twice.
-     *
-     * @package Ormin\OBSLexicalParser\Builds\Service
      */
     class StandaloneParsingService
     {
@@ -32,14 +31,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 
         public TES4Script parseScript(string scriptPath)
         {
-            if (!parsingCache.ContainsKey(scriptPath))
+            return parsingCache.GetOrAdd(scriptPath, () =>
             {
                 ScriptLexer lexer = new ScriptLexer();
                 ArrayTokenStream tokens = lexer.lex(File.ReadAllText(scriptPath));
-                this.parsingCache[scriptPath] = (TES4Script)this.parser.ParseWithFixLogic(tokens);
-            }
-
-            return this.parsingCache[scriptPath];
+                return (TES4Script)this.parser.ParseWithFixLogic(tokens);
+            });
         }
     }
 }

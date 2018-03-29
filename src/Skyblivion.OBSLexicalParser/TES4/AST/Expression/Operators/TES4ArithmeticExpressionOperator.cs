@@ -2,16 +2,6 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
 {
-    /*
-     * Class TES4ArithmeticExpressionOperator
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_EQUAL()
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_NOT_EQUAL()
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_GREATER()
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_GREATER_OR_EQUAL()
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_LESS()
-     * @method static TES4ArithmeticExpressionOperator OPERATOR_LESS_OR_EQUAL()
-     * @package Ormin\OBSLexicalParser\TES4\AST\Operators
-     */
     class TES4ArithmeticExpressionOperator : TES4ExpressionOperator
     {
         private TES4ArithmeticExpressionOperator(string name)

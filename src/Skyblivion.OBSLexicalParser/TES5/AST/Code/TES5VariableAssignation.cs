@@ -1,11 +1,14 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
-    class TES5VariableAssignation : ITES5CodeChunk
+    class TES5VariableAssignation : ITES5ValueCodeChunk
     {
         private ITES5Referencer reference;
         private ITES5Value value;
@@ -17,14 +20,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         public List<string> output()
         {
-            List<string> referenceOutputList = this.reference.output();
-            string referenceOutputFirst = referenceOutputList[0];
-            List<string> valueOutputList = this.value.output();
-            string valueOutputFirst = valueOutputList[0];
-            string code = referenceOutputFirst+" = "+valueOutputFirst;
+            string referenceOutput = this.reference.output().Single();
+            string valueOutput = this.value.output().Single();
+            string code = referenceOutput + " = "+ valueOutput;
             if (this.reference.getType() != this.value.getType() && !(this.value is TES5None))
             {
-                code+= " as "+this.reference.getType().output();
+                code+= " as "+this.reference.getType().output().Single();
             }
 
             List<string> codeLines = new List<string>() { code };
@@ -39,6 +40,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
         public ITES5Value getValue()
         {
             return this.value;
+        }
+
+        public ITES5Type getType()//WTM:  Change:  Added until a new proper interface is made.
+        {
+            throw new NotImplementedException();
         }
     }
 }

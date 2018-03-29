@@ -1,4 +1,5 @@
 using Dissect.Lexer.TokenStream;
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Lexer;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
@@ -9,8 +10,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
     /*
      * Class FragmentsParsingService
-     *
-     * @package Ormin\OBSLexicalParser\Builds\Service
      */
     class FragmentsParsingService
     {
@@ -27,13 +26,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 
         public TES4CodeChunks parseScript(string scriptPath)
         {
-            if (!parsingCache.ContainsKey(scriptPath))
+            return parsingCache.GetOrAdd(scriptPath, () =>
             {
                 FragmentLexer lexer = new FragmentLexer();
                 ArrayTokenStream tokens = lexer.lex(File.ReadAllText(scriptPath));
-                this.parsingCache.Add(scriptPath, (TES4CodeChunks)this.parser.ParseWithFixLogic(tokens));
-            }
-            return this.parsingCache[scriptPath];
+                return (TES4CodeChunks)this.parser.ParseWithFixLogic(tokens);
+            });
         }
     }
 }

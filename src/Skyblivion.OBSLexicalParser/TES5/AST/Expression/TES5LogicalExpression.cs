@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 {
@@ -19,11 +20,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 
         public List<string> output()
         {
-            List<string> leftOutput = this.leftValue.output();
-            string leftOutputFirst = leftOutput[0];
-            List<string> rightOutput = this.rightValue.output();
-            string rightOutputFirst = rightOutput[0];
-            return new List<string>() { "(" + leftOutputFirst + " " + this.op.Name + " " + rightOutput + ")" };
+            string leftOutput = this.leftValue.output().Single();
+            string rightOutput = this.rightValue.output().Single();
+            return new List<string>() { "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")" };
         }
 
         public ITES5Type getType()

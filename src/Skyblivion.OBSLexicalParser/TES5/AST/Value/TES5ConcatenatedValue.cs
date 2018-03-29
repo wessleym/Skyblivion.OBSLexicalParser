@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
 {
@@ -18,12 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
 
         public List<string> output()
         {
-            List<string> outputs = new List<string>();
-            foreach (var concatValue in this.concatenatedValues)
-            {
-                outputs.Add(string.Join("", concatValue.output()));
-            }
-            return new List<string>() { string.Join(" + ", outputs) };
+            return new List<string>() { string.Join(" + ", this.concatenatedValues.Select(cv => cv.output().Single())) };
         }
     }
 }

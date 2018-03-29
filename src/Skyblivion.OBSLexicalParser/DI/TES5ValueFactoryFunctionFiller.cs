@@ -1,8 +1,7 @@
-using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using Ormin.OBSLexicalParser.TES5.Factory;
 
 namespace Skyblivion.OBSLexicalParser.DI
 {

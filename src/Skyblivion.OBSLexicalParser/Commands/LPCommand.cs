@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace Skyblivion.OBSLexicalParser.Commands
+﻿namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class LPCommand
+    public abstract class LPCommand
     {
-        protected string Name, Description;
+        public string CommandName { get; private set; }
+        public string FriendlyName { get; private set; }
+        public string Description { get; private set; }
         protected LPCommandInput Input = new LPCommandInput();
-        public void set_time_limit(int minutes) { }
+        public abstract void execute();
+        protected LPCommand(string commandName, string friendlyName, string description)
+        {
+            CommandName = commandName;
+            FriendlyName = friendlyName;
+            Description = description;
+        }
     }
 }

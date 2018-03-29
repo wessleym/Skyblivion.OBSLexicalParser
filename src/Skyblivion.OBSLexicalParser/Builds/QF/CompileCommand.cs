@@ -2,16 +2,11 @@ using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
-    class CompileCommand : ICompileCommand
+    class CompileCommand : CompileCommandBase
     {
-        public void initialize()
+        public override void initialize()
         {
             // TODO: Implement initialize() method.
-        }
-
-        public string[] compile(string sourcePath, string workspacePath, string outputPath)
-        {
-            return ExternalExecution.RunPapyrusCompiler(sourcePath, workspacePath, outputPath);
         }
     }
 }

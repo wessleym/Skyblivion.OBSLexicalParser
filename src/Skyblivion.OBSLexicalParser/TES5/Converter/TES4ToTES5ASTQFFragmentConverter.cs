@@ -1,13 +1,11 @@
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using Ormin.OBSLexicalParser.TES5.Factory;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter
 {

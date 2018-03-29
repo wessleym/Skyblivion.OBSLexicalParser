@@ -10,17 +10,21 @@ namespace Dissect.Parser.Exceptions
      */
     public class UnexpectedTokenException : Exception
     {
-        const string MESSAGE = "Unexpected %s at line %d.  Expected one of %s.";
         protected IToken token;
         protected string[] expected;
         /*
         * Constructor.
         */
         public UnexpectedTokenException(IToken token, string[] expected)
-            : base(string.Format(MESSAGE, token.getValue() == token.getType() ? token.getValue() + " (" + token.getType() + ")" : token.getType(), token.getLine(), string.Join(", ", expected)))
+            : base(GetMessage(token, expected))
         {
             this.token = token;
             this.expected = expected;
+        }
+
+        private static string GetMessage(IToken token, string[] expected)
+        {
+            return "Unexpected " + (token.getValue() != token.getType() ? token.getValue() + " (" + token.getType() + ")" : token.getType()) + @" at line " + token.getLine() + @".  Expected one of " + string.Join(", ", expected) + @".";
         }
 
         /*

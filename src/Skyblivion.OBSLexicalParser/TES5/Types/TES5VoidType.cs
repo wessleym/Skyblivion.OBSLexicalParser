@@ -34,5 +34,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             throw new ConversionException("Cannot set native type void type.");
         }
+
+        public string getOriginalName()
+        {
+            return "void";
+        }
     }
 }

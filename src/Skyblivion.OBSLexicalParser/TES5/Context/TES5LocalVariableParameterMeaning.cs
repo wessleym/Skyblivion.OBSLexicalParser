@@ -1,11 +1,5 @@
 namespace Skyblivion.OBSLexicalParser.TES5.Context
 {
-    /*
-     * Class TES5LocalVariableParameterMeaning
-     * @package Ormin\OBSLexicalParser\TES5\Context
-     * @method static TES5LocalVariableParameterMeaning ACTIVATOR()
-     * @method static TES5LocalVariableParameterMeaning CONTAINER()
-     */
     class TES5LocalVariableParameterMeaning
     {
         public string Name { get; private set; }

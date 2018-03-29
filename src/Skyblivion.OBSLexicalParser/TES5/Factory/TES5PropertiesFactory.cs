@@ -16,37 +16,35 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         private TES5Property createPropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
         {
-            if (globalVariables.hasGlobalVariable(declaration.getVariableName()))
+            string variableName = declaration.getVariableName();
+            if (globalVariables.hasGlobalVariable(variableName))
             {
-                return new TES5Property(declaration.getVariableName(), TES5BasicType.T_GLOBALVARIABLE, declaration.getVariableName());
+                return new TES5Property(variableName, TES5BasicType.T_GLOBALVARIABLE, variableName);
             }
             else
             {
-                return new TES5Property(declaration.getVariableName(), TES5BasicType.T_FORM, declaration.getVariableName());
+                return new TES5Property(variableName, TES5BasicType.T_FORM, variableName);
             }
         }
 
         /*
-             * @throws ConversionException
+        * @throws ConversionException
         */
         public void createProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
         {
-            /*
-             * @var TES4VariableDeclaration[] alreadyDefinedVariables
-             */
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
             foreach (TES4VariableDeclaration variable in variableList.getVariableList())
             {
                 string variableName = variable.getVariableName();
                 string variableNameLower = variableName.ToLower();
                 TES4Type variableType = variable.getVariableType();
-                if (alreadyDefinedVariables.ContainsKey(variableNameLower))
+                TES4VariableDeclaration alreadyDefinedVariable;
+                if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
                 {
-                    if (variableType == alreadyDefinedVariables[variableNameLower].getVariableType())
+                    if (variableType == alreadyDefinedVariable.getVariableType())
                     {
                         continue; //Same variable defined twice, smack the original script developer and fallthrough silently.
                     }
-
                     throw new ConversionException("Double definition of variable named " + variableName + " with different types ( " + alreadyDefinedVariables[variableNameLower].getVariableType().Name + " and " + variable.getVariableType().Name + " )");
                 }
 
@@ -69,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
 
                 globalScope.add(property);
-                alreadyDefinedVariables[variableNameLower] = variable;
+                alreadyDefinedVariables.Add(variableNameLower, variable);
             }
         }
     }

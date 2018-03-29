@@ -1,11 +1,14 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -37,12 +40,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            fameArguments.add(new TES5Integer((int)functionArguments.getValue(0).getData()));
+            ITES4StringValue argument0 = functionArguments.getValue(0);
+            Nullable<int> argument0Int = argument0.getData() as Nullable<int>;
+            ITES5Value newArgument;
+            if (argument0Int != null)
+            {
+                newArgument = new TES5Integer(argument0Int.Value);
+            }
+            else
+            {
+                newArgument= this.valueFactory.createValue(argument0, codeScope, globalScope, multipleScriptsScope);
+            }
+            fameArguments.add(newArgument);
             TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
             return newFunction;
         }

@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -66,8 +67,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
          * Disable
          * Activate
          * GetInFaction whatsoever
-         * 
-         * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
         */
         public ITES5Referencer extractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
@@ -122,8 +121,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         public ITES5Referencer createReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            //Papyrus compiler somehow treats properties with ,,temp" in them in a special way, so we change them to tmp to accomodate that.
-            referenceName = Regex.Replace(referenceName, "temp", "tmp", RegexOptions.IgnoreCase);
+            referenceName = PapyrusCompiler.FixReferenceName(referenceName);
 
             if (referenceName.ToLower() == "player")
             {
@@ -145,9 +143,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 if (property == null)
                 {
                     TES5Property propertyToAddToGlobalScope = null;
-                    if (this.special_conversions.ContainsKey(referenceName))
+                    ITES5Type specialConversion;
+                    if (this.special_conversions.TryGetValue(referenceName, out specialConversion))
                     {
-                        propertyToAddToGlobalScope = new TES5Property(referenceName, this.special_conversions[referenceName], referenceName);
+                        propertyToAddToGlobalScope = new TES5Property(referenceName, specialConversion, referenceName);
                     }
 
                     if (propertyToAddToGlobalScope == null)

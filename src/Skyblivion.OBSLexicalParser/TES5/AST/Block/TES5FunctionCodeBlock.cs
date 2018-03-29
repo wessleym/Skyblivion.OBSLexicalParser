@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             List<string> functionSignatureFlat = new List<string>();
             foreach (var localVariable in this.functionScope.getVariables().Select(v=>v.Value))
             {
-                functionSignatureFlat.Add(localVariable.getPropertyType().output() + " " + localVariable.getPropertyName());
+                functionSignatureFlat.Add(localVariable.getPropertyType().output().Single() + " " + localVariable.getPropertyName());
             }
 
             string functionSignature = string.Join(", ", functionSignatureFlat);

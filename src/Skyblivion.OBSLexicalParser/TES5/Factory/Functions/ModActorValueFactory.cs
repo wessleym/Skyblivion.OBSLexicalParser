@@ -1,8 +1,8 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5LocalScope localScope = codeScope.getLocalScope();

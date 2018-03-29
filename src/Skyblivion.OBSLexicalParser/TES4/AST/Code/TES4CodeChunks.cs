@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
-    class TES4CodeChunks
+    class TES4CodeChunks : ITES4CodeFilterable
     {
         private List<ITES4CodeChunk> codeChunks = new List<ITES4CodeChunk>();
         public void add(ITES4CodeChunk chunk)

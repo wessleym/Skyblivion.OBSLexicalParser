@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Dissect.Extensions.IDictionaryExtensions;
+using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
 {
@@ -8,11 +9,8 @@ namespace Dissect.Parser.LALR1.Analysis
         public Dictionary<int, Dictionary<string, int>> GoTo = new Dictionary<int, Dictionary<string, int>>();
         private static void Add(Dictionary<int, Dictionary<string, int>> dict, int num, string trigger, int destination)
         {
-            if (!dict.ContainsKey(num))
-            {
-                dict.Add(num, new Dictionary<string, int>());
-            }
-            dict[num][trigger] = destination;
+            Dictionary<string, int> innerDict = dict.GetOrAdd(num, () => new Dictionary<string, int>());
+            innerDict.Add(trigger, destination);
         }
         public void AddAction(int num, string trigger, int destination)
         {

@@ -1,4 +1,4 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;

@@ -62,11 +62,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             }
         }
 
-        public void setValue(int i, ITES4StringValue value)
-        {
-            this.values[i] = value;
-        }
-
         public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             return this.values.SelectMany(v => v.filter(predicate)).ToArray();

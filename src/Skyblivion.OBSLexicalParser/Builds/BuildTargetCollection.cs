@@ -1,5 +1,7 @@
+using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +11,17 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTargetCollection : IEnumerable<BuildTarget>
     {
-        private TES5ScriptDependencyGraph dependencyGraph;
-        private Dictionary<string, BuildTarget> buildTargets = new Dictionary<string, BuildTarget>();
+        private Lazy<TES5ScriptDependencyGraph> dependencyGraph;
+        private Dictionary<string, BuildTarget> buildTargets;
+        public BuildTargetCollection()
+        {
+            buildTargets = new Dictionary<string, BuildTarget>();
+            dependencyGraph = new Lazy<TES5ScriptDependencyGraph>(() => ReadGraph());
+        }
+
         public void add(BuildTarget buildTarget)
         {
-            this.buildTargets[buildTarget.getTargetName()] = buildTarget;
+            this.buildTargets.Add(buildTarget.getTargetName(), buildTarget);
         }
 
         public bool canBuild()
@@ -21,24 +29,21 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return buildTargets.All(bt => bt.Value.canBuild());
         }
 
-        public string getUniqueBuildFingerprint()
-        {
-            Dictionary<string, BuildTarget> myBuildTargets = this.buildTargets;
-            string md5 = PHPFunction.MD5("randomseed");
-            foreach (var key in myBuildTargets.Select(kvp=>kvp.Key).Select(key=>key))
-            {
-                md5 = PHPFunction.MD5(md5 + key);
-            }
-            return md5;
-        }
-
         public BuildTarget getByName(string name)
         {
-            if (!buildTargets.ContainsKey(name))
+            try
             {
-                return null;
+                return this.buildTargets[name];
             }
-            return this.buildTargets[name];
+            catch (KeyNotFoundException)
+            {
+                throw new InvalidOperationException("Unknown build " + name);
+            }
+        }
+
+        public BuildTarget getByNameOrNull(string name)
+        {
+            return this.buildTargets.GetWithFallback(name, () => null);
         }
 
         /*
@@ -89,14 +94,38 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return this.getDependencyGraph().getScriptsToCompile(scriptName);
         }
 
+        private string getUniqueBuildFingerprint()
+        {
+            Dictionary<string, BuildTarget> myBuildTargets = this.buildTargets;
+            string md5 = PHPFunction.MD5("randomseed");
+            foreach (var key in myBuildTargets.Select(kvp => kvp.Key).OrderBy(k => k))
+            {
+                md5 = PHPFunction.MD5(md5 + key);
+            }
+            return md5;
+        }
+
         private TES5ScriptDependencyGraph getDependencyGraph()
         {
-            if (this.dependencyGraph == null)
-            {
-                this.dependencyGraph = PHPFunction.Deserialize<TES5ScriptDependencyGraph>(File.ReadAllText("app/graph_"+this.getUniqueBuildFingerprint()));
-            }
+            return this.dependencyGraph.Value;
+        }
 
-            return this.dependencyGraph;
+        private string GetFilePath()
+        {
+            return "Build" + Path.DirectorySeparatorChar + "graph_" + this.getUniqueBuildFingerprint();
+        }
+
+        private TES5ScriptDependencyGraph ReadGraph()
+        {
+            return PHPFunction.Deserialize<TES5ScriptDependencyGraph>(File.ReadAllText(GetFilePath()));
+        }
+
+        public void WriteGraph(TES5ScriptDependencyGraph graph)
+        {
+            string graphPath = GetFilePath();
+            string serializedGraph = PHPFunction.Serialize(graph);
+            Directory.CreateDirectory(Path.GetDirectoryName(graphPath));
+            File.WriteAllText(graphPath, serializedGraph);
         }
     }
 }

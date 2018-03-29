@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 {
@@ -23,8 +24,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
         {
             TES5Bool trueBool = new TES5Bool(true);
             TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.OPERATOR_EQUAL;
-            string outputValue = string.Join(" ", this.value.output());
-            string trueOutputValue = string.Join(" ", trueBool.output());
+            string outputValue = this.value.output().Single();
+            string trueOutputValue = trueBool.output().Single();
             return new List<string>() { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };
         }
     }

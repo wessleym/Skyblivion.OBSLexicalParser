@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using Dissect.Parser.LALR1.Analysis.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace Dissect.Parser.LALR1.Analysis
             Dictionary<string, List<string>> firstSets = this.calculateFirstSets(groupedRules);
             // keeps a list of tokens that need to be pumped
             // through the automaton
-            Dictionary<Item, List<string>> pumpings = new Dictionary<Item, List<string>>();
+            List<Tuple<Item, List<string>>> pumpings = new List<Tuple<Item, List<string>>>();
             // the item from which the whole automaton
             // is derived
             Item initialItem = new Item(grammar.getStartRule(), 0);
@@ -58,30 +59,26 @@ namespace Dissect.Parser.LALR1.Analysis
             State state = new State(kernelSet.insert(new decimal[][] { new decimal[] { initialItem.getRule().getNumber(), initialItem.getDotIndex() } }), new Item[] { initialItem });
             // the initial item automatically has EOF
             // as its lookahead
-            pumpings.Add(initialItem, new List<string>() { Dissect.Parser.Parser.EOF_TOKEN_TYPE });
+            pumpings.Add(new Tuple<Item, List<string>>(initialItem, new List<string>() { Dissect.Parser.Parser.EOF_TOKEN_TYPE }));
             queue.Enqueue(state);
             automaton.addState(state);
             while (queue.Any())
             {
-                State queueState = queue.Dequeue();
+                state = queue.Dequeue();
                 // items of this state are grouped by
                 // the active component to calculate
                 // transitions easily
                 Dictionary<string, List<Item>> groupedItems = new Dictionary<string, List<Item>>();
                 // calculate closure
                 List<string> added = new List<string>();
-                List<Item> currentItems = queueState.getItems();
+                List<Item> currentItems = state.getItems().ToList();//It's important to make a copy here, or else items will get added to this list twice (once below and then once again in State.
                 for (int x = 0; x < currentItems.Count; x++)
                 {
                     Item item = currentItems[x];
                     if (!item.isReduceItem())
                     {
                         string component = item.getActiveComponent();
-                        if (!groupedItems.ContainsKey(component))
-                        {
-                            groupedItems.Add(component, new List<Item>());
-                        }
-                        groupedItems[component].Add(item);
+                        groupedItems.AddNewListIfNotContainsKeyAndAddValueToList(component, item);
                         // if nonterminal
                         if (grammar.hasNonterminal(component))
                         {
@@ -153,14 +150,14 @@ namespace Dissect.Parser.LALR1.Analysis
                                     // create new items for it
                                     newItem = new Item(rule, 0);
                                     currentItems.Add(newItem);
-                                    queueState.add(newItem);
+                                    state.add(newItem);
                                 }
                                 else
                                 {
                                     // if it was expanded, each original
                                     // rule might bring new lookahead tokens,
                                     // so get the rule from the current state
-                                    newItem = queueState.get(rule.getNumber(), 0);
+                                    newItem = state.get(rule.getNumber(), 0);
                                 }
 
                                 if (connect)
@@ -170,7 +167,7 @@ namespace Dissect.Parser.LALR1.Analysis
 
                                 if (pump)
                                 {
-                                    pumpings.Add(newItem, lookahead);
+                                    pumpings.Add(new Tuple<Item, List<string>>(newItem, lookahead));
                                 }
                             }
                         }
@@ -179,15 +176,12 @@ namespace Dissect.Parser.LALR1.Analysis
                         added.Add(component);
                     }
                 } // calculate transitions
-                foreach
-
-                (var kvp in groupedItems)
+                foreach (var kvp in groupedItems)
                 {
                     var thisComponent = kvp.Key;
                     var theseItems = kvp.Value;
                     List<decimal[]> newKernel = new List<decimal[]>();
-                    foreach
-    (var thisItem in theseItems)
+                    foreach (var thisItem in theseItems)
                     {
                         newKernel.Add(new decimal[] { thisItem.getRule().getNumber(), thisItem.getDotIndex() + 1 });
                     }
@@ -197,26 +191,30 @@ namespace Dissect.Parser.LALR1.Analysis
                     {// the state already exists
                         automaton.addTransition(state.getNumber(), thisComponent, num); // extract the connected items from the target state
                         State nextState = automaton.getState(num);
-                        foreach (var thisItem in theseItems) { thisItem.connect(nextState.get(thisItem.getRule().getNumber(),
-thisItem.getDotIndex() + 1));
+                        foreach (var thisItem in theseItems)
+                        {
+                            thisItem.connect(nextState.get(thisItem.getRule().getNumber(), thisItem.getDotIndex() + 1));
                         }
                     }
                     else
                     {// new state needs to be created
-                        State newState = new State(num, theseItems.Select((Item i) =>
-{
-    Item newItem = new Item(i.getRule(), i.getDotIndex() + 1);
-    // connect the two items
-    i.connect(newItem);
-    return newItem;
-}).ToArray());
+                        State newState = new State(num, theseItems.Select(item =>
+                        {
+                            Item newItem = new Item(item.getRule(), item.getDotIndex() + 1);
+                            // connect the two items
+                            item.connect(newItem);
+                            return newItem;
+                        }).ToArray());
                         automaton.addState(newState);
                         queue.Enqueue(newState);
                         automaton.addTransition(state.getNumber(), thisComponent, num);
                     }
                 }
             } // pump all the lookahead tokens
-            foreach (var pumping in pumpings) { pumping.Key.pumpAll(pumping.Value); }
+            foreach (var pumping in pumpings)
+            {
+                pumping.Item1.pumpAll(pumping.Item2);
+            }
             return automaton;
         }
 
@@ -235,11 +233,11 @@ thisItem.getDotIndex() + 1));
             // initialize the table
             ActionAndGoTo table = new ActionAndGoTo();
             foreach (var kvp in automaton.getTransitionTable())
-    {
+            {
                 var num = kvp.Key;
                 var transitions = kvp.Value;
-                foreach (var kvp2  in         transitions )
-        {
+                foreach (var kvp2 in transitions)
+                {
                     var trigger = kvp2.Key;
                     var destination = kvp2.Value;
                     if (!grammar.hasNonterminal(trigger))
@@ -256,13 +254,10 @@ thisItem.getDotIndex() + 1));
             }
 
             foreach (var kvp in automaton.getStates())
-    {
+            {
                 var num = kvp.Key;
                 var state = kvp.Value;
-                if (!table.Action.ContainsKey(num))
-                {
-                    table.Action.Add(num, new Dictionary<string, int>());
-                }
+                Dictionary<string, int> actionDictionary = table.Action.GetOrAdd(num, ()=>new Dictionary<string, int>());
 
                 foreach (var item in state.getItems())
                 {
@@ -271,20 +266,21 @@ thisItem.getDotIndex() + 1));
                         int ruleNumber = item.getRule().getNumber();
                         foreach (var token in item.getLookahead())
                         {
-                            if (errors.ContainsKey(num) && errors[num].ContainsKey(token))
+                            Dictionary<string, bool> errorsOfNum;
+                            if (errors.TryGetValue(num, out errorsOfNum) && errorsOfNum.ContainsKey(token))
                             {
                                 // there was a previous conflict resolved as an error
                                 // entry for this token.
                                 continue;
                             }
 
-                            if (table.Action[num].ContainsKey(token))
+                            int instruction;
+                            if (actionDictionary.TryGetValue(token, out instruction))
                             {
                                 // conflict
-                                int instruction = table.Action[num][token];
                                 if (instruction > 0)
                                 {
-                                    if ((conflictsMode & Grammar.OPERATORS)== Grammar.OPERATORS)
+                                    if ((conflictsMode & Grammar.OPERATORS) == Grammar.OPERATORS)
                                     {
                                         if (grammar.hasOperator(token))
                                         {
@@ -312,16 +308,16 @@ thisItem.getDotIndex() + 1));
                                                 if (rulePrecedence > tokenPrecedence)
                                                 {
                                                     // if the rule precedence is higher, reduce
-                                                    table.Action[num][token] = -ruleNumber;
+                                                    actionDictionary[token] = -ruleNumber;
                                                 }
 
-                                                else if(rulePrecedence < tokenPrecedence)
+                                                else if (rulePrecedence < tokenPrecedence)
                                                 {
                                                     // if the token precedence is higher, shift
                                                     // (i.e. don"t modify the table)
                                                 }
-                                                else 
-                                        {
+                                                else
+                                                {
                                                     // precedences are equal, let"s turn to associativity
                                                     int assoc = operatorInfo["assoc"];
                                                     if (assoc == Grammar.RIGHT)
@@ -330,21 +326,21 @@ thisItem.getDotIndex() + 1));
                                                         // (i.e. don"t modify the table)
                                                     }
 
-                                                    else if(assoc == Grammar.LEFT)
-                                            {
+                                                    else if (assoc == Grammar.LEFT)
+                                                    {
                                                         // if left-associative, reduce
-                                                        table.Action[num][token] = -ruleNumber;
+                                                        actionDictionary[token] = -ruleNumber;
                                                     }
 
-                                                    else if(assoc == Grammar.NONASSOC)
-                                            {
+                                                    else if (assoc == Grammar.NONASSOC)
+                                                    {
                                                         // the token is nonassociative.
                                                         // this actually means an input error, so
                                                         // remove the shift entry from the table
                                                         // and mark this as an explicit error
                                                         // entry
-                                                        table.Action[num].Remove(token);
-                                                        errors[num][token] = true;
+                                                        actionDictionary.Remove(token);
+                                                        errors[num].Add(token, true);
                                                     }
                                                 }
 
@@ -356,7 +352,7 @@ thisItem.getDotIndex() + 1));
                                     }
 
                                     // s/r
-                                    if ((conflictsMode & Grammar.SHIFT)== Grammar.SHIFT)
+                                    if ((conflictsMode & Grammar.SHIFT) == Grammar.SHIFT)
                                     {
                                         conflicts.Add(new Conflict(num, token, item.getRule(), Grammar.SHIFT));
                                         continue;
@@ -371,7 +367,7 @@ thisItem.getDotIndex() + 1));
                                     // r/r
                                     Rule originalRule = grammar.getRule(-instruction);
                                     Rule newRule = item.getRule();
-                                    if ((conflictsMode & Grammar.LONGER_REDUCE)== Grammar.LONGER_REDUCE)
+                                    if ((conflictsMode & Grammar.LONGER_REDUCE) == Grammar.LONGER_REDUCE)
                                     {
                                         int count1 = originalRule.getComponents().Length;
                                         int count2 = newRule.getComponents().Length;
@@ -383,17 +379,17 @@ thisItem.getDotIndex() + 1));
                                             continue;
                                         }
 
-                                        else if(count2 > count1)
+                                        else if (count2 > count1)
                                         {
                                             // new rule is longer
-                                            table.Action[num][token] = -ruleNumber;
+                                            actionDictionary[token] = -ruleNumber;
                                             Rule[] resolvedRules = new Rule[] { newRule, originalRule };
                                             conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.LONGER_REDUCE));
                                             continue;
                                         }
                                     }
 
-                                    if ((conflictsMode & Grammar.EARLIER_REDUCE)== Grammar.EARLIER_REDUCE)
+                                    if ((conflictsMode & Grammar.EARLIER_REDUCE) == Grammar.EARLIER_REDUCE)
                                     {
                                         if (-instruction < ruleNumber)
                                         {
@@ -405,7 +401,7 @@ thisItem.getDotIndex() + 1));
                                         else
                                         {
                                             // new rule was earlier
-                                            table.Action[num][token] = -ruleNumber;
+                                            actionDictionary[token] = -ruleNumber;
                                             Rule[] resolvedRules = new Rule[] { newRule, originalRule };//WTM:  Change:  This was below the conflicts.Add statement
                                             conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.EARLIER_REDUCE));
                                             continue;
@@ -417,7 +413,7 @@ thisItem.getDotIndex() + 1));
                                 }
                             }
 
-                            table.Action[num][token] = -ruleNumber;
+                            actionDictionary[token] = -ruleNumber;
                         }
                     }
                 }
@@ -442,9 +438,10 @@ thisItem.getDotIndex() + 1));
                 firstSets.Add(key, new List<string>());
             }
 
-            bool changes = false;
+            bool changes;
             do
             {
+                changes = false;
                 foreach (var kvp in rules)
                 {
                     var lhs = kvp.Key;

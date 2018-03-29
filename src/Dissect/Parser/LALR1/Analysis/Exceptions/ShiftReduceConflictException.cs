@@ -12,15 +12,6 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
      */
     class ShiftReduceConflictException : ConflictException
     {
-        /*
-        * The exception message template.
-        */
-        const string MESSAGE =
-@"The grammar exhibits a shift/reduce conflict on rule:
-
-  %d. %s -> %s
-
-(on lookahead ""%s"" in state %d). Restructure your grammar or choose a conflict resolution mode.";
         protected Rule rule;
         protected string lookahead;
         /*
@@ -40,7 +31,12 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
         private static string GetMessage(Rule rule, int state, string lookahead)
         {
             string[] components = rule.getComponents();
-            return string.Format(MESSAGE, rule.getNumber(), rule.getName(), !components.Any() ? "/* empty */" : string.Join(" ", components), lookahead, state);
+            return
+@"The grammar exhibits a shift/reduce conflict on rule:
+
+  " + rule.getNumber() + @". " + rule.getName() + @" -> " + (!components.Any() ? "/* empty */" : string.Join(" ", components)) + @"
+
+(on lookahead """ + lookahead + @""" in state " + state + @"). Restructure your grammar or choose a conflict resolution mode.";
         }
 
         /*

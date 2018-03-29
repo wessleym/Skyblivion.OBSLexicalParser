@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
@@ -13,15 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public List<string> output()
         {
-            List<string> outputs = new List<string>();
-            foreach (var argument in this.arguments)
-            {
-                List<string> subOutput = argument.output();
-                string subOutputFirst = subOutput[0];
-                outputs.Add(subOutputFirst);
-            }
-
-            return new List<string>() { string.Join(", ", outputs) };
+            return new List<string>() { string.Join(", ", this.arguments.Select(a=>a.output().Single())) };
         }
 
         public void add(ITES5Value value)

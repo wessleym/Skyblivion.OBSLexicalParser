@@ -1,7 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
-using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
 {
@@ -11,14 +11,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
         private TES4Type variableType;
         public TES4VariableDeclaration(string variableName, TES4Type variableType)
         {
-            this.variableName = variableName;
+            this.variableName = PapyrusCompiler.FixReferenceName(variableName);
             this.variableType = variableType;
         }
 
         public string getVariableName()
         {
-            //Papyrus compiler somehow treats properties with ,,temp" in them in a special way, so we change them to tmp to accomodate that.
-            variableName = Regex.Replace(variableName, "temp", "tmp", RegexOptions.IgnoreCase);
             return variableName;
         }
 

@@ -1,15 +1,10 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.Builds.Service;
-using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.Builds.TIF
@@ -24,9 +19,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
             this.parsingService = fragmentsParsingService;
         }
 
-        public void initialize(Build build)
+        public void initialize(Build build, MetadataLogService metadataLogService)
         {
-            converter = TES4ToTES5ASTTIFFragmentConverterFactory.GetConverter(build);
+            converter = TES4ToTES5ASTTIFFragmentConverterFactory.GetConverter(build, metadataLogService);
             this.fragmentsReferenceBuilder = new FragmentsReferencesBuilder();
         }
 

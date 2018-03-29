@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.PF
             throw new NotImplementedException();
         }
 
-        public string[] compile(string sourcePath, string workspacePath, string outputPath)
+        public void compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
             // TODO: Implement compile() method.
             throw new NotImplementedException();

@@ -5,18 +5,22 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class PrepareWorkspaceJob
     {
+        public const int CopyOperationsPerBuildTarget = 2;
         private BuildTargetCollection buildTargetCollection;
         public PrepareWorkspaceJob(BuildTargetCollection buildTargetCollection)
         {
             this.buildTargetCollection = buildTargetCollection;
         }
 
-        public void run()
+        public void run(ProgressWriter progressWriter)
         {
             foreach (var buildTarget in buildTargetCollection)
             {
-                FileTransfer.CopyDirectoryFiles(buildTarget.getTranspiledPath(), buildTarget.getWorkspacePath());
-                FileTransfer.CopyDirectoryFiles(buildTarget.getDependenciesPath(), buildTarget.getWorkspacePath());
+                string workspacePath = buildTarget.getWorkspacePath();
+                FileTransfer.CopyDirectoryFiles(buildTarget.getTranspiledPath(), workspacePath, false);
+                progressWriter.IncrementAndWrite();
+                FileTransfer.CopyDirectoryFiles(buildTarget.getDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) conflict.
+                progressWriter.IncrementAndWrite();
             }
         }
     }

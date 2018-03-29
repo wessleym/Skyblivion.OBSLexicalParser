@@ -12,19 +12,6 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
      */
     class ReduceReduceConflictException : ConflictException
     {
-        /*
-        * The exception message template.
-        */
-        const string MESSAGE =
-@"The grammar exhibits a reduce/reduce conflict on rules:
-
-  %d. %s -> %s
-
-vs:
-
-  %d. %s -> %s
-
-(on lookahead ""%s"" in state %d). Restructure your grammar or choose a conflict resolution mode.";
         protected Rule firstRule;
         protected Rule secondRule;
         protected string lookahead;
@@ -49,7 +36,16 @@ vs:
         {
             string[] components1 = firstRule.getComponents();
             string[] components2 = secondRule.getComponents();
-            return string.Format(MESSAGE, firstRule.getNumber(), firstRule.getName(), !components1.Any() ? "/* empty */" : string.Join(" ", components1), secondRule.getNumber(), secondRule.getName(), !components2.Any() ? "/* empty */" : string.Join(" ", components2), lookahead, state);
+            return
+@"The grammar exhibits a reduce/reduce conflict on rules:
+
+  " + firstRule.getNumber() + @". " + firstRule.getName() + @" -> " + (!components1.Any() ? "/* empty */" : string.Join(" ", components1)) + @"
+
+vs:
+
+  " + secondRule.getNumber() + @". " + secondRule.getName() + @" -> " + (!components2.Any() ? "/* empty */" : string.Join(" ", components2)) + @"
+
+(on lookahead """ + lookahead + @""" in state " + state + @"). Restructure your grammar or choose a conflict resolution mode.";
         }
 
         /*
@@ -57,7 +53,7 @@ vs:
          *
          *  The first conflicting rule.
         */
-        public Dissect.Parser.Rule getFirstRule()
+        public Rule getFirstRule()
         {
             return this.firstRule;
         }
@@ -67,7 +63,7 @@ vs:
          *
          *  The second conflicting rule.
         */
-        public Dissect.Parser.Rule getSecondRule()
+        public Rule getSecondRule()
         {
             return this.secondRule;
         }

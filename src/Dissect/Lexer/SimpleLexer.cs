@@ -22,15 +22,7 @@ namespace Dissect.Lexer
         */
         public SimpleLexer token(string type, string value = null)
         {
-            if (value != null)
-            {
-                this.recognizers[type] = new SimpleRecognizer(value);
-            }
-            else
-            {
-                this.recognizers[type] = new SimpleRecognizer(type);
-            }
-
+            this.recognizers.Add(type, new SimpleRecognizer(value != null ? value : type));
             return this;
         }
 
@@ -39,7 +31,7 @@ namespace Dissect.Lexer
         */
         public SimpleLexer regex(string type, Regex regex)
         {
-            this.recognizers[type] = new RegexRecognizer(regex);
+            this.recognizers.Add(type, new RegexRecognizer(regex));
             return this;
         }
 
@@ -67,7 +59,7 @@ namespace Dissect.Lexer
                 string v;
                 if (recognizer.match(str, out v))
                 {
-                    if (value == null || Dissect.Util.Util.stringLength(v) > Dissect.Util.Util.stringLength(value))
+                    if (value == null || Util.Util.stringLength(v) > Util.Util.stringLength(value))
                     {
                         value = v;
                         type = kvp.Key;
@@ -75,7 +67,7 @@ namespace Dissect.Lexer
                 }
             }
 
-            if (type == null)
+            if (type != null)
             {
                 return new CommonToken(type, value, this.getCurrentLine());
             }

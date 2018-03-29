@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
@@ -35,7 +36,9 @@ namespace Dissect.Parser.LALR1.Analysis
         public void add(Item item)
         {
             this.items.Add(item);
-            this.itemMap[item.getRule().getNumber()][item.getDotIndex()] = item;
+            int ruleNumber = item.getRule().getNumber();
+            Dictionary<int, Item> itemDictionary = this.itemMap.GetOrAdd(ruleNumber, ()=> new Dictionary<int, Item>());
+            itemDictionary.Add(item.getDotIndex(), item);
         }
 
         /*

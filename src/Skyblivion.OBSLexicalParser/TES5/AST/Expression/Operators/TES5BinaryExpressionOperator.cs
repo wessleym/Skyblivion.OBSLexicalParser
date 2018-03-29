@@ -2,14 +2,6 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
-    /*
-     * Class TES5BinaryExpressionOperator
-     * @method static TES5BinaryExpressionOperator OPERATOR_ADD()
-     * @method static TES5BinaryExpressionOperator OPERATOR_SUBSTRACT()
-     * @method static TES5BinaryExpressionOperator OPERATOR_MULTIPLY()
-     * @method static TES5BinaryExpressionOperator OPERATOR_DIVIDE()
-     * @package Ormin\OBSLexicalParser\TES5\AST\Operators
-     */
     class TES5BinaryExpressionOperator
     {
         public string Name { get; private set; }

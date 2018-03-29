@@ -1,25 +1,18 @@
-using Dissect.Lexer.TokenStream;
-using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Lexer;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
-using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
-    class ASTCommand : IASTCommand
+    class ASTCommand : ASTCommandBase
     {
-        private SyntaxErrorCleanParser parser;
-        public void initialize()
+        protected override TES4ObscriptCodeGrammar GetGrammar()
         {
-            parser = new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar());
+            return new TES4ObscriptCodeGrammar();
         }
 
-        public TES4Script getAST(string sourcePath)
+        protected override OBScriptLexer GetLexer()
         {
-            FragmentLexer lexer = new FragmentLexer();
-            ArrayTokenStream tokens = lexer.lex(File.ReadAllText(sourcePath));
-            TES4Script AST = (TES4Script)this.parser.ParseWithFixLogic(tokens);
-            return AST;
+            return new FragmentLexer();
         }
     }
 }

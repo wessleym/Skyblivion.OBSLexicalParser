@@ -1,22 +1,17 @@
-using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
 {
-    class MappedTargetsLogService : IDisposable
+    class MappedTargetsLogService : BuildLogService
     {
-        private FileStream stream;
         public MappedTargetsLogService(Build build)
-        {
-            string filename = build.getBuildPath()+"TargetsMapping";
-            this.stream = new FileStream(filename, FileMode.Create);
-        }
+            : base(build.getBuildPath() + "TargetsMapping", FileMode.Create)
+        { }
 
         private void WriteLine(string text)
         {
-            stream.WriteUTF8(text + "\r\n");
+            Write(text + "\r\n");
         }
 
         public void writeScriptName(string scriptName)
@@ -28,11 +23,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
         {
             if (mappedTargetIndexes == null) { mappedTargetIndexes = new int[] { }; }
             WriteLine(originalTargetIndex.ToString() + " " + string.Join("\t", mappedTargetIndexes));
-        }
-
-        public void Dispose()
-        {
-            stream.Dispose();
         }
     }
 }

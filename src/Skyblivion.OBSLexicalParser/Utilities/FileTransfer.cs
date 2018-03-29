@@ -1,16 +1,31 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Utilities
 {
     public static class FileTransfer
     {
-        public static void CopyDirectoryFiles(string sourceDirectory, string destinationDirectory)
+        public static void CopyDirectoryFiles(string sourceDirectory, string destinationDirectory, bool overwrite)
         {
-            foreach (string path in Directory.EnumerateFileSystemEntries(sourceDirectory))
+            if (!sourceDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                throw new ArgumentException("Invalid Directory", nameof(sourceDirectory));
+            }
+            if (!destinationDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                throw new ArgumentException("Invalid Directory", nameof(destinationDirectory));
+            }
+            Directory.CreateDirectory(destinationDirectory);
+            foreach (string path in Directory.EnumerateFiles(sourceDirectory))
             {
                 string fileName = Path.GetFileName(path);
-                string destinationPath = Path.Combine(destinationDirectory, fileName);
-                File.Copy(path, destinationPath);
+                string destinationPath = destinationDirectory + fileName;
+                File.Copy(path, destinationPath, overwrite);
+            }
+            foreach(string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
+            {
+                DirectoryInfo sourceSubDirectory = new DirectoryInfo(sourceSubDirectoryPath);
+                CopyDirectoryFiles(sourceSubDirectoryPath + Path.DirectorySeparatorChar, Path.Combine(destinationDirectory, sourceSubDirectory.Name) + Path.DirectorySeparatorChar, overwrite);
             }
         }
     }

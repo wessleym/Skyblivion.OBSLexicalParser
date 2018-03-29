@@ -7,6 +7,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         */
         public TES5Target joinQFFragments(BuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
         {
-            StageMap stageMap = this.buildStageMap(target, resultingFragmentName);
+            StageMap stageMap = BuildStageMap(target, resultingFragmentName);
             /*
              * We need script fragment for objective handling for each stage, so when parsing the script fragments,
              * we"ll be marking them there, and intersecting this with stage.
@@ -37,7 +38,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * for objective handling.
              */
             Dictionary<int, bool> implementedStages = new Dictionary<int, bool>();
-            string outputPath = target.getTranspileToPath(resultingFragmentName);
             TES5ScriptHeader resultingScriptHeader = new TES5ScriptHeader(resultingFragmentName, resultingFragmentName, TES5BasicType.T_QUEST, "", true);
             TES5BlockList resultingBlockList = new TES5BlockList();
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
@@ -47,25 +47,20 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * but instead has a map to aliases and we"ll map accordingly and have references point to aliases instead
              */
             string sourcePath = target.getSourceFromPath(resultingFragmentName);
-            string scriptName = Path.GetFileName(sourcePath);
-            string aliasesFile = Path.GetDirectoryName(sourcePath) + "/" + scriptName + ".aliases";
+            string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
+            string aliasesFile = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".aliases";
             string[] aliasesLines = File.ReadAllLines(aliasesFile);
             Dictionary<string, bool> aliasesDeclared = new Dictionary<string, bool>();
             foreach (var alias in aliasesLines)
             {
                 string trimmedAlias = alias.Trim();
-                if (trimmedAlias == "")
+                if (trimmedAlias == "") { continue; }
+                try
                 {
-                    continue;
+                    aliasesDeclared.Add(trimmedAlias, true);
                 }
-
-                if (aliasesDeclared.ContainsKey(trimmedAlias))
-                {
-                    continue;
-                }
-
+                catch (ArgumentException) { continue; }
                 resultingGlobalScope.add(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
-                aliasesDeclared.Add(trimmedAlias, true);
             }
 
             Dictionary<string, bool> propertiesNamesDeclared = new Dictionary<string, bool>();
@@ -82,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     string propertyName;
                     if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.getPropertyName()))
                     {
-                        propertyName = this.generatePropertyName(subfragmentScript.getScriptHeader(), subfragmentProperty);
+                        propertyName = generatePropertyName(subfragmentScript.getScriptHeader(), subfragmentProperty);
                         subfragmentProperty.renameTo(propertyName);
                     }
                     else
@@ -90,7 +85,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                         propertyName = subfragmentProperty.getPropertyName();
                     }
 
-                    propertiesNamesDeclared[propertyName] = true;
+                    propertiesNamesDeclared.Add(propertyName, true);
                     resultingGlobalScope.add(subfragmentProperty);
                 }
 
@@ -120,7 +115,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 resultingBlockList.add(subfragmentBlock);
-                implementedStages.Add(subfragment.getStage(), true);
+                implementedStages[subfragment.getStage()] = true;
             }
 
             /*
@@ -142,43 +137,49 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             }
 
             TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList);
+            string outputPath = target.getTranspileToPath(resultingFragmentName);
             return new TES5Target(resultingTree, outputPath);
         }
 
-        private string generatePropertyName(TES5ScriptHeader header, TES5Property property)
+        private static string generatePropertyName(TES5ScriptHeader header, TES5Property property)
         {
             string propertyName = property.getPropertyName();
             return "col_" + propertyName.Substring(0, propertyName.Length - 2) + "_" + PHPFunction.MD5(header.getScriptName()).Substring(0, 4);
         }
 
-        private StageMap buildStageMap(BuildTarget target, string resultingFragmentName)
+        public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)
         {
             string sourcePath = target.getSourceFromPath(resultingFragmentName);
-            string scriptName = Path.GetFileName(sourcePath);
-            string stageMapFile = Path.GetDirectoryName(sourcePath) + "/" + scriptName + ".map";
+            string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
+            string stageMapFile = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".map";
             string[] stageMapFileLines = File.ReadAllLines(stageMapFile);
             Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
             foreach (var stageMapLine in stageMapFileLines)
             {
-                string[] e = stageMapLine.Split('-');
-                int stageId = int.Parse(e[0].Trim());
+                string[] numberAndItemsSplit = stageMapLine.Split('-');
+                int stageId = int.Parse(numberAndItemsSplit[0].Trim());
                 /*
                  * Clear the rows
                  */
-                string[] stageRowsRaw = e[1].Split(' ');
+                string[] items = numberAndItemsSplit[1].Split(' ');
                 List<int> stageRows = new List<int>();
-                foreach (var stageRowRaw in stageRowsRaw)
+                foreach (string item in items)
                 {
-                    string stageRowRawTrimmed = stageRowRaw.Trim();
-                    if (stageRowRawTrimmed != "")
+                    string itemTrimmed = item.Trim();
+                    if (itemTrimmed != "")
                     {
-                        stageRows.Add(int.Parse(stageRowRawTrimmed));
+                        stageRows.Add(int.Parse(itemTrimmed));
                     }
                 }
 
-                stageMap[stageId] = stageRows;
+                stageMap.Add(stageId, stageRows);
             }
 
+            return stageMap;
+        }
+        private static StageMap BuildStageMap(BuildTarget target, string resultingFragmentName)
+        {
+            Dictionary<int, List<int>> stageMap = BuildStageMapDictionary(target, resultingFragmentName);
             return new StageMap(stageMap);
         }
     }

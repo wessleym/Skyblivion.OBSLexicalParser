@@ -18,7 +18,7 @@ namespace Dissect.Lexer.Recognizer
 
         public bool match(string str, out string result)
         {
-            if (str==this.str)
+            if (str.StartsWith(this.str))
             {
                 result = this.str;
                 return true;

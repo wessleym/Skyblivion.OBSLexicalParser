@@ -4,7 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;LOG_EXCEPTIONS</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <Compile Remove="Commands\BuildTIFFragmentsCommand.cs" />
     <Compile Remove="Commands\Dispatch\LoadAutoloader.cs" />
     <Compile Remove="Utilities\AutoloadingTask.cs" />
   </ItemGroup>

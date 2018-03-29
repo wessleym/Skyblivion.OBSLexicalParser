@@ -1,74 +1,77 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
-using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class BuildScriptCommand : LPCommand
+    public class BuildScriptCommand : LPCommand
     {
-        protected BuildScriptCommand()
+        public BuildScriptCommand()
+            : base("skyblivion:parser:buildScript", "Build Script", "Create artifact from OBScript source")
         {
-            Name = "skyblivion:parser:buildScript";
-            Description = "Create artifact from OBScript source";
             Input.AddArgument(new LPCommandArgument("scriptName", "Script name"));
             Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
         protected void execute(LPCommandInput input)
-        {//WTM:  Change:  Below, transpileJob.run requires TES5GlobalScope and TES5MultipleScriptsScope.  I added them above.
-            set_time_limit(60);
-            try
+        {
+            string scriptName = input.GetArgumentValue("scriptName");
+            string targets = input.GetArgumentValue("targets");
+            string buildPath = input.GetArgumentValue("buildPath");
+            execute(scriptName, targets, buildPath);
+        }
+
+        public override void execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string buildPath = null)
+        {
+            if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
+            //set_time_limit(60);
+            Build build = new Build(buildPath);
+            using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                string targets = input.GetArgumentValue("targets");
-                string scriptName = input.GetArgumentValue("scriptName");
-                string buildPath = input.GetArgumentValue("buildPath");
-                Build build = new Build(buildPath);
-                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build);
+                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
                 if (!buildTargets.canBuild())
                 {
-                    Console.WriteLine("Targets current build dir not clean, archive them manually or run ./clean.sh.");
+                    Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
                     return;
                 }
 
+                TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName);
+#if !DEBUG
                 try
                 {
-                    TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName);
+#endif
                     transpileJob.run();
+#if !DEBUG
                 }
-                catch (ConversionException e)
+                catch (ConversionException ex)
                 {
-                    Console.WriteLine("Exception occured.\r\n" + e.GetType().FullName + ":  " + e.Message);
+                    Console.WriteLine("Exception occured.\r\n" + ex.GetType().FullName + ":  " + ex.Message);
                     return;
                 }
+#endif
+                PrepareWorkspaceAndCompile(build, buildTargets);
+            }
+            Console.WriteLine("Build Complete");
+            string compileLog = File.ReadAllText(build.getCompileStandardOutputPath());
+            Console.WriteLine(compileLog);
+        }
 
-                Console.WriteLine("Preparing build workspace...");
-                /*
-                 *
-                 * @TODO - Create a factory that will provide a PrepareWorkspaceJob based on running system, so we can provide a
-                 * native implementation for Windows
-                 */
-                PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
-                prepareCommand.run();
-                Console.WriteLine("Workspace prepared...");
-                CompileScriptJob compileJob = new CompileScriptJob(buildTargets, build.getCompileLogPath());
-                compileJob.run();
-                Console.WriteLine("Build completed.");
-                string compileLog = File.ReadAllText(build.getCompileLogPath());
-                Console.WriteLine(compileLog);
-            }
-            catch (InvalidOperationException e)
-            {
-                Console.WriteLine("LogicException " + e.Message);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Environment.Exit(0);
-            }
+        private static void PrepareWorkspaceAndCompile(Build build, BuildTargetCollection buildTargets)
+        {
+            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
+            PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
+            prepareCommand.run(preparingBuildWorkspaceProgressWriter);
+            preparingBuildWorkspaceProgressWriter.WriteLast();
+            CompileScriptJob task = new CompileScriptJob(build, buildTargets);
+            task.run();
         }
     }
 }

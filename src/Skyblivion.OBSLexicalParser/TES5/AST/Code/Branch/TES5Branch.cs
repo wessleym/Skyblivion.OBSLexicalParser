@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
@@ -17,17 +18,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
         public List<string> output()
         {
             List<string> codeLines = new List<string>();
-            List<string> mbExpressionOutput = this.mainBranch.getExpression().output();
-            string mbExpressionOutputFirst = mbExpressionOutput[0];
-            codeLines.Add("If(" + mbExpressionOutputFirst + ")");
+            string mbExpressionOutput = this.mainBranch.getExpression().output().Single();
+            codeLines.Add("If(" + mbExpressionOutput + ")");
             codeLines.AddRange(this.mainBranch.getCodeScope().output());
             if (this.elseifBranches != null)
             {
                 foreach (var branch in this.elseifBranches.getBranchList())
                 {
-                    List<string> branchExpressionOutput = branch.getExpression().output();
-                    string branchExpressionOutputFirst = branchExpressionOutput[0];
-                    codeLines.Add("ElseIf("+branchExpressionOutputFirst+")");
+                    string branchExpressionOutput = branch.getExpression().output().Single();
+                    codeLines.Add("ElseIf("+ branchExpressionOutput + ")");
                     codeLines.AddRange(branch.getCodeScope().output());
                 }
             }

@@ -1,7 +1,8 @@
-using Skyblivion.ESReader.PHP;
+using Dissect.Extensions.IDictionaryExtensions;
+using Dissect.Parser.Exceptions;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
-using Skyblivion.OBSLexicalParser.TES4.AST;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -17,49 +18,70 @@ using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class BuildInteroperableCompilationGraphs : LPCommand
+    public class BuildInteroperableCompilationGraphs : LPCommand
     {
-        protected BuildInteroperableCompilationGraphs()
+        public BuildInteroperableCompilationGraphs()
+            : base("skyblivion:parser:buildGraphs", "Build Interoperable Compilation Graphs", "Build graphs of scripts which are interconnected to be transpiled together")
         {
-            Name = "skyblivion:parser:buildGraphs";
-            Description = "Build graphs of scripts which are interconnected to be transpiled together";
             Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
         }
 
-        protected void execute(LPCommandInput input)
+        public void execute(LPCommandInput input)
         {
-            set_time_limit(10800);
+            //set_time_limit(10800);
             string targets = input.GetArgumentValue("targets");
+            execute(targets);
+        }
+
+        public override void execute()
+        {
+            execute(BuildTarget.DEFAULT_TARGETS);
+        }
+
+        public void execute(string targets)
+        {
             Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
-            BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build);
-            Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
-            Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
-            if (!buildTargets.canBuild())
+            using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                Console.WriteLine("Targets current build dir not clean, archive it manually.");
-                return;
-            }
-            BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
-            int sourceFilesCount = buildTargets.getTotalSourceFiles();
-            TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(new TypeMapper()), "./BuildTargets/Standalone/Source/");
-            using (FileStream errorLog = new FileStream("graph_error_log", FileMode.Create))
-            {
-                using (FileStream log = new FileStream("graph_debug_log", FileMode.Create))
+                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
+                if (!buildTargets.canBuild())
                 {
-                    foreach (var kvp in sourceFiles)
+                    Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
+                    return;
+                }
+                Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
+                Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
+                BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
+                ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.getTotalSourceFiles());
+                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(new TypeMapper()), BuildTarget.StandaloneSourcePath);
+                using (FileStream errorLog = new FileStream("graph_error_log", FileMode.Create))
+                {
+                    using (FileStream log = new FileStream("graph_debug_log", FileMode.Create))
                     {
-                        var buildTargetName = kvp.Key;
-                        var sourceBuildFiles = kvp.Value;
-                        int sourceFileIndex = 0;
-                        foreach (var sourceFile in sourceBuildFiles)
+                        foreach (var kvp in sourceFiles)
                         {
-                            try
+                            var buildTargetName = kvp.Key;
+                            var sourceBuildFiles = kvp.Value;
+                            BuildTarget buildTarget = buildTargets.getByName(buildTargetName);
+                            foreach (var sourceFile in sourceBuildFiles)
                             {
-                                BuildTarget buildTarget = buildTargets.getByName(buildTargetName);
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);
-                                TES4Script AST = buildTarget.getAST(buildTarget.getSourceFromPath(scriptName));
+                                ITES4CodeFilterable AST;
+#if !DEBUG || LOG_EXCEPTIONS
+                                try
+                                {
+#endif
+                                    AST = buildTarget.getAST(buildTarget.getSourceFromPath(scriptName));
+#if !DEBUG || LOG_EXCEPTIONS
+                                }
+                                catch (UnexpectedTokenException ex)
+                                {
+                                    errorLog.WriteUTF8(sourceFile + "\r\n" + ex.Message + "\r\n\r\n");
+                                    continue;
+                                }
+#endif
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
-                                AST.filter((data)=>
+                                AST.filter((data) =>
                                 {
                                     TES4ObjectProperty property = data as TES4ObjectProperty;
                                     if (property == null) { return false; }
@@ -73,18 +95,16 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     Match match = Regex.Match(property.StringValue, @"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase);
                                     string propertyName = match.Groups[1].Value;
                                     string propertyKeyName = propertyName.ToLower();
-                                    if (!preparedProperties.ContainsKey(propertyKeyName))
+                                    bool containedKey;
+                                    TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
+                                    ITES5Type inferencingType = inferencer.resolveInferenceTypeByReferenceEdid(preparedProperty);
+                                    if (!containedKey)
                                     {
-                                        TES5Property preparedProperty = new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName);
-                                        preparedProperties[propertyKeyName] = preparedProperty;
-                                        ITES5Type inferencingType = inferencer.resolveInferenceTypeByReferenceEdid(preparedProperty);
-                                        preparedPropertiesTypes[propertyKeyName] = inferencingType;
+                                        preparedPropertiesTypes.Add(propertyKeyName, inferencingType);
                                     }
                                     else
                                     {
-                                        TES5Property preparedProperty = preparedProperties[propertyKeyName];
-                                        ITES5Type inferencingType = inferencer.resolveInferenceTypeByReferenceEdid(preparedProperty);
-                                        if (inferencingType != preparedPropertiesTypes[propertyKeyName])
+                                        if (!inferencingType.Equals(preparedPropertiesTypes[propertyKeyName]))
                                         {
                                             throw new ConversionException("Cannot settle up the properties types - conflict.");
                                         }
@@ -96,39 +116,25 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 {
                                     var preparedPropertyKey = kvp2.Key;
                                     var preparedProperty = kvp2.Value;
+                                    string propertyTypeName = preparedPropertiesTypes[preparedPropertyKey].getOriginalName();
                                     //Only keys are lowercased.
-                                    string lowerPropertyType = preparedPropertiesTypes[preparedPropertyKey].getOriginalName().ToLower();
+                                    string lowerPropertyType = propertyTypeName.ToLower();
                                     string lowerScriptType = scriptName.ToLower();
-                                    if (!dependencyGraph.ContainsKey(lowerPropertyType))
-                                    {
-                                        dependencyGraph[lowerPropertyType] = new List<string>();
-                                    }
-
-                                    dependencyGraph[lowerPropertyType].Add(lowerScriptType);
-                                    if (!usageGraph.ContainsKey(lowerScriptType))
-                                    {
-                                        usageGraph[lowerScriptType] = new List<string>();
-                                    }
-
-                                    usageGraph[lowerScriptType].Add(lowerPropertyType);
-                                    log.WriteUTF8("Registering a dependency from " + scriptName + " to " + preparedPropertiesTypes[preparedPropertyKey].getOriginalName() + "\r\n");
+                                    dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
+                                    usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
+                                    log.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + "\r\n");
                                 }
 
-                                sourceFileIndex++;
-                                Console.WriteLine("Progress:  " + sourceFileIndex.ToString() + "/" + sourceFilesCount.ToString());
-                            }
-                            catch (Exception e)
-                            {
-                                errorLog.WriteUTF8(sourceFile + "\r\n" + e.Message + "\r\n");
-                                continue;
+                                progressWriter.IncrementAndWrite();
                             }
                         }
                     }
                 }
+                progressWriter.Write("Saving");
+                TES5ScriptDependencyGraph graph = new TES5ScriptDependencyGraph(dependencyGraph, usageGraph);
+                buildTargets.WriteGraph(graph);
+                progressWriter.WriteLast();
             }
-
-            TES5ScriptDependencyGraph graph = new TES5ScriptDependencyGraph(dependencyGraph, usageGraph);
-            File.WriteAllText("app/graph_" + buildTargets.getUniqueBuildFingerprint(), PHPFunction.Serialize(graph));
         }
     }
 }

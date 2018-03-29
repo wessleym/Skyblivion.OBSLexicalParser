@@ -1,13 +1,9 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    /*
-     * Class BuildTracker
-     * Tracks the build of the build targets
-     * @package Ormin\OBSLexicalParser\Builds
-     */
     class BuildTracker
     {
         private BuildTargetCollection buildTargetCollection;
@@ -23,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.buildTargetCollection = buildTargetCollection;
             foreach (var buildTarget in buildTargetCollection)
             {
-                this.builtScripts[buildTarget.getTargetName()] = new Dictionary<string, TES5Target>();
+                this.builtScripts.Add(buildTarget.getTargetName(), new Dictionary<string, TES5Target>());
             }
         }
 
@@ -34,12 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public Dictionary<string, TES5Target> getBuiltScripts(string targetName)
         {
-            if (!this.builtScripts.ContainsKey(targetName))
-            {
-                return new Dictionary<string, TES5Target>();
-            }
-
-            return this.builtScripts[targetName];
+            return builtScripts.GetWithFallback(targetName, () => new Dictionary<string, TES5Target>());
         }
     }
 }

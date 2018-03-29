@@ -10,7 +10,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
      * Under this scope, things can interact together , send type-related information between scripts etc.
      * Also holds global variables list which are registered under these scripts
      * Class TES5MultipleScriptsScope
-     * @package Ormin\OBSLexicalParser\TES5\AST\Scope
      */
     class TES5MultipleScriptsScope
     {
@@ -30,22 +29,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5ScriptHeader getScriptHeaderOfScript(string scriptName)
         {
-            if (!this.globalScopes.ContainsKey(scriptName.ToLower()))
+            TES5GlobalScope globalScope;
+            if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script "+scriptName+" - make sure that the multiple scripts scope is built correctly.");
+                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
             }
-
-            return this.globalScopes[scriptName.ToLower()].getScriptHeader();
+            return globalScope.getScriptHeader();
         }
 
         public TES5Property getPropertyFromScript(string scriptName, string propertyName)
         {
-            if (!this.globalScopes.ContainsKey(scriptName.ToLower()))
+            TES5GlobalScope globalScope;
+            if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
                 throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script "+scriptName+" - make sure that the multiple scripts scope is built correctly.");
             }
-
-            TES5Property property = this.globalScopes[scriptName.ToLower()].getPropertyByName(propertyName);
+            TES5Property property = globalScope.getPropertyByName(propertyName);
             if (property == null)
             {
                 throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a property "+propertyName+" in script name "+scriptName);

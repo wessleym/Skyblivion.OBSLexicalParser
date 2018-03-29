@@ -4,107 +4,17 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
-    /*
-     * Class TES5BasicType
-     * @package Ormin\OBSLexicalParser\TES5\Types
-     * @method static TES5BasicType T_ACTIVEMAGICEFFECT
-     * @method static TES5BasicType T_INT
-     * @method static TES5BasicType T_FLOAT
-     * @method static TES5BasicType T_ALIAS
-     * @method static TES5BasicType T_REFERENCEALIAS
-     * @method static TES5BasicType T_LOCATIONALIAS
-     * @method static TES5BasicType T_UTILITY
-     * @method static TES5BasicType T_DEBUG
-     * @method static TES5BasicType T_GAME
-     * @method static TES5BasicType T_MAIN
-     * @method static TES5BasicType T_MATH
-     * @method static TES5BasicType T_FORM
-     * @method static TES5BasicType T_ACTION
-     * @method static TES5BasicType T_MAGICEFFECT
-     * @method static TES5BasicType T_ACTIVATOR
-     * @method static TES5BasicType T_FURNITURE
-     * @method static TES5BasicType T_FLORA
-     * @method static TES5BasicType T_TALKINGACTIVATOR
-     * @method static TES5BasicType T_MESSAGE
-     * @method static TES5BasicType T_ACTORBASE
-     * @method static TES5BasicType T_MISCOBJECT
-     * @method static TES5BasicType T_APPARATUS
-     * @method static TES5BasicType T_CONSTRUCTIBLEOBJECT
-     * @method static TES5BasicType T_KEY
-     * @method static TES5BasicType T_SOULGEM
-     * @method static TES5BasicType T_AMMO
-     * @method static TES5BasicType T_ARMOR
-     * @method static TES5BasicType T_ARMORADDON
-     * @method static TES5BasicType T_ASSOCIATIONTYPE
-     * @method static TES5BasicType T_MUSICTYPE
-     * @method static TES5BasicType T_BOOK
-     * @method static TES5BasicType T_BOOL
-     * @method static TES5BasicType T_OBJECTREFERENCE
-     * @method static TES5BasicType T_ACTOR
-     * @method static TES5BasicType T_CELL
-     * @method static TES5BasicType T_CLASS
-     * @method static TES5BasicType T_OUTFIT
-     * @method static TES5BasicType T_COLORFORM
-     * @method static TES5BasicType T_PACKAGE
-     * @method static TES5BasicType T_COMBATSTYLE
-     * @method static TES5BasicType T_CONTAINER
-     * @method static TES5BasicType T_PERK
-     * @method static TES5BasicType T_DOOR
-     * @method static TES5BasicType T_POTION
-     * @method static TES5BasicType T_EFFECTSHADER
-     * @method static TES5BasicType T_PROJECTILE
-     * @method static TES5BasicType T_ENCHANTMENT
-     * @method static TES5BasicType T_QUEST
-     * @method static TES5BasicType T_ENCOUNTERZONE
-     * @method static TES5BasicType T_RACE
-     * @method static TES5BasicType T_COLORCOMPONENT
-     * @method static TES5BasicType T_EQUIPSLOT
-     * @method static TES5BasicType T_SCENE
-     * @method static TES5BasicType T_EXPLOSION
-     * @method static TES5BasicType T_FACTION
-     * @method static TES5BasicType T_FORMLIST
-     * @method static TES5BasicType T_SCROLL
-     * @method static TES5BasicType T_GLOBALVARIABLE
-     * @method static TES5BasicType T_SHOUT
-     * @method static TES5BasicType T_HAZARD
-     * @method static TES5BasicType T_SOUND
-     * @method static TES5BasicType T_HEADPART
-     * @method static TES5BasicType T_SOUNDCATEGORY
-     * @method static TES5BasicType T_IDLE
-     * @method static TES5BasicType T_SPELL
-     * @method static TES5BasicType T_IMAGESPACEMODIFIER
-     * @method static TES5BasicType T_STATIC
-     * @method static TES5BasicType T_IMPACTDATASET
-     * @method static TES5BasicType T_TEXTURESET
-     * @method static TES5BasicType T_INGREDIENT
-     * @method static TES5BasicType T_TOPIC
-     * @method static TES5BasicType T_KEYWORD
-     * @method static TES5BasicType T_LOCATIONREFTYPE
-     * @method static TES5BasicType T_TOPICINFO
-     * @method static TES5BasicType T_LEVELEDACTOR
-     * @method static TES5BasicType T_VISUALEFFECT
-     * @method static TES5BasicType T_LEVELEDITEM
-     * @method static TES5BasicType T_VOICETYPE
-     * @method static TES5BasicType T_LEVELEDSPELL
-     * @method static TES5BasicType T_WEAPON
-     * @method static TES5BasicType T_LIGHT
-     * @method static TES5BasicType T_WEATHER
-     * @method static TES5BasicType T_LOCATION
-     * @method static TES5BasicType T_WORDOFPOWER
-     * @method static TES5BasicType T_WORLDSPACE
-     * @method static TES5BasicType T_INPUT
-     * @method static TES5BasicType T_SKSE
-     * @method static TES5BasicType T_STRING
-     * @method static TES5BasicType T_STRINGUTIL
-     * @method static TES5BasicType T_UI
-     * @method static TES5BasicType T_TES4TIMERHELPER()
-     */
     class TES5BasicType : ITES5Type
     {
         public string Name { get; private set; }
         private TES5BasicType(string name)
         {
             Name = name;
+        }
+
+        public string getOriginalName()
+        {
+            return Name;
         }
 
         public static readonly TES5BasicType
@@ -295,9 +205,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 T_TES4TIMERHELPER
         };
 
-        public static TES5BasicType GetFirst(string name)
+        public static TES5BasicType GetFirstOrNull(string name)
         {
-            return all.Where(t => t.Name == name).First();
+            return all.Where(t => t.Name == name).FirstOrDefault();
         }
 
         public bool isPrimitive()

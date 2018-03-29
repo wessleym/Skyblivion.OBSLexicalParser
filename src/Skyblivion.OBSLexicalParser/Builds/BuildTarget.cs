@@ -1,4 +1,6 @@
+using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES4.AST;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -8,10 +10,6 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    /*
-     * Class BuildTarget
-     * @package Ormin\OBSLexicalParser\Builds
-     */
     class BuildTarget
     {
         public const string BUILD_TARGET_STANDALONE = "Standalone";
@@ -19,10 +17,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public const string BUILD_TARGET_QF = "QF";
         public const string BUILD_TARGET_PF = "PF";
         public const string DEFAULT_TARGETS = BUILD_TARGET_STANDALONE+ "," + BUILD_TARGET_TIF+ "," +BUILD_TARGET_QF;
+        public static string StandaloneSourcePath = Build.BasePathFromCurrentDirectory + "BuildTargets" + Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar + "Source" + Path.DirectorySeparatorChar;
         private bool transpileInitialized, compileInitialized, ASTInitialized, scopeInitialized;
         private string targetName;
         private string filePrefix;
         private Build build;
+        private MetadataLogService metadataLogService;
         private ITranspileCommand transpileCommand;
         private ICompileCommand compileCommand;
         private IASTCommand ASTCommand;
@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * Needed for proper resolution of filename
         */
         private TES5NameTransformer nameTransformer;
-        public BuildTarget(string targetName, string filePrefix, Build build, TES5NameTransformer nameTransformer, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand ASTCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
+        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, TES5NameTransformer nameTransformer, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand ASTCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
         {
             this.transpileInitialized = false;
             this.compileInitialized = false;
@@ -40,6 +40,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.scopeInitialized = false;
             this.targetName = targetName;
             this.build = build;
+            this.metadataLogService = metadataLogService;
             this.filePrefix = filePrefix;
             this.transpileCommand = transpileCommand;
             this.compileCommand = compileCommand;
@@ -53,14 +54,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             if (!this.transpileInitialized)
             {
-                this.transpileCommand.initialize(this.build);
+                this.transpileCommand.initialize(this.build, metadataLogService);
                 this.transpileInitialized = true;
             }
 
             return this.transpileCommand.transpile(sourcePath, outputPath, globalScope, compilingScope);
         }
 
-        public string[] compile(string sourcePath, string workspacePath, string outputPath)
+        public void compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
             if (!this.compileInitialized)
             {
@@ -68,10 +69,10 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 this.compileInitialized = true;
             }
 
-            return this.compileCommand.compile(sourcePath, workspacePath, outputPath);
+            this.compileCommand.compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
         }
 
-        public TES4Script getAST(string sourcePath)
+        public ITES4CodeFilterable getAST(string sourcePath)
         {
             if (!this.ASTInitialized)
             {
@@ -93,9 +94,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return this.buildScopeCommand.buildScope(sourcePath, globalVariables);
         }
 
-        public void write(BuildTracker buildTracker)
+        public void write(BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            this.writeCommand.write(this, buildTracker);
+            this.writeCommand.write(this, buildTracker, progressWriter);
         }
 
         public string getTargetName()
@@ -105,22 +106,22 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getSourcePath()
         {
-            return this.getRootBuildTargetPath()+"/Source/";
+            return this.getRootBuildTargetPath()+ Path.DirectorySeparatorChar+"Source"+ Path.DirectorySeparatorChar;
         }
 
         public string getDependenciesPath()
         {
-            return this.getRootBuildTargetPath()+"/Dependencies/";
+            return this.getRootBuildTargetPath()+ Path.DirectorySeparatorChar+"Dependencies"+ Path.DirectorySeparatorChar;
         }
 
         public string getArchivePath()
         {
-            return this.getRootBuildTargetPath() + "/Archive/";
+            return this.getRootBuildTargetPath() + Path.DirectorySeparatorChar+ "Archive"+ Path.DirectorySeparatorChar;
         }
 
         public string getArchivedBuildPath(int buildNumber)
         {
-            return this.getRootBuildTargetPath() + "/Archive/" + buildNumber.ToString() + "/";
+            return this.getRootBuildTargetPath() + Path.DirectorySeparatorChar+ "Archive"+ Path.DirectorySeparatorChar + buildNumber.ToString() + Path.DirectorySeparatorChar;
         }
 
         public string getSourceFromPath(string scriptName)
@@ -135,12 +136,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getTranspiledPath()
         {
-            return this.build.getBuildPath() + "/Transpiled/" + this.targetName + "/";
+            return this.build.getBuildPath()+ "Transpiled" + Path.DirectorySeparatorChar + this.targetName + Path.DirectorySeparatorChar;
         }
 
         public string getArtifactsPath()
         {
-            return this.build.getBuildPath() + "/Artifacts/" + this.targetName + "/";
+            return this.build.getBuildPath() + "Artifacts" + Path.DirectorySeparatorChar + this.targetName + Path.DirectorySeparatorChar;
         }
 
         public string getWorkspacePath()
@@ -161,12 +162,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         private string getRootBuildTargetPath()
         {
-            return "./BuildTargets/"+this.getTargetName();
+            return Build.BasePathFromCurrentDirectory + "BuildTargets" + Path.DirectorySeparatorChar + this.getTargetName();
         }
 
         public bool canBuild()
         {
-            return (!(Directory.EnumerateFileSystemEntries(getTranspiledPath()).Any() || Directory.EnumerateFileSystemEntries(getArtifactsPath()).Any()) && this.build.canBuild());
+            return !(Directory.EnumerateFileSystemEntries(getTranspiledPath()).Any() || Directory.EnumerateFileSystemEntries(getArtifactsPath()).Any()) && this.build.canBuild();
         }
 
         /*
@@ -180,7 +181,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
              * Only files without extension or .txt are considered sources
              * You can add metadata next to those files, but they cannot have those extensions.
              */
-            string[] sourcePaths = Directory.EnumerateFiles(getSourcePath(), "*.txt").ToArray();
+            string[] sourcePaths = Directory.EnumerateFiles(getSourcePath(), "*.txt").Select(path=>Path.GetFileName(path)).ToArray();
             if (intersectedSourceFiles != null)
             {
                 sourcePaths = sourcePaths.Where(p=>intersectedSourceFiles.Contains(p)).ToArray();

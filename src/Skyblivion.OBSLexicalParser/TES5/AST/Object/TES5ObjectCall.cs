@@ -1,11 +1,11 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
-    class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5CodeChunk
+    class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
     {
         private ITES5Referencer called;
         private string functionName;
@@ -22,12 +22,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             string argumentsCode = "";
             if (this.arguments != null)
             {
-                List<string> arguments = this.arguments.output();
-                argumentsCode = arguments[0];
+                argumentsCode = this.arguments.output().Single();
             }
-            List<string> called = this.called.output();
-            string calledFirst = called[0];
-            return new List<string>() { called + "." + this.functionName + "(" + argumentsCode + ")" };
+            string calledFirst = this.called.output().Single();
+            return new List<string>() { calledFirst + "." + this.functionName + "(" + argumentsCode + ")" };
         }
 
         public TES5ObjectCallArguments getArguments()

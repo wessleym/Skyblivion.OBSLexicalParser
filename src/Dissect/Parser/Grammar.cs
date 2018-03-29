@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Dissect.Parser
         * The epsilon symbol signifies an empty production.
         */
         public const string EPSILON = "epsilon";
-        protected Rule[] rules = new Rule[] { };
+        protected List<Rule> rules = new List<Rule> { null };//Leave the first rule open for the eventual call to start(string name).
         protected Dictionary<string, List<Rule>> groupedRules = new Dictionary<string, List<Rule>>();
         protected int nextRuleNumber = 1;
         protected int conflictsMode = 9; // SHIFT | OPERATORS
@@ -92,10 +93,10 @@ namespace Dissect.Parser
             }
 
             int num = this.nextRuleNumber++;
-            Rule rule = new Rule(num, this.currentNonterminal, args); this.
-      rules[num] = rule;
+            Rule rule = new Rule(num, this.currentNonterminal, args);
+            this.rules.Add(rule);
             this.currentRule = rule;
-            this.groupedRules[this.currentNonterminal].Add(rule);
+            this.groupedRules.AddNewListIfNotContainsKeyAndAddValueToList(this.currentNonterminal, rule);
             return this;
         }
 
@@ -138,9 +139,9 @@ namespace Dissect.Parser
         }
 
         /*
-            * Returns the set of rules of this grammar.
-            */
-        public Dissect.Parser.Rule[] getRules()
+        * Returns the set of rules of this grammar.
+        */
+        public List<Rule> getRules()
         {
             return this.rules;
         }
@@ -223,7 +224,7 @@ namespace Dissect.Parser
             this.currentOperators = args;
             foreach (var op in args)
             {
-                this.operators[op] = new Dictionary<string, int>() { { "prec", 1 }, { "assoc", LEFT } };
+                this.operators.Add(op, new Dictionary<string, int>() { { "prec", 1 }, { "assoc", LEFT } });
             }
 
             return this;
@@ -265,7 +266,7 @@ namespace Dissect.Parser
 
             foreach (var op in this.currentOperators)
             {
-                this.operators[op]["assoc"] = a;
+                this.operators[op].Add("assoc", a);
             }
 
             return this;
@@ -293,7 +294,7 @@ namespace Dissect.Parser
             {
                 foreach (var op in this.currentOperators)
                 {
-                    this.operators[op]["prec"] = i;
+                    this.operators[op].Add("prec", i);
                 }
             }
 

@@ -41,7 +41,7 @@ namespace Dissect.Lexer
             List<IToken> tokens = new List<IToken>();
             int position = 0;
             string originalString = str;
-            int originalLength = Dissect.Util.Util.stringLength(str);
+            int originalLength = Util.Util.stringLength(str);
             while (true)
             {
                 IToken token = this.extractToken(str);
@@ -55,7 +55,7 @@ namespace Dissect.Lexer
                     tokens.Add(token);
                 }
 
-                int shift = Dissect.Util.Util.stringLength(token.getValue());
+                int shift = Util.Util.stringLength(token.getValue());
                 position += shift;
                 // update line + offset
                 if (position > 0)
@@ -63,10 +63,10 @@ namespace Dissect.Lexer
                     this.line = originalString.Substring(0, position).Cast<char>().Count(c => c == '\n') + 1;
                 }
 
-                str = Dissect.Util.Util.substring(str, shift);
+                str = Util.Util.substring(str, shift);
             }
 
-            if (position == originalLength)
+            if (position != originalLength)
             {
                 throw new RecognitionException(this.line);
             }

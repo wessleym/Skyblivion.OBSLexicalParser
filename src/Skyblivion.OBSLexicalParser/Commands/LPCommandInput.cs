@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class LPCommandInput
+    public class LPCommandInput
     {
         protected List<LPCommandArgument> arguments = new List<LPCommandArgument>();
         protected List<LPCommandOption> options = new List<LPCommandOption>();

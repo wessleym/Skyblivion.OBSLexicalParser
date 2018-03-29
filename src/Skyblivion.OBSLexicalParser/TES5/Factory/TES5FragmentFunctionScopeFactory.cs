@@ -8,9 +8,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5FragmentFunctionScopeFactory
     {
-        /*
-             * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
-        */
         public TES5FunctionScope createFromFragmentType(string fragmentName, TES5FragmentType fragmentType)
         {
             TES5FunctionScope localScope = new TES5FunctionScope(fragmentName);

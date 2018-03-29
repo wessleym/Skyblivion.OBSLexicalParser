@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
@@ -12,7 +13,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -20,9 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ormin.OBSLexicalParser.TES5.Factory
+namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-
     class TES5ValueFactory
     {
         private TES5ObjectCallFactory objectCallFactory;
@@ -50,11 +49,14 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
         public void addFunctionFactory(string functionName, IFunctionFactory factory)
         {
             string key = functionName.ToLower();
-            if (this.functionFactories.ContainsKey(key))
+            try
+            {
+                this.functionFactories.Add(key, factory);
+            }
+            catch (ArgumentException)
             {
                 throw new InvalidOperationException("Function factory for function " + functionName + " already defined.");
             }
-            this.functionFactories[key] = factory;
         }
         private ITES5Value convertArithmeticExpression(ITES4Expression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
@@ -294,13 +296,12 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
             TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.getOperator().Name);
 
             /*
-             * @var TES5Value[] tes5set
              * Scenario 2: Comparision of ObjectReferences to integers ( quick formid check )
              */
             foreach (var tes5set in tes5sets)
             {
 
-                if (tes5set.Item1.getType() == objectReferenceType || TES5InheritanceGraphAnalyzer.isExtending(tes5set.Item1.getType(), objectReferenceType))
+                if (tes5set.Item1.getType().getOriginalName() == objectReferenceType.getOriginalName() || TES5InheritanceGraphAnalyzer.isExtending(tes5set.Item1.getType(), objectReferenceType))
                 {
                     if (tes5set.Item2.getType() == TES5BasicType.T_INT)
                     {
@@ -331,7 +332,7 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
                         }
                     }
                 }
-                else if (tes5set.Item1.getType() == TES5TypeFactory._void())
+                else if (tes5set.Item1.getType().getOriginalName() == TES5TypeFactory._void().getOriginalName())
                 {
 
                     ITES5Primitive tes5SetItem2Primitive = tes5set.Item2 as ITES5Primitive;
@@ -384,17 +385,18 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
             throw new ConversionException("Unknown ITES4Value: " + value.GetType().FullName);
         }
 
-        public ITES5CodeChunk createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Function function = chunk.getFunction();
             ITES5Referencer calledOnReference = this.createCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
             string functionName = function.getFunctionCall().getFunctionName();
             string functionKey = functionName.ToLower();
-            if (!this.functionFactories.ContainsKey(functionKey))
+            IFunctionFactory factory;
+            if (!this.functionFactories.TryGetValue(functionKey, out factory))
             {
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
-            ITES5CodeChunk codeChunk = this.functionFactories[functionKey].convertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
+            ITES5ValueCodeChunk codeChunk = factory.convertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
             return codeChunk;
         }
 
@@ -408,8 +410,6 @@ namespace Ormin.OBSLexicalParser.TES5.Factory
 
         /*
         * Returns a called-on reference for the called function.
-        * 
-        * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
         */
         private ITES5Referencer createCalledOnReferenceOfCalledFunction(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {

@@ -14,5 +14,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         * Is this type a native papyrus type ( the one defined by skyrim itself ) or a custom script?
         */
         bool isNativePapyrusType();
+        string getOriginalName();//WTM:  Change:  I added this.
     }
 }

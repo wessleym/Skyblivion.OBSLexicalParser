@@ -1,14 +1,13 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Context;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -41,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
@@ -67,8 +66,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES4StringValue blockOnActivate = functionArguments.getValue(1);
             if (blockOnActivate != null)
             {
-                bool blockOnActivateVal = !(bool)blockOnActivate.getData();
-                constantArgument.add(new TES5Bool(blockOnActivateVal));
+                bool blockOnActivateVal = (int)blockOnActivate.getData() == 1;
+                constantArgument.add(new TES5Bool(!blockOnActivateVal));
             }
 
             return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, constantArgument);

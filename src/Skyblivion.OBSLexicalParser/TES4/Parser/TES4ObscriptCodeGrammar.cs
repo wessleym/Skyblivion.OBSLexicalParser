@@ -1,15 +1,13 @@
 using Dissect.Lexer;
 using Dissect.Parser;
-using Skyblivion.OBSLexicalParser.TES4.AST.Expression;
-using Skyblivion.OBSLexicalParser.TES4.AST;
-using Skyblivion.OBSLexicalParser.TES4.AST.Block;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch;
+using Skyblivion.OBSLexicalParser.TES4.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators;
-using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Types;
 
@@ -17,11 +15,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
     class TES4ObscriptCodeGrammar : Grammar
     {
-        public TES4ObscriptCodeGrammar()
+        protected TES4ObscriptCodeGrammar(bool createCodeParsingTree)
         {
-            this.createObscriptCodeParsingTree();
-            this.start("Code+");
+            if (createCodeParsingTree)
+            {
+                this.createObscriptCodeParsingTree();
+                this.start("Code+");
+            }
         }
+        public TES4ObscriptCodeGrammar()
+            : this(true)
+        { }
 
         protected void createObscriptCodeParsingTree()
         {

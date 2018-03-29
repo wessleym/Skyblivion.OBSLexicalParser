@@ -4,14 +4,13 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
     /*
      * TES5CodeScope describes scope for given chunks of code. It consists of its variable local scope and chunks that
      * are put inside this code scope.
-     * Class TES5CodeScope
-     * @package Ormin\OBSLexicalParser\TES5\AST\Code
      */
     class TES5CodeScope : ITES5Outputtable
     {
@@ -24,12 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         public List<string> output()
         {
-            List<string> codeLines = this.localScope.output();
-            foreach (var codeChunk in this.codeChunks)
-            {
-                codeLines.AddRange(codeChunk.output());
-            }
-            return codeLines;
+            return this.localScope.output().Concat(this.codeChunks.SelectMany(c=>c.output())).ToList();
         }
 
         public void clear()

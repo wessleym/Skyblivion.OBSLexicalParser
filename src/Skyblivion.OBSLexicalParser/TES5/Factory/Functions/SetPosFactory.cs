@@ -1,12 +1,11 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -39,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments callArguments = new TES5ObjectCallArguments();

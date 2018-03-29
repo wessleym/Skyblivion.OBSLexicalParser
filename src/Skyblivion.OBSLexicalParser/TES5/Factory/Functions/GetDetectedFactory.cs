@@ -1,7 +1,7 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -37,15 +37,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
             ITES4StringValue value = functionArguments.getValue(0);
-            functionArguments.setValue(0, new TES4ApiToken(calledOn.getName()));
+            TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments();
+            newArguments.add(this.valueFactory.createValue(new TES4ApiToken(calledOn.getName()), codeScope, globalScope, multipleScriptsScope));
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             string functionName = "IsDetectedBy";
-            return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, newArguments);
         }
     }
 }

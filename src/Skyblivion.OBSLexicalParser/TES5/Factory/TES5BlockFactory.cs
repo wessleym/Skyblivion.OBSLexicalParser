@@ -226,9 +226,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5FunctionScope blockFunctionScope = this.blockFunctionScopeFactory.createFromBlockType(newBlockType);
             TES5EventCodeBlock newBlock = this.createNewBlock(newBlockType, blockFunctionScope);
             TES5CodeScope conversionScope = this.initialBlockCodeFactory.addInitialCode(multipleScriptsScope, globalScope, newBlock);
-            if (block.getChunks() != null)
+            TES4CodeChunks chunks = block.getChunks();
+            if (chunks != null)
             {
-                foreach (ITES4CodeChunk codeChunk in block.getChunks().getCodeChunks())
+                foreach (ITES4CodeChunk codeChunk in chunks.getCodeChunks())
                 {
                     TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.getCodeScope(), globalScope, multipleScriptsScope);
                     if (codeChunks != null)

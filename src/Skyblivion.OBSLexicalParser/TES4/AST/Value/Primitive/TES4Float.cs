@@ -4,7 +4,7 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
-    class TES4Float : ITES4Primitive
+    class TES4Float : ITES4Primitive, ITES4StringValue
     {
         private float data;
         public TES4Float(float data)
@@ -16,6 +16,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
         {
             return this.data;
         }
+
+        public string StringValue => this.data.ToString();
 
         public TES4Type getType()
         {

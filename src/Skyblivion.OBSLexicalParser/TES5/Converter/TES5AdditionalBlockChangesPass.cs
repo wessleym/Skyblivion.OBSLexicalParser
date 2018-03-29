@@ -240,8 +240,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 branch = new TES4ConditionalBranch();
                 expression = new TES4Expression();
                 leftConstant = new TES4Constant("akAggressor", "ObjectReference");
-    //                actionConstant        = new TES4Constant(this.eventArgs[1],"Package");
-    
+                //actionConstant        = new TES4Constant(this.eventArgs[1],"Package");
                 actionConstant = TES4Factories.createReference(this.eventArgs[2], this);
     
                 expression.left_side = leftConstant;

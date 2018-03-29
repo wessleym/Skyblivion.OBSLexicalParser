@@ -2,12 +2,6 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
 {
-    /*
-     * Class TES4LogicalExpressionOperator
-     * @method static TES4LogicalExpressionOperator OPERATOR_OR()
-     * @method static TES4LogicalExpressionOperator OPERATOR_AND()
-     * @package Ormin\OBSLexicalParser\TES4\AST\Operators
-     */
     class TES4LogicalExpressionOperator : TES4ExpressionOperator
     {
         private TES4LogicalExpressionOperator(string name)

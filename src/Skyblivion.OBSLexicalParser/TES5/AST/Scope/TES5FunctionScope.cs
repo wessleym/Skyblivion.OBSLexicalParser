@@ -1,6 +1,8 @@
+using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using System;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
@@ -8,7 +10,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     /*
      * Class TES5FunctionScope
      * Represents variable scope at function level.
-     * @package Ormin\OBSLexicalParser\TES5\AST\Scope
      */
     class TES5FunctionScope
     {
@@ -31,15 +32,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public void addVariable(TES5LocalVariable localVariable)
         {
-            this.variables[localVariable.getPropertyName()] = localVariable;
+            this.variables.Add(localVariable.getPropertyName(), localVariable);
             foreach (TES5LocalVariableParameterMeaning meaning in localVariable.getMeanings())
             {
-                if (this.variablesByMeanings.ContainsKey(meaning))
+                try
+                {
+                    this.variablesByMeanings.Add(meaning, localVariable);
+                }
+                catch (ArgumentException)
                 {
                     throw new ConversionException("Cannot register variable " + localVariable.getPropertyName() + " - it has a meaning " + meaning.Name + " that was already registered before.");
                 }
-
-                this.variablesByMeanings[meaning] = localVariable;
             }
         }
 
@@ -50,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5LocalVariable getVariableByName(string name)
         {
-            return this.variables.ContainsKey(name) ? this.variables[name] : null;
+            return this.variables.GetWithFallback(name, () => null);
         }
 
         public Dictionary<string, TES5LocalVariable> getVariables()
@@ -60,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.variablesByMeanings.ContainsKey(meaning) ? this.variablesByMeanings[meaning] : null;
+            return this.variablesByMeanings.GetWithFallback(meaning, () => null);
         }
 
         /*

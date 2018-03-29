@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
@@ -47,11 +48,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         {
             if (this.isHidden)
             {
-                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output() + " Hidden" };
+                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " Hidden" };
             }
             else
             {
-                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output() + " Conditional" };
+                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " Conditional" };
             }
         }
 

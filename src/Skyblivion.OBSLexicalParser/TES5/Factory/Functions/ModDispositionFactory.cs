@@ -1,11 +1,11 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -37,23 +37,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             //Faction Reactions are Per-Faction not per-Actor, so we just simulate what would potentially happen in Skyrim
-            switch (functionArguments.getValue(1).getData())
+            var argument1 = functionArguments.getValue(1);
+            Nullable<int> argument1NullableInt = argument1.getData() as Nullable<int>;
+            if (argument1NullableInt != null && argument1NullableInt.Value==-100)
             {
-                case "-100":
-                {
-                    string functionName = "StartCombat";
-                    functionArguments.popValue(1);
-                    return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
-                }
-
-                default:
-                {
-                    return new TES5Filler();
-                }
+                string functionName = "StartCombat";
+                functionArguments.popValue(1);
+                return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            }
+            else
+            {
+                return new TES5Filler();
             }
         }
     }

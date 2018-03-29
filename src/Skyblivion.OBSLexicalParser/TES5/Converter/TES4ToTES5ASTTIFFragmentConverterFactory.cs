@@ -1,5 +1,4 @@
-﻿using Ormin.OBSLexicalParser.TES5.Factory;
-using Skyblivion.OBSLexicalParser.Builds;
+﻿using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Context;
@@ -10,16 +9,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 {
     static class TES4ToTES5ASTTIFFragmentConverterFactory
     {
-        public static TES4ToTES5ASTTIFFragmentConverter GetConverter(Build build)
+        public static TES4ToTES5ASTTIFFragmentConverter GetConverter(Build build, MetadataLogService metadataLogService)
         {
             TypeMapper typeMapper = new TypeMapper();
             ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
             TES5PrimitiveValueFactory primitiveValueFactory = new TES5PrimitiveValueFactory();
-            MetadataLogService metadataLogService = new MetadataLogService(build);
             TES5BlockFunctionScopeFactory blockLocalScopeFactory = new TES5BlockFunctionScopeFactory();
             TES5CodeScopeFactory codeScopeFactory = new TES5CodeScopeFactory();
             TES5ExpressionFactory expressionFactory = new TES5ExpressionFactory();
-            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, "./BuildTargets/Standalone/Source/");
+            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, BuildTarget.StandaloneSourcePath);
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);

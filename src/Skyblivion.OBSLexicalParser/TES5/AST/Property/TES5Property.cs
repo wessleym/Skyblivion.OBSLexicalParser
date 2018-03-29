@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
@@ -34,9 +35,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 
         public List<string> output()
         {
-            string propertyType = this.getPropertyType().output()[0];
+            string propertyTypeName = this.getPropertyType().output().Single();
             //Todo - Actually differentiate between properties which need and do not need to be conditional
-            return new List<string>() { propertyType + " Property " + this.propertyName + " Auto Conditional" };
+            return new List<string>() { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
         }
 
         public string getPropertyName()

@@ -18,6 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
     class TES4OBScriptGrammar : TES4ObscriptCodeGrammar
     {
         public TES4OBScriptGrammar()
+            : base(false)
         {
             __invoke("Script")._is("ScriptHeader", "Block+").call((TES4ScriptHeader header, TES4BlockList blockList)=>
             {

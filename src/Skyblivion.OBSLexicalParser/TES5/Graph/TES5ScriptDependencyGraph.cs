@@ -3,14 +3,19 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Graph
 {
-    class TES5ScriptDependencyGraph
+    public class TES5ScriptDependencyGraph
     {
-        private Dictionary<string, List<string>> graph=new Dictionary<string, List<string>>();
-        private Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
+        //WTM:  Change:  This two members were made public so they could be serialized by DataContractSerializer.
+        public Dictionary<string, List<string>> Graph = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> UsageGraph = new Dictionary<string, List<string>>();
+        private TES5ScriptDependencyGraph()//XmlSerializer requires a parameterless constructor.
+        { }
+
         public TES5ScriptDependencyGraph(Dictionary<string, List<string>> graph, Dictionary<string, List<string>> usageGraph)
+            : this()
         {
-            this.graph = graph;
-            this.usageGraph = usageGraph;
+            this.Graph = graph;
+            this.UsageGraph = usageGraph;
         }
 
         public string[] getScriptsToCompile(string scriptName)
@@ -22,41 +27,38 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
 
         /*
         * Finds dependencies to this script.
-         * Will resolve both the scripts this script depends on and the scripts that depend on this script
-         * 
-         *   cies
+        * Will resolve both the scripts this script depends on and the scripts that depend on this script
         */
         private List<string> getDependenciesFor(string scriptName, List<string> foundDependencies)
         {
-            foundDependencies = new List<string>();
             string scriptNameLower = scriptName.ToLower();
             List<string> dependencies = new List<string>();
-            if (this.graph.ContainsKey(scriptNameLower))
+            List<string> graphOfScriptName;
+            if (this.Graph.TryGetValue(scriptNameLower, out graphOfScriptName))
             {
-                foreach (var dependencyScript in this.graph[scriptNameLower])
+                foreach (var dependencyScript in graphOfScriptName)
                 {
                     string dependencyScriptLower = dependencyScript.ToLower();
                     if (foundDependencies.Contains(dependencyScriptLower))
                     {
                         continue; //Do not resolve the cycle
                     }
-
                     dependencies.Add(dependencyScript);
                     foundDependencies.Add(dependencyScriptLower);
                     dependencies.AddRange(this.getDependenciesFor(dependencyScript, foundDependencies));
                 }
             }
 
-            if (this.usageGraph.ContainsKey(scriptNameLower))
+            List<string> usageGraphOfScriptName;
+            if (this.UsageGraph.TryGetValue(scriptNameLower, out usageGraphOfScriptName))
             {
-                foreach (var usingScript in this.usageGraph[scriptNameLower])
+                foreach (var usingScript in usageGraphOfScriptName)
                 {
                     string usingScriptLower = usingScript.ToLower();
                     if (foundDependencies.Contains(usingScriptLower))
                     {
                         continue; //Do not resolve the cycle
                     }
-
                     dependencies.Add(usingScript);
                     foundDependencies.Add(usingScriptLower);
                     dependencies.AddRange(this.getDependenciesFor(usingScript, foundDependencies));

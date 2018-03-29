@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
@@ -19,7 +20,7 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public void addState(State state)
         {
-            this.states[state.getNumber()] = state;
+            this.states.Add(state.getNumber(), state);
         }
 
         /*
@@ -31,11 +32,8 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public void addTransition(int origin, string label, int dest)
         {
-            if(!transitionTable.ContainsKey(origin))
-            {
-                transitionTable.Add(origin, new Dictionary<string, int>());
-            }
-            this.transitionTable[origin][label] = dest;
+            Dictionary<string, int> transition = transitionTable.GetOrAdd(origin, () => new Dictionary<string, int>());
+            transition.Add(label, dest);
         }
 
         /*

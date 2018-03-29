@@ -13,11 +13,11 @@ namespace Dissect.Parser
         /*
         * The token type that represents an EOF.
         */
-        public const string EOF_TOKEN_TYPE = "eof";
+        public const string EOF_TOKEN_TYPE = "$eof";
         /*
         * Parses a token stream and returns the semantical value
          * of the input.
         */
-        protected abstract IToken parse(ITokenStream stream);
+        protected abstract object parse(ITokenStream stream);
     }
 }

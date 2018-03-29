@@ -23,13 +23,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         {
             this.esmAnalyzer = ESMAnalyzer;
             this.otherScriptsFolder = otherScriptsFolder;
-            otherScripts = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path))).ToArray();
+            otherScripts = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path)).ToArray();
         }
 
         /*
         * Inference the type by analyzing the object call.
          * Please note: It is not able to analyze calls to another scripts, but those weren"t used in oblivion anyways
-         * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
         */
         public void inferenceObjectByMethodCall(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
         {
@@ -48,13 +47,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             TES5ObjectCallArguments arguments = objectCall.getArguments();
             int argumentNumber = 0;
             ITES5Type calledOnType = objectCall.getAccessedObject().getType().getNativeType();
-            foreach (ITES5Type argument in arguments.getArguments())
+            foreach (ITES5Value argument in arguments.getArguments())
             {
                 /*
                  * Get the argument type according to TES5Inheritance graph.
                  */
                 ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.findTypeByMethodParameter(calledOnType, objectCall.getFunctionName(), argumentNumber);
-                if (argument.getNativeType() == argumentTargetType)//WTM:  Change:  This line used argument.getType().  ITES5Type does not define getType().  I'm using getNativeType() instead.
+                if (argument.getType() == argumentTargetType)
                 {
                     argumentNumber++;
                     continue; //Same type matched. We do not need to do anything :)
@@ -64,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                  * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
                  */
                 ITES5Referencer referencerArgument = argument as ITES5Referencer;
-                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.getNativeType()))//WTM:  Change:  ITES5Type does not define getType().  I'm using getNativeType() instead.
+                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.getType()))
                 { //HACKY!
                     this.inferenceType(referencerArgument.getReferencesTo(), argumentTargetType, multipleScriptsScope);
                 }
@@ -74,7 +73,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                     //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
                     //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
                     //float assigment somewhere in the code )
-                    if (argumentTargetType == TES5BasicType.T_INT && argument.getNativeType() == TES5BasicType.T_FLOAT)//WTM:  Change:  This line used argument.getType().  ITES5Type does not define getType().  I'm using getNativeType() instead.
+                    if (argumentTargetType == TES5BasicType.T_INT && argument.getType() == TES5BasicType.T_FLOAT)
                     {
                         TES5Reference referenceArgument = argument as TES5Reference;
                         if (referenceArgument != null)
@@ -150,9 +149,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         {
             string baseEDID = variable.getReferenceEdid();
             List<string> namesToTry = new List<string>() { baseEDID, baseEDID + "Script" };
-            if (baseEDID.Substring(baseEDID.Length - 3, 3).Equals("ref", StringComparison.OrdinalIgnoreCase))
+            int baseEDIDLength = baseEDID.Length;
+            if (baseEDID.Substring(baseEDIDLength - 3, 3).Equals("ref", StringComparison.OrdinalIgnoreCase))
             {
-                string tryAsRef = baseEDID.Substring(0, -3);
+                string tryAsRef = baseEDID.Substring(0, baseEDIDLength - 3);
                 namesToTry.AddRange(new string[] { tryAsRef, tryAsRef + "Script" });
             }
 

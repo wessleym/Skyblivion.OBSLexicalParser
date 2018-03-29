@@ -1,23 +1,29 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class TestStageMap : LPCommand
+    public class TestStageMap : LPCommand
     {
-        protected TestStageMap()
-        {
-            Name = "skyblivion:testStageMap";
-        }
+        public TestStageMap()
+            : base("skyblivion:testStageMap", "Test Stage Map", null)
+        { }
 
-        protected void execute()
+        public override void execute()
         {
-            set_time_limit(60);
-            Dictionary<int, List<int>>  originalStageMap = this.buildStageMap(BuildTargetFactory.get(BuildTarget.BUILD_TARGET_QF, new Build(Build.DEFAULT_BUILD_PATH)), "QF_FGC01Rats_01035713");
-            StageMap stageMap = new StageMap(originalStageMap);
+            //set_time_limit(60);
+            Build build = new Build(Build.DEFAULT_BUILD_PATH);
+            Dictionary<int, List<int>> originalStageMap;
+            using (BuildLogServices buildLogServices = new BuildLogServices(build))
+            {
+                BuildTarget buildTarget = BuildTargetFactory.get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices);
+                originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
+            }
+            StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary
             foreach (var stageId in stageMap.getStageIds())
             {
                 Console.WriteLine(stageId.ToString()+" - "+string.Join(" ", originalStageMap[stageId]));
@@ -40,35 +46,41 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
         }
 
-        private Dictionary<int, List<int>> buildStageMap(BuildTarget target, string resultingFragmentName)
-        {
-            string sourcePath = target.getSourceFromPath(resultingFragmentName);
-            string scriptName = Path.GetFileName(sourcePath);
-            string stageMapFile = Path.GetDirectoryName(sourcePath)+"/"+scriptName+".map";
-            string[] stageMapContent = File.ReadAllLines(stageMapFile);
-            Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
-            foreach (var stageMapLine in stageMapContent)
-            {
-                string[] e = stageMapLine.Split('-');
-                int stageId = int.Parse(e[0].Trim());
-                /*
-                 * Clear the rows
-                 */
-                string[] stageRowsRaw = e[1].Split(' ');
-                List<int> stageRows = new List<int>();
-                foreach (var v in stageRowsRaw)
-                {
-                    string vTrimmed = v.Trim();
-                    if (vTrimmed != "")
-                    {
-                        stageRows.Add(int.Parse(vTrimmed));
-                    }
-                }
-
-                stageMap[stageId] = stageRows;
-            }
-
-            return stageMap;
-        }
+/*
+10 - 0 0 0 1 0 0 0
+10 - 0 0 0 1 0 0 0
+20 - 1 0 0 0 0 0 0
+20 - 1 0 0 0 0 0 0
+30 - 0 0 0 0 1 0 0
+30 - 0 0 0 0 1 0 0
+40 - 0 0 1 0 0 0 0
+40 - 0 0 1 0 0 0 0
+50 - 0 0 1 0 0 0 0
+50 - 0 0 1 0 0 0 0
+55 - 0 0 0 0 0 0 0
+55 - 0 0 0 0 0 0 0
+60 - 0 0 0 0 0 1 0
+60 - 0 0 0 0 0 1 0
+65 - 0 0 0 0 0 0 0
+65 - 0 0 0 0 0 0 0
+70 - 0 1 0 0 0 0 0
+70 - 0 1 0 0 0 0 0
+80 - 0 1 0 0 0 0 0
+80 - 0 1 0 0 0 0 0
+90 - 0 0 0 0 0 0 0
+90 - 0 0 0 0 0 0 0
+100 - 0 0 0 0 0 0 0
+100 - 0 0 0 0 0 0 0
+105 - 0 0 0 0 0 0 1
+105 - 0 0 0 0 0 0 1
+110 - 0 0 0 0 0 0 0
+110 - 0 0 0 0 0 0 0
+200 - 0 0 0 0 0 0 0
+200 - 0 0 0 0 0 0 0
+Mapping index print
+3 - 4
+0 - 5
+1 - 6
+*/
     }
 }

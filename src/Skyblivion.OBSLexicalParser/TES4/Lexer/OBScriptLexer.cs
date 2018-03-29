@@ -5,7 +5,46 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexer
 {
     class OBScriptLexer : StatefulLexer
     {
-        public static readonly Regex FUNCTION_REGEX = new Regex(@"^(activate|addachievement|additem|addscriptpackage|addspell|addtopic|autosave|cast|clearownership|closecurrentobliviongate|closeobliviongate|completequest|createfullactorcopy|deletefullactorcopy|disablelinkedpathpoints|disableplayercontrols|disable|dispel|dropme|drop|duplicateallitems|enablefasttravel|enablelinkedpathpoints|enableplayercontrols|enable|equipitem|essentialdeathreload|evp|evaluatepackage|forceactorvalue|forceav|forcecloseobliviongate|forceweather|fw|getactionref|getav|getactorvalue|getamountsoldstolen|getangle|getarmorrating|getattacked|getbaseav|getbaseactorvalue|getbuttonpressed|getclothingvalue|getcombattarget|getcontainer|getcrimegold|getcrimeknown|getcrime|getcurrentaipackage|getcurrentaiprocedure|getcurrenttime|getdayofweek|getdeadcount|getdead|getdestroyed|getdetected|getdetectionlevel|getdisabled|getdisposition|getdistance|getequipped|getfactionrank|getforcesneak|getgamesetting|getgold|getgs|getheadingangle|getincell|getinfaction|getinsamecell|getinworldspace|getisalerted|getiscreature|getiscurrentpackage|getiscurrentweather|getisid|getisplayablerace|getisplayerbirthsign|getisrace|getisreference|getissex|getitemcount|getknockedstate|getlevel|getlocked|getlos|getopenstate|getparentref|getpcexpelled|getpcfactionmurder|getpcfactionattack|getpcfactionsteal|getpcfame|getpcinfamy|getpcisrace|getpcissex|getpcmiscstat|getplayercontrolsdisabled|getplayerinseworld|getpos|getquestrunning|getrandompercent|getrestrained|getsecondspassed|this|getself|getshouldattack|getsitting|getsleeping|getstagedone|getstage|getstartingangle|getstartingpos|gettalkedtopc|getweaponanimtype|gotojail|hasmagiceffect|hasvampirefed|isactionref|isactordetected|isactorusingatorch|isactor|isanimplaying|isessential|isguard|isidleplaying|isincombat|isindangerouswater|isininterior|isowner|ispcamurderer|ispcsleeping|isplayerinjail|israining|isridinghorse|issneaking|isspelltarget|isswimming|istalking|istimepassing|isweaponout|isxbox|kill|lock|look|menumode|messagebox|message|modactorvalue|modav|modcrimegold|moddisposition|modfactionreaction|modpcfame|modpcinfamy|modpcmiscstat|modpcskill|movetomarker|moveto|payfine|pickidle|placeatme|playgroup|playmagiceffectvisuals|pme|playmagicshadervisuals|pms|playsound3d|playsound|purgecellbuffers|pcb|pushactoraway|refreshtopiclist|releaseweatheroverride|removeallitems|removeitem|removeme|removescriptpackage|removespell|reset3dstate|resetfalldamagetimer|resethealth|resetinterior|resurrect|rotate|sayto|say|scripteffectelapsedseconds|sendtrespassalarm|setactoralpha|saa|setactorfullname|setactorrefraction|setactorsai|setactorvalue|setav|setalert|setallreachable|setallvisible|setangle|setcellpublicflag|setclass|setcombatstyle|setcrimegoldnonviolent|setcrimegold|setdestroyed|setdoordefaultopen|setessential|setfactionrank|setfactionreaction|setforcerun|setforcesneak|setghost|setignorefriendlyhits|setinvestmentgold|setitemvalue|setnoavoidance|setnorumors|setopenstate|setownership|setpackduration|setpcexpelled|setpcfactionattack|setpcfactionmurder|setpcfactionsteal|setpcfame|setpcinfamy|setplayerinseworld|setpos|setquestobject|setrestrained|setrigidbodymass|setscale|setsceneiscomplex|setshowquestitems|setstage|setunconscious|setweather|showbirthsignmenu|showclassmenu|showdialogsubtitles|showenchantment|showmap|showracemenu|showspellmaking|sme|startcombat|startconversation|startquest|stopcombatalarmonactor|stopcombat|scaonactor|stoplook|stopmagiceffectvisuals|stopmagicshadervisuals|stopwaiting|sms|stopquest|sw|trapupdate|triggerhitshader|unequipitem|unlock|wait|wakeuppc|yield)", RegexOptions.IgnoreCase);
+        //WTM:  Change:  I added the functions in INCLUDE_LEXER_FIXES, but while they can be output by BuildInteroperableCompilationGraphs, it doesn't seem they can be converted by BuildTargetCommand.
+        public static readonly Regex FUNCTION_REGEX = new Regex(
+@"^(activate|addachievement|additem|addscriptpackage|addspell|addtopic|autosave|cast|clearownership|closecurrentobliviongate|closeobliviongate|completequest|createfullactorcopy|deletefullactorcopy|disablelinkedpathpoints|disableplayercontrols|disable|dispel|dropme|drop|duplicateallitems|enablefasttravel|enablelinkedpathpoints|enableplayercontrols|enable|equipitem|essentialdeathreload|evp|evaluatepackage|forceactorvalue|forceav|forcecloseobliviongate|" +
+#if INCLUDE_LEXER_FIXES
+@"forceflee|" +
+#endif
+@"forceweather|fw|getactionref|getav|getactorvalue|getamountsoldstolen|getangle|getarmorrating|getattacked|getbaseav|getbaseactorvalue|getbuttonpressed|getclothingvalue|getcombattarget|getcontainer|getcrimegold|getcrimeknown|getcrime|getcurrentaipackage|getcurrentaiprocedure|getcurrenttime|getdayofweek|getdeadcount|getdead|getdestroyed|getdetected|getdetectionlevel|getdisabled|getdisposition|getdistance|getequipped|getfactionrank|getforcesneak|getgamesetting|getgold|getgs|getheadingangle|getincell|getinfaction|getinsamecell|getinworldspace|getisalerted|getiscreature|getiscurrentpackage|getiscurrentweather|getisid|getisplayablerace|getisplayerbirthsign|getisrace|getisreference|getissex|getitemcount|getknockedstate|getlevel|getlocked|getlos|getopenstate|getparentref|getpcexpelled|getpcfactionmurder|getpcfactionattack|getpcfactionsteal|getpcfame|getpcinfamy|getpcisrace|getpcissex|getpcmiscstat|getplayercontrolsdisabled|getplayerinseworld|getpos|getquestrunning|getrandompercent|getrestrained|getsecondspassed|this|getself|getshouldattack|getsitting|getsleeping|getstagedone|getstage|getstartingangle|getstartingpos|gettalkedtopc|getweaponanimtype|gotojail|hasmagiceffect|hasvampirefed|isactionref|isactordetected|isactorusingatorch|isactor|isanimplaying|isessential|isguard|isidleplaying|isincombat|isindangerouswater|isininterior|isowner|ispcamurderer|ispcsleeping|isplayerinjail|israining|isridinghorse|issneaking|isspelltarget|isswimming|istalking|istimepassing|isweaponout|isxbox|kill|lock|look|menumode|messagebox|message|modactorvalue|" +
+#if INCLUDE_LEXER_FIXES
+@"modamountsoldstolen|" +
+#endif
+@"modav|modcrimegold|moddisposition|modfactionreaction|modpcfame|modpcinfamy|modpcmiscstat|modpcskill|movetomarker|moveto|" +
+#if INCLUDE_LEXER_FIXES
+@"payfinethief|" +
+#endif
+@"payfine|pickidle|placeatme|playgroup|playmagiceffectvisuals|pme|" +
+#if INCLUDE_LEXER_FIXES
+@"playbink|" +
+#endif
+@"playmagicshadervisuals|pms|playsound3d|playsound|purgecellbuffers|pcb|pushactoraway|refreshtopiclist|releaseweatheroverride|removeallitems|removeitem|removeme|removescriptpackage|removespell|reset3dstate|resetfalldamagetimer|resethealth|resetinterior|resurrect|rotate|sayto|say|scripteffectelapsedseconds|sendtrespassalarm|setactoralpha|saa|setactorfullname|setactorrefraction|setactorsai|setactorvalue|setav|setalert|setallreachable|setallvisible|setangle|" +
+#if INCLUDE_LEXER_FIXES
+@"setcellfullname|" +
+#endif
+@"setcellpublicflag|" +
+#if INCLUDE_LEXER_FIXES
+@"setcellownership|" +
+#endif
+@"setclass|setcombatstyle|setcrimegoldnonviolent|setcrimegold|setdestroyed|setdoordefaultopen|setessential|setfactionrank|setfactionreaction|setforcerun|setforcesneak|setghost|setignorefriendlyhits|" +
+#if INCLUDE_LEXER_FIXES
+@"setinchargen|" +
+#endif
+@"setinvestmentgold|setitemvalue|" +
+#if INCLUDE_LEXER_FIXES
+@"setlevel|" +
+#endif
+@"setnoavoidance|setnorumors|setopenstate|setownership|setpackduration|setpcexpelled|setpcfactionattack|setpcfactionmurder|setpcfactionsteal|setpcfame|setpcinfamy|setplayerinseworld|setpos|" +
+#if INCLUDE_LEXER_FIXES
+@"setpublic|" +
+#endif
+@"setquestobject|setrestrained|setrigidbodymass|setscale|setsceneiscomplex|setshowquestitems|setstage|setunconscious|setweather|showbirthsignmenu|showclassmenu|showdialogsubtitles|showenchantment|showmap|showracemenu|showspellmaking|sme|startcombat|startconversation|startquest|stopcombatalarmonactor|stopcombat|scaonactor|stoplook|stopmagiceffectvisuals|stopmagicshadervisuals|stopwaiting|sms|stopquest|sw|trapupdate|triggerhitshader|unequipitem|unlock|wait|wakeuppc|yield)"
+, RegexOptions.IgnoreCase);
 
         private void addCommentsRecognition()
         {
@@ -36,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexer
                 .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))
                 .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
                 .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)", RegexOptions.IgnoreCase))
+                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
                 .regex("TokenDelimiter", new Regex(@"\.", RegexOptions.IgnoreCase))
                 .token("+")
                 .token("-")
@@ -65,7 +104,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexer
                 .regex("ReturnToken", new Regex(@"^return", RegexOptions.IgnoreCase))
                 .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
                 .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)", RegexOptions.IgnoreCase))
+                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
                 .regex("Boolean", new Regex(@"^(true|false)", RegexOptions.IgnoreCase))
                 .regex("FunctionCallToken", FUNCTION_REGEX).action("FunctionScope")
                 .regex("LocalVariableDeclarationType", new Regex(@"^(ref|short|long|float|int)", RegexOptions.IgnoreCase)).action("VariableDeclarationScope")
@@ -80,7 +119,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexer
                 .regex("ReturnToken", new Regex(@"^return", RegexOptions.IgnoreCase))
                 .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
                 .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)", RegexOptions.IgnoreCase))
+                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
                 .regex("Boolean", new Regex(@"^(true|false)", RegexOptions.IgnoreCase))
                 .regex("FunctionCallToken", FUNCTION_REGEX)
                 .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))

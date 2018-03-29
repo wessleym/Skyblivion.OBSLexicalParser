@@ -11,7 +11,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
      * Local scope can have a parent scope ( as in - you can travel local scopes as a linked list from the leafs up to
      * the root )
      * Class TES5LocalScope
-     * @package Ormin\OBSLexicalParser\TES5\AST\Scope
      */
     class TES5LocalScope : ITES5Outputtable
     {

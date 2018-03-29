@@ -1,14 +1,13 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             string messageString = functionArguments.getValue(0).StringValue;
@@ -73,9 +72,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 while (caret < messageString.Length)
                 {
                     int stringBeforeStart = caret; //Set the start on the caret.
-                    if (messageMatches[i].Success)
+                    Match match = i < messageMatches.Count ? messageMatches[i] : null;
+                    if (match != null)
                     {
-                        int stringBeforeEnd = messageMatches[i].Index;
+                        int stringBeforeEnd = match.Index;
                         int length = stringBeforeEnd - stringBeforeStart;
                         if (caret == 0 && length == 0)
                         {
@@ -88,7 +88,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                             caret += length;
                         }
 
-                        caret += messageMatches[i].Length;
+                        caret += match.Length;
                     }
                     else
                     {

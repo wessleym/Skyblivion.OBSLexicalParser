@@ -4,7 +4,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
 {
     /*
      * Interface TES5Value
-     * @package Ormin\OBSLexicalParser\TES5\AST\Value
      *
      * Represents something that returns a result value upon evaluating. This might be a primitive, an expression, an data-returning object call, or an reference to a property.
      */

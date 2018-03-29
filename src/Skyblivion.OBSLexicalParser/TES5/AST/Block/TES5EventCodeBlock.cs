@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
@@ -21,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             foreach (var kvp in this.functionScope.getVariables())
             {
                 var localVariable = kvp.Value;
-                functionSignatureFlat.Add(localVariable.getPropertyType().output() + " " + localVariable.getPropertyName());
+                functionSignatureFlat.Add(localVariable.getPropertyType().output().Single() + " " + localVariable.getPropertyName());
             }
 
             string functionSignature = string.Join(", ", functionSignatureFlat);
@@ -36,12 +37,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             return this.functionScope.getBlockName();
         }
 
-        public Skyblivion.OBSLexicalParser.TES5.AST.Code.TES5CodeScope getCodeScope()
+        public TES5CodeScope getCodeScope()
         {
             return this.codeScope;
         }
 
-        public void setCodeScope(Skyblivion.OBSLexicalParser.TES5.AST.Code.TES5CodeScope codeScope)
+        public void setCodeScope(TES5CodeScope codeScope)
         {
             this.codeScope = codeScope;
         }
@@ -51,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             this.codeScope.add(chunk);
         }
 
-        public Skyblivion.OBSLexicalParser.TES5.AST.Scope.TES5FunctionScope getFunctionScope()
+        public TES5FunctionScope getFunctionScope()
         {
             return this.functionScope;
         }

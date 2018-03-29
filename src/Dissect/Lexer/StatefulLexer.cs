@@ -53,8 +53,9 @@ namespace Dissect.Lexer
                 value = type;
             }
 
-            this.states[this.stateBeingBuilt].Recognizers[type] = new SimpleRecognizer(value);
-            this.states[this.stateBeingBuilt].Actions[type] = NO_ACTION;
+            State state = this.states[this.stateBeingBuilt];
+            state.Recognizers.Add(type, new SimpleRecognizer(value));
+            state.Actions.Add(type, NO_ACTION);
             this.typeBeingBuilt = type;
             return this;
         }
@@ -69,8 +70,9 @@ namespace Dissect.Lexer
                 throw new InvalidOperationException("Define a lexer state first.");
             }
 
-            this.states[this.stateBeingBuilt].Recognizers[type] = new RegexRecognizer(regex);
-            this.states[this.stateBeingBuilt].Actions[type] = NO_ACTION;
+            State state = this.states[this.stateBeingBuilt];
+            state.Recognizers.Add(type, new RegexRecognizer(regex));
+            state.Actions.Add(type, NO_ACTION);
             this.typeBeingBuilt = type;
             return this;
         }
@@ -85,7 +87,8 @@ namespace Dissect.Lexer
                 throw new InvalidOperationException("Define a lexer state first.");
             }
 
-            this.states[this.stateBeingBuilt].SkipTokens = args;
+            State state = this.states[this.stateBeingBuilt];
+            state.SkipTokens = args;
             return this;
         }
 
@@ -96,7 +99,7 @@ namespace Dissect.Lexer
         public StatefulLexer _state(string state)
         {
             this.stateBeingBuilt = state;
-            this.states[state] = new State();
+            this.states.Add(state, new State());
             return this;
         }
 
@@ -119,7 +122,8 @@ namespace Dissect.Lexer
                 throw new InvalidOperationException("Define a lexer state and type first.");
             }
 
-            this.states[this.stateBeingBuilt].Actions[this.typeBeingBuilt] = actionObject;
+            State state = this.states[this.stateBeingBuilt];
+            state.Actions[this.typeBeingBuilt] = actionObject;
             return this;
         }
         public StatefulLexer action(string actionString)
@@ -133,7 +137,7 @@ namespace Dissect.Lexer
 
         protected override bool shouldSkipToken(IToken token)
         {
-            var state = this.states[this.stateStack.Last()];
+            var state = this.states[this.stateStack.Peek()];
             return state.SkipTokens.Contains(token.getType());
         }
 
@@ -147,14 +151,14 @@ namespace Dissect.Lexer
             string value = null;
             string type = null;
             object action = null;
-            var state = this.states[this.stateStack.Last()];
+            var state = this.states[this.stateStack.Peek()];
             foreach (var kvp in state.Recognizers)
             {
                 IRecognizer recognizer = kvp.Value;
                 string v;
                 if (recognizer.match(str, out v))
                 {
-                    if (value == null || Dissect.Util.Util.stringLength(v) > Dissect.Util.Util.stringLength(value))
+                    if (value == null || Util.Util.stringLength(v) > Util.Util.stringLength(value))
                     {
                         value = v;
                         type = kvp.Key;
@@ -163,7 +167,7 @@ namespace Dissect.Lexer
                 }
             }
 
-            if (type == null)
+            if (type != null)
             {
                 string actionString = action as string;
                 if (actionString!=null)

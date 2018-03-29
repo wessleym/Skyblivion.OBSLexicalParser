@@ -9,9 +9,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5PrimitiveValueFactory
     {
-        /*
-         * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
-        */
         public ITES5Primitive createValue(ITES4Primitive value)
         {
             TES4Type valueType = value.getType();

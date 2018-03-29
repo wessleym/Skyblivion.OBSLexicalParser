@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -20,12 +21,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     new TES5InheritanceItem("ReferenceAlias"), new TES5InheritanceItem("LocationAlias")
                 }
             },
-            { "Utility", null },
-            { "ActiveMagicEffect", null },
-            { "Debug", null },
-            { "Game", null },
-            { "Main", null },
-            { "Math", null },
+            { "Utility", new TES5InheritanceItemCollection() },
+            { "ActiveMagicEffect", new TES5InheritanceItemCollection() },
+            { "Debug", new TES5InheritanceItemCollection() },
+            { "Game", new TES5InheritanceItemCollection() },
+            { "Main", new TES5InheritanceItemCollection() },
+            { "Math", new TES5InheritanceItemCollection() },
             { "Form", new TES5InheritanceItemCollection()
                 {
                     { "Action" },
@@ -104,10 +105,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     { "WorldSpace" }
                 }
             },
-            { "Input", null },
-            { "SKSE", null },
-            { "StringUtil", null },
-            { "UI", null }
+            { "Input", new TES5InheritanceItemCollection() },
+            { "SKSE", new TES5InheritanceItemCollection() },
+            { "StringUtil", new TES5InheritanceItemCollection() },
+            { "UI", new TES5InheritanceItemCollection() }
         };
         private static TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
@@ -4553,7 +4554,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return treeContains(extendingType.value(), subTree);
         }
 
-        private static string targetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass)
+        private static string targetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
         {
             string targetClassName = type.value();
             string baseClassForNode = baseClass.Name;
@@ -4562,22 +4563,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 foreach (var item in baseClassExtenders)
                 {
-                    if ((new string[] { item.Name }).Concat(item.Items.Select(i => i.Name)).Contains(targetClassName))
+                    if (item.Name == targetClassName)
                     {
+                        if (baseClassForNode == null && throwIfNotFound)
+                        {
+                            throw new ConversionException("Type " + targetClassName + " not found in inheritance graph.");
+                        }
                         return baseClassForNode;
                     }
                 }
 
                 foreach (var item in baseClassExtenders)
                 {
-                    string recursiveReturn = targetRootBaseClass(type, item);
+                    string recursiveReturn = targetRootBaseClass(type, item, false);
                     if (recursiveReturn != null)
                     {
                         return recursiveReturn;
                     }
                 }
 
-                if (baseClassForNode == null)
+                if (baseClassForNode == null || throwIfNotFound)
                 {
                     throw new ConversionException("Type " + targetClassName + " not found in inheritance graph.");
                 }
@@ -4589,29 +4594,31 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 return baseClassForNode;
             }
+            if (throwIfNotFound)
+            {
+                throw new ConversionException("Type " + targetClassName + " not found in inheritance graph.");
+            }
             return null;
         }
 
         public static ITES5Type findBaseClassFor(ITES5Type type)
         {
-            if (inheritanceCache.ContainsKey(type))
+            return inheritanceCache.GetOrAdd(type, () =>
             {
-                return inheritanceCache[type];
-            }
-            string baseTypeName = targetRootBaseClass(type, inheritanceAsItem);
-            ITES5Type baseType = TES5TypeFactory.memberByValue(baseTypeName);
-            inheritanceCache.Add(type, baseType);
-            return baseType;
+                string baseTypeName = targetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: true);
+                return TES5TypeFactory.memberByValue(baseTypeName);
+            });
         }
 
         public static ITES5Type findTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
         {
-            if (!callReturns.ContainsKey(calledOnType.value()) && calledOnType.isNativePapyrusType())
+            TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
+            if (!callReturns.TryGetValue(calledOnType.value(), out callReturnsOfCalledOnType) && calledOnType.isNativePapyrusType())
             {
                 throw new ConversionException("Inference type exception - no methods found for " + calledOnType.value() + "!");
             }
 
-            foreach (var callReturn in callReturns[calledOnType.value()])
+            foreach (var callReturn in callReturnsOfCalledOnType)
             {
                 if (callReturn.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -4621,9 +4628,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         argument = arguments[parameterIndex];
                     }
-                    catch (ArgumentOutOfRangeException)
+                    catch (ArgumentOutOfRangeException ex)
                     {
-                        throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.value());
+                        throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.value(), ex);
                     }
                     return TES5TypeFactory.memberByValue(argument);
                 }
@@ -4635,7 +4642,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public static ITES5Type findReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
         {
-            if (!callReturns.ContainsKey(calledOnType.value()))
+            TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
+            if (!callReturns.TryGetValue(calledOnType.value(), out callReturnsOfCalledOnType))
             {
                 //Type not present in inheritance graph, check if its a basic type ( which means its basically an exception )
                 if (calledOnType.isNativePapyrusType())
@@ -4646,10 +4654,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 {
                     //Otherwise, treat it like a base script
                     calledOnType = calledOnType.getNativeType();
+                    callReturnsOfCalledOnType = callReturns[calledOnType.value()];
                 }
             }
 
-            foreach (var method in callReturns[calledOnType.value()])
+            foreach (var method in callReturnsOfCalledOnType)
             {
                 if (method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -4659,10 +4668,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
             return findReturnTypeForObjectCall(findBaseClassFor(calledOnType), methodName);
         }
-
-        /*
-        * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
-        */
+        
         public static ITES5Type findTypeByMethod(TES5ObjectCall objectCall)
         {
             string methodName = objectCall.getFunctionName();

@@ -2,16 +2,6 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Types
 {
-    /*
-     * Class TES4Type
-     * @package Ormin\OBSLexicalParser\TES4\Types
-     * @method static TES4Type T_REF
-     * @method static TES4Type T_SHORT
-     * @method static TES4Type T_LONG
-     * @method static TES4Type T_FLOAT
-     * @method static TES4Type T_INT
-     * @method static TES4Type T_STRING
-     */
     class TES4Type
     {
         public string Name { get; private set; }

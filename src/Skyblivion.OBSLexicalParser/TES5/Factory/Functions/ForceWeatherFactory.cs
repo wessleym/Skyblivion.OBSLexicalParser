@@ -1,11 +1,10 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -38,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.getLocalScope();
             TES4FunctionArguments functionArguments = function.getArguments();
@@ -51,7 +50,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                force = new TES5Bool((bool)functionArguments.getValue(1).getData());
+                force = new TES5Bool((int)functionArguments.getValue(1).getData() == 1);
             }
             arguments.add(force);
             return this.objectCallFactory.createObjectCall(newCalledOn, "ForceActive", multipleScriptsScope, arguments);

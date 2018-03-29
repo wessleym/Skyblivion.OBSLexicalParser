@@ -38,23 +38,23 @@ namespace Dissect.Parser.LALR1
             }
         }
 
-        protected override IToken parse(ITokenStream stream)
+        protected override object parse(ITokenStream stream)
         {
             int currentState = 0;
             Stack<int> stateStack = new Stack<int>();
-            Stack<IToken> args = new Stack<IToken>();
-            foreach (var token in stream)
+            stateStack.Push(currentState);
+            Stack<object> args = new Stack<object>();
+            foreach (CommonToken token in stream)
             {
                 while (true)
                 {
                     string type = token.getType();
-                    if (!this.parseTable.Action[currentState].ContainsKey(type))
-                    {
-                        // unexpected token
-                        throw new UnexpectedTokenException(token, this.parseTable.Action[currentState].Select(kvp=>kvp.Key).ToArray());
+                    Dictionary<string, int> typeToAction = this.parseTable.Action[currentState];
+                    int action;
+                    if(!typeToAction.TryGetValue(type, out action))
+                    {// unexpected token
+                        throw new UnexpectedTokenException(token, this.parseTable.Action[currentState].Select(kvp => kvp.Key).ToArray());
                     }
-
-                    int action = this.parseTable.Action[currentState][type];
                     if (action > 0)
                     {
                         // shift
@@ -63,18 +63,17 @@ namespace Dissect.Parser.LALR1
                         stateStack.Push(currentState);
                         break;
                     }
-
                     else if(action < 0)
                     {
                         // reduce
                         Rule rule = this.grammar.getRule(-action);
                         int popCount = rule.getComponents().Length;
                         stateStack.Pop(popCount).ToArray();
-                        IToken[] newArgs = args.Pop(popCount).ToArray();
+                        object[] newArgs = args.Pop(popCount).Reverse().ToArray();
                         var callback = rule.getCallback();
                         if (callback != null)
                         {
-                            IToken newToken = (IToken)callback.Invoke(newArgs);
+                            object newToken = callback.Invoke(newArgs);
                             args.Push(newToken);
                         }
                         else
@@ -82,18 +81,18 @@ namespace Dissect.Parser.LALR1
                             args.Push(newArgs[0]);
                         }
 
-                        int state = stateStack.Last();
+                        int state = stateStack.Peek();
                         currentState = this.parseTable.GoTo[state][rule.getName()];
                         stateStack.Push(currentState);
                     }
                     else 
                     {
                         // accept
-                        return args.First();
+                        return args.Last();
                     }
                 }
             }
-            throw new InvalidOperationException();//WTM:  Change:  In PHP, this function did not return here.
+            throw new InvalidOperationException();//WTM:  Note:  In PHP, this function did not return here.
         }
     }
 }

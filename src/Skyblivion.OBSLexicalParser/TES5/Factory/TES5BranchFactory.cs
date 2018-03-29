@@ -3,7 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Ormin.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 

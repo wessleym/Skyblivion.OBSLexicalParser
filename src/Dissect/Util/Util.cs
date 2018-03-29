@@ -32,17 +32,15 @@ namespace Dissect.Util
         */
         public static bool different<T>(IList<T> first, IList<T> second)
         {
-            return first.Where(f=>!second.Contains(f)).Any();//WTM:  This was previously implemented backward:  count(array_diff(first, second)) == 0;
+            return first.Where(f=>!second.Contains(f)).Any();
         }
 
         /*
         * Determines length of a UTF-8 string.
         */
-        private static Lazy<Encoding> iso_8859_1 = new Lazy<Encoding>(() => Encoding.GetEncoding("iso-8859-1"));
         public static int stringLength(string str)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(str);
-            return iso_8859_1.Value.GetString(bytes, 0, bytes.Length).Length;
+            return str.Length;
         }
 
         /*
@@ -52,9 +50,8 @@ namespace Dissect.Util
         {
             if (length == null)
             {
-                length = stringLength(str);
+                return str.Substring(position);
             }
-
             return str.Substring(position, length.Value);
         }
     }

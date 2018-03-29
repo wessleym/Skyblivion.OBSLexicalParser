@@ -14,27 +14,30 @@ using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    class BuildTIFFragmentsCommand : LPCommand
+    class BuildTIFFragmentsCommand : LPCommand//WTM:  Note:  According to monocleus, this file may be unnecessary.
     {
         private FragmentsReferencesBuilder fragmentsReferencesBuilder;
         public BuildTIFFragmentsCommand()
-        {
-            this.fragmentsReferencesBuilder = new FragmentsReferencesBuilder();
-        }
-
-        protected void configure()
         {
             Name = "skyblivion:parser:buildTifFragments";
             Description = "Run lexing and parsing test against whole TIF fragments suite and build papyrus scripts";
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
             Input.AddOption(new LPCommandOption("skip-parsing", "sp", "Skip the parsing part.", "false"));
             Input.AddOption(new LPCommandOption("mode", null, "The mode this build runs in. Allowed: sloppy (will start building on over 50% scripts parsed), normal (85% and over will trigger the build), strict (over 95% will trigger the build), and perfect (only 100% will trigger the build), defaults to strict.", "strict"));
+            this.fragmentsReferencesBuilder = new FragmentsReferencesBuilder();
         }
 
-        protected void execute(LPCommandInput input)
+        public void execute(LPCommandInput input)
         {
-            set_time_limit(10800); // 3 hours is the maximum for this command. Need more? You really screwed something, full suite for all Oblivion vanilla data takes 20 minutes. :)
+            string buildPath = input.GetArgumentValue("buildPath");
+            bool skipParsing = input.GetOptionBoolean("skip-parsing");
             string mode = input.GetArgumentValue("mode");
+        }
+
+        public void execute(string buildPath = Build.DEFAULT_BUILD_PATH, bool skipParsing = false, string mode = "strict")
+        {
+
+            set_time_limit(10800); // 3 hours is the maximum for this command. Need more? You really screwed something, full suite for all Oblivion vanilla data takes 20 minutes. :)
             float threshold;
             switch (mode)
             {
@@ -61,12 +64,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     }
             }
 
-            bool skipParsing = input.GetOptionBoolean("skip-parsing");
             if (!skipParsing)
             {
                 SyntaxErrorCleanParser parser = new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar());
                 //parser = new Parser(new TES4OBScriptGrammar());
-                string buildPath = input.GetArgumentValue("buildPath");
                 TES4ToTES5ASTTIFFragmentConverter converter = TES4ToTES5ASTTIFFragmentConverterFactory.GetConverter(new Build(buildPath));
                 string inputFolder = "./Fragments/TIF/fragments/";
                 string outputFolder = "./Fragments/TIF/PapyrusFragments/";
@@ -87,19 +88,18 @@ namespace Skyblivion.OBSLexicalParser.Commands
                         Console.WriteLine(total + "/" + totalNumber + "...");
                     }
 
-                    string outputScriptPath = scriptPath.Substring(0, scriptPath.Length - 4)+".psc";
-                    string path = inputFolder + scriptPath;
+                    string scriptFileName = scriptPath.Substring(0, scriptPath.Length - 4);
+                    string outputScriptPath = scriptFileName + ".psc";
                     total++;
                     try
                     {
-                        string scriptName = scriptPath.Substring(0, scriptPath.Length - 4);
-                        Console.WriteLine(scriptName + " ...");
+                        Console.WriteLine(scriptFileName + "...");
                         FragmentLexer lexer = new FragmentLexer();
                         ArrayTokenStream tokens = lexer.lex(File.ReadAllText(path));
-                        TES4VariableDeclarationList variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(inputFolder + scriptName + ".references");
+                        TES4VariableDeclarationList variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(inputFolder + scriptFileName + ".references");
                         TES5MultipleScriptsScope AST = (TES5MultipleScriptsScope)parser.ParseWithFixLogic(tokens);
                         ASTTable[scriptPath] = AST;
-                        TES5Target TES5AST = converter.convert(scriptName, variableList, AST);
+                        TES5Target TES5AST = converter.convert(scriptFileName, variableList, AST);
                         string outputScript = TES5AST.output();
                         File.WriteAllText(outputFolder + outputScriptPath, outputScript);
                         Process.Start("lua", "\"Utilities/beautifier.lua\" \"" + outputFolder + outputScriptPath + "\"");

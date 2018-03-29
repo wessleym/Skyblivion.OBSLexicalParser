@@ -1,19 +1,20 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.ESReader.Exceptions;
+using Skyblivion.ESReader.TES4;
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using Skyblivion.ESReader.Exceptions;
-using Skyblivion.ESReader.TES4;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context
 {
     /*
      * Class ESMAnalyzer
-     * @package Ormin\OBSLexicalParser\TES4\Context
      *
      * Answers the questions regarding the context within the binary data file
      * Acts as a legacy adapter interface between ScriptConverter and ESReader
@@ -32,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             this.typeMapper = typeMapper;
             if (esm == null)
             {
-                TES4Collection collection = new TES4Collection("./");
+                TES4Collection collection = new TES4Collection(Build.BasePathFromCurrentDirectory);
                 collection.add(dataFile);
                 //NOTE - SCRI record load scheme is a copypasta, as in, i didnt check which records do actually might have SCRI
                 //Doesnt really matter for other purposes than cleaniness
@@ -220,10 +221,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             {
                 this.scriptTypes = new Dictionary<string, ITES5Type>();
                 List<TES4Grup> scpts = esm.getGrup(TES4RecordType.SCPT);
-                foreach (ITES4Record scpt in scpts)
+                foreach (ITES4Record scpt in scpts.SelectMany(s=>s.Select(r=>r)))
                 {
                     string schr = scpt.getSubrecord("SCHR");
-                    string edid = scpt.getSubrecord("EDID");
+                    string edid = scpt.getSubrecordTrimLower("EDID");
                     if (string.IsNullOrWhiteSpace(schr) || string.IsNullOrWhiteSpace(edid))
                     {
                         continue;
@@ -245,7 +246,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                         scriptType = TES5BasicType.T_OBJECTREFERENCE;
                     }
 
-                    this.scriptTypes[edid.Trim().ToLower()] = scriptType;
+                    this.scriptTypes.Add(edid, scriptType);
                 }
             }
 
@@ -253,15 +254,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             {
                 List<TES4Grup> globals = esm.getGrup(TES4RecordType.GLOB);
                 List<TES5GlobalVariable> globalArray = new List<TES5GlobalVariable>();
-                foreach (ITES4Record global in globals)
+                foreach (ITES4Record global in globals.SelectMany(g => g.Select(r => r)))
                 {
-                    string edid = global.getSubrecord("EDID");
+                    string edid = global.getSubrecordTrim("EDID");
                     if (string.IsNullOrWhiteSpace(edid))
                     {
                         continue;
                     }
 
-                    globalArray.Add(new TES5GlobalVariable(edid.Trim()));
+                    globalArray.Add(new TES5GlobalVariable(edid));
                 }
 
                 /*
@@ -303,9 +304,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 ITES4Record record = esm.findByEDID(EDID);
                 return TypeMapper.map(record.getType());
             }
-            catch (RecordNotFoundException)
+            catch (RecordNotFoundException ex)
             {
-                throw new ConversionException("Cannot find type for EDID "+EDID);
+                throw new ConversionException("Cannot find type for EDID "+EDID, ex);
             }
         }
 
@@ -314,19 +315,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type getScriptType(string scriptName)
         {
-            scriptName = scriptName.ToLower();
-            if (!this.scriptTypes.ContainsKey(scriptName))
-            {
-                string tryAgainst = scriptName.Replace("#", "");
-                if (!this.scriptTypes.ContainsKey(tryAgainst))
-                {
-                    throw new ConversionException("Script "+scriptName+" not found in ESM - cannot find its script type.");
-                }
-
-                return this.scriptTypes[tryAgainst];
-            }
-
-            return this.scriptTypes[scriptName];
+            string scriptNameLower = scriptName.ToLower();
+            ITES5Type value;
+            if(this.scriptTypes.TryGetValue(scriptNameLower, out value)) { return value; }
+            string scriptNameLowerNoPoundSymbols = scriptNameLower.Replace("#", "");
+            if (this.scriptTypes.TryGetValue(scriptNameLowerNoPoundSymbols, out value)) { return value; }
+            throw new ConversionException("Script " + scriptNameLower + " not found in ESM - cannot find its script type.");
         }
 
         /*
@@ -335,36 +329,35 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type resolveScriptTypeByItsAttachedName(string attachedName)
         {
-            if (!this.attachedNameCache.ContainsKey(attachedName.ToLower()))
+            string attachedNameLower = attachedName.ToLower();
+            ITES5Type value;
+            if (this.attachedNameCache.TryGetValue(attachedNameLower, out value)) { return value; }
+            try
             {
-                try
+                ITES4Record attachedNameRecord = esm.findByEDID(attachedName);
+                TES4RecordType attachedNameRecordType = attachedNameRecord.getType();
+                if (attachedNameRecordType == TES4RecordType.REFR || attachedNameRecordType == TES4RecordType.ACRE || attachedNameRecordType == TES4RecordType.ACHR)
                 {
-                    ITES4Record attachedNameRecord = esm.findByEDID(attachedName);
-                    TES4RecordType attachedNameRecordType = attachedNameRecord.getType();
-                    if (attachedNameRecordType == TES4RecordType.REFR || attachedNameRecordType == TES4RecordType.ACRE || attachedNameRecordType == TES4RecordType.ACHR)
-                    {
-                        //Resolve the reference
-                        Nullable<int> baseFormid = attachedNameRecord.getSubrecordAsFormid("NAME");
-                        attachedNameRecord = esm.findByFormid(baseFormid.Value);
-                    }
-
-                    Nullable<int> scriptFormid = attachedNameRecord.getSubrecordAsFormid("SCRI");
-                    if (scriptFormid == null)
-                    {
-                        throw new ConversionException("Cannot resolve script type for "+attachedName+" - Asked base record has no script bound.");
-                    }
-
-                    ITES4Record scriptRecord = esm.findByFormid(scriptFormid.Value);
-                    ITES5Type customType = TES5TypeFactory.memberByValue(scriptRecord.getSubrecord("EDID").Trim());
-                    this.attachedNameCache[attachedName.ToLower()] = customType;
+                    //Resolve the reference
+                    Nullable<int> baseFormid = attachedNameRecord.getSubrecordAsFormid("NAME");
+                    attachedNameRecord = esm.findByFormid(baseFormid.Value);
                 }
-                catch (RecordNotFoundException ex)
+
+                Nullable<int> scriptFormid = attachedNameRecord.getSubrecordAsFormid("SCRI");
+                if (scriptFormid == null)
                 {
-                    throw new ConversionException("Cannot resolve script type by searching its base form edid - no record found, "+attachedName, ex);
+                    throw new ConversionException("Cannot resolve script type for " + attachedName + " - Asked base record has no script bound.");
                 }
+
+                TES4LoadedRecord scriptRecord = esm.findByFormid(scriptFormid.Value);
+                ITES5Type customType = TES5TypeFactory.memberByValue(scriptRecord.getSubrecordTrim("EDID"));
+                this.attachedNameCache.Add(attachedNameLower, customType);
+                return customType;
             }
-
-            return this.attachedNameCache[attachedName.ToLower()];
+            catch (RecordNotFoundException ex)
+            {
+                throw new ConversionException("Cannot resolve script type by searching its base form edid - no record found, " + attachedName, ex);
+            }
         }
 
         /*

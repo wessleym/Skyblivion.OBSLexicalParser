@@ -1,7 +1,8 @@
-using Ormin.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -37,36 +38,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5CodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            int x = 0, y = 0, z = 0;
-            int secondArgumentData = (int)functionArguments.getValue(1).getData();
-            switch ((functionArguments.getValue(0).StringValue).ToLower())
-            {
-                case "x":
-                {
-                    x = secondArgumentData;
-                    break;
-                }
-
-                case "y":
-                {
-                    y = secondArgumentData;
-                    break;
-                }
-
-                case "z":
-                {
-                    z = secondArgumentData;
-                    break;
-                }
-            }
-
-            functionArguments.setValue(0, new TES4Integer(x));
-            functionArguments.setValue(1, new TES4Integer(y));
-            functionArguments.setValue(2, new TES4Integer(z));
-            return this.objectCallFactory.createObjectCall(calledOn, "SetAngle", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            string xyz = functionArguments.getValue(0).StringValue;
+            ITES4StringValue argument1 = functionArguments.getValue(1);
+            TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments();
+            newArguments.add(this.valueFactory.createValue(xyz == "x" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            newArguments.add(this.valueFactory.createValue(xyz == "y" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            newArguments.add(this.valueFactory.createValue(xyz == "z" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.createObjectCall(calledOn, "SetAngle", multipleScriptsScope, newArguments);
         }
     }
 }

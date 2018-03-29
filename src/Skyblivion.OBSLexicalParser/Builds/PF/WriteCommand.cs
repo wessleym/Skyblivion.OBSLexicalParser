@@ -1,16 +1,13 @@
+using Skyblivion.OBSLexicalParser.Commands;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.PF
 {
-    class WriteCommand : IWriteCommand
+    class WriteCommand : WriteCommandBase, IWriteCommand
     {
-        public void write(BuildTarget target, BuildTracker buildTracker)
+        public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            var scripts = buildTracker.getBuiltScripts(target.getTargetName());
-            foreach (var script in scripts.Values)
-            {
-                File.WriteAllLines(script.getOutputPath(), script.getScript().output());
-            }
+            Write(buildTracker.getBuiltScripts(target.getTargetName()).Values, progressWriter);
         }
     }
 }

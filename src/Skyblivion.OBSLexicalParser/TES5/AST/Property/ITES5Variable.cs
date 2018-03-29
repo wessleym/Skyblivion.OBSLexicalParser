@@ -5,7 +5,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
     /*
      * Interface TES5Variable
      * Implementers declare they are a variable to be put in a scope.
-     * @package Ormin\OBSLexicalParser\TES5\AST\Property
      */
     interface ITES5Variable : ITES5Outputtable
     {

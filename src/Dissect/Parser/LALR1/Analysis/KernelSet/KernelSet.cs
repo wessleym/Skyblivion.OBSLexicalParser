@@ -36,7 +36,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
             Node node = this.root;
             while (true)
             {
-                if (kernel.Length < node.kernel.Length)//WTM:  Change:  In PHP, this was kernal < node.kernel (array < array).  Apparently this is equivalent to comparing lengths.
+                if (ArrayLessThan(kernel, node.kernel))
                 {
                     if (node.left == null)
                     {
@@ -49,7 +49,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                         node = node.left;
                     }
                 }
-                else if(kernel.Length > node.kernel.Length)//WTM:  Change:  In PHP, this was kernal > node.kernel (array > array).  Apparently this is equivalent to comparing lengths.
+                else if (ArrayGreaterThan(kernel, node.kernel))
                 {
                     if (node.right == null)
                     {
@@ -62,7 +62,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                         node = node.right;
                     }
                 }
-                else 
+                else
                 {
                     return node.number;
                 }
@@ -84,6 +84,26 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                 decimal cdr = k[1];
                 return (car + cdr) * (car + cdr + 1) / 2 + cdr;
             }).OrderBy(k => k).ToArray();
+        }
+
+        private static bool ArrayGreaterThan(decimal[] left, decimal[] right)//WTM:  Change:  In PHP, arrays were compared like this:  array > array.  Apparently this is equivalent to comparing lengths and then comparing each item.
+        {
+            if (left.Length != right.Length) { return left.Length > right.Length; }
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] > right[i]) { return true; }
+            }
+            return false;
+        }
+
+        private static bool ArrayLessThan(decimal[] left, decimal[] right)//WTM:  Change:  In PHP, arrays were compared like this:  array < array.  Apparently this is equivalent to comparing lengths and then comparing each item.
+        {
+            if (left.Length != right.Length) { return left.Length < right.Length; }
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] < right[i]) { return true; }
+            }
+            return false;
         }
     }
 }

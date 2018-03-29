@@ -30,10 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             this.nameTransformer = new TES5NameTransformer();
             this.propertiesFactory = new TES5PropertiesFactory();
         }
-
-        /*
-             * @throws \Ormin\OBSLexicalParser\TES5\Exception\ConversionException
-        */
+        
         private TES5ScriptHeader createHeader(TES4Script script)
         {
             string edid = script.getScriptHeader().getScriptName();

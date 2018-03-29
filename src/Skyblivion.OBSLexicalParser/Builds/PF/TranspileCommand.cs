@@ -1,12 +1,13 @@
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Service;
 using System;
 
 namespace Skyblivion.OBSLexicalParser.Builds.PF
 {
     class TranspileCommand : ITranspileCommand
     {
-        public void initialize(Build build)
+        public void initialize(Build build, MetadataLogService metadataLogService)
         {
             // TODO: Implement initialize() method.
             throw new NotImplementedException();

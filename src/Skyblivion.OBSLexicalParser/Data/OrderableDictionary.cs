@@ -13,8 +13,8 @@ namespace Skyblivion.OBSLexicalParser.Data
         {
             dictionary = new Dictionary<TKey, TValue>();
         }
-        public OrderableDictionary(IDictionary<TKey, TValue> dictionary)
-            : base()
+        public OrderableDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
+            : this()
         {
             foreach (var kvp in dictionary)
             {

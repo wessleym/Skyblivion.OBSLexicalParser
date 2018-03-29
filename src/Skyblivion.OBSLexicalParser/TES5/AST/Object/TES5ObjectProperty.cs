@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
@@ -16,8 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public List<string> output()
         {
-            List<string> referenceOutput = this.objectReference.output();
-            string referenceOutputFirst = referenceOutput[0];
+            string referenceOutput = this.objectReference.output().Single();
             return new List<string>() { referenceOutput + "." + this.property.getPropertyName() };
         }
 

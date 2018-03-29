@@ -1,76 +1,77 @@
 using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
+using Dissect.Parser;
 using Dissect.Parser.Exceptions;
 using Dissect.Parser.LALR1.Analysis;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
     class SyntaxErrorCleanParser : Dissect.Parser.LALR1.Parser
     {
-        public SyntaxErrorCleanParser(Dissect.Parser.Grammar grammar, ActionAndGoTo parseTable = null)
+        public SyntaxErrorCleanParser(Grammar grammar, ActionAndGoTo parseTable = null)
             : base(grammar, parseTable)
         { }
 
-        public IToken ParseWithFixLogic(ITokenStream stream)
+        public object ParseWithFixLogic(ITokenStream stream)
         {
+#if INCLUDE_LEXER_FIXES
+            //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails
+            //The below check works around that until someone writes a proper solution (which I don't know how to do).
+            IToken[] firstTwoTokens = stream.Take(2).ToArray();
+            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].getType() == Parser.EOF_TOKEN_TYPE) { return new TES4CodeChunks(); }
+#endif
             try
             {
                 return base.parse(stream);
             }
-            catch (UnexpectedTokenException e)
+            catch (UnexpectedTokenException ex) when (ex.getToken().getValue()=="endif")
             {
-                IToken exToken = e.getToken();
                 bool isFixed = false;
-                if (exToken.getValue() == "endif")
+                int nesting = 0;
+                /*
+                * @var CommonToken token
+                */
+                List<IToken> tokens = new List<IToken>();
+                foreach (var token in stream)
                 {
-                    int nesting = 0;
-                    /*
-                     * @var CommonToken token
-                     */
-                    List<IToken> tokens = new List<IToken>();
-                    foreach (var token in stream)
+                    if (token.getType() == "BranchStartToken")
                     {
-                        if (token.getType() == "BranchStartToken")
+                        ++nesting;
+                        tokens.Add(token);
+                    }
+                    else
+                    {
+                        if (token.getType() == "BranchEndToken")
                         {
-                            ++nesting;
-                            tokens.Add(token);
-                        }
-                        else
-                        {
-                            if (token.getType() == "BranchEndToken")
-                            {
-                                nesting = nesting - 1;
-                                if (nesting > -1)
-                                {
-                                    tokens.Add(token);
-                                }
-                                else
-                                {
-                                    isFixed = true;
-                                    nesting = 0; //Clear up the token and nesting will be again 0
-                                }
-                            }
-                            else
+                            nesting = nesting - 1;
+                            if (nesting > -1)
                             {
                                 tokens.Add(token);
                             }
+                            else
+                            {
+                                isFixed = true;
+                                nesting = 0; //Clear up the token and nesting will be again 0
+                            }
+                        }
+                        else
+                        {
+                            tokens.Add(token);
                         }
                     }
-
-                    if (!isFixed)
-                    {
-                        throw;
-                    }
-
-                    ArrayTokenStream newTokenStream = new ArrayTokenStream(tokens);
-                    IToken newAST = this.parse(newTokenStream);
-                    return newAST;
                 }
-                else
+
+                if (!isFixed)
                 {
                     throw;
                 }
+
+                ArrayTokenStream newTokenStream = new ArrayTokenStream(tokens);
+                object newAST = this.parse(newTokenStream);
+                return newAST;
             }
         }
     }

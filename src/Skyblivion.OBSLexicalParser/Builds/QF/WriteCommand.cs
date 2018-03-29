@@ -1,13 +1,14 @@
-using Skyblivion.OBSLexicalParser.Builds;
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
+using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
-    class WriteCommand : Skyblivion.OBSLexicalParser.Builds.IWriteCommand
+    class WriteCommand : WriteCommandBase, IWriteCommand
     {
         private QFFragmentFactory QFFragmentFactory;
         public WriteCommand(QFFragmentFactory QFFragmentFactory)
@@ -15,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             this.QFFragmentFactory = QFFragmentFactory;
         }
 
-        public void write(BuildTarget target, BuildTracker buildTracker)
+        public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
             var scripts = buildTracker.getBuiltScripts(target.getTargetName());
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
@@ -28,11 +29,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             string sourcePath = target.getSourcePath();
             foreach (var mapFilePath in Directory.EnumerateFiles(sourcePath, "*.map"))
             {
-                string mapFileName = Path.GetFileName(mapFilePath);
-                if (!jointScripts.ContainsKey(mapFileName))
-                {
-                    jointScripts[mapFileName] = new List<QuestStageScript>();
-                }
+                string mapFileName = Path.GetFileNameWithoutExtension(mapFilePath);
+                jointScripts.AddNewListIfNotContainsKey(mapFileName);
             }
 
             /*
@@ -49,12 +47,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
                 }
 
                 string baseName = parts[0]+"_"+parts[1]+"_"+parts[2];
-                if (!jointScripts.ContainsKey(baseName))
-                {
-                    jointScripts[baseName] = new List<QuestStageScript>();
-                }
-
-                jointScripts[baseName].Add(new QuestStageScript(script, int.Parse(parts[3]), int.Parse(parts[4])));
+                jointScripts.AddNewListIfNotContainsKeyAndAddValueToList(baseName, new QuestStageScript(script, int.Parse(parts[3]), int.Parse(parts[4])));
             }
 
             foreach (var kvp in jointScripts)
@@ -64,10 +57,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
                 connectedQuestFragments.Add(this.QFFragmentFactory.joinQFFragments(target, resultingFragmentName, subfragmentsTrees));
             }
 
-            foreach (var connectedQuestFragment in connectedQuestFragments)
-            {
-                File.WriteAllLines(connectedQuestFragment.getOutputPath(), connectedQuestFragment.getScript().output());
-            }
+            Write(connectedQuestFragments, progressWriter);
         }
     }
 }

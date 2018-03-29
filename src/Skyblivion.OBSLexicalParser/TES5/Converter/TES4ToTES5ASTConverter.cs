@@ -1,3 +1,4 @@
+using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Block;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -47,12 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     TES5EventBlockList newBlockList = this.blockFactory.createBlock(multipleScriptsScope, globalScope, block);
                     foreach (TES5EventCodeBlock newBlock in newBlockList.getBlocks())
                     {
-                        if (!createdBlocks.ContainsKey(newBlock.getBlockType()))
-                        {
-                            createdBlocks[newBlock.getBlockType()] = new List<TES5EventCodeBlock>();
-                        }
-
-                        createdBlocks[newBlock.getBlockType()].Add(newBlock);
+                        createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.getBlockType(), newBlock);
                     }
                 }
             }
@@ -90,12 +86,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     }
 
                     //Create the proxy block.
+                    TES5EventCodeBlock lastBlock = System.Linq.Enumerable.Last(blocks);
                     TES5EventCodeBlock proxyBlock = this.blockFactory.createNewBlock(blockType,
                         /*
-                        //WTM:  Change:  block was used below, but block is out of scope.  I'm omitting the argument instead.
-                        clone $block->getFunctionScope()
+                        //WTM:  Change:  block was used below, but block is out of scope.  The PHP must have been using the last defined block from above.
+                        //WTM:  Change:  PHP called "clone" below, but I'm not sure if this is necessary or would even operate the same in C#.
                         */
-                        null);
+                        lastBlock.getFunctionScope());
                     foreach (var function in functions)
                     {
                         blockList.add(function);

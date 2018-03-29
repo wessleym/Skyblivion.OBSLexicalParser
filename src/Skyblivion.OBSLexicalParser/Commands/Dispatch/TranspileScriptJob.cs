@@ -1,10 +1,10 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
-using Skyblivion.OBSLexicalParser.TES5.Graph;
+using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
@@ -12,6 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     {
         private BuildTargetCollection buildTargets;
         private string scriptName;
+        private ESMAnalyzer esmAnalyzer;
         /*
         * TranspileScriptJob constructor.
         */
@@ -19,26 +20,36 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
+            TypeMapper typeMapper = new TypeMapper();
+            this.esmAnalyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
         }
 
-        public void run(TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
-        {//WTM:  Change:  Below, buildTarget.transpile requires TES5GlobalScope and TES5MultipleScriptsScope.  I added them above.
+        public void run()
+        {
             string[] scripts = this.buildTargets.getScriptsToCompile(this.scriptName);
             BuildSourceFilesCollection partitionedScripts = this.buildTargets.getSourceFiles(scripts);
-            List<string> sourcePaths = new List<string>();
-            List<string> outputPaths = new List<string>();
-            var buildTarget = buildTargets.First();//WTM:  Change:  buildTarget was undefined in PHP.
-            foreach (var buildScript in scripts)
+            TES5GlobalVariables globalVariables = this.esmAnalyzer.getGlobalVariables();
+            foreach (var buildTarget in this.buildTargets)
             {
-                string scriptName = Path.GetFileName(buildScript);
-                string sourcePath = buildTarget.getSourceFromPath(scriptName);
-                string outputPath = buildTarget.getTranspileToPath(scriptName);
-                sourcePaths.Add(sourcePath);
-                outputPaths.Add(outputPath);
-                buildTarget.transpile(sourcePath, outputPath, globalScope, compilingScope);
-                //WTM:  Change:  The above line was moved from below (outside loop).
+                Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
+                foreach (var buildScript in scripts)
+                {
+                    string scriptName = Path.GetFileNameWithoutExtension(buildScript);
+                    string sourcePath = buildTarget.getSourceFromPath(scriptName);
+                    //string outputPath = buildTarget.getTranspileToPath(scriptName);
+                    scriptsScopes.Add(scriptName, buildTarget.buildScope(sourcePath, globalVariables));
+                }
+
+                TES5MultipleScriptsScope multipleScriptsScope = new TES5MultipleScriptsScope(scriptsScopes.Values, globalVariables);
+                foreach (var buildScript in scripts)
+                {
+                    string scriptName = Path.GetFileNameWithoutExtension(buildScript);
+                    string sourcePath = buildTarget.getSourceFromPath(scriptName);
+                    string outputPath = buildTarget.getTranspileToPath(scriptName);
+                    TES5GlobalScope globalScope = buildTarget.buildScope(sourcePath, globalVariables);
+                    buildTarget.transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
+                }
             }
-            //buildTarget.transpile(sourcePaths, outputPaths, globalScope, compilingScope);
         }
     }
 }
