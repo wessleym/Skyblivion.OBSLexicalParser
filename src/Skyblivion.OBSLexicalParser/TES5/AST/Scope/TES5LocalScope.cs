@@ -26,9 +26,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.parentScope = parentScope;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return variables.SelectMany(v => v.output()).ToList();
+            return variables.SelectMany(v => v.output());
         }
 
         public void addVariable(TES5LocalVariable localVariable)

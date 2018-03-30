@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -28,7 +29,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public void execute(LPCommandInput input)
         {
-            //set_time_limit(10800);
             string targets = input.GetArgumentValue("targets");
             execute(targets);
         }
@@ -54,9 +54,9 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
                 ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.getTotalSourceFiles());
                 TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(new TypeMapper()), BuildTarget.StandaloneSourcePath);
-                using (FileStream errorLog = new FileStream("graph_error_log", FileMode.Create))
+                using (FileStream errorLog = new FileStream(TES5ScriptDependencyGraph.ErrorLogPath, FileMode.Create))
                 {
-                    using (FileStream log = new FileStream("graph_debug_log", FileMode.Create))
+                    using (FileStream debugLog = new FileStream(TES5ScriptDependencyGraph.DebugLogPath, FileMode.Create))
                     {
                         foreach (var kvp in sourceFiles)
                         {
@@ -67,19 +67,16 @@ namespace Skyblivion.OBSLexicalParser.Commands
                             {
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);
                                 ITES4CodeFilterable AST;
-#if !DEBUG || LOG_EXCEPTIONS
                                 try
                                 {
-#endif
                                     AST = buildTarget.getAST(buildTarget.getSourceFromPath(scriptName));
-#if !DEBUG || LOG_EXCEPTIONS
                                 }
-                                catch (UnexpectedTokenException ex)
-                                {
-                                    errorLog.WriteUTF8(sourceFile + "\r\n" + ex.Message + "\r\n\r\n");
+                                catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
+                                /*catch (UnexpectedTokenException ex)
+                                {//Exceptions no longer occur, so this code should not be invoked.
+                                    errorLog.WriteUTF8(sourceFile + ":  " + ex.Message + "\r\n");
                                     continue;
-                                }
-#endif
+                                }*/
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
                                 AST.filter((data) =>
                                 {
@@ -111,7 +108,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     }
                                 }
 
-                                log.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared\r\n");
+                                debugLog.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared\r\n");
                                 foreach (var kvp2 in preparedProperties)
                                 {
                                     var preparedPropertyKey = kvp2.Key;
@@ -122,7 +119,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string lowerScriptType = scriptName.ToLower();
                                     dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
                                     usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
-                                    log.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + "\r\n");
+                                    debugLog.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + "\r\n");
                                 }
 
                                 progressWriter.IncrementAndWrite();

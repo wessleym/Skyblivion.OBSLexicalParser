@@ -15,30 +15,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
             this.elseBranch = elseBranch;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            List<string> codeLines = new List<string>();
-            string mbExpressionOutput = this.mainBranch.getExpression().output().Single();
-            codeLines.Add("If(" + mbExpressionOutput + ")");
-            codeLines.AddRange(this.mainBranch.getCodeScope().output());
+            IEnumerable<string> lines = this.mainBranch.GetOutput("If");
             if (this.elseifBranches != null)
             {
-                foreach (var branch in this.elseifBranches.getBranchList())
-                {
-                    string branchExpressionOutput = branch.getExpression().output().Single();
-                    codeLines.Add("ElseIf("+ branchExpressionOutput + ")");
-                    codeLines.AddRange(branch.getCodeScope().output());
-                }
+                lines= lines.Concat(elseifBranches.GetElseIfOutput());
             }
-
             if (this.elseBranch != null)
             {
-                codeLines.Add("Else");
-                codeLines.AddRange(this.elseBranch.getCodeScope().output());
+                lines = lines.Concat(this.elseBranch.Output());
             }
-
-            codeLines.Add("EndIf");
-            return codeLines;
+            lines = lines.Concat(new string[] { "EndIf" });
+            return lines;
         }
 
         public TES5ElseSubBranch getElseBranch()

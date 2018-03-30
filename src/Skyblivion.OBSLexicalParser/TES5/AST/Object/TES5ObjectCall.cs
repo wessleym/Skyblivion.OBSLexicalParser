@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.arguments = arguments;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             string argumentsCode = "";
             if (this.arguments != null)
@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                 argumentsCode = this.arguments.output().Single();
             }
             string calledFirst = this.called.output().Single();
-            return new List<string>() { calledFirst + "." + this.functionName + "(" + argumentsCode + ")" };
+            return new string[] { calledFirst + "." + this.functionName + "(" + argumentsCode + ")" };
         }
 
         public TES5ObjectCallArguments getArguments()

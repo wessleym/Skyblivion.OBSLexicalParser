@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
         //WTM:  Change:  This two members were made public so they could be serialized by DataContractSerializer.
         public Dictionary<string, List<string>> Graph = new Dictionary<string, List<string>>();
         public Dictionary<string, List<string>> UsageGraph = new Dictionary<string, List<string>>();
+        public static readonly string ErrorLogPath = DataDirectory.GetGraphPath("graph_error_log");
+        public static readonly string DebugLogPath = DataDirectory.GetGraphPath("graph_debug_log");
         private TES5ScriptDependencyGraph()//XmlSerializer requires a parameterless constructor.
         { }
 

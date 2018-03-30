@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -21,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
             TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
         }
 
         public void run()

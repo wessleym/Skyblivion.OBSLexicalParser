@@ -4,6 +4,7 @@ using Dissect.Parser;
 using Dissect.Parser.Exceptions;
 using Dissect.Parser.LALR1.Analysis;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,12 +18,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 
         public object ParseWithFixLogic(ITokenStream stream)
         {
-#if INCLUDE_LEXER_FIXES
             //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails
-            //The below check works around that until someone writes a proper solution (which I don't know how to do).
+            //The below check works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
-            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].getType() == Parser.EOF_TOKEN_TYPE) { return new TES4CodeChunks(); }
-#endif
+            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].getType() == Parser.EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
             try
             {
                 return base.parse(stream);

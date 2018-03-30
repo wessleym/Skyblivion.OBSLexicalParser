@@ -21,9 +21,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.localScope = localScope;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return this.localScope.output().Concat(this.codeChunks.SelectMany(c=>c.output())).ToList();
+            return this.localScope.output().Concat(this.codeChunks.SelectMany(c=>c.output()));
         }
 
         public void clear()

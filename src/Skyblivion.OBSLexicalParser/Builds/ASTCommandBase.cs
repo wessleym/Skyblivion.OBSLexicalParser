@@ -1,6 +1,6 @@
 ﻿using Dissect.Lexer.TokenStream;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.TES4.Lexer;
+using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 using System.IO;
 

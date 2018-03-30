@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
@@ -10,9 +11,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
             this.branchList.Add(declaration);
         }
 
-        public List<TES5SubBranch> getBranchList()
+        public IEnumerable<string> GetElseIfOutput()
         {
-            return this.branchList;
+            return this.branchList.SelectMany(branch => branch.GetOutput("ElseIf"));
         }
     }
 }

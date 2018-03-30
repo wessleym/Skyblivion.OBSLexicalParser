@@ -2,13 +2,9 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
-    class TES5BinaryExpressionOperator
+    class TES5BinaryExpressionOperator : TES5ExpressionOperator
     {
-        public string Name { get; private set; }
-        public TES5BinaryExpressionOperator(string name)
-        {
-            Name = name;
-        }
+        public TES5BinaryExpressionOperator(string name) : base(name) { }
 
         public static readonly TES5BinaryExpressionOperator
             OPERATOR_ADD = new TES5BinaryExpressionOperator("+"),

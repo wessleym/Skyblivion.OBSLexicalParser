@@ -42,6 +42,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("evaluatepackage", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("forceactorvalue", new ForceActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("forcecloseobliviongate", new FillerFactory());
+            valueFactory.addFunctionFactory("forceflee", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("forceweather", new ForceWeatherFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getactionref", new GetActionRefFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getactorvalue", new GetActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
@@ -152,6 +153,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("messagebox", new MessageBoxFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("message", new MessageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("modactorvalue", new ModActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("modamountsoldstolen", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("modcrimegold", new ModCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("moddisposition", new ModDispositionFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("modfactionreaction", new PopCalledRenameFunctionFactory("ModReaction", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
@@ -161,8 +163,10 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("movetomarker", new RenamedFunctionFactory("MoveTo", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("moveto", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("payfine", new PayFineFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("payfinethief", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("pickidle", new FillerFactory());
             valueFactory.addFunctionFactory("placeatme", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.addFunctionFactory("playbink", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("playgroup", new PlayGroupFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("playmagiceffectvisuals", new FillerFactory());
             valueFactory.addFunctionFactory("playmagicshadervisuals", new FillerFactory());
@@ -195,7 +199,9 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setallreachable", new FillerFactory());
             valueFactory.addFunctionFactory("setallvisible", new FillerFactory());
             valueFactory.addFunctionFactory("setangle", new SetAngleFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("setcellfullname", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("setcellownership", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setclass", new FillerFactory());
             valueFactory.addFunctionFactory("setcombatstyle", new FillerFactory());
             valueFactory.addFunctionFactory("setcrimegold", new SetCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
@@ -208,8 +214,10 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setforcesneak", new SetForceSneakFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("setghost", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setignorefriendlyhits", new FillerFactory());
+            valueFactory.addFunctionFactory("setinchargen", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setinvestmentgold", new FillerFactory());
             valueFactory.addFunctionFactory("setitemvalue", new FillerFactory());
+            valueFactory.addFunctionFactory("setlevel", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setnoavoidance", new FillerFactory());
             valueFactory.addFunctionFactory("setnorumors", new FillerFactory());
             valueFactory.addFunctionFactory("setopenstate", new SetOpenStateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
@@ -223,6 +231,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setpcinfamy", new SetPCInfamyFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("setplayerinseworld", new FillerFactory());
             valueFactory.addFunctionFactory("setpos", new SetPosFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("setpublic", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setquestobject", new FillerFactory());
             valueFactory.addFunctionFactory("setrestrained", new FillerFactory());
             valueFactory.addFunctionFactory("setrigidbodymass", new FillerFactory());

@@ -1,11 +1,12 @@
+#define INCLUDE_LEXER_FIXES
 using Dissect.Lexer;
 using System.Text.RegularExpressions;
 
-namespace Skyblivion.OBSLexicalParser.TES4.Lexer
+namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 {
     class OBScriptLexer : StatefulLexer
     {
-        //WTM:  Change:  I added the functions in INCLUDE_LEXER_FIXES, but while they can be output by BuildInteroperableCompilationGraphs, it doesn't seem they can be converted by BuildTargetCommand.
+        //WTM:  Change:  I added the function names in INCLUDE_LEXER_FIXES.  I added all of them to TES5ValueFactoryFunctionFiller as NotSupportedFactory.
         public static readonly Regex FUNCTION_REGEX = new Regex(
 @"^(activate|addachievement|additem|addscriptpackage|addspell|addtopic|autosave|cast|clearownership|closecurrentobliviongate|closeobliviongate|completequest|createfullactorcopy|deletefullactorcopy|disablelinkedpathpoints|disableplayercontrols|disable|dispel|dropme|drop|duplicateallitems|enablefasttravel|enablelinkedpathpoints|enableplayercontrols|enable|equipitem|essentialdeathreload|evp|evaluatepackage|forceactorvalue|forceav|forcecloseobliviongate|" +
 #if INCLUDE_LEXER_FIXES

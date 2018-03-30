@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
         public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string referencesPath = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".references";
+            string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");
             //Create the header.
             TES5ScriptHeader scriptHeader = new TES5ScriptHeader(TES5NameTransformer.transform(scriptName, ""), scriptName, TES5BasicType.T_QUEST, "", true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);

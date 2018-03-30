@@ -20,13 +20,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             return TES5BasicType.T_BOOL;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             TES5Bool trueBool = new TES5Bool(true);
             TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.OPERATOR_EQUAL;
             string outputValue = this.value.output().Single();
             string trueOutputValue = trueBool.output().Single();
-            return new List<string>() { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };
+            return new string[] { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };
         }
     }
 }

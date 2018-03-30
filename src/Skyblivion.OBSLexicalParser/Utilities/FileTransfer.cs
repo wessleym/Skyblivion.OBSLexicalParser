@@ -25,7 +25,8 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             foreach(string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
             {
                 DirectoryInfo sourceSubDirectory = new DirectoryInfo(sourceSubDirectoryPath);
-                CopyDirectoryFiles(sourceSubDirectoryPath + Path.DirectorySeparatorChar, Path.Combine(destinationDirectory, sourceSubDirectory.Name) + Path.DirectorySeparatorChar, overwrite);
+                string destinationSubDirectoryPath = Path.Combine(destinationDirectory, sourceSubDirectory.Name) + Path.DirectorySeparatorChar;
+                CopyDirectoryFiles(sourceSubDirectoryPath + Path.DirectorySeparatorChar, destinationSubDirectoryPath, overwrite);
             }
         }
     }

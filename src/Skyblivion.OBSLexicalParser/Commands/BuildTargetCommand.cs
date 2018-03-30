@@ -37,34 +37,26 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public void execute(string targets, int threadsNumber = DefaultThreads, string buildPath = null)
         {
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
-            //set_time_limit(10800); // 3 hours is the maximum for this command. Need more? You really screwed something, full suite for all Oblivion vanilla data takes 20 minutes. :)
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                BuildTracker buildTracker = new BuildTracker(buildTargets);
                 if (!buildTargets.canBuild())
                 {
                     Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
                     return;
                 }
-
-                ExecuteBuild(build, buildPath, buildTracker, buildTargets, threadsNumber);
-                ProgressWriter writingTranspiledScriptsProgressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt=>bt.getSourceFileList().Count()));
-                foreach (var buildTarget in buildTargets)
-                {
-                    buildTarget.write(buildTracker, writingTranspiledScriptsProgressWriter);
-                }
-                writingTranspiledScriptsProgressWriter.WriteLast();
-
-                //Hack - force ESM analyzer deallocation.
-                ESMAnalyzer.deallocate();
-                PrepareWorkspaceAndCompile(build, buildTargets);
+                BuildTracker buildTracker = new BuildTracker(buildTargets);
+                Transpile(build, buildPath, buildTracker, buildTargets, threadsNumber);
+                WriteTranspiled(buildTargets, buildTracker);
+                ESMAnalyzer.deallocate();//Hack - force ESM analyzer deallocation.
+                PrepareWorkspace(build, buildTargets);
+                Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
         }
 
-        private static void ExecuteBuild(Build build, string buildPath, BuildTracker buildTracker, BuildTargetCollection buildTargets, int threadsNumber)
+        private static void Transpile(Build build, string buildPath, BuildTracker buildTracker, BuildTargetCollection buildTargets, int threadsNumber)
         {
             // Create Metadata file if it doesn"t exist and clear
             MetadataLogService.ClearFile(build);
@@ -88,12 +80,26 @@ namespace Skyblivion.OBSLexicalParser.Commands
             progressWriter.WriteLast();
         }
 
-        private static void PrepareWorkspaceAndCompile(Build build, BuildTargetCollection buildTargets)
+        private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
+        {
+            ProgressWriter writingTranspiledScriptsProgressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => bt.getSourceFileList().Count()));
+            foreach (var buildTarget in buildTargets)
+            {
+                buildTarget.write(buildTracker, writingTranspiledScriptsProgressWriter);
+            }
+            writingTranspiledScriptsProgressWriter.WriteLast();
+        }
+
+        private static void PrepareWorkspace(Build build, BuildTargetCollection buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
             prepareCommand.run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
+        }
+
+        private static void Compile(Build build, BuildTargetCollection buildTargets)
+        {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.run();
         }

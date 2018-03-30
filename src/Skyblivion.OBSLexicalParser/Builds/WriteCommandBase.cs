@@ -2,6 +2,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
@@ -25,9 +26,10 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         protected static void Write(IEnumerable<TES5Target> targets, ProgressWriter progressWriter)
         {
-            foreach(TES5Target target in targets)
+            foreach (TES5Target target in targets)
             {
-                Write(target.getOutputPath(), target.getScript().output());
+                string[] outputString = target.getScript().output().ToArray();
+                Write(target.getOutputPath(), outputString);
                 progressWriter.IncrementAndWrite();
             }
         }

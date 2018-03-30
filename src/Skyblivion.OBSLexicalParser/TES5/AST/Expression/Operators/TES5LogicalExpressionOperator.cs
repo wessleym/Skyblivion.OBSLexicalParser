@@ -2,13 +2,9 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
-    class TES5LogicalExpressionOperator
+    class TES5LogicalExpressionOperator : TES5ExpressionOperator
     {
-        public string Name { get; private set; }
-        public TES5LogicalExpressionOperator(string name)
-        {
-            Name = name;
-        }
+        public TES5LogicalExpressionOperator(string name) : base(name) { }
 
         public static readonly TES5LogicalExpressionOperator
             OPERATOR_OR = new TES5LogicalExpressionOperator("||"),

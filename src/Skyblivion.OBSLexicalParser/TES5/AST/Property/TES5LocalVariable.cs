@@ -19,9 +19,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.meanings = meanings;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { this.type.value() + " " + this.variableName };
+            return new string[] { this.type.value() + " " + this.variableName };
         }
 
         public TES5LocalVariableParameterMeaning[] getMeanings()

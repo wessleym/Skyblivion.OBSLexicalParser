@@ -8,6 +8,7 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.Builds.Service;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
+using Skyblivion.OBSLexicalParser.Data;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
@@ -26,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         public void initialize()
         {
             TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
             this.nameTransformer = new TES5NameTransformer();
             this.propertiesFactory = new TES5PropertiesFactory();
         }

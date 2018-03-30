@@ -11,9 +11,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.integer = integer;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { this.integer.ToString() };
+            return new string[] { this.integer.ToString() };
         }
 
         public ITES5Type getType()

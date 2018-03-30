@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              */
             string sourcePath = target.getSourceFromPath(resultingFragmentName);
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string aliasesFile = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".aliases";
+            string aliasesFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".aliases");
             string[] aliasesLines = File.ReadAllLines(aliasesFile);
             Dictionary<string, bool> aliasesDeclared = new Dictionary<string, bool>();
             foreach (var alias in aliasesLines)
@@ -151,7 +151,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         {
             string sourcePath = target.getSourceFromPath(resultingFragmentName);
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string stageMapFile = Path.GetDirectoryName(sourcePath) + Path.DirectorySeparatorChar + scriptName + ".map";
+            string stageMapFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".map");
             string[] stageMapFileLines = File.ReadAllLines(stageMapFile);
             Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
             foreach (var stageMapLine in stageMapFileLines)

@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             return this.value.getType();
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             return this.value.output();
         }

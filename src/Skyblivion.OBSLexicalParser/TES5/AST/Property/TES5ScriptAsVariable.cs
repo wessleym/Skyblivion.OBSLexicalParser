@@ -17,9 +17,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             return "self";
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { "self" };
+            return new string[] { "self" };
         }
 
         public ITES5Type getPropertyType()

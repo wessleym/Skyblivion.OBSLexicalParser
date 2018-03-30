@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.value = value;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             string referenceOutput = this.reference.output().Single();
             string valueOutput = this.value.output().Single();
@@ -27,9 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             {
                 code+= " as "+this.reference.getType().output().Single();
             }
-
-            List<string> codeLines = new List<string>() { code };
-            return codeLines;
+            return new string[] { code };
         }
 
         public ITES5Referencer getReference()

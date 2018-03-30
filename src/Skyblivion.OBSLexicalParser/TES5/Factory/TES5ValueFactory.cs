@@ -49,14 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public void addFunctionFactory(string functionName, IFunctionFactory factory)
         {
             string key = functionName.ToLower();
-            try
-            {
-                this.functionFactories.Add(key, factory);
-            }
-            catch (ArgumentException)
-            {
-                throw new InvalidOperationException("Function factory for function " + functionName + " already defined.");
-            }
+            this.functionFactories.Add(key, factory);
         }
         private ITES5Value convertArithmeticExpression(ITES4Expression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {

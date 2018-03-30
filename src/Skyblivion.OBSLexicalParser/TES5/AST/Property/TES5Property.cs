@@ -33,11 +33,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.trackedScript = null;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             string propertyTypeName = this.getPropertyType().output().Single();
             //Todo - Actually differentiate between properties which need and do not need to be conditional
-            return new List<string>() { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
+            return new string[] { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
         }
 
         public string getPropertyName()

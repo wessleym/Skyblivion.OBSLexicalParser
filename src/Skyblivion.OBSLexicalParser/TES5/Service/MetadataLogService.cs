@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         private static string GetPath(Build build)
         {
-            return build.getBuildPath() + "Metadata";
+            return build.GetBuildPath("Metadata");
         }
 
         public static void ClearFile(Build build)

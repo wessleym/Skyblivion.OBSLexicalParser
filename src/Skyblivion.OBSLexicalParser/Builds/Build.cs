@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Data;
 using System.IO;
 using System.Linq;
 
@@ -5,41 +6,36 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class Build
     {
-        public static readonly string BasePathFromCurrentDirectory = "Data" + Path.DirectorySeparatorChar;
-        public static readonly string DEFAULT_BUILD_PATH = BasePathFromCurrentDirectory + "Build" + Path.DirectorySeparatorChar;
+        public static readonly string DEFAULT_BUILD_PATH = DataDirectory.GetBuildPath();
         private string buildPath;
         public Build(string buildPath)
         {
-            if (!buildPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                buildPath += Path.DirectorySeparatorChar;
-            }
             this.buildPath = buildPath;
         }
 
-        public string getBuildPath()
+        public string GetBuildPath(string additionalPath)
         {
-            return this.buildPath;
+            return Path.Combine(this.buildPath, additionalPath);
         }
 
         public string getErrorLogPath()
         {
-            return this.getBuildPath() + "build_error_log";
+            return GetBuildPath("build_error_log");
         }
 
         public string getCompileStandardOutputPath()
         {
-            return this.getBuildPath() + "compile_stdout_log";
+            return GetBuildPath("compile_stdout_log");
         }
 
         public string getCompileStandardErrorPath()
         {
-            return this.getBuildPath() + "compile_stderr_log";
+            return GetBuildPath("compile_stderr_log");
         }
 
         public string getWorkspacePath()
         {
-            return this.getBuildPath() + "Workspace" + Path.DirectorySeparatorChar;
+            return GetBuildPath("Workspace") + Path.DirectorySeparatorChar;
         }
 
         public bool canBuild()

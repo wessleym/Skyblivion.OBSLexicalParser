@@ -32,7 +32,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public void execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string buildPath = null)
         {
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
-            //set_time_limit(60);
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {

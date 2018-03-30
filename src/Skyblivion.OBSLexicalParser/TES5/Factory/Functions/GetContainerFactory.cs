@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalVariable containerVariable = codeScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);
             if (containerVariable == null)
             {
-                throw new ConversionException("TES4.getContainer() - Cannot convert to Skyrim in other contextes than onEquip/onUnequip");
+                throw new ConversionException("TES4.getContainer() - Cannot convert to Skyrim in other contexts than onEquip/onUnequip");
             }
             return this.referenceFactory.createReferenceToVariable(containerVariable);
         }

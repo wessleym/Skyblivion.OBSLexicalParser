@@ -1,5 +1,6 @@
 using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
 using Skyblivion.ESReader.PHP;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
 using System.Collections;
@@ -112,7 +113,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         private string GetFilePath()
         {
-            return "Build" + Path.DirectorySeparatorChar + "graph_" + this.getUniqueBuildFingerprint();
+            return DataDirectory.GetGraphPath("graph_" + this.getUniqueBuildFingerprint());
         }
 
         private TES5ScriptDependencyGraph ReadGraph()

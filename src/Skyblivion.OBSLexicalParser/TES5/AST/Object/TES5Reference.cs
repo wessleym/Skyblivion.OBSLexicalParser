@@ -1,8 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
-using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
@@ -19,13 +17,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.referencesTo = referencesTo;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            if (this.manualCastTo != null)
-            {
-                return new List<string>() { this.referencesTo.getPropertyName() + " as " + this.manualCastTo.value() };
-            }
-            return new List<string>() { this.referencesTo.getPropertyName() };
+            return new string[] { this.referencesTo.getPropertyName() + (this.manualCastTo != null ? " as " + this.manualCastTo.value() : "") };
         }
 
         public ITES5Variable getReferencesTo()

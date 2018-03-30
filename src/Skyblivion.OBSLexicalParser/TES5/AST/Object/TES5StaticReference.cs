@@ -13,9 +13,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.name = name;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { this.name };
+            return new string[] { this.name };
         }
 
         public string getName()

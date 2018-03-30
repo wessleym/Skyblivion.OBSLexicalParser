@@ -225,9 +225,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return Name;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { Name };
+            return new string[] { Name };
         }
 
         public void setNativeType(ITES5Type basicType)

@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return "";
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             throw new ConversionException("VOID TYPE value output");
         }

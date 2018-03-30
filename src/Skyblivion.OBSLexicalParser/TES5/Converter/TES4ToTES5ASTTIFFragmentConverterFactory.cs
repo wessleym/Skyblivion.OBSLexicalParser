@@ -1,4 +1,5 @@
 ﻿using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Context;
@@ -12,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         public static TES4ToTES5ASTTIFFragmentConverter GetConverter(Build build, MetadataLogService metadataLogService)
         {
             TypeMapper typeMapper = new TypeMapper();
-            ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+            ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
             TES5PrimitiveValueFactory primitiveValueFactory = new TES5PrimitiveValueFactory();
             TES5BlockFunctionScopeFactory blockLocalScopeFactory = new TES5BlockFunctionScopeFactory();
             TES5CodeScopeFactory codeScopeFactory = new TES5CodeScopeFactory();

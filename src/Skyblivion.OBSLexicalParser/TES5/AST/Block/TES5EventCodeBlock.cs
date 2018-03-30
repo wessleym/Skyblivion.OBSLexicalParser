@@ -15,21 +15,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             this.codeScope = chunks;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            List<string> codeLines = new List<string>();
-            List<string> functionSignatureFlat = new List<string>();
-            foreach (var kvp in this.functionScope.getVariables())
-            {
-                var localVariable = kvp.Value;
-                functionSignatureFlat.Add(localVariable.getPropertyType().output().Single() + " " + localVariable.getPropertyName());
-            }
-
-            string functionSignature = string.Join(", ", functionSignatureFlat);
-            codeLines.Add("Event "+this.functionScope.getBlockName()+"("+functionSignature+")");
-            codeLines.AddRange(this.codeScope.output());
-            codeLines.Add("EndEvent");
-            return codeLines;
+            return (new string[] { "Event " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
+                .Concat(this.codeScope.output())
+                .Concat(new string[] { "EndEvent" });
         }
 
         public string getBlockType()

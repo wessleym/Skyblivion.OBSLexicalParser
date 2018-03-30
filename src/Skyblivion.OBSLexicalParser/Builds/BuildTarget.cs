@@ -1,5 +1,5 @@
 using Skyblivion.OBSLexicalParser.Commands;
-using Skyblivion.OBSLexicalParser.TES4.AST;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public const string BUILD_TARGET_QF = "QF";
         public const string BUILD_TARGET_PF = "PF";
         public const string DEFAULT_TARGETS = BUILD_TARGET_STANDALONE+ "," + BUILD_TARGET_TIF+ "," +BUILD_TARGET_QF;
-        public static string StandaloneSourcePath = Build.BasePathFromCurrentDirectory + "BuildTargets" + Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar + "Source" + Path.DirectorySeparatorChar;
+        public static string StandaloneSourcePath = Path.Combine(DataDirectory.GetBuildTargetsPath(), "Standalone", "Source") + Path.DirectorySeparatorChar;
         private bool transpileInitialized, compileInitialized, ASTInitialized, scopeInitialized;
         private string targetName;
         private string filePrefix;
@@ -106,22 +106,22 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getSourcePath()
         {
-            return this.getRootBuildTargetPath()+ Path.DirectorySeparatorChar+"Source"+ Path.DirectorySeparatorChar;
+            return Path.Combine(this.getRootBuildTargetPath(), "Source")+Path.DirectorySeparatorChar;
         }
 
         public string getDependenciesPath()
         {
-            return this.getRootBuildTargetPath()+ Path.DirectorySeparatorChar+"Dependencies"+ Path.DirectorySeparatorChar;
+            return Path.Combine(this.getRootBuildTargetPath(), "Dependencies")+ Path.DirectorySeparatorChar;
         }
 
         public string getArchivePath()
         {
-            return this.getRootBuildTargetPath() + Path.DirectorySeparatorChar+ "Archive"+ Path.DirectorySeparatorChar;
+            return Path.Combine(this.getRootBuildTargetPath(), "Archive")+ Path.DirectorySeparatorChar;
         }
 
         public string getArchivedBuildPath(int buildNumber)
         {
-            return this.getRootBuildTargetPath() + Path.DirectorySeparatorChar+ "Archive"+ Path.DirectorySeparatorChar + buildNumber.ToString() + Path.DirectorySeparatorChar;
+            return Path.Combine(this.getRootBuildTargetPath(), "Archive", buildNumber.ToString()) + Path.DirectorySeparatorChar;
         }
 
         public string getSourceFromPath(string scriptName)
@@ -136,12 +136,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getTranspiledPath()
         {
-            return this.build.getBuildPath()+ "Transpiled" + Path.DirectorySeparatorChar + this.targetName + Path.DirectorySeparatorChar;
+            return this.build.GetBuildPath(Path.Combine("Transpiled", this.targetName)) + Path.DirectorySeparatorChar;
         }
 
         public string getArtifactsPath()
         {
-            return this.build.getBuildPath() + "Artifacts" + Path.DirectorySeparatorChar + this.targetName + Path.DirectorySeparatorChar;
+            return this.build.GetBuildPath(Path.Combine("Artifacts", this.targetName)) + Path.DirectorySeparatorChar;
         }
 
         public string getWorkspacePath()
@@ -162,7 +162,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         private string getRootBuildTargetPath()
         {
-            return Build.BasePathFromCurrentDirectory + "BuildTargets" + Path.DirectorySeparatorChar + this.getTargetName();
+            return Path.Combine(DataDirectory.GetBuildTargetsPath(), this.getTargetName()) + Path.DirectorySeparatorChar;
         }
 
         public bool canBuild()

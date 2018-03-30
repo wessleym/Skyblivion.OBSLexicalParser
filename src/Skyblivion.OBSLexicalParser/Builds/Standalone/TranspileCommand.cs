@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds.Service;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -23,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         public void initialize(Build build, MetadataLogService metadataLogService)
         {
             TypeMapper typeMapper = new TypeMapper();
-            ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+            ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
             TES5PrimitiveValueFactory primitiveValueFactory = new TES5PrimitiveValueFactory();
             TES5BlockFunctionScopeFactory blockLocalScopeFactory = new TES5BlockFunctionScopeFactory();
             TES5CodeScopeFactory codeScopeFactory = new TES5CodeScopeFactory();

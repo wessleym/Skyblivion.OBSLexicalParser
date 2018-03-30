@@ -15,10 +15,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.property = property;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
             string referenceOutput = this.objectReference.output().Single();
-            return new List<string>() { referenceOutput + "." + this.property.getPropertyName() };
+            return new string[] { referenceOutput + "." + this.property.getPropertyName() };
         }
 
         public ITES5Type getType()

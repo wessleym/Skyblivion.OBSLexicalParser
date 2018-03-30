@@ -1,4 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
@@ -17,11 +19,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
             return this.codeScope;
         }
 
-        public ITES5Value getExpression()
-        {
-            return this.expression;
-        }
-
         public void setCodeScope(TES5CodeScope codeScope)
         {
             this.codeScope = codeScope;
@@ -30,6 +27,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
         public void setExpression(ITES5Value expression)
         {
             this.expression = expression;
+        }
+
+        private string GetConditionLineOutput(string ifOrElseIf)
+        {
+            return ifOrElseIf + "(" + this.expression.output().Single() + ")";
+        }
+
+        public IEnumerable<string> GetOutput(string ifOrElseIf)
+        {
+            return (new string[] { GetConditionLineOutput(ifOrElseIf) })
+                .Concat(this.getCodeScope().output());
         }
     }
 }

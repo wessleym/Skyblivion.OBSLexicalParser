@@ -1,7 +1,7 @@
 using Dissect.Lexer;
 using System.Text.RegularExpressions;
 
-namespace Skyblivion.OBSLexicalParser.TES4.Lexer
+namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 {
     class ArithLexer : SimpleLexer
     {

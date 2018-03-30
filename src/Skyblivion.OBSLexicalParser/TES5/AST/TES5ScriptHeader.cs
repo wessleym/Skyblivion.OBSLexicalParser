@@ -44,16 +44,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             return this.edid;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            if (this.isHidden)
-            {
-                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " Hidden" };
-            }
-            else
-            {
-                return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " Conditional" };
-            }
+            return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
         }
 
         /*

@@ -1,7 +1,9 @@
 using Dissect.Parser.Exceptions;
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -38,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.staticGlobalScopesFactory = new TES5StaticGlobalScopesFactory();
             this.buildTargets = new BuildTargetCollection();
             TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
         }
 
         public void runTask(FileStream errorLog, ProgressWriter progressWriter)
@@ -87,16 +89,15 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         string sourcePath = buildTarget.getSourceFromPath(scriptName);
                         string outputPath = buildTarget.getTranspileToPath(scriptName);
                         TES5Target convertedScript;
-#if !DEBUG || LOG_EXCEPTIONS
                         try
                         {
-#endif
                             convertedScript = buildTarget.transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
-#if !DEBUG || LOG_EXCEPTIONS
                         }
+                        catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
+#if !DEBUG || LOG_EXCEPTIONS
                         catch (Exception ex) when (ex is UnexpectedTokenException || ex is ConversionException)
                         {
-                            errorLog.WriteUTF8(scriptName + "\r\n" + ex.GetType().FullName + "\r\n" + ex.Message + "\r\n\r\n");
+                            errorLog.WriteUTF8(scriptName + " (" + sourcePath + ")\r\n" + ex.GetType().FullName + "\r\n" + ex.Message + "\r\n\r\n");
                             continue;
                         }
 #endif

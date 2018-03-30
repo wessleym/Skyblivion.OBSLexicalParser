@@ -1,4 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES4.Lexer;
+using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 
 namespace Skyblivion.OBSLexicalParser.Builds.TIF

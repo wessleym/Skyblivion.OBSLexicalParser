@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.Service;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
@@ -48,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
                         TypeMapper typeMapper = new TypeMapper();
-                        ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, "Oblivion.esm");
+                        ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
                         TES5PrimitiveValueFactory primitiveValueFactory = new TES5PrimitiveValueFactory();
                         TES5CodeScopeFactory codeScopeFactory = new TES5CodeScopeFactory();
                         TES5ExpressionFactory expressionFactory = new TES5ExpressionFactory();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Skyblivion.OBSLexicalParser.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Build" + Path.DirectorySeparatorChar);
             Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "BuildTargets" + Path.DirectorySeparatorChar);
             Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Compiler" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Oblivion.esm");
+            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Graph" + Path.DirectorySeparatorChar + " (Only needed for " + commands[0].FriendlyName + ")");
+            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + DataDirectory.TES4GameFileName);
             Console.WriteLine("Type a number to run a command:");
             for (int i = 0; i < commands.Length; i++)
             {
@@ -33,6 +35,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.WriteLine("Running " + command.FriendlyName + ":");
             command.execute();
             Console.WriteLine("Press any key to exit.");
+            while (Console.KeyAvailable) { Console.ReadKey(true); }//Clear buffered keys
             Console.ReadKey(true);
         }
 

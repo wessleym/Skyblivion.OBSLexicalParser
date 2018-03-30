@@ -11,9 +11,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             return this.blocks;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return blocks.SelectMany(b => b.output()).ToList();
+            return blocks.SelectMany(b => b.output());
         }
 
         public void add(ITES5CodeBlock block)

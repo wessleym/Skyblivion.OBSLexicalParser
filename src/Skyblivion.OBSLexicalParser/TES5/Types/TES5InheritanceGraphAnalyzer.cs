@@ -4567,7 +4567,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         if (baseClassForNode == null && throwIfNotFound)
                         {
-                            throw new ConversionException("Type " + targetClassName + " not found in inheritance graph.");
+                            throw new ConversionException("Type " + targetClassName + " is a top-level type in the inheritance graph, so it has no base class.");
                         }
                         return baseClassForNode;
                     }
@@ -4582,12 +4582,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     }
                 }
 
+                //not found in node.
                 if (baseClassForNode == null || throwIfNotFound)
                 {
                     throw new ConversionException("Type " + targetClassName + " not found in inheritance graph.");
                 }
-
-                //not found in node.
                 return null;
             }
             else if (targetClassName == baseClassForNode)
@@ -4727,7 +4726,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         ITES5Type formType = ESMAnalyzer._instance().getFormTypeByEDID(calledOn.getReferenceEdid());
                         if (!extendingMatches.Contains(formType))
                         {
-                            throw new ConversionException("ESM <. Inheritance Graph conflict, ESM returned " + formType.value() + ", which is not present in possible matches from inheritance graph");
+                            throw new ConversionException("ESM <-> Inheritance Graph conflict.  ESM returned " + formType.value() + ", which is not present in possible matches from inheritance graph:  " + string.Join(", ", extendingMatches.Select(em => em.value())));
                         }
                         return formType;
                     }

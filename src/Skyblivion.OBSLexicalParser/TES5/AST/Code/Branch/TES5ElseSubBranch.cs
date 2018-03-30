@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
     class TES5ElseSubBranch
@@ -8,9 +11,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
             this.codeScope = codeScope;
         }
 
-        public TES5CodeScope getCodeScope()
+        public IEnumerable<string> Output()
         {
-            return this.codeScope;
+            return (new string[] { "Else" })
+                .Concat(this.codeScope.output());
         }
     }
 }

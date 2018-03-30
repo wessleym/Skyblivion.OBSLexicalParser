@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
@@ -59,6 +60,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public Dictionary<string, TES5LocalVariable> getVariables()
         {
             return this.variables;
+        }
+
+        public IEnumerable<string> getVariablesOutput()
+        {
+            return this.getVariables().Values.Select(v => v.getPropertyType().output().Single() + " " + v.getPropertyName());
         }
 
         public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)

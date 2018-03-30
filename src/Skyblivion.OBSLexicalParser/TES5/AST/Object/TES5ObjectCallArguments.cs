@@ -12,9 +12,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             return this.arguments;
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return new List<string>() { string.Join(", ", this.arguments.Select(a=>a.output().Single())) };
+            return new string[] { string.Join(", ", this.arguments.Select(a=>a.output().Single())) };
         }
 
         public void add(ITES5Value value)

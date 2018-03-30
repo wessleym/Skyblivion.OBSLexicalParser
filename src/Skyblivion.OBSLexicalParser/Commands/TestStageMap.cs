@@ -15,7 +15,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public override void execute()
         {
-            //set_time_limit(60);
             Build build = new Build(Build.DEFAULT_BUILD_PATH);
             Dictionary<int, List<int>> originalStageMap;
             using (BuildLogServices buildLogServices = new BuildLogServices(build))

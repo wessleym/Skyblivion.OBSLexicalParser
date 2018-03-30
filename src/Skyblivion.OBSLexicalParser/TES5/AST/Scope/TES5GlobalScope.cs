@@ -26,9 +26,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.properties.Add(declaration);
         }
 
-        public List<string> output()
+        public IEnumerable<string> output()
         {
-            return properties.SelectMany(p => p.output()).ToList();
+            return properties.SelectMany(p => p.output());
         }
 
         public TES5Property getPropertyByName(string propertyName)
