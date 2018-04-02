@@ -8,18 +8,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
     class TES5Script : ITES5Outputtable
     {
         private TES5ScriptHeader scriptHeader;
-        private TES5GlobalScope propertyList;
+        private TES5GlobalScope globalScope;
         private TES5BlockList blockList;
         public TES5Script(TES5GlobalScope globalScope, TES5BlockList blockList = null)
         {
             this.scriptHeader = globalScope.getScriptHeader();
-            this.propertyList = globalScope;
+            this.globalScope = globalScope;
             this.blockList = blockList;
         }
 
         public IEnumerable<string> output()
         {
-            return this.scriptHeader.output().Concat(this.propertyList.output()).Concat(this.blockList.output());
+            return this.scriptHeader.output().Concat(this.globalScope.output()).Concat(this.blockList.output());
         }
 
         public TES5BlockList getBlockList()
@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
 
         public TES5GlobalScope getGlobalScope()
         {
-            return this.propertyList;
+            return this.globalScope;
         }
     }
 }

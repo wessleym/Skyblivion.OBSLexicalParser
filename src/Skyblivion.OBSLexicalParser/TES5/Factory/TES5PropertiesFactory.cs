@@ -9,12 +9,12 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5PropertiesFactory
+    static class TES5PropertiesFactory
     {
         /*
         * Create an pre-defined property from a ref VariableDeclaration
         */
-        private TES5Property createPropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
+        private static TES5Property createPropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
         {
             string variableName = declaration.getVariableName();
             if (globalVariables.hasGlobalVariable(variableName))
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         /*
         * @throws ConversionException
         */
-        public void createProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        public static void createProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
         {
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
             foreach (TES4VariableDeclaration variable in variableList.getVariableList())
@@ -59,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else if (variableType == TES4Type.T_REF)
                 {
-                    property = this.createPropertyFromReference(variable, globalVariables);
+                    property = createPropertyFromReference(variable, globalVariables);
                 }
                 else
                 {

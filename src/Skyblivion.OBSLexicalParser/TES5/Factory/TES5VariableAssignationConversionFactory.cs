@@ -21,16 +21,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private TES5ValueFactory valueFactory;
         private TES5VariableAssignationFactory assignationFactory;
         private TES5BranchFactory branchFactory;
-        private TES5ExpressionFactory expressionFactory;
         private TES5TypeInferencer typeInferencer;
-        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5VariableAssignationFactory assignationFactory, TES5BranchFactory branchFactory, TES5ExpressionFactory expressionFactory, TES5TypeInferencer typeInferencer)
+        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5VariableAssignationFactory assignationFactory, TES5BranchFactory branchFactory, TES5TypeInferencer typeInferencer)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
             this.valueFactory = valueFactory;
             this.assignationFactory = assignationFactory;
             this.branchFactory = branchFactory;
-            this.expressionFactory = expressionFactory;
             this.typeInferencer = typeInferencer;
         }
 
@@ -77,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                      * endIf
                      */
                     TES5Integer minusOne = new TES5Integer(-1);
-                    TES5ArithmeticExpression expression = this.expressionFactory.createArithmeticExpression(reference, TES5ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL, minusOne);
+                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(reference, TES5ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL, minusOne);
                     TES5VariableAssignation reassignation = this.assignationFactory.createAssignation(referencerValue, minusOne);
                     TES5Branch branch = this.branchFactory.createSimpleBranch(expression, codeScope.getLocalScope());
                     branch.getMainBranch().getCodeScope().add(reassignation);

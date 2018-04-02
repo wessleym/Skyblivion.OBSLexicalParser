@@ -12,12 +12,10 @@ using Skyblivion.OBSLexicalParser.Data;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
-    class BuildScopeCommand : Skyblivion.OBSLexicalParser.Builds.IBuildScopeCommand
+    class BuildScopeCommand : IBuildScopeCommand
     {
         const string SCRIPTS_PREFIX = "TES4";
         private ESMAnalyzer esmAnalyzer;
-        private TES5NameTransformer nameTransformer;
-        private TES5PropertiesFactory propertiesFactory;
         private StandaloneParsingService standaloneParsingService;
         public BuildScopeCommand(StandaloneParsingService standaloneParsing)
         {
@@ -26,16 +24,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 
         public void initialize()
         {
-            TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
-            this.nameTransformer = new TES5NameTransformer();
-            this.propertiesFactory = new TES5PropertiesFactory();
+            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
         
         private TES5ScriptHeader createHeader(TES4Script script)
         {
             string edid = script.getScriptHeader().getScriptName();
-            string scriptName = TES5NameTransformer.transform(edid, SCRIPTS_PREFIX);
+            string scriptName = TES5NameTransformer.TransformLongName(edid, SCRIPTS_PREFIX);
             return new TES5ScriptHeader(scriptName, edid, this.esmAnalyzer.getScriptType(edid), SCRIPTS_PREFIX);
         }
 
@@ -47,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
             if (variableList != null)
             {
-                this.propertiesFactory.createProperties(variableList, globalScope, globalVariables);
+                TES5PropertiesFactory.createProperties(variableList, globalScope, globalVariables);
             }
             return globalScope;
         }

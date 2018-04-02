@@ -11,14 +11,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5BranchFactory
     {
-        private TES5LocalScopeFactory localScopeFactory;
-        private TES5CodeScopeFactory codeScopeFactory;
         private TES5ChainedCodeChunkFactory codeChunkFactory;
         private TES5ValueFactory valueFactory;
-        public TES5BranchFactory(TES5LocalScopeFactory localScopeFactory, TES5CodeScopeFactory codeScopeFactory, TES5ValueFactory valueFactory)
+        public TES5BranchFactory(TES5ValueFactory valueFactory)
         {
-            this.localScopeFactory = localScopeFactory;
-            this.codeScopeFactory = codeScopeFactory;
             this.valueFactory = valueFactory;
         }
 
@@ -56,14 +52,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5Branch createSimpleBranch(ITES5Expression expression, TES5LocalScope parentScope)
         {
-            return new TES5Branch(new TES5SubBranch(expression, this.codeScopeFactory.createCodeScope(this.localScopeFactory.createRecursiveScope(parentScope))));
+            return new TES5Branch(new TES5SubBranch(expression, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRecursiveScope(parentScope))));
         }
 
         private TES5ElseSubBranch convertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope outerLocalScope = outerCodeScope.getLocalScope();
-            TES5LocalScope newScope = this.localScopeFactory.createRecursiveScope(outerLocalScope);
-            TES5CodeScope newCodeScope = this.codeScopeFactory.createCodeScope(newScope);
+            TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
+            TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(newScope);
             TES4CodeChunks branchChunks = branch.getCodeChunks();
             if (branchChunks != null)
             {
@@ -87,8 +83,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES5LocalScope outerLocalScope = outerCodeScope.getLocalScope();
             ITES5Value expression = this.valueFactory.createValue(branch.getExpression(), outerCodeScope, globalScope, multipleScriptsScope);
-            TES5LocalScope newScope = this.localScopeFactory.createRecursiveScope(outerLocalScope);
-            TES5CodeScope newCodeScope = this.codeScopeFactory.createCodeScope(newScope);
+            TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
+            TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(newScope);
             TES4CodeChunks branchChunks = branch.getCodeChunks();
             if (branchChunks != null)
             {

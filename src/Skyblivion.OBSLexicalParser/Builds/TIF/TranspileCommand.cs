@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.Builds.Service;
-using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
@@ -13,7 +12,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
     {
         private FragmentsParsingService parsingService;
         private TES4ToTES5ASTTIFFragmentConverter converter;
-        private FragmentsReferencesBuilder fragmentsReferenceBuilder;
         public TranspileCommand(FragmentsParsingService fragmentsParsingService)
         {
             this.parsingService = fragmentsParsingService;
@@ -22,7 +20,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
         public void initialize(Build build, MetadataLogService metadataLogService)
         {
             converter = TES4ToTES5ASTTIFFragmentConverterFactory.GetConverter(build, metadataLogService);
-            this.fragmentsReferenceBuilder = new FragmentsReferencesBuilder();
         }
 
         public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

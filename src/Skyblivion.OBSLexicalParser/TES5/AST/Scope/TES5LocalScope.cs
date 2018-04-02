@@ -80,7 +80,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 scope = scope.getParentScope();
             }
             while (scope != null);
-            variables.AddRange(this.functionScope.getVariables().Select(v=>v.Value));
+            variables.AddRange(this.functionScope.getVariables().Values);
             return variables;
         }
 

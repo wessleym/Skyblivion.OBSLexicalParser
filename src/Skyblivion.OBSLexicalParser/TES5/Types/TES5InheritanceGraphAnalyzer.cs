@@ -4567,7 +4567,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         if (baseClassForNode == null && throwIfNotFound)
                         {
-                            throw new ConversionException("Type " + targetClassName + " is a top-level type in the inheritance graph, so it has no base class.");
+                            throw new ConversionException("Type " + targetClassName + " is a top-level type in the inheritance graph, so it has no base class.", expected: true);
                         }
                         return baseClassForNode;
                     }
@@ -4629,14 +4629,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.value(), ex);
+                        throw new InvalidOperationException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.value(), ex);
                     }
                     return TES5TypeFactory.memberByValue(argument);
                 }
             }
 
             return findTypeByMethodParameter(findBaseClassFor(calledOnType), methodName, parameterIndex);
-            //throw new ConversionException("Method ".methodName." not found in type ".calledOnType.value());
+            //throw new ConversionException("Method "+methodName+" not found in type "+calledOnType.value());
         }
 
         public static ITES5Type findReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
@@ -4726,7 +4726,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         ITES5Type formType = ESMAnalyzer._instance().getFormTypeByEDID(calledOn.getReferenceEdid());
                         if (!extendingMatches.Contains(formType))
                         {
-                            throw new ConversionException("ESM <-> Inheritance Graph conflict.  ESM returned " + formType.value() + ", which is not present in possible matches from inheritance graph:  " + string.Join(", ", extendingMatches.Select(em => em.value())));
+                            throw new ConversionException("ESM <-> Inheritance Graph conflict.  ESM returned " + formType.value() + ", which is not present in possible matches from inheritance graph:  " + string.Join(", ", extendingMatches.Select(em => em.value())), expected: true);
                         }
                         return formType;
                     }

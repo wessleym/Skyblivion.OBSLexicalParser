@@ -4,7 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5EventBlockList
     {
-        private List<TES5EventCodeBlock> blocks = new List<TES5EventCodeBlock>();//WTM:  Change:  In the PHP, this was a list of TES5CodeBlock.
+        private List<TES5EventCodeBlock> blocks = new List<TES5EventCodeBlock>();
         public List<TES5EventCodeBlock> getBlocks()
         {
             return this.blocks;

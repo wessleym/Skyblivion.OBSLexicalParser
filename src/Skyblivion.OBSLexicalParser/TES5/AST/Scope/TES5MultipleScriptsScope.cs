@@ -47,7 +47,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             TES5Property property = globalScope.getPropertyByName(propertyName);
             if (property == null)
             {
-                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a property "+propertyName+" in script name "+scriptName);
+                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a property "+propertyName+" in script name "+scriptName, expected: true);
             }
             return property;
         }

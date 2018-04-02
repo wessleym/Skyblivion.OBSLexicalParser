@@ -402,7 +402,8 @@ namespace Dissect.Parser.LALR1.Analysis
                                         {
                                             // new rule was earlier
                                             actionDictionary[token] = -ruleNumber;
-                                            Rule[] resolvedRules = new Rule[] { newRule, originalRule };//WTM:  Change:  This was below the conflicts.Add statement
+                                            //WTM:  Change:  In PHP, this resolvedRules declaration was below the conflicts.Add statement, but this else statement was never reached anyway as far as I can tell.
+                                            Rule[] resolvedRules = new Rule[] { newRule, originalRule };
                                             conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.EARLIER_REDUCE));
                                             continue;
                                         }

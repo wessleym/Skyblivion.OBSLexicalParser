@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 ESMAnalyzer analyzer = ESMAnalyzer._instance();
                 basicType = analyzer.getScriptType(memberByValue);
             }
-            return new TES5CustomType(TES5NameTransformer.transform(memberByValue, scriptsPrefix), scriptsPrefix, memberByValue, basicType);
+            return new TES5CustomType(TES5NameTransformer.TransformLongName(memberByValue, scriptsPrefix), scriptsPrefix, memberByValue, basicType);
         }
     }
 }

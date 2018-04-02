@@ -19,26 +19,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class ModActorValueFactory : IFunctionFactory
     {
         private TES5ReferenceFactory referenceFactory;
-        private TES5ExpressionFactory expressionFactory;
         private TES5VariableAssignationFactory assignationFactory;
         private ESMAnalyzer analyzer;
         private TES5ObjectPropertyFactory objectPropertyFactory;
-        private TES5PrimitiveValueFactory primitiveValueFactory;
         private TES5TypeInferencer typeInferencer;
         private MetadataLogService metadataLogService;
         private TES5ValueFactory valueFactory;
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public ModActorValueFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ExpressionFactory expressionFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer, TES5PrimitiveValueFactory primitiveValueFactory, TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        public ModActorValueFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
-            this.expressionFactory = expressionFactory;
             this.analyzer = analyzer;
             this.assignationFactory = assignationFactory;
             this.objectPropertyFactory = objectPropertyFactory;
-            this.primitiveValueFactory = primitiveValueFactory;
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
@@ -86,7 +82,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         ITES5Referencer newCalledOn = this.referenceFactory.createReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
                         ITES4StringValue secondArg = functionArguments.getValue(1);
                         ITES5Value addedValue = this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope);
-                        convertedArguments.add(this.expressionFactory.createBinaryExpression(addedValue, TES5BinaryExpressionOperator.OPERATOR_ADD, this.referenceFactory.createReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
+                        convertedArguments.add(TES5ExpressionFactory.createBinaryExpression(addedValue, TES5BinaryExpressionOperator.OPERATOR_ADD, this.referenceFactory.createReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
                         return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
 

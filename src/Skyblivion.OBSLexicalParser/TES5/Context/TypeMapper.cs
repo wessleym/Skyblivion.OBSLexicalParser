@@ -5,7 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Context
 {
-    class TypeMapper
+    static class TypeMapper
     {
         public static ITES5Type map(TES4RecordType type)
         {

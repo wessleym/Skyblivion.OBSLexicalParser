@@ -5,7 +5,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Other;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter
 {
@@ -18,16 +17,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         private TES5FragmentFactory fragmentFactory;
         private TES5ValueFactory valueFactory;
         private TES5ReferenceFactory referenceFactory;
-        private TES5PropertiesFactory propertiesFactory;
-        private TES5NameTransformer nameTransformer;
-        public TES4ToTES5ASTQFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory, TES5PropertiesFactory propertiesFactory, TES5NameTransformer nameTransformer)
+        public TES4ToTES5ASTQFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory)
         {
             this.esmAnalyzer = esmAnalyzer;
             this.fragmentFactory = fragmentFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
-            this.propertiesFactory = propertiesFactory;
-            this.nameTransformer = nameTransformer;
         }
 
         /*

@@ -18,26 +18,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class SetOrForceActorValueFactory : FunctionFactoryBase
     {
         private TES5ReferenceFactory referenceFactory;
-        private TES5ExpressionFactory expressionFactory;
         private TES5VariableAssignationFactory assignationFactory;
         private ESMAnalyzer analyzer;
         private TES5ObjectPropertyFactory objectPropertyFactory;
-        private TES5PrimitiveValueFactory primitiveValueFactory;
         private TES5TypeInferencer typeInferencer;
         private MetadataLogService metadataLogService;
         private TES5ValueFactory valueFactory;
         private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public SetOrForceActorValueFactory(string tes4FunctionName, string tes5FunctionName, TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ExpressionFactory expressionFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer, TES5PrimitiveValueFactory primitiveValueFactory, TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        public SetOrForceActorValueFactory(string tes4FunctionName, string tes5FunctionName, TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
             : base(tes4FunctionName, tes5FunctionName, objectCallFactory)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
-            this.expressionFactory = expressionFactory;
             this.analyzer = analyzer;
             this.assignationFactory = assignationFactory;
             this.objectPropertyFactory = objectPropertyFactory;
-            this.primitiveValueFactory = primitiveValueFactory;
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
         }

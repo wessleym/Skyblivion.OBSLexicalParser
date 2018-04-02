@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
                 BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
                 ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.getTotalSourceFiles());
-                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(new TypeMapper()), BuildTarget.StandaloneSourcePath);
+                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(), BuildTarget.StandaloneSourcePath);
                 using (FileStream errorLog = new FileStream(TES5ScriptDependencyGraph.ErrorLogPath, FileMode.Create))
                 {
                     using (FileStream debugLog = new FileStream(TES5ScriptDependencyGraph.DebugLogPath, FileMode.Create))

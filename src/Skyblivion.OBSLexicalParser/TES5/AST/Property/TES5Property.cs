@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         private TES5ScriptHeader trackedScript;
         public TES5Property(string propertyName, ITES5Type propertyType, string referenceEdid)
         {
-            this.propertyName = propertyName+PROPERTY_SUFFIX; //we"re adding _p prefix because papyrus compiler complains about property names named after other scripts, _p makes sure we won"t conflict.
+            this.propertyName = AddPropertyNameSuffix(propertyName);
             this.propertyType = propertyType; //If we"re tracking a script, this won"t be used anymore
             this.referenceEdid = referenceEdid;
             this.trackedScript = null;
@@ -47,7 +47,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 
         public void renameTo(string newName)
         {
-            this.propertyName = newName+PROPERTY_SUFFIX;
+            this.propertyName = AddPropertyNameSuffix(newName);
+        }
+
+        public string GetPropertyNameWithoutSuffix()
+        {
+            return RemovePropertyNameSuffix(this.propertyName);
+        }
+
+        private static string AddPropertyNameSuffix(string propertyName)
+        {
+            return propertyName + PROPERTY_SUFFIX;//we"re adding _p prefix because papyrus compiler complains about property names named after other scripts, _p makes sure we won"t conflict.
+        }
+
+        private static string RemovePropertyNameSuffix(string propertyName)
+        {
+            return propertyName.Substring(0, propertyName.Length - PROPERTY_SUFFIX.Length);
         }
 
         public ITES5Type getPropertyType()

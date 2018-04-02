@@ -143,8 +143,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
         private static string generatePropertyName(TES5ScriptHeader header, TES5Property property)
         {
-            string propertyName = property.getPropertyName();
-            return "col_" + propertyName.Substring(0, propertyName.Length - 2) + "_" + PHPFunction.MD5(header.getScriptName()).Substring(0, 4);
+            return "col_" + property.GetPropertyNameWithoutSuffix() + "_" +
+#if PHP_COMPAT
+                PHPFunction.MD5(header.getScriptName()).Substring(0, 4)
+#else
+                header.getScriptName().GetHashCode().ToString()
+#endif
+                ;
         }
 
         public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)

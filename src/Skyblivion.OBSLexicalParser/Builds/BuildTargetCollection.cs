@@ -97,13 +97,16 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         private string getUniqueBuildFingerprint()
         {
-            Dictionary<string, BuildTarget> myBuildTargets = this.buildTargets;
+#if PHP_COMPAT
             string md5 = PHPFunction.MD5("randomseed");
-            foreach (var key in myBuildTargets.Select(kvp => kvp.Key).OrderBy(k => k))
+            foreach (var key in this.buildTargets.Select(kvp => kvp.Key).OrderBy(k => k))
             {
                 md5 = PHPFunction.MD5(md5 + key);
             }
             return md5;
+#else
+            return string.Join(",", this.buildTargets.Select(kvp => kvp.Key)).GetHashCode().ToString();
+#endif
         }
 
         private TES5ScriptDependencyGraph getDependencyGraph()

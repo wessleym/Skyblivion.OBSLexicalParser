@@ -24,7 +24,6 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         private List<Dictionary<string, List<string>>> buildPlan;
         private Build build;
         private BuildLogServices buildLogServices;
-        private TES5StaticGlobalScopesFactory staticGlobalScopesFactory;
         private ESMAnalyzer esmAnalyzer;
         /*
         * No injection is done here because of multithreaded enviroment which messes it up.
@@ -37,10 +36,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.buildTracker = buildTracker;
             this.build = new Build(buildPath);
             this.buildLogServices = new BuildLogServices(build);
-            this.staticGlobalScopesFactory = new TES5StaticGlobalScopesFactory();
             this.buildTargets = new BuildTargetCollection();
-            TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
 
         public void runTask(FileStream errorLog, ProgressWriter progressWriter)
@@ -66,8 +63,9 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 }
 
                 //Add the static global scopes which are added by complimenting scripts..
-                List<TES5GlobalScope> staticGlobalScopes = this.staticGlobalScopesFactory.createGlobalScopes();
+                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.createGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
+                //But I doubt these scripts are ever accessed.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
                 {
@@ -95,7 +93,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         }
                         catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
 #if !DEBUG || LOG_EXCEPTIONS
-                        catch (Exception ex) when (ex is UnexpectedTokenException || ex is ConversionException)
+                        catch (ConversionException ex) when (ex.Expected)
                         {
                             errorLog.WriteUTF8(scriptName + " (" + sourcePath + ")\r\n" + ex.GetType().FullName + "\r\n" + ex.Message + "\r\n\r\n");
                             continue;

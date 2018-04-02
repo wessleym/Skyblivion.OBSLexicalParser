@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,16 +12,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         private TES5CodeScope codeScope;
         private TES5FunctionScope functionScope;
         private ITES5Type returnType;
-        public TES5FunctionCodeBlock(ITES5Type returnType, TES5FunctionScope functionScope, TES5CodeScope chunks)
+        private bool isStandalone;//Only needed for PHP_COMPAT
+        public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone = false)
         {
+            if (returnType == null) { throw new ArgumentNullException(nameof(returnType)); }
             this.functionScope = functionScope;
-            this.codeScope = chunks;
+            this.codeScope = codeScope;
             this.returnType = returnType;
+            this.isStandalone = isStandalone;
         }
 
         public IEnumerable<string> output()
         {
-            string functionReturnType = (this.returnType != null) ? this.returnType.value() + " " : "";
+            string returnTypeValue = this.returnType.value();
+            string functionReturnType = returnTypeValue != "" ? returnTypeValue + " " :
+#if PHP_COMPAT
+                isStandalone ? "" : " "
+#else
+                ""
+#endif
+                ;
             return (new string[] { functionReturnType + "Function " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
                 .Concat(this.codeScope.output())
                 .Concat(new string[] { "EndFunction" });
@@ -34,11 +45,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         public TES5CodeScope getCodeScope()
         {
             return this.codeScope;
-        }
-
-        public void setCodeScope(TES5CodeScope codeScope)
-        {
-            this.codeScope = codeScope;
         }
 
         public void addChunk(ITES5CodeChunk chunk)

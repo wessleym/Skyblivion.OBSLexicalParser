@@ -11,18 +11,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5BlockFactory
     {
         private TES5ChainedCodeChunkFactory codeChunkFactory;
-        private TES5BlockFunctionScopeFactory blockFunctionScopeFactory;
-        private TES5CodeScopeFactory codeScopeFactory;
         private TES5AdditionalBlockChangesPass changesPass;
-        private TES5LocalScopeFactory localScopeFactory;
         private TES5InitialBlockCodeFactory initialBlockCodeFactory;
-        public TES5BlockFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory, TES5BlockFunctionScopeFactory blockFunctionScopeFactory, TES5CodeScopeFactory codeScopeFactory, TES5AdditionalBlockChangesPass changesPass, TES5LocalScopeFactory localScopeFactory, TES5InitialBlockCodeFactory initialBlockCodeFactory)
+        public TES5BlockFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory, TES5AdditionalBlockChangesPass changesPass, TES5InitialBlockCodeFactory initialBlockCodeFactory)
         {
             this.codeChunkFactory = chainedCodeChunkFactory;
-            this.blockFunctionScopeFactory = blockFunctionScopeFactory;
-            this.codeScopeFactory = codeScopeFactory;
             this.changesPass = changesPass;
-            this.localScopeFactory = localScopeFactory;
             this.initialBlockCodeFactory = initialBlockCodeFactory;
         }
 
@@ -209,7 +203,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 functionScope = new TES5FunctionScope(blockType);
             }
 
-            TES5EventCodeBlock newBlock = new TES5EventCodeBlock(functionScope, this.codeScopeFactory.createCodeScope(this.localScopeFactory.createRootScope(functionScope)));
+            TES5EventCodeBlock newBlock = new TES5EventCodeBlock(functionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(functionScope)));
             return newBlock;
         }
 
@@ -223,7 +217,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
 
             string newBlockType = this.mapBlockType(blockType);
-            TES5FunctionScope blockFunctionScope = this.blockFunctionScopeFactory.createFromBlockType(newBlockType);
+            TES5FunctionScope blockFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType(newBlockType);
             TES5EventCodeBlock newBlock = this.createNewBlock(newBlockType, blockFunctionScope);
             TES5CodeScope conversionScope = this.initialBlockCodeFactory.addInitialCode(multipleScriptsScope, globalScope, newBlock);
             TES4CodeChunks chunks = block.getChunks();

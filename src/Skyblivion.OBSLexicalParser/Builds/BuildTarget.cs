@@ -28,11 +28,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         private IASTCommand ASTCommand;
         private IBuildScopeCommand buildScopeCommand;
         private IWriteCommand writeCommand;
-        /*
-        * Needed for proper resolution of filename
-        */
-        private TES5NameTransformer nameTransformer;
-        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, TES5NameTransformer nameTransformer, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand ASTCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
+        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand ASTCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
         {
             this.transpileInitialized = false;
             this.compileInitialized = false;
@@ -44,7 +40,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.filePrefix = filePrefix;
             this.transpileCommand = transpileCommand;
             this.compileCommand = compileCommand;
-            this.nameTransformer = nameTransformer;
             this.ASTCommand = ASTCommand;
             this.buildScopeCommand = buildScopeCommand;
             this.writeCommand = writeCommand;
@@ -151,7 +146,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getTranspileToPath(string scriptName)
         {
-            string transformedName = TES5NameTransformer.transform(scriptName, this.filePrefix);
+            string transformedName = TES5NameTransformer.TransformLongName(scriptName, this.filePrefix);
             return this.getTranspiledPath()+this.filePrefix+transformedName+".psc";
         }
 

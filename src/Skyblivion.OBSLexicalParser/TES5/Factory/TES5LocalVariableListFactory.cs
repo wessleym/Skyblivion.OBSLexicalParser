@@ -7,10 +7,10 @@ using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5LocalVariableListFactory
+    static class TES5LocalVariableListFactory
     {
-        public TES5CodeChunkCollection createCodeChunk(TES4VariableDeclarationList chunk, TES5CodeScope codeScope)
-        {//WTM:  Note:  This always returns null.  Why return at all?
+        public static void createCodeChunk(TES4VariableDeclarationList chunk, TES5CodeScope codeScope)
+        {
             foreach (TES4VariableDeclaration variable in chunk.getVariableList())
             {
                 TES4Type variableType = variable.getVariableType();
@@ -34,7 +34,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 codeScope.getLocalScope().addVariable(property);
             }
-            return null;
         }
     }
 }

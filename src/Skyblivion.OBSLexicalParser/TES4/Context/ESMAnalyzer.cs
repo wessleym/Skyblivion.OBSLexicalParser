@@ -23,13 +23,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
     {
         private Dictionary<string, ITES5Type> scriptTypes;
         private TES5GlobalVariables globals;
-        private TypeMapper typeMapper;
         private Dictionary<string, ITES5Type> attachedNameCache = new Dictionary<string, ITES5Type>();
         private static TES4Collection esm;
         private static ESMAnalyzer instance;
-        public ESMAnalyzer(TypeMapper typeMapper, string dataFile = DataDirectory.TES4GameFileName)
+        public ESMAnalyzer(string dataFile = DataDirectory.TES4GameFileName)
         {
-            this.typeMapper = typeMapper;
             if (esm == null)
             {
                 TES4Collection collection = new TES4Collection(DataDirectory.GetESMDirectoryPath());
@@ -282,7 +280,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         {
             if (instance == null)
             {
-                return new ESMAnalyzer(new TypeMapper());
+                return new ESMAnalyzer();
             }
 
             return instance;
@@ -299,7 +297,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         public ITES5Type getFormTypeByEDID(string edid)
         {
             ITES4Record record = esm.findByEDID(edid, false);
-            if (record == null) { throw new ConversionException("Cannot find type for EDID " + edid); }
+            if (record == null) { throw new ConversionException("Cannot find type for EDID " + edid, expected: true); }
             return TypeMapper.map(record.getType());
         }
 

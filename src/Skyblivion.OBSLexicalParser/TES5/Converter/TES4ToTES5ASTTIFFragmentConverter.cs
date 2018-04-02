@@ -18,16 +18,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         private TES5FragmentFactory fragmentFactory;
         private TES5ValueFactory valueFactory;
         private TES5ReferenceFactory referenceFactory;
-        private TES5PropertiesFactory propertiesFactory;
-        private TES5NameTransformer nameTransformer;
-        public TES4ToTES5ASTTIFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory, TES5PropertiesFactory propertiesFactory, TES5NameTransformer nameTransformer)
+        public TES4ToTES5ASTTIFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory)
         {
             this.esmAnalyzer = esmAnalyzer;
             this.fragmentFactory = fragmentFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
-            this.propertiesFactory = propertiesFactory;
-            this.nameTransformer = nameTransformer;
         }
 
         /*

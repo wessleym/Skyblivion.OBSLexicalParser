@@ -21,8 +21,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
-            TypeMapper typeMapper = new TypeMapper();
-            this.esmAnalyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
 
         public void run()

@@ -12,27 +12,20 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {
     class BuildScopeCommand : IBuildScopeCommand
     {
-        private TES5NameTransformer nameTransformer;
-        private FragmentsReferencesBuilder fragmentsReferencesBuilder;
-        private TES5PropertiesFactory propertiesFactory;
         public void initialize()
-        {
-            this.nameTransformer = new TES5NameTransformer();
-            this.fragmentsReferencesBuilder = new FragmentsReferencesBuilder();
-            this.propertiesFactory = new TES5PropertiesFactory();
-        }
+        { }
 
         public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");
             //Create the header.
-            TES5ScriptHeader scriptHeader = new TES5ScriptHeader(TES5NameTransformer.transform(scriptName, ""), scriptName, TES5BasicType.T_TOPICINFO, "", true);
+            TES5ScriptHeader scriptHeader = new TES5ScriptHeader(TES5NameTransformer.TransformLongName(scriptName, ""), scriptName, TES5BasicType.T_TOPICINFO, "", true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
-            TES4VariableDeclarationList variableList = this.fragmentsReferencesBuilder.buildVariableDeclarationList(referencesPath);
+            TES4VariableDeclarationList variableList = FragmentsReferencesBuilder.buildVariableDeclarationList(referencesPath);
             if (variableList != null)
             {
-                this.propertiesFactory.createProperties(variableList, globalScope, globalVariables);
+                TES5PropertiesFactory.createProperties(variableList, globalScope, globalVariables);
             }
 
             return globalScope;

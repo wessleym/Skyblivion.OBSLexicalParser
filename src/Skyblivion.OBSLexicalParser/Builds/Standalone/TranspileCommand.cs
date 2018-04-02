@@ -23,27 +23,19 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 
         public void initialize(Build build, MetadataLogService metadataLogService)
         {
-            TypeMapper typeMapper = new TypeMapper();
-            ESMAnalyzer analyzer = new ESMAnalyzer(typeMapper, DataDirectory.TES4GameFileName);
-            TES5PrimitiveValueFactory primitiveValueFactory = new TES5PrimitiveValueFactory();
-            TES5BlockFunctionScopeFactory blockLocalScopeFactory = new TES5BlockFunctionScopeFactory();
-            TES5CodeScopeFactory codeScopeFactory = new TES5CodeScopeFactory();
-            TES5ExpressionFactory expressionFactory = new TES5ExpressionFactory();
+            ESMAnalyzer analyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
             TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, BuildTarget.StandaloneSourcePath);
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
             TES5VariableAssignationFactory assignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-            TES5LocalVariableListFactory localVariableFactory = new TES5LocalVariableListFactory();
-            TES5LocalScopeFactory localScopeFactory = new TES5LocalScopeFactory();
-            TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService);
-            TES5ValueFactoryFunctionFiller filler = new TES5ValueFactoryFunctionFiller();
+            TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-            filler.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, expressionFactory, assignationFactory, objectPropertyFactory, analyzer, primitiveValueFactory, typeInferencer, metadataLogService);
-            TES5BranchFactory branchFactory = new TES5BranchFactory(localScopeFactory, codeScopeFactory, valueFactory);
-            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, branchFactory, expressionFactory, typeInferencer);
-            TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory, referenceFactory, blockLocalScopeFactory);
-            converter = new TES4ToTES5ASTConverter(analyzer, new TES5BlockFactory(new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory, branchFactory, localVariableFactory), blockLocalScopeFactory, codeScopeFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, blockLocalScopeFactory, codeScopeFactory, expressionFactory, referenceFactory, branchFactory, assignationFactory, localScopeFactory), localScopeFactory, new TES5InitialBlockCodeFactory(branchFactory, expressionFactory, referenceFactory, objectCallFactory)), objectCallFactory, referenceFactory);
+            TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
+            TES5BranchFactory branchFactory = new TES5BranchFactory(valueFactory);
+            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, branchFactory, typeInferencer);
+            TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory, referenceFactory);
+            converter = new TES4ToTES5ASTConverter(analyzer, new TES5BlockFactory(new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory, branchFactory), new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, branchFactory, assignationFactory), new TES5InitialBlockCodeFactory(branchFactory, referenceFactory, objectCallFactory)), objectCallFactory, referenceFactory);
         }
 
         public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

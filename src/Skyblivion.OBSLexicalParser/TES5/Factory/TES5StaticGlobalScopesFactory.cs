@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5StaticGlobalScopesFactory
+    static class TES5StaticGlobalScopesFactory
     {
-        public List<TES5GlobalScope> createGlobalScopes()
+        public static List<TES5GlobalScope> createGlobalScopes()
         {
             List<TES5GlobalScope> globalScopes = new List<TES5GlobalScope>();
             globalScopes.Add(new TES5GlobalScope(new TES5ScriptHeader("TES4TimerHelper", "TES4TimerHelper", TES5BasicType.T_QUEST, "")));

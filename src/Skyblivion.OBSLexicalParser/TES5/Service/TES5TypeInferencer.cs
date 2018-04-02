@@ -63,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                  * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
                  */
                 ITES5Referencer referencerArgument = argument as ITES5Referencer;
-                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.getType()))
+                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.getType().getNativeType()))
                 { //HACKY!
                     this.inferenceType(referencerArgument.getReferencesTo(), argumentTargetType, multipleScriptsScope);
                 }

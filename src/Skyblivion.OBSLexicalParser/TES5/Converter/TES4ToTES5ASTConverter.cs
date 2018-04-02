@@ -7,7 +7,9 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter
 {
@@ -54,6 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             }
 
             //todo encapsulate it to a different class.
+            bool isStandalone = target.getOutputPath().Contains(Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar);
             foreach (var createdBlock in createdBlocks)
             {
                 var blockType = createdBlock.Key;
@@ -66,19 +69,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     foreach (TES5EventCodeBlock block in blocks)
                     {
                         TES5FunctionScope newFunctionScope = new TES5FunctionScope(blockType+"_"+i.ToString());
-                        foreach (var variable in block.getFunctionScope().getVariables())
+                        foreach (var variable in block.getFunctionScope().getVariables().Values)
                         {
-                            newFunctionScope.addVariable(variable.Value);
+                            newFunctionScope.addVariable(variable);
                         }
 
-                        TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(null, newFunctionScope, block.getCodeScope());
+                        TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.getCodeScope(), new TES5VoidType(), isStandalone);
                         functions.Add(function);
                         if (localScopeArguments == null)
                         {
                             localScopeArguments = new TES5ObjectCallArguments();
-                            foreach (var kvp2 in block.getFunctionScope().getVariables())
+                            foreach (var variable in block.getFunctionScope().getVariables().Values)
                             {
-                                localScopeArguments.add(this.referenceFactory.createReferenceToVariable(kvp2.Value));
+                                localScopeArguments.add(this.referenceFactory.createReferenceToVariable(variable));
                             }
                         }
 

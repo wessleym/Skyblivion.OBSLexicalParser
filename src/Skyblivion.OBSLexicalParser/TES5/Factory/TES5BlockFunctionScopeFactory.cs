@@ -6,9 +6,9 @@ using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5BlockFunctionScopeFactory
+    static class TES5BlockFunctionScopeFactory
     {
-        public TES5FunctionScope createFromBlockType(string blockType)
+        public static TES5FunctionScope createFromBlockType(string blockType)
         {
             TES5FunctionScope localScope = new TES5FunctionScope(blockType);
             switch (blockType)

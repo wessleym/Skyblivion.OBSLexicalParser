@@ -16,22 +16,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
     class ObjectiveHandlingFactory
     {
-        private TES5FragmentFunctionScopeFactory fragmentFunctionScopeFactory;
-        private TES5CodeScopeFactory codeScopeFactory;
-        private TES5LocalScopeFactory localScopeFactory;
         private TES5ReferenceFactory referenceFactory;
         private TES5VariableAssignationFactory variableAssignationFactory;
         private TES5BranchFactory branchFactory;
-        private TES5ExpressionFactory expressionFactory;
-        public ObjectiveHandlingFactory(TES5FragmentFunctionScopeFactory fragmentFunctionScopeFactory, TES5CodeScopeFactory codeScopeFactory, TES5LocalScopeFactory localScopeFactory, TES5BranchFactory branchFactory, TES5VariableAssignationFactory variableAssignationFactory, TES5ReferenceFactory referenceFactory, TES5ExpressionFactory expressionFactory)
+        public ObjectiveHandlingFactory(TES5BranchFactory branchFactory, TES5VariableAssignationFactory variableAssignationFactory, TES5ReferenceFactory referenceFactory)
         {
-            this.fragmentFunctionScopeFactory = fragmentFunctionScopeFactory;
-            this.codeScopeFactory = codeScopeFactory;
-            this.localScopeFactory = localScopeFactory;
             this.variableAssignationFactory = variableAssignationFactory;
             this.referenceFactory = referenceFactory;
             this.branchFactory = branchFactory;
-            this.expressionFactory = expressionFactory;
         }
 
         /*
@@ -41,9 +33,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         public TES5FunctionCodeBlock createEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
         {
             string fragmentName = "Fragment_"+stageId.ToString();
-            TES5FunctionScope functionScope = this.fragmentFunctionScopeFactory.createFromFragmentType(fragmentName, TES5FragmentType.T_QF);
-            TES5CodeScope codeScope = this.codeScopeFactory.createCodeScope(this.localScopeFactory.createRootScope(functionScope));
-            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(new TES5VoidType(), functionScope, codeScope);
+            TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.createFromFragmentType(fragmentName, TES5FragmentType.T_QF);
+            TES5CodeScope codeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(functionScope));
+            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, new TES5VoidType());
             List<ITES5CodeChunk> chunks = this.generateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {
@@ -70,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
                     displayedArguments.add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
-                    TES5ArithmeticExpression expression = this.expressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
+                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                     arguments.add(targetIndex);
                     arguments.add(new TES5Integer(1));
@@ -84,7 +76,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
                     displayedArguments.add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
-                    TES5ArithmeticExpression expression = this.expressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
+                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                     arguments.add(targetIndex);
                     arguments.add(new TES5Integer(1));

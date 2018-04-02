@@ -13,13 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5InitialBlockCodeFactory
     {
         private TES5BranchFactory branchFactory;
-        private TES5ExpressionFactory expressionFactory;
         private TES5ReferenceFactory referenceFactory;
         private TES5ObjectCallFactory objectCallFactory;
-        public TES5InitialBlockCodeFactory(TES5BranchFactory branchFactory, TES5ExpressionFactory expressionFactory, TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
+        public TES5InitialBlockCodeFactory(TES5BranchFactory branchFactory, TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
         {
             this.branchFactory = branchFactory;
-            this.expressionFactory = expressionFactory;
             this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
         }
@@ -41,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     {
                         if (globalScope.getScriptHeader().getBasicScriptType() == TES5BasicType.T_QUEST)
                         {
-                            TES5Branch branch = this.branchFactory.createSimpleBranch(this.expressionFactory.createArithmeticExpression(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "IsRunning", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.getCodeScope().getLocalScope());
+                            TES5Branch branch = this.branchFactory.createSimpleBranch(TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "IsRunning", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.getCodeScope().getLocalScope());
                             //Even though we"d like this script to not do anything at this time, it seems like sometimes condition races, so we"re putting it into a loop anyways but with early return bailout
                             TES5ObjectCallArguments args = new TES5ObjectCallArguments();
                             args.add(new TES5Float(TES5AdditionalBlockChangesPass.ON_UPDATE_TICK));
@@ -53,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                         else if (globalScope.getScriptHeader().getBasicScriptType() == TES5BasicType.T_OBJECTREFERENCE)
                         {
-                            TES5Branch branch = this.branchFactory.createSimpleBranch(this.expressionFactory.createArithmeticExpression(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToPlayer(), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments())), eventCodeBlock.getCodeScope().getLocalScope());
+                            TES5Branch branch = this.branchFactory.createSimpleBranch(TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToPlayer(), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments())), eventCodeBlock.getCodeScope().getLocalScope());
                             eventCodeBlock.addChunk(branch);
                             return branch.getMainBranch().getCodeScope();
                         }

@@ -15,14 +15,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private TES5VariableAssignationConversionFactory assignationFactory;
         private TES5ReturnFactory returnFactory;
         private TES5ValueFactory objectCallFactory;
-        private TES5LocalVariableListFactory localVariableListFactory;
-        public TES5ChainedCodeChunkFactory(TES5ValueFactory objectCallFactory, TES5ReturnFactory returnFactory, TES5VariableAssignationConversionFactory assignationFactory, TES5BranchFactory branchFactory, TES5LocalVariableListFactory localVariableListFactory)
+        public TES5ChainedCodeChunkFactory(TES5ValueFactory objectCallFactory, TES5ReturnFactory returnFactory, TES5VariableAssignationConversionFactory assignationFactory, TES5BranchFactory branchFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.returnFactory = returnFactory;
             this.assignationFactory = assignationFactory;
             this.branchFactory = branchFactory;
-            this.localVariableListFactory = localVariableListFactory;
             branchFactory.setCodeChunkFactory(this); //ugly!!!
         }
 
@@ -37,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4VariableAssignation assignation = chunk as TES4VariableAssignation;
             if (assignation != null) { return this.assignationFactory.createCodeChunk(assignation, codeScope, globalScope, multipleScriptsScope); }
             TES4VariableDeclarationList declarationList = chunk as TES4VariableDeclarationList;
-            if (declarationList != null) { return this.localVariableListFactory.createCodeChunk(declarationList, codeScope); }
+            if (declarationList != null) { TES5LocalVariableListFactory.createCodeChunk(declarationList, codeScope); return null; }
             throw new ConversionException("Cannot convert a chunk: " + chunk.GetType().FullName);
         }
     }

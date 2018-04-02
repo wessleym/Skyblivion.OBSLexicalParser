@@ -10,12 +10,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     {
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ReferenceFactory referenceFactory;
-        private TES5BlockFunctionScopeFactory localScopeFactory;
-        public TES5ReturnFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5BlockFunctionScopeFactory localScopeFactory)
+        public TES5ReturnFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
-            this.localScopeFactory = localScopeFactory;
         }
 
         public TES5CodeChunkCollection createCodeChunk(TES5FunctionScope functionScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

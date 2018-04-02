@@ -4,9 +4,9 @@ using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Input
 {
-    class FragmentsReferencesBuilder
+    static class FragmentsReferencesBuilder
     {
-        public TES4VariableDeclarationList buildVariableDeclarationList(string path)
+        public static TES4VariableDeclarationList buildVariableDeclarationList(string path)
         {
             TES4VariableDeclarationList list = new TES4VariableDeclarationList();
             if (!File.Exists(path))
