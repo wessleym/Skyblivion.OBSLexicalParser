@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParser.csproj">
-      <Project>{933F0062-641C-4051-A573-5A704968E8F5}</Project>
+      <Project>{933f0062-641c-4051-a573-5a704968e8f5}</Project>
       <Name>Skyblivion.OBSLexicalParser</Name>
     </ProjectReference>
   </ItemGroup>

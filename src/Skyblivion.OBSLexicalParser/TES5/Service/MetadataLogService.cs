@@ -21,10 +21,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             return build.GetBuildPath("Metadata");
         }
 
-        public static void ClearFile(Build build)
+        public static void DeleteFile(Build build)
         {
             string metadataPath = GetPath(build);
-            File.WriteAllText(metadataPath, "");
+            File.Delete(metadataPath);
         }
     }
 }

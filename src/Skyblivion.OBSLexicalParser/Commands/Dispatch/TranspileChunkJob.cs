@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
-    class TranspileChunkJob : IDisposable
+    class TranspileChunkJob
     {
         private BuildTracker buildTracker;
         private BuildTargetCollection buildTargets;
@@ -30,12 +30,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(BuildTracker buildTracker, string buildPath, List<Dictionary<string, List<string>>> buildPlan)
+        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
-            this.build = new Build(buildPath);
-            this.buildLogServices = new BuildLogServices(build);
+            this.build = build;
+            this.buildLogServices = buildLogServices;
             this.buildTargets = new BuildTargetCollection();
             this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
@@ -122,11 +122,6 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 
             BuildTarget result = this.buildTargets.getByName(targetName);
             return result;
-        }
-
-        public void Dispose()
-        {
-            buildLogServices.Dispose();
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -47,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     return;
                 }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
-                Transpile(build, buildPath, buildTracker, buildTargets, threadsNumber);
+                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
                 WriteTranspiled(buildTargets, buildTracker);
                 ESMAnalyzer.deallocate();//Hack - force ESM analyzer deallocation.
                 PrepareWorkspace(build, buildTargets);
@@ -56,10 +57,9 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.WriteLine("Build Complete");
         }
 
-        private static void Transpile(Build build, string buildPath, BuildTracker buildTracker, BuildTargetCollection buildTargets, int threadsNumber)
+        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber)
         {
-            // Create Metadata file if it doesn"t exist and clear
-            MetadataLogService.ClearFile(build);
+            MetadataLogService.DeleteFile(build);
             var buildPlan = buildTargets.getBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);
@@ -67,14 +67,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {
-                    /*
-                     * We had some problems with sharing objects inside the jobs, so thats why we pass the path.
-                     * Maybe later we can just inject Build and it will be nice and clean :)
-                     */
-                    using (TranspileChunkJob task = new TranspileChunkJob(buildTracker, buildPath, threadBuildPlan.Value))
-                    {
-                        task.runTask(errorLog, progressWriter);
-                    }
+                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value);
+                    task.runTask(errorLog, progressWriter);
                 }
             }
             progressWriter.WriteLast();
