@@ -41,8 +41,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         TES5FunctionScope onInitFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType("OnInit");
                         TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
                         TES5ObjectCallArguments args = new TES5ObjectCallArguments();
-                        args.add(new TES5Float(ON_UPDATE_TICK));
-                        TES5ObjectCall function = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
+                        args.Add(new TES5Float(ON_UPDATE_TICK));
+                        TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
                         newInitBlock.addChunk(function);
                         blockList.add(newInitBlock);
                         newBlock.addChunk(function);
@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     {
                         TES5FunctionScope onInitFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType("OnInit");
                         TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
-                        TES5ObjectCall function = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "BlockActivation", multipleScriptsScope);
+                        TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation", multipleScriptsScope);
                         newInitBlock.addChunk(function);
                         blockList.add(newInitBlock);
                         break;
@@ -69,14 +69,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                         List<TES4BlockParameter> blockParameterListParameterList = blockParameterList.getVariableList();
                         TES4BlockParameter tesEquippedTarget = blockParameterListParameterList[0];
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER)), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER)), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -84,36 +84,36 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "ontriggeractor":
                     {
                         TES4BlockParameterList parameterList = block.getBlockParameterList();
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         TES5LocalVariable activator = localScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
-                        TES5Reference referenceToCastedVariable = this.referenceFactory.createReferenceToVariable(castedToActor);
-                        TES5Reference referenceToNonCastedVariable = this.referenceFactory.createReferenceToVariable(activator);
+                        TES5Reference referenceToCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(castedToActor);
+                        TES5Reference referenceToNonCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(activator);
                         TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(referenceToCastedVariable, TES5ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL, new TES5None());
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
-                        newCodeScope.getLocalScope().addVariable(castedToActor);
-                        newCodeScope.add(this.assignationFactory.createAssignation(referenceToCastedVariable, referenceToNonCastedVariable));
+                        newCodeScope.LocalScope.addVariable(castedToActor);
+                        newCodeScope.Add(this.assignationFactory.createAssignation(referenceToCastedVariable, referenceToNonCastedVariable));
                         TES5CodeScope outerBranchCode;
                         if (parameterList != null)
                         {
                             //NOT TESTED
                             List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                             ITES5Referencer targetActor = this.referenceFactory.createReadReference(parameterListVariableList[0].getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                            TES5ArithmeticExpression interExpression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(activator), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, targetActor);
+                            TES5ArithmeticExpression interExpression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(activator), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, targetActor);
                             //TES5CodeScope interBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                             TES5CodeScope interBranchCode = newBlock.getCodeScope();
                             outerBranchCode = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
-                            interBranchCode.getLocalScope().setParentScope(outerBranchCode.getLocalScope());
-                            outerBranchCode.add(new TES5Branch(new TES5SubBranch(interExpression, interBranchCode)));
+                            interBranchCode.LocalScope.setParentScope(outerBranchCode.LocalScope);
+                            outerBranchCode.Add(new TES5Branch(new TES5SubBranch(interExpression, interBranchCode)));
                         }
                         else
                         {
                             //outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                             outerBranchCode = newBlock.getCodeScope();
-                            outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
+                            outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
                         }
 
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -128,14 +128,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                         List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.getVariableByName("akNewContainer")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.getVariableByName("akNewContainer")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -150,14 +150,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                         List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.getVariableByName("akOldContainer")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.getVariableByName("akOldContainer")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -172,14 +172,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                         List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.getVariableByName("akNewPackage")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.getVariableByName("akNewPackage")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -191,14 +191,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         TES4BlockParameterList parameterList = block.getBlockParameterList();
                         List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
-                        TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                        TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.getVariableByName("akOldPackage")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.getVariableByName("akOldPackage")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, newContainer);
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -206,12 +206,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onalarm":
                     {
                         //@INCONSISTENCE - We don"t account for alarm type.
-                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "IsAlarmed", multipleScriptsScope), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
+                        TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed", multipleScriptsScope), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                         //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                         TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                        outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                        newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                        outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                        newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.setCodeScope(newCodeScope);
                         break;
                     }
@@ -262,14 +262,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             TES4BlockParameterList parameterList = block.getBlockParameterList();
                             List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
                             TES4BlockParameter equipActor = parameterListVariableList[0];
-                            TES5LocalScope localScope = newBlock.getCodeScope().getLocalScope();
+                            TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                             ITES5Referencer equipActorRef = this.referenceFactory.createReference(equipActor.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
-                            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(localScope.getVariableByName("akActor")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, equipActorRef);
+                            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(localScope.getVariableByName("akActor")), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, equipActorRef);
                             TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(blockFunctionScope));
                             //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
                             TES5CodeScope outerBranchCode = newBlock.getCodeScope();
-                            outerBranchCode.getLocalScope().setParentScope(newCodeScope.getLocalScope());
-                            newCodeScope.add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
+                            outerBranchCode.LocalScope.setParentScope(newCodeScope.LocalScope);
+                            newCodeScope.Add(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                             newBlock.setCodeScope(newCodeScope);
                         }
 

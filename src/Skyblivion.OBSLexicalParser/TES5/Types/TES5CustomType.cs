@@ -67,10 +67,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return this.typeName;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            bool includePrefix = this.typeName != "TES4TimerHelper" && this.typeName != "TES4Container";//no time to refactor now, later.
-            return new string[] { (includePrefix ? this.prefix : "") + this.value() };
+            get
+            {
+                bool includePrefix = this.typeName != "TES4TimerHelper" && this.typeName != "TES4Container";//no time to refactor now, later.
+                return new string[] { (includePrefix ? this.prefix : "") + this.value() };
+            }
         }
 
         public bool isPrimitive()

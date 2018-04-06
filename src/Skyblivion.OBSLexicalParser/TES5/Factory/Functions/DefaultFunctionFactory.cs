@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -24,7 +25,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            if (functionName.ToLower().Contains("placeatme"))
+            {
+                if (newArguments.Any(a => a.Output.Any(b=>b.Contains("TG03LlathasasBust"))))
+                {
+
+                }
+            }
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }
 }

@@ -6,24 +6,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5PlayerReference : ITES5Referencer
     {
-        public IEnumerable<string> output()
-        {
-            return new string[] { "Game.getPlayer()" }; //pretty ugly to do it here.
-        }
+        public IEnumerable<string> Output => new string[] { "Game.getPlayer()" }; //pretty ugly to do it here.
 
-        public string getName()
-        {
-            return "player";
-        }
+        public string Name => "player";
 
-        public ITES5Variable getReferencesTo()
-        {
-            return null;
-        }
+        public ITES5Variable ReferencesTo => null;
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_ACTOR;
-        }
+        public ITES5Type TES5Type => TES5BasicType.T_ACTOR;
     }
 }

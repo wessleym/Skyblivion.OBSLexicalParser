@@ -38,13 +38,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             //We move the called upon to function arg ( cloned object ) and we replace placed upon to player
-            TES4ApiToken newToken = new TES4ApiToken(calledOn.getName());
-            calledOn = this.referenceFactory.createReferenceToPlayer();
-            string functionName = "placeAtMe";
+            TES4ApiToken newToken = new TES4ApiToken(calledOn.Name);
+            ITES5Referencer newCalledOn = TES5ReferenceFactory.CreateReferenceToPlayer();
+            const string functionName = "PlaceAtMe";
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            arguments.add(this.valueFactory.createValue(newToken, codeScope, globalScope, multipleScriptsScope));
-            arguments.add(new TES5Bool(true));
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            arguments.Add(this.valueFactory.createValue(newToken, codeScope, globalScope, multipleScriptsScope));
+            arguments.Add(new TES5Integer(1));//WTM:  Change:  I added this argument.
+            arguments.Add(new TES5Bool(true));
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope,
+                //this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope)//WTM:  Change:  Previously, the above arguments variable was not used.  It probably should be.
+                arguments);
         }
     }
 }

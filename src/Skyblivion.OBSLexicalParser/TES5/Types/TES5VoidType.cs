@@ -15,10 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return "";
         }
 
-        public IEnumerable<string> output()
-        {
-            throw new ConversionException("VOID TYPE value output");
-        }
+        public IEnumerable<string> Output => throw new ConversionException("VOID TYPE value output");
 
         public bool isPrimitive()
         {

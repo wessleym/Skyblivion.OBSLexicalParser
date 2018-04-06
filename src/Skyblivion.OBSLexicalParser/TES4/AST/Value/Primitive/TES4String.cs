@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
             return true;
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             return predicate(this) ? new ITES4CodeFilterable[] { this } : new ITES4CodeFilterable[] { };
         }

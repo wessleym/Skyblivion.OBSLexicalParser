@@ -39,16 +39,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
-            TES5LocalVariable activatorVariable = codeScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+            TES5LocalVariable activatorVariable = codeScope.FindVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
             if (activatorVariable == null)
             {
                 throw new ConversionException("isActionRef called in a context where action ref should not be present");
             }
 
-            string dataString = functionArguments.getValue(0).StringValue;
-            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(this.referenceFactory.createReferenceToVariable(activatorVariable), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope));
+            string dataString = functionArguments[0].StringValue;
+            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(activatorVariable), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope));
             return expression;
         }
     }

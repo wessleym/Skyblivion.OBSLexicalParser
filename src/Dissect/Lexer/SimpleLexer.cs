@@ -1,4 +1,5 @@
 using Dissect.Lexer.Recognizer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -31,7 +32,26 @@ namespace Dissect.Lexer
         */
         public SimpleLexer regex(string type, Regex regex)
         {
+            if (!regex.Options.HasFlag(RegexOptions.Compiled))
+            {
+                //throw new InvalidOperationException("Regex was not compiled.");
+            }
             this.recognizers.Add(type, new RegexRecognizer(regex));
+            return this;
+        }
+        private SimpleLexer regex(string type, string pattern, RegexOptions options)
+        {
+            regex(type, new Regex(pattern, options));
+            return this;
+        }
+        public SimpleLexer regex(string type, string pattern)
+        {
+            regex(type, pattern, RegexOptions.Compiled);
+            return this;
+        }
+        public SimpleLexer regexIgnoreCase(string type, string pattern)
+        {
+            regex(type, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             return this;
         }
 

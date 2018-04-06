@@ -6,8 +6,10 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -38,30 +40,36 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            arguments.add(calledOn);
-            arguments.add(this.valueFactory.createValue(functionArguments.getValue(0), codeScope, globalScope, multipleScriptsScope));
-            ITES4StringValue optionalFlag = functionArguments.getValue(2);
+            arguments.Add(calledOn);
+            ITES5Value argument1 = this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope);
+            if (argument1.TES5Type != TES5BasicType.T_TOPIC)
+            {
+                TES5Castable argument1Castable = argument1 as TES5Reference;
+                if (argument1Castable != null) { argument1Castable.ManualCastTo = TES5BasicType.T_TOPIC; }
+            }
+            arguments.Add(argument1);
+            ITES4StringValue optionalFlag = functionArguments.GetOrNull(2);
             if (optionalFlag != null)
             {
                 string optionalFlagDataString = optionalFlag.StringValue;
                 if (ESMAnalyzer._instance().getFormTypeByEDID(optionalFlagDataString).value() != TES4RecordType.REFR.Name)
                 {
-                    this.metadataLogService.add("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
+                    this.metadataLogService.WriteLine("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
                     optionalFlag = new TES4ApiToken(optionalFlag.getData()+"Ref");
                 }
 
-                arguments.add(this.valueFactory.createValue(optionalFlag, codeScope, globalScope, multipleScriptsScope));
+                arguments.Add(this.valueFactory.createValue(optionalFlag, codeScope, globalScope, multipleScriptsScope));
             }
             else
             {
-                arguments.add(new TES5None());
+                arguments.Add(new TES5None());
             }
 
-            arguments.add(new TES5Bool(true));
+            arguments.Add(new TES5Bool(true));
             ITES5Referencer timerReference = this.referenceFactory.createReadReference("tTimer", globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.createObjectCall(timerReference, "LegacySay", multipleScriptsScope, arguments);
+            return this.objectCallFactory.CreateObjectCall(timerReference, "LegacySay", multipleScriptsScope, arguments);
         }
     }
 }

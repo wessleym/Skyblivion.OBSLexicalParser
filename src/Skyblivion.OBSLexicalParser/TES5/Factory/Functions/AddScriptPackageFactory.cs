@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -35,23 +36,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
-            string dataString = functionArguments.getValue(0).StringValue;
+            string dataString = functionArguments[0].StringValue;
             string referenceName = "TES4SCENE_" +
 #if PHP_COMPAT
-                PHPFunction.MD5(calledOn.getName()+ dataString).Substring(0, 16)
+                PHPFunction.MD5(calledOn.Name + dataString).Substring(0, 16)
 #else
-                (calledOn.getName() + dataString).GetHashCode().ToString()
+                Math.Abs((calledOn.Name + dataString).GetHashCode()).ToString()
 #endif
                 ;
-            this.metadataLogService.add("ADD_SCRIPT_SCENE", new string[] { dataString, referenceName });
+            this.metadataLogService.WriteLine("ADD_SCRIPT_SCENE", new string[] { dataString, referenceName });
             ITES5Referencer reference = this.referenceFactory.createReference(referenceName, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();
             /*
              * Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
              */
-            return this.objectCallFactory.createObjectCall(reference, "ForceStart", multipleScriptsScope, funcArgs);
+            return this.objectCallFactory.CreateObjectCall(reference, "ForceStart", multipleScriptsScope, funcArgs);
         }
     }
 }

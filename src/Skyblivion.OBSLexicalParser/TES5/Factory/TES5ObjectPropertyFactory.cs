@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5ObjectProperty createObjectProperty(TES5MultipleScriptsScope multipleScriptsScope, ITES5Referencer reference, string propertyName)
         {
-            ITES5Variable referencesTo = reference.getReferencesTo();
+            ITES5Variable referencesTo = reference.ReferencesTo;
             this.typeInferencer.inferenceVariableByReferenceEdid(referencesTo, multipleScriptsScope);
             TES5Property remoteProperty = multipleScriptsScope.getPropertyFromScript(referencesTo.getPropertyType().value(), propertyName);
             TES5ObjectProperty objectProperty = new TES5ObjectProperty(reference, remoteProperty);

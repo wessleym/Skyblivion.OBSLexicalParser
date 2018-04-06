@@ -34,13 +34,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.popValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
-            string functionName = "play";
+            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
+            const string functionName = "play";
             TES5ObjectCallArguments args = new TES5ObjectCallArguments();
-            args.add(this.referenceFactory.createReferenceToSelf(globalScope));
-            return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, args);
+            args.Add(
+                //this.referenceFactory.createReferenceToSelf(globalScope)//WTM:  Change
+                calledOn
+                );
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, args);
         }
     }
 }

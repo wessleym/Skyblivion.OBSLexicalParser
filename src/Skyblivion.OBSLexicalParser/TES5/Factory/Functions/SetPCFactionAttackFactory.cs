@@ -36,10 +36,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             int arg;
-            switch ((int)functionArguments.getValue(1).getData())
+            switch ((int)functionArguments[1].getData())
             {
                 case 0:
                 {
@@ -60,9 +60,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments();
-            constantArgument.add(new TES5Integer(arg));
-            ITES5Referencer faction = this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
-            TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(faction, "SetCrimeGoldViolent", multipleScriptsScope, constantArgument);
+            constantArgument.Add(new TES5Integer(arg));
+            ITES5Referencer faction = this.referenceFactory.createReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(faction, "SetCrimeGoldViolent", multipleScriptsScope, constantArgument);
             return newFunction;
         }
     }

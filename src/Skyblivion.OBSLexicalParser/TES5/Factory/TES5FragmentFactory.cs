@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES5FunctionScope fragmentLocalScope = TES5FragmentFunctionScopeFactory.createFromFragmentType(fragmentName, fragmentType);
             TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(fragmentLocalScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(fragmentLocalScope)), new TES5VoidType());
-            foreach (var codeChunk in chunks.getCodeChunks())
+            foreach (var codeChunk in chunks.CodeChunks)
             {
                 TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, function.getCodeScope(), globalScope, multipleScriptsScope);
                 if (codeChunks != null)

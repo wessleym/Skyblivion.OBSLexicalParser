@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -13,15 +12,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5ReferenceFactory
     {
         public const string MESSAGEBOX_VARIABLE_CONST = "TES4_MESSAGEBOX_RESULT";
+        public static Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ObjectPropertyFactory objectPropertyFactory;
-        private Dictionary<string, ITES5Type> special_conversions;
+        private Dictionary<string, ITES5Type> specialConversions;
         public TES5ReferenceFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectPropertyFactory objectPropertyFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectPropertyFactory = objectPropertyFactory;
             //Those are used to hook in the internal Skyblivion systems.
-            special_conversions = new Dictionary<string, ITES5Type>()
+            specialConversions = new Dictionary<string, ITES5Type>()
             {
                 { "TES4AttrStrength",  TES5BasicType.T_GLOBALVARIABLE },
                 { "TES4AttrIntelligence", TES5BasicType.T_GLOBALVARIABLE },
@@ -39,23 +39,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             };
         }
 
-        public TES5StaticReference createReferenceToStaticClass(string name)
+        public static TES5StaticReference CreateReferenceToStaticClass(string name)
         {
             return new TES5StaticReference(name);
         }
 
-        public TES5SelfReference createReferenceToSelf(TES5GlobalScope globalScope)
+        public static TES5SelfReference CreateReferenceToSelf(TES5GlobalScope globalScope)
         {
             //todo perhaps move tes5scriptAsVariable to a new factory
             return new TES5SelfReference(new TES5ScriptAsVariable(globalScope.getScriptHeader()));
         }
 
-        public TES5Reference createReferenceToVariable(ITES5Variable variable)
+        public static TES5Reference CreateReferenceToVariable(ITES5Variable variable)
         {
             return new TES5Reference(variable);
         }
 
-        public TES5PlayerReference createReferenceToPlayer()
+        public static TES5PlayerReference CreateReferenceToPlayer()
         {
             return new TES5PlayerReference();
         }
@@ -71,21 +71,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer extractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             ITES5Type type = globalScope.getScriptHeader().getBasicScriptType();
-            if (type == TES5BasicType.T_OBJECTREFERENCE)
+            if (type == TES5BasicType.T_OBJECTREFERENCE || type==TES5BasicType.T_ACTOR)//Change:  WTM:  Added Actor here.
             {
-                return this.createReferenceToSelf(globalScope);
+                return TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
             }
             else if (type == TES5BasicType.T_ACTIVEMAGICEFFECT)
             {
-                TES5SelfReference self = this.createReferenceToSelf(globalScope);
-                return this.objectCallFactory.createObjectCall(self, "GetTargetActor", multipleScriptsScope);
+                TES5SelfReference self = TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
+                return this.objectCallFactory.CreateObjectCall(self, "GetTargetActor", multipleScriptsScope);
             }
             else if (type == TES5BasicType.T_QUEST)
             {
                 //todo - this should not be done like this
                 //we should actually not try to extract the implicit reference on the non-reference oblivion functions like "stopQuest"
                 //think of this line as a hacky way to just get code forward.
-                return this.createReferenceToSelf(globalScope);
+                return TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
             }
             else if (type == TES5BasicType.T_TOPICINFO)
             {
@@ -105,10 +105,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer createReadReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             ITES5Referencer rawReference = this.createReference(referenceName, globalScope, multipleScriptsScope, localScope);
-            if (rawReference.getType() == TES5BasicType.T_GLOBALVARIABLE)
+            if (rawReference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             {
                 //Changed to int implementation.
-                return this.objectCallFactory.createObjectCall(rawReference, "GetValueInt", multipleScriptsScope);
+                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt", multipleScriptsScope);
             }
             else
             {
@@ -125,10 +125,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
             if (referenceName.ToLower() == "player")
             {
-                return this.createReferenceToPlayer();
+                return TES5ReferenceFactory.CreateReferenceToPlayer();
             }
 
-            Match match = Regex.Match(referenceName, @"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase);
+            Match match = PropertyNameRegex.Match(referenceName);
             if (match.Success)
             {
                 ITES5Referencer mainReference = this.createReference(match.Groups[1].Value, globalScope, multipleScriptsScope, localScope);
@@ -144,7 +144,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 {
                     TES5Property propertyToAddToGlobalScope = null;
                     ITES5Type specialConversion;
-                    if (this.special_conversions.TryGetValue(referenceName, out specialConversion))
+                    if (this.specialConversions.TryGetValue(referenceName, out specialConversion))
                     {
                         propertyToAddToGlobalScope = new TES5Property(referenceName, specialConversion, referenceName);
                     }

@@ -37,13 +37,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             //Faction Reactions are Per-Faction not per-Actor, so we just simulate what would potentially happen in Skyrim
-            var argument1 = functionArguments.getValue(1);
+            var argument1 = functionArguments[1];
             Nullable<int> argument1NullableInt = argument1.getData() as Nullable<int>;
             if (argument1NullableInt != null && argument1NullableInt.Value==-100)
             {
                 string functionName = "StartCombat";
-                functionArguments.popValue(1);
-                return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                functionArguments.RemoveAt(1);
+                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else
             {

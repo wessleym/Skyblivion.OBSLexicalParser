@@ -32,17 +32,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
             return this.chunks;
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
             if (this.blockParameterList != null)
             {
-                filtered = filtered.Concat(this.blockParameterList.filter(predicate));
+                filtered = filtered.Concat(this.blockParameterList.Filter(predicate));
             }
 
             if (this.chunks != null)
             {
-                filtered = filtered.Concat(this.chunks.filter(predicate));
+                filtered = filtered.Concat(this.chunks.Filter(predicate));
             }
 
             return filtered.ToArray();

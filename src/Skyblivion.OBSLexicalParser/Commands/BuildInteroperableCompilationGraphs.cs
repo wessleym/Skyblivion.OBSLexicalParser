@@ -1,5 +1,4 @@
 using Dissect.Extensions.IDictionaryExtensions;
-using Dissect.Parser.Exceptions;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
@@ -7,8 +6,8 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -78,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     continue;
                                 }*/
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
-                                AST.filter((data) =>
+                                AST.Filter((data) =>
                                 {
                                     TES4ObjectProperty property = data as TES4ObjectProperty;
                                     if (property == null) { return false; }
@@ -89,7 +88,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 Dictionary<string, ITES5Type> preparedPropertiesTypes = new Dictionary<string, ITES5Type>();
                                 foreach (var property in propertiesAccesses)
                                 {
-                                    Match match = Regex.Match(property.StringValue, @"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase);
+                                    Match match = TES5ReferenceFactory.PropertyNameRegex.Match(property.StringValue);
                                     string propertyName = match.Groups[1].Value;
                                     string propertyKeyName = propertyName.ToLower();
                                     bool containedKey;
@@ -109,6 +108,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 }
 
                                 debugLog.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared\r\n");
+                                string lowerScriptType = scriptName.ToLower();
                                 foreach (var kvp2 in preparedProperties)
                                 {
                                     var preparedPropertyKey = kvp2.Key;
@@ -116,7 +116,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string propertyTypeName = preparedPropertiesTypes[preparedPropertyKey].getOriginalName();
                                     //Only keys are lowercased.
                                     string lowerPropertyType = propertyTypeName.ToLower();
-                                    string lowerScriptType = scriptName.ToLower();
                                     dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
                                     usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
                                     debugLog.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + "\r\n");

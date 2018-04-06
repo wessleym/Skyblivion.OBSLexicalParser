@@ -32,14 +32,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
             return this.mainBranch;
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            IEnumerable<ITES4CodeFilterable> filtered = this.mainBranch.filter(predicate);
+            IEnumerable<ITES4CodeFilterable> filtered = this.mainBranch.Filter(predicate);
             if (this.elseifBranches != null)
             {
                 foreach (var elseifBranch in this.elseifBranches.getSubBranches())
                 {
-                    filtered = filtered.Concat(elseifBranch.filter(predicate));
+                    filtered = filtered.Concat(elseifBranch.Filter(predicate));
                 }
             }
 

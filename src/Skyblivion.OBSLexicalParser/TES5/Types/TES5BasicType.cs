@@ -212,7 +212,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public bool isPrimitive()
         {
-            return this == T_BOOL || this == T_INT || this == T_STRING || this == T_FLOAT;
+            return this == T_BOOL || this == T_INT || this == T_FLOAT || this == T_STRING;
         }
 
         public bool isNativePapyrusType()
@@ -225,10 +225,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return Name;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { Name };
-        }
+        public IEnumerable<string> Output => new string[] { Name };
 
         public void setNativeType(ITES5Type basicType)
         {

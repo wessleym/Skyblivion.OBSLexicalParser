@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.DI
         {
             valueFactory.addFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("addachievement", new FillerFactory());
-            valueFactory.addFunctionFactory("additem", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.addFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("addscriptpackage", new AddScriptPackageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("addspell", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("addtopic", new PopCalledRenameFunctionFactory("Add", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
@@ -103,7 +103,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("getpcinfamy", new GetPCInfamyFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpcisrace", new GetPCIsRaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpcissex", new GetPCIsSexFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("getpcmiscstat", new NotSupportedFactory());
+            valueFactory.addFunctionFactory("getpcmiscstat", new NotSupportedFactory());//WTM:  Note:  This only seems to be used as "GetPCMiscStat 7 >= 30" in Standalone\Source\rusiabradusscript.txt.
             valueFactory.addFunctionFactory("getplayercontrolsdisabled", new ReturnFalseFactory());
             valueFactory.addFunctionFactory("getplayerinseworld", new GetPlayerInSEWorldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpos", new GetPosFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -116,8 +116,8 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("getsleeping", new RenamedFunctionFactory("GetSleepState", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("getstagedone", new PopCalledRenameFunctionFactory("GetStageDone", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("getstage", new PopCalledRenameFunctionFactory("GetStage", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("getstartingangle", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("getstartingpos", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.addFunctionFactory("getstartingangle", /*new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory)*/new NotSupportedFactory());//WTM:  Change
+            valueFactory.addFunctionFactory("getstartingpos", /*new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory)*/new NotSupportedFactory());//WTM:  Change
             valueFactory.addFunctionFactory("gettalkedtopc", new ReturnTrueFactory());
             valueFactory.addFunctionFactory("getweaponanimtype", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("gotojail", new GoToJailFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -162,11 +162,11 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("modpcmiscstat", new FillerFactory());
             valueFactory.addFunctionFactory("movetomarker", new RenamedFunctionFactory("MoveTo", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("moveto", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("payfine", new PayFineFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("payfine", new PayFineFactory(objectCallFactory, referenceFactory));
             valueFactory.addFunctionFactory("payfinethief", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("pickidle", new FillerFactory());
             valueFactory.addFunctionFactory("placeatme", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("playbink", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("playbink", new PlayBinkFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("playgroup", new PlayGroupFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("playmagiceffectvisuals", new FillerFactory());
             valueFactory.addFunctionFactory("playmagicshadervisuals", new FillerFactory());
@@ -177,7 +177,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("refreshtopiclist", new FillerFactory());
             valueFactory.addFunctionFactory("releaseweatheroverride", new ReleaseWeatherOverrideFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("removeallitems", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("removeitem", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.addFunctionFactory("removeitem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("removeme", new RemoveMeFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("removescriptpackage", new FillerFactory());
             valueFactory.addFunctionFactory("removespell", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
@@ -200,8 +200,8 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setallvisible", new FillerFactory());
             valueFactory.addFunctionFactory("setangle", new SetAngleFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("setcellfullname", new NotSupportedFactory());//WTM:  Change:  Added
-            valueFactory.addFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("setcellownership", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
+            valueFactory.addFunctionFactory("setcellownership", new SetCellOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setclass", new FillerFactory());
             valueFactory.addFunctionFactory("setcombatstyle", new FillerFactory());
             valueFactory.addFunctionFactory("setcrimegold", new SetCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -214,14 +214,14 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setforcesneak", new SetForceSneakFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("setghost", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setignorefriendlyhits", new FillerFactory());
-            valueFactory.addFunctionFactory("setinchargen", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("setinchargen", new SetInChargenFactory(objectCallFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setinvestmentgold", new FillerFactory());
             valueFactory.addFunctionFactory("setitemvalue", new FillerFactory());
             valueFactory.addFunctionFactory("setlevel", new NotSupportedFactory());//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setnoavoidance", new FillerFactory());
             valueFactory.addFunctionFactory("setnorumors", new FillerFactory());
             valueFactory.addFunctionFactory("setopenstate", new SetOpenStateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("setownership", new SetOwnershipFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("setownership", new SetOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.addFunctionFactory("setpackduration", new FillerFactory());
             valueFactory.addFunctionFactory("setpcexpelled", new PopCalledRenameFunctionFactory("SetPlayerExpelled", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setpcfactionattack", new SetPCFactionAttackFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -231,7 +231,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setpcinfamy", new SetPCInfamyFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("setplayerinseworld", new FillerFactory());
             valueFactory.addFunctionFactory("setpos", new SetPosFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("setpublic", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("setpublic", new SetCellPublicFlagFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setquestobject", new FillerFactory());
             valueFactory.addFunctionFactory("setrestrained", new FillerFactory());
             valueFactory.addFunctionFactory("setrigidbodymass", new FillerFactory());

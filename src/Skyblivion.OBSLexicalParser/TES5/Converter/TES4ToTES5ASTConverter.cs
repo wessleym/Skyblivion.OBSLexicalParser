@@ -81,7 +81,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             localScopeArguments = new TES5ObjectCallArguments();
                             foreach (var variable in block.getFunctionScope().getVariables().Values)
                             {
-                                localScopeArguments.add(this.referenceFactory.createReferenceToVariable(variable));
+                                localScopeArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(variable));
                             }
                         }
 
@@ -99,7 +99,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     foreach (var function in functions)
                     {
                         blockList.add(function);
-                        TES5ObjectCall functionCall = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), function.getFunctionName(), multipleScriptsScope, localScopeArguments, false // hacky.
+                        TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.getFunctionName(), multipleScriptsScope, localScopeArguments, false // hacky.
                         );
                         proxyBlock.addChunk(functionCall);
                     }

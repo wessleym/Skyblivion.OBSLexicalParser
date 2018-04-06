@@ -105,7 +105,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
             return md5;
 #else
-            return string.Join(",", this.buildTargets.Select(kvp => kvp.Key)).GetHashCode().ToString();
+            return Math.Abs(string.Join(",", this.buildTargets.Select(kvp => kvp.Key)).GetHashCode()).ToString();
 #endif
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
-    class TES5Float : ITES5Primitive
+    class TES5Float : TES5IntegerOrFloat
     {
         private float f;
         public TES5Float(float f)
@@ -11,19 +11,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.f = f;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { f.ToString() };
-        }
+        public override IEnumerable<string> Output => new string[] { f.ToString() };
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_FLOAT;
-        }
+        public override ITES5Type TES5Type => TES5BasicType.T_FLOAT;
 
-        public object getValue()
-        {
-            return this.f;
-        }
+        public override int ConvertedIntValue => (int)f;
     }
 }

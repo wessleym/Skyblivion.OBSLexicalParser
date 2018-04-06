@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
         public IEnumerable<string> Output()
         {
             return (new string[] { "Else" })
-                .Concat(this.codeScope.output());
+                .Concat(this.codeScope.Output);
         }
     }
 }

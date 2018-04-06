@@ -57,20 +57,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private TES5ElseSubBranch convertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope outerLocalScope = outerCodeScope.getLocalScope();
+            TES5LocalScope outerLocalScope = outerCodeScope.LocalScope;
             TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(newScope);
-            TES4CodeChunks branchChunks = branch.getCodeChunks();
+            TES4CodeChunks branchChunks = branch.CodeChunks;
             if (branchChunks != null)
             {
-                foreach (ITES4CodeChunk codeChunk in branchChunks.getCodeChunks())
+                foreach (ITES4CodeChunk codeChunk in branchChunks.CodeChunks)
                 {
                     TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                         {
-                            newCodeScope.add(newCodeChunk);
+                            newCodeScope.Add(newCodeChunk);
                         }
                     }
                 }
@@ -81,21 +81,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private TES5SubBranch convertSubBranch(TES4SubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope outerLocalScope = outerCodeScope.getLocalScope();
-            ITES5Value expression = this.valueFactory.createValue(branch.getExpression(), outerCodeScope, globalScope, multipleScriptsScope);
+            TES5LocalScope outerLocalScope = outerCodeScope.LocalScope;
+            ITES5Value expression = this.valueFactory.createValue(branch.Expression, outerCodeScope, globalScope, multipleScriptsScope);
             TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(newScope);
-            TES4CodeChunks branchChunks = branch.getCodeChunks();
+            TES4CodeChunks branchChunks = branch.CodeChunks;
             if (branchChunks != null)
             {
-                foreach (ITES4CodeChunk codeChunk in branchChunks.getCodeChunks())
+                foreach (ITES4CodeChunk codeChunk in branchChunks.CodeChunks)
                 {
                     TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                         {
-                            newCodeScope.add(newCodeChunk);
+                            newCodeScope.Add(newCodeChunk);
                         }
                     }
                 }

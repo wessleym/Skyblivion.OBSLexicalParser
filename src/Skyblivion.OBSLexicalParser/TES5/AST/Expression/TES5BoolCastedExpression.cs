@@ -12,14 +12,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             this.value = value;
         }
 
-        public ITES5Type getType()
-        {
-            return this.value.getType();
-        }
+        public ITES5Type TES5Type => this.value.TES5Type;
 
-        public IEnumerable<string> output()
-        {
-            return this.value.output();
-        }
+        public IEnumerable<string> Output => this.value.Output;
     }
 }

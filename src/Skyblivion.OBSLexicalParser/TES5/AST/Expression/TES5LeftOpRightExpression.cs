@@ -18,13 +18,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             this.rightValue = rightValue;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string leftOutput = this.leftValue.output().Single();
-            string rightOutput = this.rightValue.output().Single();
-            return new string[] { "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")" };
+            get
+            {
+                string leftOutput = this.leftValue.Output.Single();
+                string rightOutput = this.rightValue.Output.Single();
+                return new string[] { "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")" };
+            }
         }
 
-        public abstract ITES5Type getType();
+        public abstract ITES5Type TES5Type { get; }
     }
 }

@@ -34,13 +34,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             //@INCONSISTENCE - Will only check for scripted effects
             //In oblivion, this is checking for a spell which targeted a given actor
             //In Skyrim you can check for effects only.
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
-            newArgs.add(this.referenceFactory.createReference("EffectSEFF", globalScope, multipleScriptsScope, localScope));
-            return this.objectCallFactory.createObjectCall(calledOn, "HasMagicEffect", multipleScriptsScope, newArgs);
+            newArgs.Add(this.referenceFactory.createReference("EffectSEFF", globalScope, multipleScriptsScope, localScope));
+            return this.objectCallFactory.CreateObjectCall(calledOn, "HasMagicEffect", multipleScriptsScope, newArgs);
         }
     }
 }

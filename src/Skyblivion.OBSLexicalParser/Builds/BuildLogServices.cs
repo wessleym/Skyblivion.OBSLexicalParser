@@ -12,6 +12,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public MappedTargetsLogService MappedTargetsLogService => mappedTargetsLogService.Value;
         public BuildLogServices(Build build)
         {
+            MetadataLogService.DeleteFile(build);
+            MappedTargetsLogService.DeleteFile(build);
             metadataLogService = new Lazy<MetadataLogService>(() => new MetadataLogService(build));
             mappedTargetsLogService = new Lazy<MappedTargetsLogService>(() => new MappedTargetsLogService(build));
         }

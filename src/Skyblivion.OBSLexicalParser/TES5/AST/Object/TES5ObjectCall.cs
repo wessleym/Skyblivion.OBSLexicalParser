@@ -8,54 +8,35 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
     class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
     {
         private ITES5Referencer called;
-        private string functionName;
-        private TES5ObjectCallArguments arguments;
+        public string FunctionName { get; private set; }
+        public TES5ObjectCallArguments Arguments { get; private set; }
         public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments arguments = null)
         {
             this.called = called;
-            this.functionName = functionName;
-            this.arguments = arguments;
+            this.FunctionName = functionName;
+            this.Arguments = arguments;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string argumentsCode = "";
-            if (this.arguments != null)
+            get
             {
-                argumentsCode = this.arguments.output().Single();
+                string argumentsCode = "";
+                if (this.Arguments != null)
+                {
+                    argumentsCode = this.Arguments.Output.Single();
+                }
+                string calledFirst = this.called.Output.Single();
+                return new string[] { calledFirst + "." + this.FunctionName + "(" + argumentsCode + ")" };
             }
-            string calledFirst = this.called.output().Single();
-            return new string[] { calledFirst + "." + this.functionName + "(" + argumentsCode + ")" };
         }
 
-        public TES5ObjectCallArguments getArguments()
-        {
-            return this.arguments;
-        }
+        public ITES5Referencer AccessedObject => this.called;
 
-        public ITES5Referencer getAccessedObject()
-        {
-            return this.called;
-        }
+        public ITES5Variable ReferencesTo => null;
 
-        public string getFunctionName()
-        {
-            return this.functionName;
-        }
+        public string Name => "ObjectCall";
 
-        public ITES5Variable getReferencesTo()
-        {
-            return null;
-        }
-
-        public string getName()
-        {
-            return "ObjectCall";
-        }
-
-        public ITES5Type getType()
-        {
-            return TES5InheritanceGraphAnalyzer.findReturnTypeForObjectCall(this.called.getType(), this.functionName);
-        }
+        public ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.findReturnTypeForObjectCall(this.called.TES5Type, this.FunctionName);
     }
 }

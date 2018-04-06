@@ -22,19 +22,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             this.isStandalone = isStandalone;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string returnTypeValue = this.returnType.value();
-            string functionReturnType = returnTypeValue != "" ? returnTypeValue + " " :
+            get
+            {
+                string returnTypeValue = this.returnType.value();
+                string functionReturnType = returnTypeValue != "" ? returnTypeValue + " " :
 #if PHP_COMPAT
                 isStandalone ? "" : " "
 #else
                 ""
 #endif
                 ;
-            return (new string[] { functionReturnType + "Function " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
-                .Concat(this.codeScope.output())
-                .Concat(new string[] { "EndFunction" });
+                return (new string[] { functionReturnType + "Function " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
+                    .Concat(this.codeScope.Output)
+                    .Concat(new string[] { "EndFunction" });
+            }
         }
 
         public string getFunctionName()
@@ -49,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public void addChunk(ITES5CodeChunk chunk)
         {
-            this.codeScope.add(chunk);
+            this.codeScope.Add(chunk);
         }
 
         public TES5FunctionScope getFunctionScope()

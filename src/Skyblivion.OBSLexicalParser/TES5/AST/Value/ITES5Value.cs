@@ -9,7 +9,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
      */
     interface ITES5Value : ITES5Outputtable
     {
-        ITES5Type getType();
-        //object getValue();//WTM:  Change:  ITES5Primitive already had this, so I removed it here.
+        ITES5Type TES5Type { get; }
     }
 }

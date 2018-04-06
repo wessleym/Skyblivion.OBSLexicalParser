@@ -3,27 +3,18 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
-    class TES5Integer : ITES5Primitive
+    class TES5Integer : TES5IntegerOrFloat
     {
-        private int integer;
+        public int IntValue { get; private set; }
         public TES5Integer(int integer)
         {
-            this.integer = integer;
+            this.IntValue = integer;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { this.integer.ToString() };
-        }
+        public override IEnumerable<string> Output => new string[] { this.IntValue.ToString() };
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_INT;
-        }
+        public override ITES5Type TES5Type => TES5BasicType.T_INT;
 
-        public object getValue()
-        {
-            return this.integer;
-        }
+        public override int ConvertedIntValue => IntValue;
     }
 }

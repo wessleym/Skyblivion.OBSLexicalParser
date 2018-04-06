@@ -9,6 +9,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -43,30 +44,30 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments == null || !functionArguments.Any())
             {
                 TES5ObjectCallArguments constantArgumentForNoFunctionArguments = new TES5ObjectCallArguments();
-                TES5LocalVariable meaningVariable = codeScope.findVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+                TES5LocalVariable meaningVariable = codeScope.FindVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                 if (meaningVariable != null)
                 {
-                    constantArgumentForNoFunctionArguments.add(this.referenceFactory.createReferenceToVariable(meaningVariable));
+                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(meaningVariable));
                 }
                 else
                 {
-                    constantArgumentForNoFunctionArguments.add(this.referenceFactory.createReferenceToPlayer());
+                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToPlayer());
                 }
 
-                constantArgumentForNoFunctionArguments.add(new TES5Bool(true)); //Since default in oblivion is ,,skip the OnActivateBlock", this defaults to ,,abDefaultProcessingOnly = true" in Skyrim
-                return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, constantArgumentForNoFunctionArguments);
+                constantArgumentForNoFunctionArguments.Add(new TES5Bool(true)); //Since default in oblivion is ,,skip the OnActivateBlock", this defaults to ,,abDefaultProcessingOnly = true" in Skyrim
+                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, constantArgumentForNoFunctionArguments);
             }
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments();
-            constantArgument.add(this.valueFactory.createValue(functionArguments.getValue(0), codeScope, globalScope, multipleScriptsScope));
-            ITES4StringValue blockOnActivate = functionArguments.getValue(1);
+            constantArgument.Add(this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope));
+            ITES4StringValue blockOnActivate = functionArguments.GetOrNull(1);
             if (blockOnActivate != null)
             {
                 bool blockOnActivateVal = (int)blockOnActivate.getData() == 1;
-                constantArgument.add(new TES5Bool(!blockOnActivateVal));
+                constantArgument.Add(new TES5Bool(!blockOnActivateVal));
             }
 
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, constantArgument);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, constantArgument);
         }
     }
 }

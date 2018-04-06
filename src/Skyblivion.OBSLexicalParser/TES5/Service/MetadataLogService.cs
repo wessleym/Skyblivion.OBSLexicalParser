@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             : base(GetPath(build), FileMode.Append)
         { }
 
-        public void add(string command, IEnumerable<string> arguments = null)
+        public void WriteLine(string command, IEnumerable<string> arguments = null)
         {
             if (arguments == null) { arguments = new string[] { }; }
             Write(command + " " + string.Join("\t", arguments) + "\r\n");
@@ -18,13 +18,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         private static string GetPath(Build build)
         {
-            return build.GetBuildPath("Metadata");
+            return build.GetBuildPath("Metadata.txt");
         }
 
         public static void DeleteFile(Build build)
         {
-            string metadataPath = GetPath(build);
-            File.Delete(metadataPath);
+            string path = GetPath(build);
+            File.Delete(path);
         }
     }
 }

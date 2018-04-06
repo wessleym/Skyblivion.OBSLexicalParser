@@ -12,14 +12,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value
             this.concatenatedValues = concatenatedValues;
         }
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_STRING; //concatenated value is always a string ( what else.. :) )
-        }
+        public ITES5Type TES5Type => TES5BasicType.T_STRING; //concatenated value is always a string ( what else.. :) )
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { string.Join(" + ", this.concatenatedValues.Select(cv => cv.output().Single())) };
-        }
+        public IEnumerable<string> Output => new string[] { string.Join(" + ", this.concatenatedValues.Select(cv => cv.Output.Single())) };
     }
 }

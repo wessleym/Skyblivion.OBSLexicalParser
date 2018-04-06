@@ -31,13 +31,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 
         private string GetConditionLineOutput(string ifOrElseIf)
         {
-            return ifOrElseIf + "(" + this.expression.output().Single() + ")";
+            return ifOrElseIf + "(" + this.expression.Output.Single() + ")";
         }
 
         public IEnumerable<string> GetOutput(string ifOrElseIf)
         {
             return (new string[] { GetConditionLineOutput(ifOrElseIf) })
-                .Concat(this.getCodeScope().output());
+                .Concat(this.getCodeScope().Output);
         }
     }
 }

@@ -31,13 +31,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
         {
             __invoke("Code+")._is("Code+", "Code").call((TES4CodeChunks list, ITES4CodeChunk codeDeclaration)=>
             {
-                list.add(codeDeclaration);
+                list.Add(codeDeclaration);
                 return list;
             } ) .
             _is("Code").call((ITES4CodeChunk codeDeclaration)=>
             {
                 TES4CodeChunks list = new TES4CodeChunks();
-                list.add(codeDeclaration);
+                list.Add(codeDeclaration);
                 return list;
             });
             __invoke("Code")._is("Branch")._is("SetValue", "NWL")._is("Function", "NWL")._is("ObjectCall", "NWL")._is("LocalVariableDeclaration+")._is("Return");
@@ -264,14 +264,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             ;
             __invoke("FunctionArguments")._is("FunctionArguments", "FunctionParameter").call((TES4FunctionArguments list, ITES4StringValue value)=>
             {
-                list.add(value);
+                list.Add(value);
                 return list;
             } ) .
 
             _is("FunctionParameter").call((ITES4StringValue value)=>
             {
                 TES4FunctionArguments list = new TES4FunctionArguments();
-                list.add(value);
+                list.Add(value);
                 return list;
             } )
 

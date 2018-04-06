@@ -15,12 +15,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             this.codeScope = chunks;
         }
 
-        public IEnumerable<string> output()
-        {
-            return (new string[] { "Event " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
-                .Concat(this.codeScope.output())
+        public IEnumerable<string> Output => (new string[] { "Event " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
+                .Concat(this.codeScope.Output)
                 .Concat(new string[] { "EndEvent" });
-        }
 
         public string getBlockType()
         {
@@ -39,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public void addChunk(ITES5CodeChunk chunk)
         {
-            this.codeScope.add(chunk);
+            this.codeScope.Add(chunk);
         }
 
         public TES5FunctionScope getFunctionScope()

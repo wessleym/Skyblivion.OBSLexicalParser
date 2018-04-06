@@ -39,10 +39,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.getArguments();
             string functionName = function.getFunctionCall().getFunctionName();
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
-            methodArguments.add(new TES5Bool(true)); //override different behaviour
-            ITES4StringValue lockAsOwner = functionArguments.getValue(1);
-            methodArguments.add(new TES5Bool(lockAsOwner != null && (int)lockAsOwner.getData() == 1));
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
+            methodArguments.Add(new TES5Bool(true)); //override different behaviour
+            ITES4StringValue lockAsOwnerBool = functionArguments.GetOrNull(1);
+            bool newLockBool = lockAsOwnerBool != null && (int)lockAsOwnerBool.getData() == 1;
+            methodArguments.Add(new TES5Bool(newLockBool));
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
         }
     }
 }

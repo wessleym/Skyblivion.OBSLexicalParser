@@ -34,9 +34,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
-            string questName = functionArguments.popValue(0).StringValue;
+            string questName = functionArguments.Pop(0).StringValue;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(questName, globalScope, multipleScriptsScope, localScope);
             /*
              * Basically, there are some ugly mechanics in Oblivion.
@@ -47,11 +47,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
              */
             if (questName == "FGInterimConversation" || questName == "ArenaIC" || questName == "ArenaICGrandChampion" || questName == "ArenaAggression" || questName == "ArenaAnnouncer" || questName == "ArenaDisqualification" || questName == "Arena")
             {
-                return this.objectCallFactory.createObjectCall(newCalledOn, "PrepareForReinitializing", multipleScriptsScope, new TES5ObjectCallArguments());
+                return this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", multipleScriptsScope, new TES5ObjectCallArguments());
             }
             else
             {
-                return this.objectCallFactory.createObjectCall(newCalledOn, "Stop", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
         }
     }

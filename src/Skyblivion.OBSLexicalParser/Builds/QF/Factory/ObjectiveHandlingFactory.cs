@@ -48,9 +48,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         {
             List<ITES5CodeChunk> result = new List<ITES5CodeChunk>();
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
-            TES5Reference referenceToTemp = this.referenceFactory.createReferenceToVariable(castedToQuest);
-            result.Add(variableAssignationFactory.createAssignation(referenceToTemp, this.referenceFactory.createReferenceToSelf(globalScope)));
-            TES5LocalScope localScope = codeBlock.getCodeScope().getLocalScope();
+            TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);
+            result.Add(variableAssignationFactory.createAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope)));
+            TES5LocalScope localScope = codeBlock.getCodeScope().LocalScope;
             localScope.addVariable(castedToQuest);
             int i = 0;
             foreach (var stageTargetState in stageMap)
@@ -60,29 +60,29 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 {
                     //Should be visible
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
-                    displayedArguments.add(targetIndex);
+                    displayedArguments.Add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
                     TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                    arguments.add(targetIndex);
-                    arguments.add(new TES5Integer(1));
+                    arguments.Add(targetIndex);
+                    arguments.Add(new TES5Integer(1));
                     TES5ObjectCall showTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments);
                     TES5Branch branch = this.branchFactory.createSimpleBranch(expression, localScope);
-                    branch.getMainBranch().getCodeScope().add(showTheObjective);
+                    branch.getMainBranch().getCodeScope().Add(showTheObjective);
                     result.Add(branch);
                 }
                 else
                 {
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
-                    displayedArguments.add(targetIndex);
+                    displayedArguments.Add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
                     TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                    arguments.add(targetIndex);
-                    arguments.add(new TES5Integer(1));
+                    arguments.Add(targetIndex);
+                    arguments.Add(new TES5Integer(1));
                     TES5ObjectCall completeTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments);
                     TES5Branch branch = this.branchFactory.createSimpleBranch(expression, localScope);
-                    branch.getMainBranch().getCodeScope().add(completeTheObjective);
+                    branch.getMainBranch().getCodeScope().Add(completeTheObjective);
                     result.Add(branch);
                 }
 

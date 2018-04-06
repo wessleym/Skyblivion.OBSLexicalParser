@@ -3,7 +3,7 @@
     class TES5ExpressionOperator
     {
         public string Name { get; private set; }
-        public TES5ExpressionOperator(string name)
+        protected TES5ExpressionOperator(string name)
         {
             Name = name;
         }

@@ -227,20 +227,27 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                         continue;
                     }
 
-                    bool is_q = ((int)schr.Substring(16, 1)[0]) != 0;
-                    bool is_m = ((int)schr.Substring(17, 1)[0]) != 0;
                     TES5BasicType scriptType;
-                    if (is_q)
+                    if (edid == "dark09skeletonsuicidescript" || edid == "xpebroccabossscript" || edid == "se09altarscript")//WTM:  Change:  Added special condition
                     {
-                        scriptType = TES5BasicType.T_QUEST;
-                    }
-                    else if (is_m)
-                    {
-                        scriptType = TES5BasicType.T_ACTIVEMAGICEFFECT;
+                        scriptType = TES5BasicType.T_ACTOR;
                     }
                     else
                     {
-                        scriptType = TES5BasicType.T_OBJECTREFERENCE;
+                        bool isQuest = ((int)schr.Substring(16, 1)[0]) != 0;
+                        bool isActiveMagicEffect = ((int)schr.Substring(17, 1)[0]) != 0;
+                        if (isQuest)
+                        {
+                            scriptType = TES5BasicType.T_QUEST;
+                        }
+                        else if (isActiveMagicEffect)
+                        {
+                            scriptType = TES5BasicType.T_ACTIVEMAGICEFFECT;
+                        }
+                        else
+                        {
+                            scriptType = TES5BasicType.T_OBJECTREFERENCE;
+                        }
                     }
 
                     this.scriptTypes.Add(edid, scriptType);
@@ -297,7 +304,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         public ITES5Type getFormTypeByEDID(string edid)
         {
             ITES4Record record = esm.findByEDID(edid, false);
-            if (record == null) { throw new ConversionException("Cannot find type for EDID " + edid, expected: true); }
+            if (record == null)
+            {
+                //WTM:  Change:  These EDIDs can't be found, so I've written them into the code.
+                if (edid == "SE02FIN") { return TES5BasicType.T_QUEST; }
+                if (edid == "LvlSpell") { return TES5BasicType.T_SPELL; }
+                throw new ConversionException("Cannot find type for EDID " + edid);
+            }
             return TypeMapper.map(record.getType());
         }
 

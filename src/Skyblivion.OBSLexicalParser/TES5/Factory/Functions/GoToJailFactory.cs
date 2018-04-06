@@ -34,9 +34,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference("CyrodiilCrimeFaction", globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.createObjectCall(newCalledOn, "SendPlayerToJail", multipleScriptsScope, new TES5ObjectCallArguments());
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, "SendPlayerToJail", multipleScriptsScope, new TES5ObjectCallArguments());
         }
     }
 }

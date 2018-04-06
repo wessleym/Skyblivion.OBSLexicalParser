@@ -1,7 +1,5 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
-using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST;
+using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,46 +12,33 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
      */
     class TES5CodeScope : ITES5Outputtable
     {
-        private List<ITES5CodeChunk> codeChunks = new List<ITES5CodeChunk>();
-        private TES5LocalScope localScope;
+        public List<ITES5CodeChunk> CodeChunks { get; private set; } = new List<ITES5CodeChunk>();
+        public TES5LocalScope LocalScope { get; private set; }
         public TES5CodeScope(TES5LocalScope localScope)
         {
-            this.localScope = localScope;
+            this.LocalScope = localScope;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output => this.LocalScope.Output.Concat(this.CodeChunks.SelectMany(c => c.Output));
+
+        public void Clear()
         {
-            return this.localScope.output().Concat(this.codeChunks.SelectMany(c=>c.output()));
+            this.CodeChunks.Clear();
         }
 
-        public void clear()
+        public void Add(ITES5CodeChunk chunk)
         {
-            this.codeChunks.Clear();
+            this.CodeChunks.Add(chunk);
         }
 
-        public void add(ITES5CodeChunk chunk)
+        public void AddVariable(TES5LocalVariable localVariable)
         {
-            this.codeChunks.Add(chunk);
+            this.LocalScope.addVariable(localVariable);
         }
 
-        public void addVariable(TES5LocalVariable localVariable)
+        public TES5LocalVariable FindVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            this.localScope.addVariable(localVariable);
-        }
-
-        public TES5LocalScope getLocalScope()
-        {
-            return this.localScope;
-        }
-
-        public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
-        {
-            return this.localScope.findVariableWithMeaning(meaning);
-        }
-
-        public List<ITES5CodeChunk> getCodeChunks()
-        {
-            return this.codeChunks;
+            return this.LocalScope.findVariableWithMeaning(meaning);
         }
     }
 }

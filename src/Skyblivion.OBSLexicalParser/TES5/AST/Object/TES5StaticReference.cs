@@ -7,30 +7,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5StaticReference : ITES5Referencer
     {
-        private string name;
+        public string Name { get; private set; }
         public TES5StaticReference(string name)
         {
-            this.name = name;
+            this.Name = name;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { this.name };
-        }
+        public IEnumerable<string> Output => new string[] { this.Name };
 
-        public string getName()
-        {
-            return this.name;
-        }
+        public ITES5Type TES5Type => TES5TypeFactory.memberByValue(this.Name);
 
-        public ITES5Type getType()
-        {
-            return TES5TypeFactory.memberByValue(this.getName());
-        }
-
-        public ITES5Variable getReferencesTo()
-        {
-            return null;
-        }
+        public ITES5Variable ReferencesTo => null;
     }
 }

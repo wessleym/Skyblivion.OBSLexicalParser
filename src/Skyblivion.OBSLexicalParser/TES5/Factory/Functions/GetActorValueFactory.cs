@@ -10,6 +10,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -40,12 +41,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;
-            ITES4StringValue firstArg = functionArguments.getValue(0);
+            ITES4StringValue firstArg = functionArguments[0];
             string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
             switch (firstArgStringLower)
@@ -59,10 +60,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "personality":
                 case "luck":
                     {
-                        if (calledOn.getName() != "player")
+                        if (calledOn.Name != "player")
                         {
+                            if (calledOn.TES5Type.getNativeType() == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
+                            {
+                                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
+                                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                            }
                             //We can"t convert those.. and shouldn"t be any, too.
-                            throw new ConversionException("[ModAV] Cannot get attributes on non-player", expected: true);
+                            throw new ConversionException(nameof(GetActorValueFactory)+":  Cannot get attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);
                         }
 
                         /*
@@ -88,16 +94,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistpoison":
                 case "resistshock":
                     {
-                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-                        convertedArguments.add(new TES5String(actorValueMap[firstArgStringLower]));
-                        return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(actorValueMap[firstArgStringLower]) };
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
 
                 default:
                     {
-                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-                        convertedArguments.add(new TES5String(firstArgString));
-                        return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
             }
         }

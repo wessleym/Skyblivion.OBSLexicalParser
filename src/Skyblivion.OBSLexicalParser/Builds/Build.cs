@@ -20,17 +20,17 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getErrorLogPath()
         {
-            return GetBuildPath("build_error_log");
+            return GetBuildPath("build_error_log.txt");
         }
 
         public string getCompileStandardOutputPath()
         {
-            return GetBuildPath("compile_stdout_log");
+            return GetBuildPath("compile_stdout_log.txt");
         }
 
         public string getCompileStandardErrorPath()
         {
-            return GetBuildPath("compile_stderr_log");
+            return GetBuildPath("compile_stderr_log.txt");
         }
 
         public string getWorkspacePath()

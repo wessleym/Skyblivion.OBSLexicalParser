@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return this.referenceFactory.extractImplicitReference(globalScope, multipleScriptsScope, codeScope.getLocalScope());
+            return this.referenceFactory.extractImplicitReference(globalScope, multipleScriptsScope, codeScope.LocalScope);
         }
     }
 }

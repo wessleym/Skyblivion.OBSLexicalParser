@@ -41,8 +41,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
              * b) Its only for the armor worn, not all eq - can be implemented though..
              */
             TES5ObjectCallArguments getArmorWornArg = new TES5ObjectCallArguments();
-            getArmorWornArg.add(new TES5Integer(2));
-            return this.objectCallFactory.createObjectCall(this.objectCallFactory.createObjectCall(calledOn, "GetWornForm", multipleScriptsScope, getArmorWornArg), "GetGoldValue", multipleScriptsScope);
+            getArmorWornArg.Add(new TES5Integer(2));
+            return this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(calledOn, "GetWornForm", multipleScriptsScope, getArmorWornArg), "GetGoldValue", multipleScriptsScope);
         }
     }
 }

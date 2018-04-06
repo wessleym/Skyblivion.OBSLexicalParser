@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             }
         }
 
-        private static Regex lfWithoutCR = new Regex("(?<!\r)\n");
+        private static Regex lfWithoutCR = new Regex("(?<!\r)\n", RegexOptions.Compiled);
         private static void ProcessStartWindows(string fileName, string arguments, string standardOutputFilePath, string standardErrorFilePath)
         {//This method uses an alternate technique for getting standard output and standard error.
             //PapyrusCompiler.exe stops running after a few seconds if RedirectStandardOutput or RedirectStandardError are true.

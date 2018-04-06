@@ -6,20 +6,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
     class TES4CodeChunks : ITES4CodeFilterable
     {
-        private List<ITES4CodeChunk> codeChunks = new List<ITES4CodeChunk>();
-        public void add(ITES4CodeChunk chunk)
+        public List<ITES4CodeChunk> CodeChunks { get; private set; } = new List<ITES4CodeChunk>();
+        public void Add(ITES4CodeChunk chunk)
         {
-            this.codeChunks.Add(chunk);
+            this.CodeChunks.Add(chunk);
         }
 
-        public List<ITES4CodeChunk> getCodeChunks()
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.codeChunks;
-        }
-
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return this.codeChunks.SelectMany(c => c.filter(predicate)).ToArray();
+            return this.CodeChunks.SelectMany(c => c.Filter(predicate)).ToArray();
         }
     }
 }

@@ -38,16 +38,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.getFunctionCall().getFunctionName();
             /* Emulating just the same disable player control as in Oblivion */
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
-            newArgs.add(new TES5Bool(true));
-            newArgs.add(new TES5Bool(true));
-            newArgs.add(new TES5Bool(false));
-            newArgs.add(new TES5Bool(false));
-            newArgs.add(new TES5Bool(false));
-            newArgs.add(new TES5Bool(true));
-            newArgs.add(new TES5Bool(true));
-            newArgs.add(new TES5Bool(true));
+            newArgs.Add(new TES5Bool(true));
+            newArgs.Add(new TES5Bool(true));
+            newArgs.Add(new TES5Bool(false));
+            newArgs.Add(new TES5Bool(false));
+            newArgs.Add(new TES5Bool(false));
+            newArgs.Add(new TES5Bool(true));
+            newArgs.Add(new TES5Bool(true));
+            newArgs.Add(new TES5Bool(true));
             calledOn = new TES5StaticReference("Game");
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, newArgs);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArgs);
         }
     }
 }

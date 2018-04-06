@@ -1,5 +1,6 @@
 #define INCLUDE_LEXER_FIXES
 using Dissect.Lexer;
+using Dissect.Lexer.TokenStream;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Lexers
@@ -7,6 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
     class OBScriptLexer : StatefulLexer
     {
         //WTM:  Change:  I added the function names in INCLUDE_LEXER_FIXES.  I added all of them to TES5ValueFactoryFunctionFiller as NotSupportedFactory.
+        //See http://en.uesp.net/wiki/Tes4Mod:Script_Functions
         public static readonly Regex FUNCTION_REGEX = new Regex(
 @"^(activate|addachievement|additem|addscriptpackage|addspell|addtopic|autosave|cast|clearownership|closecurrentobliviongate|closeobliviongate|completequest|createfullactorcopy|deletefullactorcopy|disablelinkedpathpoints|disableplayercontrols|disable|dispel|dropme|drop|duplicateallitems|enablefasttravel|enablelinkedpathpoints|enableplayercontrols|enable|equipitem|essentialdeathreload|evp|evaluatepackage|forceactorvalue|forceav|forcecloseobliviongate|" +
 #if INCLUDE_LEXER_FIXES
@@ -45,12 +47,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 @"setpublic|" +
 #endif
 @"setquestobject|setrestrained|setrigidbodymass|setscale|setsceneiscomplex|setshowquestitems|setstage|setunconscious|setweather|showbirthsignmenu|showclassmenu|showdialogsubtitles|showenchantment|showmap|showracemenu|showspellmaking|sme|startcombat|startconversation|startquest|stopcombatalarmonactor|stopcombat|scaonactor|stoplook|stopmagiceffectvisuals|stopmagicshadervisuals|stopwaiting|sms|stopquest|sw|trapupdate|triggerhitshader|unequipitem|unlock|wait|wakeuppc|yield)"
-, RegexOptions.IgnoreCase);
+, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private void addCommentsRecognition()
         {
             this
-            .regex("Comment", new Regex(@"^;.*"))
+            .regex("Comment", @"^;.*")
             .token("(")
             .token(")")
             .token(",")
@@ -62,22 +64,22 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
         {
             //Global scope.
             this._state("globalScope");
-            this.regex("WSP", new Regex(@"^[ \r\n\t]+"));
-            this.regex("ScriptHeaderToken", new Regex("^(scn|scriptName)", RegexOptions.IgnoreCase)).action("ScriptHeaderScope");
-            this.regex("VariableDeclarationType", new Regex(@"^(ref|short|long|float|int)", RegexOptions.IgnoreCase)).action("VariableDeclarationScope");
-            this.regex("BlockStart", new Regex(@"^Begin", RegexOptions.IgnoreCase)).action("BlockStartNameScope");
+            this.regex("WSP", @"^[ \r\n\t]+");
+            this.regexIgnoreCase("ScriptHeaderToken", "^(scn|scriptName)").action("ScriptHeaderScope");
+            this.regexIgnoreCase("VariableDeclarationType", @"^(ref|short|long|float|int)").action("VariableDeclarationScope");
+            this.regexIgnoreCase("BlockStart", @"^Begin").action("BlockStartNameScope");
             this.addCommentsRecognition();
 
             this._state("ExpressionScope")
-                .regex("WSP", new Regex(@"^[ \t]+"))
-                .regex("NWL", new Regex(@"^[\r\n]+")).action("BlockScope")
+                .regex("WSP", @"^[ \t]+")
+                .regex("NWL", @"^[\r\n]+").action("BlockScope")
                 .regex("FunctionCallToken", FUNCTION_REGEX).action("FunctionScope")
-                .regex("Boolean", new Regex(@"^(true|false)", RegexOptions.IgnoreCase))
-                .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))
-                .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
-                .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
-                .regex("TokenDelimiter", new Regex(@"\.", RegexOptions.IgnoreCase))
+                .regexIgnoreCase("Boolean", @"^(true|false)")
+                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
+                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
+                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
+                .regexIgnoreCase("TokenDelimiter", @"\.")
                 .token("+")
                 .token("-")
                 .token("*")
@@ -95,36 +97,36 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             this.addCommentsRecognition();
 
             this._state("BlockScope")
-                .regex("WSP", new Regex(@"^[ \t\r\n]+"))
-                .regex("BlockEnd", new Regex(@"^end( [a-zA-Z]+)?", RegexOptions.IgnoreCase)).action("BlockEndScope")
-                .regex("BranchElseifToken", new Regex(@"^else[ ]?if(\()?[ \r\n\t]+", RegexOptions.IgnoreCase)).action("ExpressionScope")
-                .regex("BranchStartToken", new Regex(@"^if(\()?[ \r\n\t]+", RegexOptions.IgnoreCase)).action("ExpressionScope")
-                .regex("BranchElseToken", new Regex(@"^else", RegexOptions.IgnoreCase))
-                .regex("BranchEndToken", new Regex(@"^endif", RegexOptions.IgnoreCase))
-                .regex("SetInitialization", new Regex(@"^set[ \t]+", RegexOptions.IgnoreCase)).action("SetScope")
-                .regex("ReturnToken", new Regex(@"^return", RegexOptions.IgnoreCase))
-                .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
-                .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
-                .regex("Boolean", new Regex(@"^(true|false)", RegexOptions.IgnoreCase))
+                .regex("WSP", @"^[ \t\r\n]+")
+                .regexIgnoreCase("BlockEnd", @"^end( [a-zA-Z]+)?").action("BlockEndScope")
+                .regexIgnoreCase("BranchElseifToken", @"^else[ ]?if(\()?[ \r\n\t]+").action("ExpressionScope")
+                .regexIgnoreCase("BranchStartToken", @"^if(\()?[ \r\n\t]+").action("ExpressionScope")
+                .regexIgnoreCase("BranchElseToken", @"^else")
+                .regexIgnoreCase("BranchEndToken", @"^endif")
+                .regexIgnoreCase("SetInitialization", @"^set[ \t]+").action("SetScope")
+                .regexIgnoreCase("ReturnToken", @"^return")
+                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
+                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
+                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
+                .regexIgnoreCase("Boolean", @"^(true|false)")
                 .regex("FunctionCallToken", FUNCTION_REGEX).action("FunctionScope")
-                .regex("LocalVariableDeclarationType", new Regex(@"^(ref|short|long|float|int)", RegexOptions.IgnoreCase)).action("VariableDeclarationScope")
-                .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))
-                .regex("TokenDelimiter", new Regex(@"^\.", RegexOptions.IgnoreCase));
+                .regexIgnoreCase("LocalVariableDeclarationType", @"^(ref|short|long|float|int)").action("VariableDeclarationScope")
+                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .regexIgnoreCase("TokenDelimiter", @"^\.");
 
             this.addCommentsRecognition();
 
             this._state("FunctionScope")
-                .regex("WSP", new Regex(@"^[ \t]+"))
-                .regex("NWL", new Regex(@"^[\r\n]+")).action("BlockScope")
-                .regex("ReturnToken", new Regex(@"^return", RegexOptions.IgnoreCase))
-                .regex("Float", new Regex(@"^(-)?([0-9]*)\.[0-9]+", RegexOptions.IgnoreCase))
-                .regex("Integer", new Regex(@"^(-)?(0|[1-9][0-9]*)", RegexOptions.IgnoreCase))
-                .regex("String", new Regex(@"^""((?:(?<=\\)[""]|[^""])*)""", RegexOptions.IgnoreCase))
-                .regex("Boolean", new Regex(@"^(true|false)", RegexOptions.IgnoreCase))
+                .regex("WSP", @"^[ \t]+")
+                .regex("NWL", @"^[\r\n]+").action("BlockScope")
+                .regexIgnoreCase("ReturnToken", @"^return")
+                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
+                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
+                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
+                .regexIgnoreCase("Boolean", @"^(true|false)")
                 .regex("FunctionCallToken", FUNCTION_REGEX)
-                .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))
-                .regex("TokenDelimiter", new Regex(@"^\.", RegexOptions.IgnoreCase))
+                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .regexIgnoreCase("TokenDelimiter", @"^\.")
                 .token("+").action(POP_STATE)
                 .token("-").action(POP_STATE)
                 .token("*").action(POP_STATE)
@@ -143,40 +145,68 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 
 
             this._state("SetScope")
-                 .regex("ReferenceToken", new Regex(@"^[a-z][a-zA-Z0-9]*", RegexOptions.IgnoreCase))
-                 .regex("TokenDelimiter", new Regex(@"\.", RegexOptions.IgnoreCase))
+                 .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                 .regexIgnoreCase("TokenDelimiter", @"\.")
                  .token("To ").action("ExpressionScope")
                  .token("to ").action("ExpressionScope")
-                 .regex("WSP", new Regex(@"^[ \t]+"))
-                 .regex("NWL", new Regex(@"^[\r\n]+")).action(POP_STATE);
+                 .regex("WSP", @"^[ \t]+")
+                 .regex("NWL", @"^[\r\n]+").action(POP_STATE);
             this.addCommentsRecognition();
 
             this._state("BlockEndScope")
-                .regex("WSP", new Regex(@"^[ \t]+"))
-                //            .regex("NotNeededTrash",new Regex(@"^([a-zA-Z0-9_-]+)", RegexOptions.IgnoreCase)) I kinda forgot why it is here..
-                .regex("WSPEOL", new Regex(@"^[\r\n]+")).action("globalScope");
+                .regex("WSP", @"^[ \t]+")
+                //.regexIgnoreCase("NotNeededTrash",@"^([a-zA-Z0-9_-]+)") I kinda forgot why it is here..
+                .regex("WSPEOL", @"^[\r\n]+").action("globalScope");
             this.addCommentsRecognition();
 
             this._state("BlockStartNameScope")
-                .regex("WSP", new Regex(@"^[ \t]+"))
-                .regex("BlockType", new Regex(@"^([a-zA-Z0-9_-]+)", RegexOptions.IgnoreCase)).action("BlockStartParameterScope");
+                .regex("WSP", @"^[ \t]+")
+                .regexIgnoreCase("BlockType", @"^([a-zA-Z0-9_-]+)").action("BlockStartParameterScope");
             this.addCommentsRecognition();
 
             this._state("BlockStartParameterScope")
-                .regex("WSP", new Regex(@"^[ \t]+"))
-                .regex("BlockParameterToken", new Regex(@"[a-zA-Z0-9_-]+", RegexOptions.IgnoreCase))
-                .regex("WSPEOL", new Regex(@"^[\r\n]+")).action("BlockScope");
+                .regex("WSP", @"^[ \t]+")
+                .regexIgnoreCase("BlockParameterToken", @"[a-zA-Z0-9_-]+")
+                .regex("WSPEOL", @"^[\r\n]+").action("BlockScope");
             this.addCommentsRecognition();
 
             this._state("ScriptHeaderScope")
-                .regex("WSP", new Regex(@"^[ \r\n\t]+"))
-                .regex("ScriptName", new Regex(@"^([a-zA-Z0-9_-]+)", RegexOptions.IgnoreCase)).action(POP_STATE);
+                .regex("WSP", @"^[ \r\n\t]+")
+                .regexIgnoreCase("ScriptName", @"^([a-zA-Z0-9_-]+)").action(POP_STATE);
             this.addCommentsRecognition();
 
             this._state("VariableDeclarationScope")
-                .regex("WSP", new Regex(@"^[ \r\n\t]+"))
-                .regex("VariableName", new Regex(@"^([a-zA-Z0-9_-]+)", RegexOptions.IgnoreCase)).action(POP_STATE);
+                .regex("WSP", @"^[ \r\n\t]+")
+                .regexIgnoreCase("VariableName", @"^([a-zA-Z0-9_-]+)").action(POP_STATE);
             this.addCommentsRecognition();
+        }
+
+        public ArrayTokenStream LexWithFixes(string str)
+        {
+            //WTM:  Change:  In tif__0101efc0 and other TGExpelledScripts, PayFine gets misunderstood as a function call instead of a variable.
+            str = str.Replace("TGExpelled.PayFine", "TGExpelled.PayFineTemp");
+            //WTM:  Change:  In tgcastout, the below replacement must be made so the variable name can stay in synch.
+            if (str.StartsWith("ScriptName TGCastOut"))
+            {
+                str = str.Replace("Float PayFine", "Float PayFineTemp");
+            }
+            //WTM:  Change:  In darkperenniaghostscript, Disable gets misunderstood as a function call instead of a variable.
+            if (str.StartsWith("Scriptname DarkPerenniaGhostScript"))
+            {
+                str = str.Replace("Disable", "DisableTemp");
+            }
+            //WTM:  Change:  In blade3script, Look gets misunderstood as a function call instead of a variable.
+            if (str.StartsWith("Scriptname Blade3Script"))
+            {
+                str = str
+                    .Replace("short Look", "short LookTemp")
+                    .Replace("if Look == ", "if LookTemp == ")
+                    .Replace("set Look to ", "set LookTemp to ");
+            }
+            //WTM:  Change:  In qf_tg03elven_01034ea2_100_0, a variable is apparently accidentally quoted.
+            str = str.Replace("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\"", "TG03LlathasasBustMarker.PlaceAtMe TG03LlathasasBust");
+            ArrayTokenStream tokens = lex(str);
+            return tokens;
         }
     }
 }

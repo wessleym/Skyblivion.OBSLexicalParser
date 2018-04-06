@@ -36,10 +36,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             int x = 0, y = 0, z = 0;
-            int secondArgumentData = (int)functionArguments.getValue(1).getData();
-            switch ((functionArguments.getValue(0).StringValue).ToLower())
+            int secondArgumentData = (int)functionArguments[1].getData();
+            switch ((functionArguments[0].StringValue).ToLower())
             {
                 case "x":
                     {
@@ -59,11 +59,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
 
             TES5ObjectCallArguments rotateArguments = new TES5ObjectCallArguments();
-            rotateArguments.add(calledOn);
-            rotateArguments.add(new TES5Integer(x));
-            rotateArguments.add(new TES5Integer(y));
-            rotateArguments.add(new TES5Integer(z));
-            TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(this.referenceFactory.createReadReference("tTimer", globalScope, multipleScriptsScope, localScope), "Rotate", multipleScriptsScope, rotateArguments);
+            rotateArguments.Add(calledOn);
+            rotateArguments.Add(new TES5Integer(x));
+            rotateArguments.Add(new TES5Integer(y));
+            rotateArguments.Add(new TES5Integer(z));
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference("tTimer", globalScope, multipleScriptsScope, localScope), "Rotate", multipleScriptsScope, rotateArguments);
             return newFunction;
         }
     }

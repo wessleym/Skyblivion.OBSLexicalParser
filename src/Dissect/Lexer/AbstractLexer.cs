@@ -34,8 +34,10 @@ namespace Dissect.Lexer
         * Should given token be skipped?
         */
         protected abstract bool shouldSkipToken(IToken token);
+        protected virtual void ResetStatesForNewString() { }
         public ArrayTokenStream lex(string str)
         {
+            ResetStatesForNewString();
             // normalize line endings
             str = str.Replace("\r\n", "\n").Replace("\r", "\n");
             List<IToken> tokens = new List<IToken>();

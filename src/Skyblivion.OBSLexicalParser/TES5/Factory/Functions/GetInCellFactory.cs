@@ -38,14 +38,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES4StringValue apiToken = functionArguments.getValue(0);
+            ITES4StringValue apiToken = functionArguments[0];
             string dataString = apiToken.StringValue;
             int length = dataString.Length; //Get the length of the match
             TES5ObjectCallArguments argumentsList = new TES5ObjectCallArguments();
-            argumentsList.add(this.objectCallFactory.createObjectCall(calledOn, "GetParentCell", multipleScriptsScope));
-            argumentsList.add(new TES5Integer(0));
-            argumentsList.add(new TES5Integer(length));
-            TES5ObjectCall parentCellCheck = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToStaticClass("StringUtil"), "Substring", multipleScriptsScope, argumentsList);
+            argumentsList.Add(this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell", multipleScriptsScope));
+            argumentsList.Add(new TES5Integer(0));
+            argumentsList.Add(new TES5Integer(length));
+            TES5ObjectCall parentCellCheck = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToStaticClass("StringUtil"), "Substring", multipleScriptsScope, argumentsList);
             TES5String checkAgainst = new TES5String(dataString);
             return TES5ExpressionFactory.createArithmeticExpression(parentCellCheck, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, checkAgainst);
         }

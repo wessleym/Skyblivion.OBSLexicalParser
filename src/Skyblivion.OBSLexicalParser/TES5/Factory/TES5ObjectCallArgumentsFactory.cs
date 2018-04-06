@@ -1,9 +1,8 @@
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -22,13 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 return list;
             }
-
-            foreach (var argument in arguments.getValues())
-            {
-                ITES5Value newValue = this.valueFactory.createValue(argument, codeScope, globalScope, multipleScriptsScope);
-                list.add(newValue);
-            }
-
+            list.AddRange(arguments.Select(a => this.valueFactory.createValue(a, codeScope, globalScope, multipleScriptsScope)));
             return list;
         }
     }

@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
@@ -16,27 +17,15 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
      * It was created because both BuildScopeCommand and TranspileCommand need the parsed TES4Script and we didn"t
      * want to parse twice.
      */
-    class StandaloneParsingService
+    class StandaloneParsingService : ParsingService<TES4Script>
     {
-        private Dictionary<string, TES4Script> parsingCache = new Dictionary<string, TES4Script>();
-        private SyntaxErrorCleanParser parser;
-        /*
-        * Forcing implementation on purpose.
-         * StandaloneParsingService constructor.
-        */
         public StandaloneParsingService(SyntaxErrorCleanParser parser)
-        {
-            this.parser = parser;
-        }
+            : base(parser)
+        { }
 
-        public TES4Script parseScript(string scriptPath)
+        protected override OBScriptLexer GetLexer()
         {
-            return parsingCache.GetOrAdd(scriptPath, () =>
-            {
-                ScriptLexer lexer = new ScriptLexer();
-                ArrayTokenStream tokens = lexer.lex(File.ReadAllText(scriptPath));
-                return (TES4Script)this.parser.ParseWithFixLogic(tokens);
-            });
+            return new ScriptLexer();
         }
     }
 }

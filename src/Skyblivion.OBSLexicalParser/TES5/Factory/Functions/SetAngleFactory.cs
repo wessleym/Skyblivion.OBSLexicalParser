@@ -37,13 +37,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string xyz = functionArguments.getValue(0).StringValue;
-            ITES4StringValue argument1 = functionArguments.getValue(1);
+            string xyz = functionArguments[0].StringValue;
+            ITES4StringValue argument1 = functionArguments[1];
             TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments();
-            newArguments.add(this.valueFactory.createValue(xyz == "x" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
-            newArguments.add(this.valueFactory.createValue(xyz == "y" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
-            newArguments.add(this.valueFactory.createValue(xyz == "z" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
-            return this.objectCallFactory.createObjectCall(calledOn, "SetAngle", multipleScriptsScope, newArguments);
+            newArguments.Add(this.valueFactory.createValue(xyz == "x" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            newArguments.Add(this.valueFactory.createValue(xyz == "y" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            newArguments.Add(this.valueFactory.createValue(xyz == "z" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAngle", multipleScriptsScope, newArguments);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //@INCONSISTENCE - evaluated in random compile time, cannot assure all inference has happened already.
-            TES5Bool boolean = new TES5Bool(!(calledOn.getType() == TES5BasicType.T_ACTOR || TES5InheritanceGraphAnalyzer.isExtending(calledOn.getType(), TES5BasicType.T_ACTOR)));
+            TES5Bool boolean = new TES5Bool(!(calledOn.TES5Type == TES5BasicType.T_ACTOR || TES5InheritanceGraphAnalyzer.isExtending(calledOn.TES5Type, TES5BasicType.T_ACTOR)));
             return boolean;
         }
     }

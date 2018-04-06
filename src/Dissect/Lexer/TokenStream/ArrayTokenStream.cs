@@ -34,7 +34,7 @@ namespace Dissect.Lexer.TokenStream
         public IToken lookAhead(int n)
         {
             int newPosition = this.position + n;
-            if (newPosition<tokens.Count)//previously isset
+            if (newPosition<tokens.Count)
             {
                 return tokens[newPosition];
             }
@@ -44,7 +44,7 @@ namespace Dissect.Lexer.TokenStream
 
         public IToken get(int n)
         {
-            try//previously isset
+            try
             {
                 return this.tokens[n];
             }
@@ -56,7 +56,7 @@ namespace Dissect.Lexer.TokenStream
 
         public void move(int n)
         {
-            if (n>tokens.Count - 1)//previously isset
+            if (n>tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Invalid index to move to.");
             }
@@ -67,7 +67,7 @@ namespace Dissect.Lexer.TokenStream
         public void seek(int n)
         {
             int newPosition = this.position + n;
-            if (newPosition>tokens.Count - 1)//previously isset
+            if (newPosition>tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Invalid seek.");
             }
@@ -78,7 +78,7 @@ namespace Dissect.Lexer.TokenStream
         public void next()
         {
             int newPosition = this.position + 1;
-            if (newPosition > tokens.Count - 1)//previously isset
+            if (newPosition > tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Attempting to move beyond the end of the stream.");
             }

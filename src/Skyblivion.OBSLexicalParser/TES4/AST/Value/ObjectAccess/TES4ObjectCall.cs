@@ -39,9 +39,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
             return false;
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.called.filter(predicate).Concat(this.function.filter(predicate)).ToArray();
+            return this.called.Filter(predicate).Concat(this.function.Filter(predicate)).ToArray();
         }
     }
 }

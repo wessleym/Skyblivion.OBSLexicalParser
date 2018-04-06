@@ -59,7 +59,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber)
         {
-            MetadataLogService.DeleteFile(build);
             var buildPlan = buildTargets.getBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);

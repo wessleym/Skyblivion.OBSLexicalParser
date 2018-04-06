@@ -25,8 +25,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (functionScope.getBlockName() == "OnUpdate")
             {
                 TES5ObjectCallArguments args = new TES5ObjectCallArguments();
-                args.add(new TES5Float(TES5AdditionalBlockChangesPass.ON_UPDATE_TICK));
-                TES5ObjectCall function = this.objectCallFactory.createObjectCall(this.referenceFactory.createReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
+                args.Add(new TES5Float(TES5AdditionalBlockChangesPass.ON_UPDATE_TICK));
+                TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
                 collection.add(function);
             }
 

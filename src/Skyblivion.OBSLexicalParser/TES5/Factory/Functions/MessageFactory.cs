@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -42,26 +43,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string messageString = functionArguments.getValue(0).StringValue;
+            string messageString = functionArguments[0].StringValue;
             MatchCollection messageMatches = Regex.Matches(messageString, @"%([ +-0]*[1-9]*\.[0-9]+[ef]|g)");
             if (messageMatches.Cast<Match>().Any(m=>m.Success))
             {
                 //Pack the printf syntax
                 //TODO - Perhaps we can use sprintf?
-                if (!(functionArguments.getValue(0) is TES4String))
+                ITES4StringValue arg0 = functionArguments.Pop(0);
+                if (!(arg0 is TES4String))
                 { //hacky
                     throw new ConversionException("Cannot transform printf like syntax to concat on string loaded dynamically");
                 }
 
                 int i = 0;
                 int caret = 0;
-                functionArguments.popValue(0); //We don"t need first value.
                 //Example call: You have %.2f apples and %g boxes in your inventory, applesCount, boxesCount
-                List<ITES5Value> variablesList = new List<ITES5Value>();
-                foreach (var variable in functionArguments.getValues())
-                {
-                    variablesList.Add(this.valueFactory.createValue(variable, codeScope, globalScope, multipleScriptsScope));
-                }
+                ITES5Value[] variablesArray = functionArguments.Select(a => this.valueFactory.createValue(a, codeScope, globalScope, multipleScriptsScope)).ToArray();
 
                 List<TES5String> stringsList = new List<TES5String>();//Target: "You have ", " apples and ", " boxes in your inventory"
                 bool startWithVariable = false; //Pretty ugly. Basically, if we start with a vairable, it should be pushed first from the variable stack and then string comes, instead of string , variable , and so on [...]
@@ -97,7 +94,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                 List<ITES5Value> combinedValues = new List<ITES5Value>();
                 Stack<TES5String> stringsStack = new Stack<TES5String>(stringsList.Select(kvp=>kvp).Reverse());
-                Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesList.Select(kvp=>kvp).Reverse());
+                Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesArray.Select(kvp=>kvp).Reverse());
                 if (startWithVariable)
                 {
                     if (variablesStack.Any())
@@ -117,15 +114,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                 calledOn = new TES5StaticReference("Debug");
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                arguments.add(TES5PrimitiveValueFactory.createConcatenatedValue(combinedValues));
-                return this.objectCallFactory.createObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
+                arguments.Add(TES5PrimitiveValueFactory.createConcatenatedValue(combinedValues));
+                return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
             else
             {
                 calledOn = new TES5StaticReference("Debug");
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                arguments.add(this.valueFactory.createValue(functionArguments.getValue(0), codeScope, globalScope, multipleScriptsScope));
-                return this.objectCallFactory.createObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
+                arguments.Add(this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
         }
     }

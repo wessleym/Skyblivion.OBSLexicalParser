@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string setting = functionArguments.popValue(0).StringValue;
+            string setting = functionArguments[0].StringValue;
             switch (setting.ToLower())
             {
                 case "icrimegoldattackmin":

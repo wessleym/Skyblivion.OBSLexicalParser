@@ -10,9 +10,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             : base(left, op, right)
         { }
 
-        public override ITES5Type getType()
-        {
-            return TES5BasicType.T_BOOL;
-        }
+        public override ITES5Type TES5Type => TES5BasicType.T_BOOL;
     }
 }

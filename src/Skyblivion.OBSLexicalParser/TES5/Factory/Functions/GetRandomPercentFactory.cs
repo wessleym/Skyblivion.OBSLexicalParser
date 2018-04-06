@@ -38,9 +38,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = "RandomInt";
             calledOn = new TES5StaticReference("Utility");
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
-            methodArguments.add(new TES5Integer(0));
-            methodArguments.add(new TES5Integer(99));
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
+            methodArguments.Add(new TES5Integer(0));
+            methodArguments.Add(new TES5Integer(99));
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
         }
     }
 }

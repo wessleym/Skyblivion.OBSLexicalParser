@@ -11,19 +11,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.b = b;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { b ? "True" : "False" };
-        }
+        public IEnumerable<string> Output => new string[] { b ? "True" : "False" };
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_BOOL;
-        }
-
-        public object getValue()
-        {
-            return this.b;
-        }
+        public ITES5Type TES5Type => TES5BasicType.T_BOOL;
     }
 }

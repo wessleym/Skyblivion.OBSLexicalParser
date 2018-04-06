@@ -37,13 +37,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             ITES5Referencer fameReference = this.referenceFactory.createReadReference("Infamy", globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            TES5BinaryExpression binaryExpression = TES5ExpressionFactory.createBinaryExpression(fameReference, TES5BinaryExpressionOperator.OPERATOR_ADD, new TES5Integer((int)functionArguments.getValue(0).getData()));
-            fameArguments.add(binaryExpression);
-            TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
+            TES5BinaryExpression binaryExpression = TES5ExpressionFactory.createBinaryExpression(fameReference, TES5BinaryExpressionOperator.OPERATOR_ADD, new TES5Integer((int)functionArguments[0].getData()));
+            fameArguments.Add(binaryExpression);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
             return newFunction;
         }
     }

@@ -18,16 +18,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.value = value;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string referenceOutput = this.reference.output().Single();
-            string valueOutput = this.value.output().Single();
-            string code = referenceOutput + " = "+ valueOutput;
-            if (this.reference.getType() != this.value.getType() && !(this.value is TES5None))
+            get
             {
-                code+= " as "+this.reference.getType().output().Single();
+                string referenceOutput = this.reference.Output.Single();
+                string valueOutput = this.value.Output.Single();
+                string code = referenceOutput + " = " + valueOutput;
+                if (this.reference.TES5Type != this.value.TES5Type && !(this.value is TES5None))
+                {
+                    if (this.reference.TES5Type == TES5BasicType.T_INT && TES5InheritanceGraphAnalyzer.isExtending(this.value.TES5Type, TES5BasicType.T_FORM))
+                    {//WTM:  Change:  Added
+                        code += ".GetFormID()";
+                    }
+                    else
+                    {
+                        code += " as " + this.reference.TES5Type.Output.Single();
+                    }
+                }
+                return new string[] { code };
             }
-            return new string[] { code };
         }
 
         public ITES5Referencer getReference()
@@ -35,14 +45,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             return this.reference;
         }
 
-        public ITES5Value getValue()
-        {
-            return this.value;
-        }
-
-        public ITES5Type getType()//WTM:  Change:  Added until a new proper interface is made.
-        {
-            throw new NotImplementedException();
-        }
+        public ITES5Type TES5Type => throw new NotImplementedException();//WTM:  Change:  Added until a new proper interface is made.
     }
 }

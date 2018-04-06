@@ -182,7 +182,7 @@ namespace Dissect.Parser
         public Dissect.Parser.Rule getStartRule()
         {
             Rule firstRule = rules.FirstOrDefault();
-            if (firstRule == null)//previously isset
+            if (firstRule == null)
             {
                 throw new InvalidOperationException("No start rule specified.");
             }

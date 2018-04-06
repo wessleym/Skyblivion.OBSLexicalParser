@@ -38,10 +38,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            ITES4StringValue argument0 = functionArguments.getValue(0);
+            ITES4StringValue argument0 = functionArguments[0];
             Nullable<int> argument0Int = argument0.getData() as Nullable<int>;
             ITES5Value newArgument;
             if (argument0Int != null)
@@ -52,8 +52,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 newArgument= this.valueFactory.createValue(argument0, codeScope, globalScope, multipleScriptsScope);
             }
-            fameArguments.add(newArgument);
-            TES5ObjectCall newFunction = this.objectCallFactory.createObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
+            fameArguments.Add(newArgument);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
             return newFunction;
         }
     }

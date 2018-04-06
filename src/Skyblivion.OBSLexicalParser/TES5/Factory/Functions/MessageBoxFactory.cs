@@ -5,7 +5,9 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -35,29 +37,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             //todo Refactor - add floating point vars .
-            if (functionArguments.count() == 1)
+            if (functionArguments.Count== 1)
             {
                 TES5StaticReference calledOnRef = new TES5StaticReference("Debug");
-                return this.objectCallFactory.createObjectCall(calledOnRef, "MessageBox", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else
             {
                 List<string> messageArguments = new List<string>();
-                string uniqueAddition = functionArguments.getValues().GetHashCode().ToString();//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
+                string uniqueAddition = Math.Abs(functionArguments.GetHashCode()).ToString();//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
                 string edid = "TES4MessageBox" + uniqueAddition;
                 messageArguments.Add(edid);
-                for (int i = 0; i < functionArguments.count(); i++)
-                {
-                    messageArguments.Add(functionArguments.getValue(i).StringValue);
-                }
-
-                this.metadataLogService.add("ADD_MESSAGE", messageArguments);
+                messageArguments.AddRange(functionArguments.Select(a => a.StringValue));
+                this.metadataLogService.WriteLine("ADD_MESSAGE", messageArguments);
                 ITES5Referencer messageBoxResult = this.referenceFactory.createReadReference(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST, globalScope, multipleScriptsScope, localScope);
                 ITES5Referencer reference = this.referenceFactory.createReadReference(edid, globalScope, multipleScriptsScope, localScope);
-                return this.assignationFactory.createAssignation(messageBoxResult, this.objectCallFactory.createObjectCall(reference, "show", multipleScriptsScope));
+                return this.assignationFactory.createAssignation(messageBoxResult, this.objectCallFactory.CreateObjectCall(reference, "show", multipleScriptsScope));
             }
         }
     }

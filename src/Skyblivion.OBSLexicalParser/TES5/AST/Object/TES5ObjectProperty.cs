@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
-    class TES5ObjectProperty : ITES5Referencer, ITES5ObjectAccess
+    class TES5ObjectProperty : TES5Castable, ITES5Referencer, ITES5ObjectAccess
     {
         private ITES5Referencer objectReference;
         private TES5Property property;
@@ -15,30 +15,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.property = property;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string referenceOutput = this.objectReference.output().Single();
-            return new string[] { referenceOutput + "." + this.property.getPropertyName() };
+            get
+            {
+                string referenceOutput = this.objectReference.Output.Single();
+                return new string[] { referenceOutput + "." + this.property.getPropertyName() + ManualCastToOutput };
+            }
         }
 
-        public ITES5Type getType()
-        {
-            return this.property.getPropertyType();
-        }
+        public ITES5Type TES5Type => this.property.getPropertyType();
 
-        public ITES5Referencer getAccessedObject()
-        {
-            return this.objectReference;
-        }
+        public ITES5Referencer AccessedObject => this.objectReference;
 
-        public ITES5Variable getReferencesTo()
-        {
-            return this.property;
-        }
+        public ITES5Variable ReferencesTo => this.property;
 
-        public string getName()
-        {
-            return this.property.getPropertyName();
-        }
+        public string Name => this.property.getPropertyName();
     }
 }

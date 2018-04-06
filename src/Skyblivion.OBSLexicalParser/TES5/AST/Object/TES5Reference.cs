@@ -4,42 +4,18 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
-    class TES5Reference : ITES5Referencer
+    class TES5Reference : TES5Castable, ITES5Referencer
     {
-        private ITES5Variable referencesTo;
-        /*
-        * Used only for Float . int cast
-        * Hacky. Should be removed at some point.
-        */
-        private ITES5Type manualCastTo = null;
+        public ITES5Variable ReferencesTo { get; private set; }
         public TES5Reference(ITES5Variable referencesTo)
         {
-            this.referencesTo = referencesTo;
+            this.ReferencesTo = referencesTo;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { this.referencesTo.getPropertyName() + (this.manualCastTo != null ? " as " + this.manualCastTo.value() : "") };
-        }
+        public IEnumerable<string> Output => new string[] { this.ReferencesTo.getPropertyName() + ManualCastToOutput };
 
-        public ITES5Variable getReferencesTo()
-        {
-            return this.referencesTo;
-        }
+        public string Name => this.ReferencesTo.getPropertyName();
 
-        public string getName()
-        {
-            return this.referencesTo.getPropertyName();
-        }
-
-        public ITES5Type getType()
-        {
-            return this.referencesTo.getPropertyType();
-        }
-
-        public void setManualCastTo(ITES5Type type)
-        {
-            this.manualCastTo = type;
-        }
+        public ITES5Type TES5Type => this.ReferencesTo.getPropertyType();
     }
 }

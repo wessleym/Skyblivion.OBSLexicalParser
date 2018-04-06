@@ -7,30 +7,20 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
     class TES4SubBranch : ITES4CodeFilterable
     {
-        private ITES4Value expression;
-        private TES4CodeChunks codeChunks;
+        public ITES4Value Expression { get; private set; }
+        public TES4CodeChunks CodeChunks { get; private set; }
         public TES4SubBranch(ITES4Value expression, TES4CodeChunks codeChunks = null)
         {
-            this.expression = expression;
-            this.codeChunks = codeChunks;
+            this.Expression = expression;
+            this.CodeChunks = codeChunks;
         }
 
-        public TES4CodeChunks getCodeChunks()
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.codeChunks;
-        }
-
-        public ITES4Value getExpression()
-        {
-            return this.expression;
-        }
-
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            IEnumerable<ITES4CodeFilterable> filtered = this.expression.filter(predicate);
-            if (this.codeChunks != null)
+            IEnumerable<ITES4CodeFilterable> filtered = this.Expression.Filter(predicate);
+            if (this.CodeChunks != null)
             {
-                filtered = filtered.Concat(this.codeChunks.filter(predicate));
+                filtered = filtered.Concat(this.CodeChunks.Filter(predicate));
             }
             return filtered.ToArray();
         }

@@ -69,11 +69,30 @@ namespace Dissect.Lexer
             {
                 throw new InvalidOperationException("Define a lexer state first.");
             }
+            if (!regex.Options.HasFlag(RegexOptions.Compiled))
+            {
+                //throw new InvalidOperationException("Regex was not compiled.");
+            }
 
             State state = this.states[this.stateBeingBuilt];
             state.Recognizers.Add(type, new RegexRecognizer(regex));
             state.Actions.Add(type, NO_ACTION);
             this.typeBeingBuilt = type;
+            return this;
+        }
+        private StatefulLexer regex(string type, string pattern, RegexOptions options)
+        {
+            regex(type, new Regex(pattern, options));
+            return this;
+        }
+        public StatefulLexer regex(string type, string pattern)
+        {
+            regex(type, pattern, RegexOptions.Compiled);
+            return this;
+        }
+        public StatefulLexer regexIgnoreCase(string type, string pattern)
+        {
+            regex(type, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             return this;
         }
 
@@ -183,6 +202,13 @@ namespace Dissect.Lexer
             }
 
             return null;
+        }
+
+        protected override void ResetStatesForNewString()
+        {
+            string lastState = this.stateStack.Last();
+            this.stateStack.Clear();
+            this.start(lastState);
         }
     }
 }

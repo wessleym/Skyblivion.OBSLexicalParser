@@ -37,26 +37,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            string functionName;
-            string dataString = functionArguments.getValue(0).StringValue;
-            switch (dataString.ToLower())
-            {
-                case "x":
-                case "y":
-                case "z":
-                    {
-                        functionName = "GetAngle" + PHPFunction.UCWords(dataString);
-                        functionArguments.popValue(0);
-                        break;
-                    }
-
-                default:
-                    {
-                        throw new ConversionException("getAngle can handle only X,Y,Z parameters.");
-                    }
-            }
-
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            string arg0 = functionArguments.Pop(0).StringValue;
+            string arg0Lower = arg0.ToLower();
+            if (arg0Lower != "x" && arg0Lower != "y" && arg0Lower != "z") { throw new ConversionException("getAngle can handle only X,Y,Z parameters."); }
+            string functionName = "GetAngle" + PHPFunction.UCWords(arg0);
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }
 }

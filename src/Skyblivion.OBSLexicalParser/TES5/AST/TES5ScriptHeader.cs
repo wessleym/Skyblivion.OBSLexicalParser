@@ -44,10 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             return this.edid;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().output().Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
-        }
+        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
 
         /*
              * @throws ConversionException

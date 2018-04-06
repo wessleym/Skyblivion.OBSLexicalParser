@@ -54,11 +54,10 @@ namespace Dissect.Parser
         */
         public string getComponent(int index)
         {
-            if (index>components.Length-1)//previously isset
+            if (index > components.Length - 1)
             {
                 return null;
             }
-
             return this.components[index];
         }
 

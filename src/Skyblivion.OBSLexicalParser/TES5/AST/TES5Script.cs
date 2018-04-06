@@ -17,10 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             this.blockList = blockList;
         }
 
-        public IEnumerable<string> output()
-        {
-            return this.scriptHeader.output().Concat(this.globalScope.output()).Concat(this.blockList.output());
-        }
+        public IEnumerable<string> Output => this.scriptHeader.Output.Concat(this.globalScope.Output).Concat(this.blockList.Output);
 
         public TES5BlockList getBlockList()
         {

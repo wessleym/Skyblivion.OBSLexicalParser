@@ -38,11 +38,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES4StringValue argument0 = functionArguments.getValue(0);
+            ITES4StringValue argument0 = functionArguments[0];
             TES5ObjectCallArguments functionArgs = new TES5ObjectCallArguments();
-            functionArgs.add(this.valueFactory.createValue(argument0, codeScope, globalScope, multipleScriptsScope));
-            functionArgs.add(new TES5Bool(true));
-            return this.objectCallFactory.createObjectCall(calledOn, "SetAlpha", multipleScriptsScope, functionArgs);
+            functionArgs.Add(this.valueFactory.createValue(argument0, codeScope, globalScope, multipleScriptsScope));
+            functionArgs.Add(new TES5Bool(true));
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAlpha", multipleScriptsScope, functionArgs);
         }
     }
 }

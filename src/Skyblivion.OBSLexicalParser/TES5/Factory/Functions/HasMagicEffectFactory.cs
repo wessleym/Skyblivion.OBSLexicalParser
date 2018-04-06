@@ -34,12 +34,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
-            string dataString = functionArguments.getValue(0).StringValue;
-            newArgs.add(this.referenceFactory.createReference("Effect"+dataString, globalScope, multipleScriptsScope, localScope));
+            string dataString = functionArguments[0].StringValue;
+            newArgs.Add(this.referenceFactory.createReference("Effect"+dataString, globalScope, multipleScriptsScope, localScope));
             /*switch (dataString)
             {
 
@@ -61,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         break;
                     }
             }*/
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, newArgs);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArgs);
         }
     }
 }

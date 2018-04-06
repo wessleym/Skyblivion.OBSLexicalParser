@@ -18,9 +18,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
         {
             return this.variableList;
         }
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return variableList.SelectMany(vl => vl.filter(predicate)).ToArray();
+            return variableList.SelectMany(vl => vl.Filter(predicate)).ToArray();
         }
     }
 }

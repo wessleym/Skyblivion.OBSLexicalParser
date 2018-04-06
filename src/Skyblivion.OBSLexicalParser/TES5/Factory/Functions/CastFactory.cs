@@ -35,21 +35,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
-            ITES4StringValue value = functionArguments.getValue(0);
+            ITES4StringValue value = functionArguments[0];
             ITES5Referencer toBeMethodArgument = calledOn;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
-            methodArguments.add(toBeMethodArgument);
-            ITES4StringValue target = functionArguments.getValue(1);
+            methodArguments.Add(toBeMethodArgument);
+            ITES4StringValue target = functionArguments.GetOrNull(1);
             if (target != null)
             {
-                methodArguments.add(this.referenceFactory.createReadReference(target.StringValue, globalScope, multipleScriptsScope, localScope));
+                methodArguments.Add(this.referenceFactory.createReadReference(target.StringValue, globalScope, multipleScriptsScope, localScope));
             }
 
-            return this.objectCallFactory.createObjectCall(newCalledOn, functionName, multipleScriptsScope, methodArguments);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, methodArguments);
         }
     }
 }

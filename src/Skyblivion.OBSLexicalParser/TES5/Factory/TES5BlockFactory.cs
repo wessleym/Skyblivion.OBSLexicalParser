@@ -223,14 +223,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4CodeChunks chunks = block.getChunks();
             if (chunks != null)
             {
-                foreach (ITES4CodeChunk codeChunk in chunks.getCodeChunks())
+                foreach (ITES4CodeChunk codeChunk in chunks.CodeChunks)
                 {
                     TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.getCodeScope(), globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                         {
-                            conversionScope.add(newCodeChunk);
+                            conversionScope.Add(newCodeChunk);
                         }
                     }
                 }

@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
     class MappedTargetsLogService : BuildLogService
     {
         public MappedTargetsLogService(Build build)
-            : base(build.GetBuildPath("TargetsMapping"), FileMode.Create)
+            : base(GetPath(build), FileMode.Create)
         { }
 
         private void WriteLine(string text)
@@ -14,15 +14,26 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
             Write(text + "\r\n");
         }
 
-        public void writeScriptName(string scriptName)
+        public void WriteScriptName(string scriptName)
         {
             WriteLine(scriptName);
         }
 
-        public void add(int originalTargetIndex, IEnumerable<int> mappedTargetIndexes = null)
+        public void WriteLine(int originalTargetIndex, IEnumerable<int> mappedTargetIndexes = null)
         {
             if (mappedTargetIndexes == null) { mappedTargetIndexes = new int[] { }; }
             WriteLine(originalTargetIndex.ToString() + " " + string.Join("\t", mappedTargetIndexes));
+        }
+
+        public static string GetPath(Build build)
+        {
+            return build.GetBuildPath("TargetsMapping.txt");
+        }
+
+        public static void DeleteFile(Build build)
+        {
+            string path = GetPath(build);
+            File.Delete(path);
         }
     }
 }

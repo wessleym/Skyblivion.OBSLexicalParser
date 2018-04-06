@@ -36,8 +36,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.getArguments();
+            int arg0 = (int)functionArguments.Pop(0).getData();
             string functionName;
-            switch ((int)functionArguments.getValue(0).getData())
+            switch (arg0)
             {
                 case 0:
                     {
@@ -54,9 +55,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         throw new ConversionException("Unknown setAlert value, must be 0 or 1");
                     }
             }
-
-            functionArguments.popValue(0);
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }
 }

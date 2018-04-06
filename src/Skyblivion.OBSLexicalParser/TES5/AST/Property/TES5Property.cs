@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,11 +34,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.trackedScript = null;
         }
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            string propertyTypeName = this.getPropertyType().output().Single();
-            //Todo - Actually differentiate between properties which need and do not need to be conditional
-            return new string[] { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
+            get
+            {
+                string propertyTypeName = this.getPropertyType().Output.Single();
+                //Todo - Actually differentiate between properties which need and do not need to be conditional
+                return new string[] { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
+            }
         }
 
         public string getPropertyName()
@@ -55,8 +59,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             return RemovePropertyNameSuffix(this.propertyName);
         }
 
-        private static string AddPropertyNameSuffix(string propertyName)
+        public static string AddPropertyNameSuffix(string propertyName, bool throwExceptionIfSuffixAlreadyPresent = true)
         {
+            if (throwExceptionIfSuffixAlreadyPresent && propertyName.EndsWith(PROPERTY_SUFFIX))
+            {
+                throw new ArgumentException(nameof(propertyName) + " already ended with suffix (" + PROPERTY_SUFFIX + "):  " + propertyName);
+            }
             return propertyName + PROPERTY_SUFFIX;//we"re adding _p prefix because papyrus compiler complains about property names named after other scripts, _p makes sure we won"t conflict.
         }
 

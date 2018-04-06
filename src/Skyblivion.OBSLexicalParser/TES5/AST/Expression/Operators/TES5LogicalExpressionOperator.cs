@@ -4,13 +4,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
     class TES5LogicalExpressionOperator : TES5ExpressionOperator
     {
-        public TES5LogicalExpressionOperator(string name) : base(name) { }
+        private TES5LogicalExpressionOperator(string name) : base(name) { }
 
         public static readonly TES5LogicalExpressionOperator
             OPERATOR_OR = new TES5LogicalExpressionOperator("||"),
             OPERATOR_AND = new TES5LogicalExpressionOperator("&&");
 
-        public static readonly TES5LogicalExpressionOperator[] all = new TES5LogicalExpressionOperator[]
+        private static readonly TES5LogicalExpressionOperator[] all = new TES5LogicalExpressionOperator[]
         {
             OPERATOR_OR,
             OPERATOR_AND

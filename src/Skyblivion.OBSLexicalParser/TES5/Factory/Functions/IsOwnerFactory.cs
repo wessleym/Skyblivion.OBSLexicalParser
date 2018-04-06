@@ -37,22 +37,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
-            string dataString = functionArguments.getValue(0).StringValue;
+            string dataString = functionArguments[0].StringValue;
             ITES5Referencer targetReference = this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope);
             ITES5Type dataType = ESMAnalyzer._instance().getFormTypeByEDID(dataString);
             TES5ObjectCall owner;
             ITES5Referencer baseReference;
             if (dataType == TES5BasicType.T_FACTION)
             {
-                owner = this.objectCallFactory.createObjectCall(calledOn, "GetFactionOwner", multipleScriptsScope);
+                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetFactionOwner", multipleScriptsScope);
                 baseReference = targetReference;
             }
             else
             {
-                owner = this.objectCallFactory.createObjectCall(calledOn, "GetActorOwner", multipleScriptsScope);
-                baseReference = this.objectCallFactory.createObjectCall(targetReference, "GetActorBase", multipleScriptsScope);
+                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetActorOwner", multipleScriptsScope);
+                baseReference = this.objectCallFactory.CreateGetActorBase(targetReference, multipleScriptsScope);
             }
 
             TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(owner, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, baseReference);

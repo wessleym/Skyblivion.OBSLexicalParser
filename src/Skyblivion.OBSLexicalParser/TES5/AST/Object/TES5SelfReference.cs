@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
-    class TES5SelfReference : ITES5Referencer
+    class TES5SelfReference : TES5Castable, ITES5Referencer
     {
         private TES5ScriptAsVariable scriptAsVariable;
         public TES5SelfReference(TES5ScriptAsVariable scriptAsVariable)
@@ -12,24 +12,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.scriptAsVariable = scriptAsVariable;
         }
 
-        public IEnumerable<string> output()
-        {
-            return new string[] { "self" };
-        }
+        public IEnumerable<string> Output => new string[] { "self" + ManualCastToOutput };
 
-        public string getName()
-        {
-            return "self";
-        }
+        public string Name => "self";
 
-        public ITES5Variable getReferencesTo()
-        {
-            return this.scriptAsVariable;
-        }
+        public ITES5Variable ReferencesTo => this.scriptAsVariable;
 
-        public ITES5Type getType()
-        {
-            return this.scriptAsVariable.getPropertyType();
-        }
+        public ITES5Type TES5Type => this.scriptAsVariable.getPropertyType();
     }
 }

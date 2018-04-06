@@ -35,10 +35,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string functionName = "SetActorOwner";
+            const string functionName = "SetActorOwner";
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
-            methodArguments.add(new TES5None());
-            return this.objectCallFactory.createObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
+            methodArguments.Add(new TES5None());
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
         }
     }
 }

@@ -128,12 +128,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 resultingBlockList.add(fragment);
             }
 
-            this.mappedTargetsLogService.writeScriptName(resultingFragmentName);
+            this.mappedTargetsLogService.WriteScriptName(resultingFragmentName);
             foreach (var kvp in stageMap.getMappedTargetsIndex())
             {
                 var originalTargetIndex = kvp.Key;
                 var mappedTargetIndexes = kvp.Value;
-                this.mappedTargetsLogService.add(originalTargetIndex, mappedTargetIndexes);
+                this.mappedTargetsLogService.WriteLine(originalTargetIndex, mappedTargetIndexes);
             }
 
             TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList);
@@ -147,7 +147,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 #if PHP_COMPAT
                 PHPFunction.MD5(header.getScriptName()).Substring(0, 4)
 #else
-                header.getScriptName().GetHashCode().ToString()
+                Math.Abs(header.getScriptName().GetHashCode()).ToString()
 #endif
                 ;
         }

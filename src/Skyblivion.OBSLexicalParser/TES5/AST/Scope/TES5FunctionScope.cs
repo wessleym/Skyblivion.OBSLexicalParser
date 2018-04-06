@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public IEnumerable<string> getVariablesOutput()
         {
-            return this.getVariables().Values.Select(v => v.getPropertyType().output().Single() + " " + v.getPropertyName());
+            return this.getVariables().Values.Select(v => v.getPropertyType().Output.Single() + " " + v.getPropertyName());
         }
 
         public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)

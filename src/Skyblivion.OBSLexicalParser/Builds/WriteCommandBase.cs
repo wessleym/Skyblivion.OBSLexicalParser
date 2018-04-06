@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             foreach (TES5Target target in targets)
             {
-                string[] outputString = target.getScript().output().ToArray();
+                string[] outputString = target.getScript().Output.ToArray();
                 Write(target.getOutputPath(), outputString);
                 progressWriter.IncrementAndWrite();
             }

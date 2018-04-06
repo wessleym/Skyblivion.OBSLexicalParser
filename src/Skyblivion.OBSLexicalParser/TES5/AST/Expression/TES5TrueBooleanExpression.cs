@@ -15,18 +15,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             this.value = value;
         }
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_BOOL;
-        }
+        public ITES5Type TES5Type => TES5BasicType.T_BOOL;
 
-        public IEnumerable<string> output()
+        public IEnumerable<string> Output
         {
-            TES5Bool trueBool = new TES5Bool(true);
-            TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.OPERATOR_EQUAL;
-            string outputValue = this.value.output().Single();
-            string trueOutputValue = trueBool.output().Single();
-            return new string[] { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };
+            get
+            {
+                TES5Bool trueBool = new TES5Bool(true);
+                TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.OPERATOR_EQUAL;
+                string outputValue = this.value.Output.Single();
+                string trueOutputValue = trueBool.Output.Single();
+                return new string[] { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using Skyblivion.ESReader.PHP;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Service
 {
@@ -11,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 #if PHP_COMPAT
                 return PHPFunction.MD5(originalName.ToLower());
 #else
-                return originalName.ToLower().GetHashCode().ToString();
+                return Math.Abs(originalName.ToLower().GetHashCode()).ToString();
 #endif
             }
             else

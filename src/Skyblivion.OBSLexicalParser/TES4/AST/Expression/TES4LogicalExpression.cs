@@ -54,9 +54,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             return this.leftValue.hasFixedValue() && this.rightValue.hasFixedValue();
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.leftValue.filter(predicate).Concat(this.rightValue.filter(predicate)).ToArray();
+            return this.leftValue.Filter(predicate).Concat(this.rightValue.Filter(predicate)).ToArray();
         }
     }
 }

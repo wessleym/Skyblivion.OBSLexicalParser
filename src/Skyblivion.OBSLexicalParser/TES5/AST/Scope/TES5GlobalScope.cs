@@ -11,6 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         /*
         * TES5GlobalScope constructor.
         */
+        public bool IsSpecial = false;
         public TES5GlobalScope(TES5ScriptHeader scriptHeader)
         {
             this.scriptHeader = scriptHeader;
@@ -26,19 +27,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.properties.Add(declaration);
         }
 
-        public IEnumerable<string> output()
-        {
-            return properties.SelectMany(p => p.output());
-        }
+        public IEnumerable<string> Output => properties.SelectMany(p => p.Output);
 
         public TES5Property getPropertyByName(string propertyName)
         {
-            foreach (var property in this.properties)
+            if (this.properties.Any())
             {
-                if (propertyName.ToLower()+"_p" == property.getPropertyName().ToLower())
+                string propertyNameLower = propertyName.ToLower();
+                string propertyNameLowerWithSuffix = TES5Property.AddPropertyNameSuffix(propertyNameLower, false);
+                foreach (var property in this.properties)
                 {
-                    //Token found.
-                    return property;
+                    string currentPropertyNameLower = property.getPropertyName().ToLower();
+                    if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix==currentPropertyNameLower)
+                    {
+                        //Token found.
+                        return property;
+                    }
                 }
             }
             return null;

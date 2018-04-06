@@ -4,7 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
     class TES5BinaryExpressionOperator : TES5ExpressionOperator
     {
-        public TES5BinaryExpressionOperator(string name) : base(name) { }
+        private TES5BinaryExpressionOperator(string name) : base(name) { }
 
         public static readonly TES5BinaryExpressionOperator
             OPERATOR_ADD = new TES5BinaryExpressionOperator("+"),

@@ -5,19 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5None : ITES5Primitive
     {
-        public IEnumerable<string> output()
-        {
-            return new string[] { "None" };
-        }
+        public IEnumerable<string> Output => new string[] { "None" };
 
-        public ITES5Type getType()
-        {
-            return TES5BasicType.T_FORM;
-        }
-
-        public object getValue()
-        {
-            return null;
-        }
+        public ITES5Type TES5Type => TES5BasicType.T_FORM;
     }
 }

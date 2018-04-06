@@ -36,11 +36,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalScope localScope = codeScope.getLocalScope();
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             //Made in post-analysis
-            TES5ObjectCall functionThis = this.objectCallFactory.createObjectCall(calledOn, "GetRace", multipleScriptsScope);
-            ITES5Referencer argument = this.referenceFactory.createReadReference(functionArguments.getValue(0).StringValue, globalScope, multipleScriptsScope, localScope);
+            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(calledOn, "GetRace", multipleScriptsScope);
+            ITES5Referencer argument = this.referenceFactory.createReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(functionThis, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, argument);
             return expression;
         }

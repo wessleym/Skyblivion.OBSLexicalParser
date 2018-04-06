@@ -1,4 +1,3 @@
-using Dissect.Parser.Exceptions;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
@@ -7,10 +6,8 @@ using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -65,7 +62,6 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 //Add the static global scopes which are added by complimenting scripts..
                 List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.createGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
-                //But I doubt these scripts are ever accessed.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
                 {
@@ -73,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     globalScopeIndex++;
                 }
 
-                TES5MultipleScriptsScope multipleScriptsScope = new TES5MultipleScriptsScope(scriptsScopes.Select(s => s.Value), globalVariables);
+                TES5MultipleScriptsScope multipleScriptsScope = new TES5MultipleScriptsScope(scriptsScopes.Values, globalVariables);
                 //Dictionary<string, TES5Target> convertedScripts = new Dictionary<string, TES5Target>();
                 foreach (var kvp in buildChunk)
                 {

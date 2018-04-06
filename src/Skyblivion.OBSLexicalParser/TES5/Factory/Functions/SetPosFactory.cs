@@ -38,17 +38,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments callArguments = new TES5ObjectCallArguments();
-            TES5ObjectCall dummyX = this.objectCallFactory.createObjectCall(calledOn, "GetPositionX", multipleScriptsScope);
-            TES5ObjectCall dummyY = this.objectCallFactory.createObjectCall(calledOn, "GetPositionY", multipleScriptsScope);
-            TES5ObjectCall dummyZ = this.objectCallFactory.createObjectCall(calledOn, "GetPositionZ", multipleScriptsScope);
+            TES5ObjectCall dummyX = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionX", multipleScriptsScope);
+            TES5ObjectCall dummyY = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionY", multipleScriptsScope);
+            TES5ObjectCall dummyZ = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionZ", multipleScriptsScope);
             ITES5Value[] argList;
-            switch ((functionArguments.getValue(0).StringValue).ToLower())
+            switch ((functionArguments[0].StringValue).ToLower())
             {
                 case "x":
                     {
                         argList = new ITES5Value[]
                         {
-                            this.valueFactory.createValue(functionArguments.getValue(1), codeScope, globalScope, multipleScriptsScope),
+                            this.valueFactory.createValue(functionArguments[1], codeScope, globalScope, multipleScriptsScope),
                             dummyY,
                             dummyZ
                         };
@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         argList = new ITES5Value[]
                         {
                             dummyX,
-                            this.valueFactory.createValue(functionArguments.getValue(1), codeScope, globalScope, multipleScriptsScope),
+                            this.valueFactory.createValue(functionArguments[1], codeScope, globalScope, multipleScriptsScope),
                             dummyZ
                         };
                         break;
@@ -72,7 +72,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         {
                             dummyX,
                             dummyY,
-                            this.valueFactory.createValue(functionArguments.getValue(1), codeScope, globalScope, multipleScriptsScope)
+                            this.valueFactory.createValue(functionArguments[1], codeScope, globalScope, multipleScriptsScope)
                         };
                         break;
                     }
@@ -85,10 +85,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             foreach (var argListC in argList)
             {
-                callArguments.add(argListC);
+                callArguments.Add(argListC);
             }
 
-            return this.objectCallFactory.createObjectCall(calledOn, "SetPosition", multipleScriptsScope, callArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetPosition", multipleScriptsScope, callArguments);
         }
     }
 }

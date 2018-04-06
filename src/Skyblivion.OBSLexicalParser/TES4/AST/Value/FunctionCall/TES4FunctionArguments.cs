@@ -1,57 +1,53 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
-    class TES4FunctionArguments
+    class TES4FunctionArguments : IEnumerable<ITES4StringValue>
     {
         private List<ITES4StringValue> values = new List<ITES4StringValue>();
-        public void add(ITES4StringValue declaration)
+
+        public override int GetHashCode()
+        {
+            return values.GetHashCode();
+        }
+
+        public IEnumerator<ITES4StringValue> GetEnumerator()
+        {
+            return values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Add(ITES4StringValue declaration)
         {
             this.values.Add(declaration);
         }
 
-        public int count()
+        public int Count => this.values.Count;
+
+        public ITES4StringValue this[int index] => values[index];
+
+        public void RemoveAt(int index)
         {
-            return this.values.Count;
+            values.RemoveAt(index);
         }
 
-        public List<ITES4StringValue> getValues()
+        public ITES4StringValue Pop(int index)
         {
-            return this.values;
-        }
-
-        public ITES4StringValue popValue(int index)
-        {
-            List<ITES4StringValue> newValues = new List<ITES4StringValue>();
-            ITES4StringValue toReturn = null;
-            for (int i=0;i< values.Count;i++)
-            {
-                var value = values[i];
-                if (i == index)
-                {
-                    toReturn = value;
-                }
-                else
-                {
-                    newValues.Add(value);
-                }
-            }
-
-            if (toReturn == null)
-            {
-                throw new ConversionException("Cannot pop index "+index.ToString());
-            }
-
-            this.values = newValues;
+            ITES4StringValue toReturn = values[index];
+            RemoveAt(index);
             return toReturn;
         }
 
-        public ITES4StringValue getValue(int i)
-        {//previously isset
+        public ITES4StringValue GetOrNull(int i)
+        {
             try
             {
                 return values[i];
@@ -64,12 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.values.SelectMany(v => v.filter(predicate)).ToArray();
-        }
-
-        public bool Any()
-        {
-            return values.Any();
+            return this.SelectMany(v => v.Filter(predicate)).ToArray();
         }
     }
 }

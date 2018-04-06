@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         public void inferenceObjectByMethodCall(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
         {
             this.inferenceTypeOfCalledObject(objectCall, multipleScriptsScope);
-            if (objectCall.getArguments() != null)
+            if (objectCall.Arguments!= null)
             {
                 this.inferenceTypeOfMethodArguments(objectCall, multipleScriptsScope);
             }
@@ -44,16 +44,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             /*
              * Inference the arguments
              */
-            TES5ObjectCallArguments arguments = objectCall.getArguments();
             int argumentNumber = 0;
-            ITES5Type calledOnType = objectCall.getAccessedObject().getType().getNativeType();
-            foreach (ITES5Value argument in arguments.getArguments())
+            ITES5Type calledOnType = objectCall.AccessedObject.TES5Type.getNativeType();
+            foreach (ITES5Value argument in objectCall.Arguments)
             {
                 /*
                  * Get the argument type according to TES5Inheritance graph.
                  */
-                ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.findTypeByMethodParameter(calledOnType, objectCall.getFunctionName(), argumentNumber);
-                if (argument.getType() == argumentTargetType)
+                ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.findTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentNumber);
+                if (argument.TES5Type == argumentTargetType)
                 {
                     argumentNumber++;
                     continue; //Same type matched. We do not need to do anything :)
@@ -63,9 +62,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                  * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
                  */
                 ITES5Referencer referencerArgument = argument as ITES5Referencer;
-                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.getType().getNativeType()))
+                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.TES5Type.getNativeType()))
                 { //HACKY!
-                    this.inferenceType(referencerArgument.getReferencesTo(), argumentTargetType, multipleScriptsScope);
+                    this.inferenceType(referencerArgument.ReferencesTo, argumentTargetType, multipleScriptsScope);
                 }
                 else
                 {
@@ -73,27 +72,32 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                     //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
                     //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
                     //float assigment somewhere in the code )
-                    if (argumentTargetType == TES5BasicType.T_INT && argument.getType() == TES5BasicType.T_FLOAT)
+                    if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
                     {
-                        TES5Reference referenceArgument = argument as TES5Reference;
-                        if (referenceArgument != null)
+                        TES5Castable argumentCastable = argument as TES5Castable;
+                        if (argumentCastable != null)
                         { //HACKY! When we"ll clean up this interface, it will dissapear :)
-                            referenceArgument.setManualCastTo(TES5BasicType.T_INT);
+                            argumentCastable.ManualCastTo = argumentTargetType;
                         }
                     }
+                    //WTM:  Note:  I added the below as a safeguard, but it threw exceptions a lot.  So I'm removing it for now.  Maybe someday I'll find the right criteria to bring it back.
+                    /*else if (!TES5InheritanceGraphAnalyzer.isExtending(argument.getType(), argumentTargetType))
+                    {
+                        throw new InvalidOperationException("Argument type mismatch.  Expected " + argumentTargetType.getOriginalName() + ".  Found " + argument.getType().getOriginalName() + ".");
+                    }*/
                 }
 
-                ++argumentNumber;
+                argumentNumber++;
             }
         }
 
         private void inferenceTypeOfCalledObject(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            ITES5Type inferencableType = objectCall.getAccessedObject().getType().getNativeType();
+            ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.getNativeType();
             /*
              * Check if we have something to inference inside the code, not some static class or method call return
              */
-            if (objectCall.getAccessedObject().getReferencesTo() != null)
+            if (objectCall.AccessedObject.ReferencesTo != null)
             {
                 //this is not "exactly" nice solution, but its enough. For now.
                 ITES5Type inferenceType = TES5InheritanceGraphAnalyzer.findTypeByMethod(objectCall);
@@ -107,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                     return; //We already have the good type.
                 }
 
-                if (this.inferenceType(objectCall.getAccessedObject().getReferencesTo(), inferenceType, multipleScriptsScope))
+                if (this.inferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType, multipleScriptsScope))
                 {
                     return;
                 }
@@ -147,21 +151,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         */
         public ITES5Type resolveInferenceTypeByReferenceEdid(ITES5Variable variable)
         {
-            string baseEDID = variable.getReferenceEdid();
-            List<string> namesToTry = new List<string>() { baseEDID, baseEDID + "Script" };
-            int baseEDIDLength = baseEDID.Length;
-            if (baseEDID.Substring(baseEDIDLength - 3, 3).Equals("ref", StringComparison.OrdinalIgnoreCase))
+            string edid = variable.getReferenceEdid();
+            //WTM:  Change:  Without this if statement, SEBrithaurRef finds a reference
+            //from qf_se35_01044c44_40_0 to SEBrithaurScript instead of
+            //from qf_se35_01044c44_40_0 to SE35BrithaurScript
+            //So the content of this if statement must be skipped.
+            if (edid != "SEBrithaurRef")
             {
-                string tryAsRef = baseEDID.Substring(0, baseEDIDLength - 3);
-                namesToTry.AddRange(new string[] { tryAsRef, tryAsRef + "Script" });
-            }
-
-            namesToTry = namesToTry.Distinct().ToList();
-            foreach (var nameToTry in namesToTry)
-            {
-                if (this.otherScripts.Contains(nameToTry.ToLower()))
+                List<string> namesToTry = new List<string>() { edid, edid + "QuestScript", edid + "Script" };//WTM:  I added the "QuestScript" item.  This was needed for MQDragonArmorQuestScript.
+                int edidLength = edid.Length;
+                if (edid.Substring(edidLength - 3, 3).Equals("ref", StringComparison.OrdinalIgnoreCase))
                 {
-                    return TES5TypeFactory.memberByValue(nameToTry);
+                    string tryAsRef = edid.Substring(0, edidLength - 3);
+                    namesToTry.AddRange(new string[] { tryAsRef, tryAsRef + "Script" });
+                }
+                namesToTry = namesToTry.Distinct().ToList();
+                foreach (var nameToTry in namesToTry)
+                {
+                    if (this.otherScripts.Contains(nameToTry.ToLower()))
+                    {
+                        return TES5TypeFactory.memberByValue(nameToTry);
+                    }
                 }
             }
 
@@ -187,9 +197,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         public void inferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            if (reference.getReferencesTo() != null && !reference.getType().isPrimitive())
+            if (reference.ReferencesTo != null && !reference.TES5Type.isPrimitive())
             {
-                this.inferenceType(reference.getReferencesTo(), value.getType().getNativeType(), multipleScriptsScope);
+                this.inferenceType(reference.ReferencesTo, value.TES5Type.getNativeType(), multipleScriptsScope);
             }
         }
     }

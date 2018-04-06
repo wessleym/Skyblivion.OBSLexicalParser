@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 
         public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return blocks.SelectMany(b=>b.filter(predicate)).ToArray();
+            return blocks.SelectMany(b=>b.Filter(predicate)).ToArray();
         }
     }
 }
