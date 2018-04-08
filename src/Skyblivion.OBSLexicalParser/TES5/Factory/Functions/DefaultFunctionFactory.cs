@@ -26,13 +26,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-            if (functionName.ToLower().Contains("placeatme"))
-            {
-                if (newArguments.Any(a => a.Output.Any(b=>b.Contains("TG03LlathasasBust"))))
-                {
-
-                }
-            }
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }

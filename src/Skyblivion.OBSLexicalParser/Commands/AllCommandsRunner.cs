@@ -17,12 +17,13 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public static void Run()
         {
+            string dataPath = "Data" + Path.DirectorySeparatorChar;
             Console.WriteLine("Ensure you've placed all relevant data files in a Data folder in the same directory as this executable:");
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Build" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "BuildTargets" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Compiler" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + "Graph" + Path.DirectorySeparatorChar + " (Only needed for " + commands[0].FriendlyName + ")");
-            Console.WriteLine("    Data" + Path.DirectorySeparatorChar + DataDirectory.TES4GameFileName);
+            Console.WriteLine("    " + dataPath + "Build" + Path.DirectorySeparatorChar);
+            Console.WriteLine("    " + dataPath + "BuildTargets" + Path.DirectorySeparatorChar);
+            Console.WriteLine("    " + dataPath + "Compiler" + Path.DirectorySeparatorChar);
+            Console.WriteLine("    " + dataPath + "Graph" + Path.DirectorySeparatorChar + " (Only needed for " + commands[0].FriendlyName + ")");
+            Console.WriteLine("    " + dataPath + DataDirectory.TES4GameFileName);
             Console.WriteLine("Type a number to run a command:");
             for (int i = 0; i < commands.Length; i++)
             {
