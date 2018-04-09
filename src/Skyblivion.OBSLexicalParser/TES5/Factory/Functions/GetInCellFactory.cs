@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             argumentsList.Add(this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell", multipleScriptsScope));
             argumentsList.Add(new TES5Integer(0));
             argumentsList.Add(new TES5Integer(length));
-            TES5ObjectCall parentCellCheck = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToStaticClass("StringUtil"), "Substring", multipleScriptsScope, argumentsList);
+            TES5ObjectCall parentCellCheck = this.objectCallFactory.CreateObjectCall(TES5StaticReference.StringUtil, "Substring", multipleScriptsScope, argumentsList);
             TES5String checkAgainst = new TES5String(dataString);
             return TES5ExpressionFactory.createArithmeticExpression(parentCellCheck, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, checkAgainst);
         }

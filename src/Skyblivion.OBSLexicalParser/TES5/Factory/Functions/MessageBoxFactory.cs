@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //todo Refactor - add floating point vars .
             if (functionArguments.Count== 1)
             {
-                TES5StaticReference calledOnRef = new TES5StaticReference("Debug");
+                TES5StaticReference calledOnRef = TES5StaticReference.Debug;
                 return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else

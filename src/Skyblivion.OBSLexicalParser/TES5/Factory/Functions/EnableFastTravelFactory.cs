@@ -37,8 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.getFunctionCall().getFunctionName();
             TES4FunctionArguments functionArguments = function.getArguments();
             //@INCONSISTENCE @TODO: Entering an interior Cell and then exiting to an exterior will reset Fast Travel to the enabled state.
-            calledOn = new TES5StaticReference("Game");
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

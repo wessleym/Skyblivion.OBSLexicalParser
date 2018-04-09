@@ -112,14 +112,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     }
                 }
 
-                calledOn = new TES5StaticReference("Debug");
+                calledOn = TES5StaticReference.Debug;
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                 arguments.Add(TES5PrimitiveValueFactory.createConcatenatedValue(combinedValues));
                 return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
             else
             {
-                calledOn = new TES5StaticReference("Debug");
+                calledOn = TES5StaticReference.Debug;
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                 arguments.Add(this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope));
                 return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);

@@ -36,11 +36,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string functionName = "RandomInt";
-            calledOn = new TES5StaticReference("Utility");
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
             methodArguments.Add(new TES5Integer(0));
             methodArguments.Add(new TES5Integer(99));
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, functionName, multipleScriptsScope, methodArguments);
         }
     }
 }

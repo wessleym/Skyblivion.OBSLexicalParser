@@ -103,7 +103,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("getpcinfamy", new GetPCInfamyFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpcisrace", new GetPCIsRaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpcissex", new GetPCIsSexFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("getpcmiscstat", new NotSupportedFactory());//WTM:  Note:  This only seems to be used as "GetPCMiscStat 7 >= 30" in Standalone\Source\rusiabradusscript.txt.
+            valueFactory.addFunctionFactory("getpcmiscstat", new GetPCMiscStatFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("getplayercontrolsdisabled", new ReturnFalseFactory());
             valueFactory.addFunctionFactory("getplayerinseworld", new GetPlayerInSEWorldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getpos", new GetPosFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));

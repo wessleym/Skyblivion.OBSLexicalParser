@@ -39,11 +39,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             };
         }
 
-        public static TES5StaticReference CreateReferenceToStaticClass(string name)
-        {
-            return new TES5StaticReference(name);
-        }
-
         public static TES5SelfReference CreateReferenceToSelf(TES5GlobalScope globalScope)
         {
             //todo perhaps move tes5scriptAsVariable to a new factory

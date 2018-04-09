@@ -34,8 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5StaticReference newCalledOn = new TES5StaticReference("Game");
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, "GetAmountSoldStolen", multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, "GetAmountSoldStolen", multipleScriptsScope);
         }
     }
 }
