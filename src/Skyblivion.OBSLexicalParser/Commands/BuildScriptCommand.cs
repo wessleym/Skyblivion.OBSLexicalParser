@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.IO;
 using System.Linq;

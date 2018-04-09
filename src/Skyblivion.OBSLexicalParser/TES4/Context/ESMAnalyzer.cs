@@ -303,7 +303,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type getFormTypeByEDID(string edid)
         {
-            ITES4Record record = esm.findByEDID(edid, false);
+            TES4LoadedRecord record = esm.findByEDID(edid, false);
             if (record == null)
             {
                 //WTM:  Change:  These EDIDs can't be found, so I've written them into the code.
@@ -336,7 +336,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             string attachedNameLower = attachedName.ToLower();
             ITES5Type value;
             if (this.attachedNameCache.TryGetValue(attachedNameLower, out value)) { return value; }
-            ITES4Record attachedNameRecord = esm.findByEDID(attachedName, false);
+            TES4LoadedRecord attachedNameRecord = esm.findByEDID(attachedName, false);
             if (attachedNameRecord == null)
             {
                 throw new ConversionException("Cannot resolve script type by searching its base form edid - no record found, " + attachedName);
