@@ -105,7 +105,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
             return md5;
 #else
-            return Math.Abs(string.Join(",", this.buildTargets.Select(kvp => kvp.Key)).GetHashCode()).ToString();
+            string fileName = string.Join("", this.buildTargets.Select(kvp => kvp.Key));
+            foreach(char invalid in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(invalid.ToString(), "");
+            }
+            return fileName;
 #endif
         }
 

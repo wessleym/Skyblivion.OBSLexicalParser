@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.WriteLine("    " + dataPath + "Build" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + "BuildTargets" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + "Compiler" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    " + dataPath + "Graph" + Path.DirectorySeparatorChar + " (Only needed for " + commands[0].FriendlyName + ")");
+            Console.WriteLine("    " + dataPath + "Graph" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + DataDirectory.TES4GameFileName);
             Console.WriteLine("Type a number to run a command:");
             for (int i = 0; i < commands.Length; i++)

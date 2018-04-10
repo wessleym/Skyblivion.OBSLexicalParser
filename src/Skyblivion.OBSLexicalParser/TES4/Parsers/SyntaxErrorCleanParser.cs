@@ -3,7 +3,6 @@ using Dissect.Lexer.TokenStream;
 using Dissect.Parser;
 using Dissect.Parser.Exceptions;
 using Dissect.Parser.LALR1.Analysis;
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 
         public object ParseWithFixLogic(ITokenStream stream)
         {
-            //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails
+            //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails.
             //The below check works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
             if (firstTwoTokens.Length == 1 && firstTwoTokens[0].getType() == EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
@@ -30,9 +29,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             {
                 bool isFixed = false;
                 int nesting = 0;
-                /*
-                * @var CommonToken token
-                */
                 List<IToken> tokens = new List<IToken>();
                 foreach (var token in stream)
                 {

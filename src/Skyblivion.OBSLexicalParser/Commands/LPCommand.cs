@@ -1,4 +1,6 @@
-﻿namespace Skyblivion.OBSLexicalParser.Commands
+﻿using System;
+
+namespace Skyblivion.OBSLexicalParser.Commands
 {
     public abstract class LPCommand
     {
@@ -12,6 +14,11 @@
             CommandName = commandName;
             FriendlyName = friendlyName;
             Description = description;
+        }
+
+        protected static void WriteUncleanMessage()
+        {
+            Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
                 if (!buildTargets.canBuild())
                 {
-                    Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
+                    WriteUncleanMessage();
                     return;
                 }
 
@@ -53,23 +53,28 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 }
                 catch (ConversionException ex)
                 {
-                    Console.WriteLine("Exception occured.\r\n" + ex.GetType().FullName + ":  " + ex.Message);
+                    Console.WriteLine("Exception occured." + Environment.NewLine + ex.GetType().FullName + ":  " + ex.Message);
                     return;
                 }
 #endif
-                PrepareWorkspaceAndCompile(build, buildTargets);
+                PrepareWorkspace(buildTargets);
+                Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
             string compileLog = File.ReadAllText(build.getCompileStandardOutputPath());
             Console.WriteLine(compileLog);
         }
 
-        private static void PrepareWorkspaceAndCompile(Build build, BuildTargetCollection buildTargets)
+        private static void PrepareWorkspace(BuildTargetCollection buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
             prepareCommand.run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
+        }
+
+        private static void Compile(Build build, BuildTargetCollection buildTargets)
+        {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.run();
         }

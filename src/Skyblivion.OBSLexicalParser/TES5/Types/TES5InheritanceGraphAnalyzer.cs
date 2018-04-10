@@ -112,7 +112,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         };
         private static TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
-        //Regular Expression used to build tree:  ("[^"]+") =>[\r\n\s]+new string\[\] \{\r\n\s+"args" =>[\r\n\s]+(new string\[\] \{[^\}]*\}),[\r\n\s]+"returnType" => ("[^"]+"),?[\r\n\s]*}
+        //Regular Expression used to build tree from PHP:  ("[^"]+") =>[\r\n\s]+new string\[\] \{\r\n\s+"args" =>[\r\n\s]+(new string\[\] \{[^\}]*\}),[\r\n\s]+"returnType" => ("[^"]+"),?[\r\n\s]*}
         private static Dictionary<string, TES5InheritanceFunctionSignature[]> callReturns = new Dictionary<string, TES5InheritanceFunctionSignature[]>()
         {
             { "ActiveMagicEffect",

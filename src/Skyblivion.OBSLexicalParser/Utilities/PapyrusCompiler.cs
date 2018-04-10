@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
 {
     static class PapyrusCompiler
     {
-        private static void ProcessStartNonWindows(string fileName, string arguments, string standardOutputFilePath, string standardErrorFilePath)
+        private static void ProcessStart(string fileName, string arguments, string standardOutputFilePath, string standardErrorFilePath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(fileName, arguments);
             startInfo.UseShellExecute = false;
@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             string standardOutput, standardError = "";
             using (Process process = Process.Start(startInfo))
             {
-                process.ErrorDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) { standardError += e.Data + "\r\n"; } };
+                process.ErrorDataReceived += (s, e) => { if (!string.IsNullOrEmpty(e.Data)) { standardError += e.Data + Environment.NewLine; } };
                 process.BeginErrorReadLine();
                 process.WaitForExit();
                 standardOutput = process.StandardOutput.ReadToEnd();
@@ -31,21 +31,34 @@ namespace Skyblivion.OBSLexicalParser.Utilities
         }
 
         private static Regex lfWithoutCR = new Regex("(?<!\r)\n", RegexOptions.Compiled);
-        private static void ProcessStartWindows(string fileName, string arguments, string standardOutputFilePath, string standardErrorFilePath)
+        private static void ProcessStartAlternate(string fileName, string arguments, string standardOutputFilePath, string standardErrorFilePath)
         {//This method uses an alternate technique for getting standard output and standard error.
             //PapyrusCompiler.exe stops running after a few seconds if RedirectStandardOutput or RedirectStandardError are true.
-            //Also, calling PapyrusCompiler.exe directly while using >> and 2> causes problems.  So I'm calling cmd.
-            string newArguments = "/s /c \"" + fileName + " " + arguments + " >>\"" + standardOutputFilePath + "\" 2>>\"" + standardErrorFilePath + "\"\"";
-            ProcessStartInfo startInfo = new ProcessStartInfo("cmd", newArguments);
+            //Also, calling PapyrusCompiler.exe directly while using >> and 2> causes problems.  So I'm calling cmd or bash.
+            bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            string newFileName = isWindows ? "cmd" : "bash";
+            string quotationMark = isWindows ? "\"" : "'";
+            string cmdOptions = isWindows ? "/s /c" : "-c";
+            string stdOutRedirector = isWindows ? ">>" : ">";
+            string stdErrRedirector = isWindows ? "2>>" : "2>";
+            string newArguments = cmdOptions + " " + quotationMark + fileName + " " + arguments + " "+ stdOutRedirector+"\"" + standardOutputFilePath + "\" "+ stdErrRedirector + "\"" + standardErrorFilePath + "\"" + quotationMark;
+            ProcessStartInfo startInfo = new ProcessStartInfo(newFileName, newArguments);
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = false;
             using (Process process = Process.Start(startInfo))
             {
                 process.WaitForExit();
             }
-            //PapyrusCompiler sometimes writes \n only.
-            File.WriteAllText(standardOutputFilePath, lfWithoutCR.Replace(File.ReadAllText(standardOutputFilePath), "\r\n"));
-            File.WriteAllText(standardErrorFilePath, lfWithoutCR.Replace(File.ReadAllText(standardErrorFilePath), "\r\n"));
+            string standardOutputText = File.ReadAllText(standardOutputFilePath);
+            string standardErrorText = File.ReadAllText(standardErrorFilePath);
+            if (isWindows)
+            {
+                //PapyrusCompiler sometimes writes \n only.
+                standardOutputText = lfWithoutCR.Replace(standardOutputText, Environment.NewLine);
+                standardErrorText = lfWithoutCR.Replace(standardErrorText, Environment.NewLine);
+            }
+            File.WriteAllText(standardOutputFilePath, standardOutputText);
+            File.WriteAllText(standardErrorFilePath, standardErrorText);
         }
 
         public static void Run(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
@@ -56,17 +69,11 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             outputPath = outputPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             standardOutputFilePath = standardOutputFilePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             string compilerDirectory = DataDirectory.GetCompilerDirectoryPath();
-            string fileName = "\"" + compilerDirectory + "PapyrusCompiler.exe\"";
+            bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            string fileName = (isWindows ? "\"" : "") + "." + Path.DirectorySeparatorChar + compilerDirectory + "PapyrusCompiler.exe" + (isWindows ? "\"" : "");
             string arguments = "\"" + sourcePath + "\" -f=\"" + compilerDirectory + "TESV_Papyrus_Flags.flg\" -i=\"" + workspacePath + "\" -o=\"" + outputPath + "\" -a";
             Console.WriteLine("Executing PapyrusCompiler.exe:  " + fileName + " " + arguments);
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                ProcessStartWindows(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
-            }
-            else
-            {
-                ProcessStartNonWindows(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
-            }
+            ProcessStartAlternate(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
             Console.WriteLine("PapyrusCompiler.exe Complete");
         }
 

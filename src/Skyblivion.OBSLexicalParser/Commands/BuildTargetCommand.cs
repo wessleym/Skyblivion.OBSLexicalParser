@@ -1,12 +1,10 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -42,16 +40,16 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                if (!buildTargets.canBuild())
+                /*if (!buildTargets.canBuild())
                 {
-                    Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
+                    WriteUncleanMessage();
                     return;
                 }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
                 WriteTranspiled(buildTargets, buildTracker);
                 ESMAnalyzer.deallocate();//Hack - force ESM analyzer deallocation.
-                PrepareWorkspace(build, buildTargets);
+                PrepareWorkspace(buildTargets);*/
                 Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
@@ -83,7 +81,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             writingTranspiledScriptsProgressWriter.WriteLast();
         }
 
-        private static void PrepareWorkspace(Build build, BuildTargetCollection buildTargets)
+        private static void PrepareWorkspace(BuildTargetCollection buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);

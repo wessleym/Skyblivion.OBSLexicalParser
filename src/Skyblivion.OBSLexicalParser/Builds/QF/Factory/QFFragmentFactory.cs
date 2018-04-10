@@ -155,7 +155,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)
         {
             string sourcePath = target.getSourceFromPath(resultingFragmentName);
-            string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
+            //ToLower() is needed for Linux's case-sensitive file system since these files seem to all be lowercase.
+            string scriptName = Path.GetFileNameWithoutExtension(sourcePath).ToLower();
             string stageMapFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".map");
             string[] stageMapFileLines = File.ReadAllLines(stageMapFile);
             Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();

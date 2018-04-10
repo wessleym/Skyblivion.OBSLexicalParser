@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -13,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         public void WriteLine(string command, IEnumerable<string> arguments = null)
         {
             if (arguments == null) { arguments = new string[] { }; }
-            Write(command + " " + string.Join("\t", arguments) + "\r\n");
+            Write(command + " " + string.Join("\t", arguments) + Environment.NewLine);
         }
 
         private static string GetPath(Build build)

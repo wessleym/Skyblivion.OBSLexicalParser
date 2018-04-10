@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D40A727C-CDF8-4CEB-8581-66BA083AF938}</ProjectGuid>
+    <ProjectGuid>6a8e85e6-ef60-4bbf-ac35-f97fd51d55cf</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Skyblivion.OBSLexicalParserApp</RootNamespace>
     <AssemblyName>Skyblivion.OBSLexicalParserApp</AssemblyName>

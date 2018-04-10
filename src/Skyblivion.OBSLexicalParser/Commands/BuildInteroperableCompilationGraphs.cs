@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
                 if (!buildTargets.canBuild())
                 {
-                    Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
+                    WriteUncleanMessage();
                     return;
                 }
                 Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
@@ -73,7 +73,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
                                 /*catch (UnexpectedTokenException ex)
                                 {//Exceptions no longer occur, so this code should not be invoked.
-                                    errorLog.WriteUTF8(sourceFile + ":  " + ex.Message + "\r\n");
+                                    errorLog.WriteUTF8(sourceFile + ":  " + ex.Message + Environment.NewLine);
                                     continue;
                                 }*/
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
@@ -107,7 +107,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     }
                                 }
 
-                                debugLog.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared\r\n");
+                                debugLog.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared" + Environment.NewLine);
                                 string lowerScriptType = scriptName.ToLower();
                                 foreach (var kvp2 in preparedProperties)
                                 {
@@ -118,7 +118,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string lowerPropertyType = propertyTypeName.ToLower();
                                     dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
                                     usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
-                                    debugLog.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + "\r\n");
+                                    debugLog.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + Environment.NewLine);
                                 }
 
                                 progressWriter.IncrementAndWrite();

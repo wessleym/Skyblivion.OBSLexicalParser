@@ -8,6 +8,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 #if !DEBUG || LOG_EXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {
-                            errorLog.WriteUTF8(scriptName + " (" + sourcePath + ")\r\n" + ex.GetType().FullName + "\r\n" + ex.Message + "\r\n\r\n");
+                            errorLog.WriteUTF8(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.GetType().FullName + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
                             continue;
                         }
 #endif

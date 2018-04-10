@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
 
         private void WriteLine(string text)
         {
-            Write(text + "\r\n");
+            Write(text + Environment.NewLine);
         }
 
         public void WriteScriptName(string scriptName)

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skyblivion.ESReader", "..\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dissect", "Dissect\Dissect.csproj", "{5326CB97-4868-4B4E-ACAB-885E8D6E533D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skyblivion.OBSLexicalParserApp", "Skyblivion.OBSLexicalParserApp\Skyblivion.OBSLexicalParserApp.csproj", "{D40A727C-CDF8-4CEB-8581-66BA083AF938}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skyblivion.OBSLexicalParserApp", "Skyblivion.OBSLexicalParserApp\Skyblivion.OBSLexicalParserApp.csproj", "{6A8E85E6-EF60-4BBF-AC35-F97FD51D55CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{5326CB97-4868-4B4E-ACAB-885E8D6E533D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5326CB97-4868-4B4E-ACAB-885E8D6E533D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5326CB97-4868-4B4E-ACAB-885E8D6E533D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D40A727C-CDF8-4CEB-8581-66BA083AF938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D40A727C-CDF8-4CEB-8581-66BA083AF938}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D40A727C-CDF8-4CEB-8581-66BA083AF938}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D40A727C-CDF8-4CEB-8581-66BA083AF938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A8E85E6-EF60-4BBF-AC35-F97FD51D55CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A8E85E6-EF60-4BBF-AC35-F97FD51D55CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A8E85E6-EF60-4BBF-AC35-F97FD51D55CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A8E85E6-EF60-4BBF-AC35-F97FD51D55CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
