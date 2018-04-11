@@ -2,15 +2,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST
 {
     class TES4ScriptHeader
     {
-        private string scriptName;
+        public string ScriptName { get; private set; }
         public TES4ScriptHeader(string scriptName)
         {
-            this.scriptName = scriptName;
-        }
-
-        public string getScriptName()
-        {
-            return this.scriptName;
+            this.ScriptName = scriptName;
         }
     }
 }

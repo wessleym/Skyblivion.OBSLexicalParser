@@ -8,13 +8,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
     class MetadataLogService : BuildLogService
     {
         public MetadataLogService(Build build)
-            : base(GetPath(build), FileMode.Append)
+            : base(GetPath(build), false)
         { }
 
         public void WriteLine(string command, IEnumerable<string> arguments = null)
         {
             if (arguments == null) { arguments = new string[] { }; }
-            Write(command + " " + string.Join("\t", arguments) + Environment.NewLine);
+            base.WriteLine(command + " " + string.Join("\t", arguments));
         }
 
         private static string GetPath(Build build)

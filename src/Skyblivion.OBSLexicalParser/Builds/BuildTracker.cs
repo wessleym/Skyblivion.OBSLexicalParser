@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public void registerBuiltScript(BuildTarget buildTarget, TES5Target script)
         {
-            this.builtScripts[buildTarget.getTargetName()][script.getScript().getScriptHeader().getScriptName()] = script;
+            this.builtScripts[buildTarget.getTargetName()][script.Script.ScriptHeader.OriginalScriptName] = script;
         }
 
         public Dictionary<string, TES5Target> getBuiltScripts(string targetName)

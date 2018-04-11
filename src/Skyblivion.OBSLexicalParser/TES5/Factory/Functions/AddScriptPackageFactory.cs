@@ -6,7 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using System;
+using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -39,13 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.getArguments();
             string dataString = functionArguments[0].StringValue;
-            string referenceName = "TES4SCENE_" +
-#if PHP_COMPAT
-                PHPFunction.MD5(calledOn.Name + dataString).Substring(0, 16)
-#else
-                Math.Abs((calledOn.Name + dataString).GetHashCode()).ToString()
-#endif
-                ;
+            string referenceName = NameTransformer.GetEscapedName(calledOn.Name + dataString, "TES4SCENE_", true);
             this.metadataLogService.WriteLine("ADD_SCRIPT_SCENE", new string[] { dataString, referenceName });
             ITES5Referencer reference = this.referenceFactory.createReference(referenceName, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();

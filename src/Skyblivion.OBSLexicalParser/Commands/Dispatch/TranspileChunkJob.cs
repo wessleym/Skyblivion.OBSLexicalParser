@@ -1,6 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Data;
-using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
@@ -11,7 +10,6 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
@@ -38,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
 
-        public void runTask(FileStream errorLog, ProgressWriter progressWriter)
+        public void runTask(StreamWriter errorLog, ProgressWriter progressWriter)
         {
             foreach (var buildChunk in this.buildPlan)
             {
@@ -92,7 +90,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 #if !DEBUG || LOG_EXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {
-                            errorLog.WriteUTF8(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.GetType().FullName + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
+                            errorLog.Write(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.GetType().FullName + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
                             continue;
                         }
 #endif

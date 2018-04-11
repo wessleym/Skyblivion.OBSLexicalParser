@@ -38,8 +38,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
              */
             foreach (var script in scripts.Values)
             {
-                string scriptName = script.getScript().getScriptHeader().getScriptName();
-                string[] parts = scriptName.Split('_');
+                string[] parts = script.Script.ScriptHeader.OriginalScriptName.Split('_');
                 if (parts.Length < 3)
                 {
                     //Not able to categorize, probably wrong name of the fragment.

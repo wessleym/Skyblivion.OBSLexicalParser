@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,13 +6,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
     class MappedTargetsLogService : BuildLogService
     {
         public MappedTargetsLogService(Build build)
-            : base(GetPath(build), FileMode.Create)
+            : base(GetPath(build), false)
         { }
-
-        private void WriteLine(string text)
-        {
-            Write(text + Environment.NewLine);
-        }
 
         public void WriteScriptName(string scriptName)
         {

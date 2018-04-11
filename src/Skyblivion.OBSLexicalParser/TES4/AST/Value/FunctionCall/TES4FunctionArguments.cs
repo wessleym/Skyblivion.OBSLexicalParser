@@ -1,4 +1,6 @@
+using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,11 +11,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
     class TES4FunctionArguments : IEnumerable<ITES4StringValue>
     {
         private List<ITES4StringValue> values = new List<ITES4StringValue>();
-
-        public override int GetHashCode()
-        {
-            return values.GetHashCode();
-        }
 
         public IEnumerator<ITES4StringValue> GetEnumerator()
         {
@@ -58,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             }
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             return this.SelectMany(v => v.Filter(predicate)).ToArray();
         }

@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,11 +48,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                List<string> messageArguments = new List<string>();
-                string uniqueAddition = Math.Abs(functionArguments.GetHashCode()).ToString();//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
-                string edid = "TES4MessageBox" + uniqueAddition;
-                messageArguments.Add(edid);
-                messageArguments.AddRange(functionArguments.Select(a => a.StringValue));
+                string edid = NameTransformer.GetEscapedName(string.Join("", functionArguments.Select(v => v.StringValue)), "TES4MessageBox_", true);//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
+                IEnumerable<string> messageArguments = (new string[] { edid }).Concat(functionArguments.Select(a => a.StringValue));
                 this.metadataLogService.WriteLine("ADD_MESSAGE", messageArguments);
                 ITES5Referencer messageBoxResult = this.referenceFactory.createReadReference(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST, globalScope, multipleScriptsScope, localScope);
                 ITES5Referencer reference = this.referenceFactory.createReadReference(edid, globalScope, multipleScriptsScope, localScope);

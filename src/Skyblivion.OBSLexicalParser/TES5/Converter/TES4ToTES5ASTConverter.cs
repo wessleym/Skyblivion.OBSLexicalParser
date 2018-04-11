@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         {
             TES4Script script = target.getScript();
             TES5BlockList blockList = new TES5BlockList();
-            TES4BlockList parsedBlockList = script.getBlockList();
+            TES4BlockList parsedBlockList = script.BlockList;
             Dictionary<string, List<TES5EventCodeBlock>> createdBlocks = new Dictionary<string, List<TES5EventCodeBlock>>();
             if (parsedBlockList != null)
             {

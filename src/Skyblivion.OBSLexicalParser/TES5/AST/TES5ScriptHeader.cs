@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
     class TES5ScriptHeader : ITES5Outputtable
     {
-        private string scriptName;
+        public string OriginalScriptName { get; private set; }
+        public string EscapedScriptName { get; private set; }
         private ITES5Type scriptType;
         /*
         * The basic script type this script header was constructed
@@ -19,20 +21,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         private string scriptNamePrefix;
         private bool isHidden;
         private string edid;
-        public TES5ScriptHeader(string scriptName, string edid, ITES5Type scriptType, string scriptNamePrefix, bool isHidden = false)
+        public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden = false)
         {
-            this.scriptName = scriptName;
-            this.edid = edid;
+            this.OriginalScriptName = scriptName;
+            this.EscapedScriptName = NameTransformer.Limit(scriptName, scriptNamePrefix);
+            this.edid = scriptName;
             this.scriptNamePrefix = scriptNamePrefix;
             this.scriptType = TES5TypeFactory.memberByValue(scriptName, scriptType);
             this.basicScriptType = scriptType;
             this.isHidden = isHidden;
             this.inheritanceAnalyzer = new TES5InheritanceGraphAnalyzer();
-        }
-
-        public string getScriptName()
-        {
-            return this.scriptName;
         }
 
         /*
@@ -44,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             return this.edid;
         }
 
-        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.scriptName + " extends " + this.scriptType.getNativeType().Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
+        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.EscapedScriptName + " extends " + this.scriptType.getNativeType().Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
 
         /*
              * @throws ConversionException

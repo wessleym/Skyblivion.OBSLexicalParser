@@ -1,20 +1,19 @@
-﻿using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
-using System;
+﻿using System;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildLogService : IDisposable
     {
-        private Lazy<FileStream> fileStream;
-        protected BuildLogService(string path, FileMode fileMode)
+        private Lazy<StreamWriter> fileStream;
+        protected BuildLogService(string path, bool append)
         {
-            fileStream = new Lazy<FileStream>(() => new FileStream(path, fileMode));
+            fileStream = new Lazy<StreamWriter>(() => new StreamWriter(path, append));
         }
 
-        protected void Write(string text)
+        protected void WriteLine(string text)
         {
-            fileStream.Value.WriteUTF8(text);
+            fileStream.Value.WriteLine(text);
         }
 
         public void Dispose()

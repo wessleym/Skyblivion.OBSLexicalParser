@@ -9,12 +9,12 @@ using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.Builds.Service;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
     class BuildScopeCommand : IBuildScopeCommand
     {
-        const string SCRIPTS_PREFIX = "TES4";
         private ESMAnalyzer esmAnalyzer;
         private StandaloneParsingService standaloneParsingService;
         public BuildScopeCommand(StandaloneParsingService standaloneParsing)
@@ -29,16 +29,15 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         
         private TES5ScriptHeader createHeader(TES4Script script)
         {
-            string edid = script.getScriptHeader().getScriptName();
-            string scriptName = TES5NameTransformer.TransformLongName(edid, SCRIPTS_PREFIX);
-            return new TES5ScriptHeader(scriptName, edid, this.esmAnalyzer.getScriptType(edid), SCRIPTS_PREFIX);
+            string edid = script.ScriptHeader.ScriptName;
+            return new TES5ScriptHeader(edid, this.esmAnalyzer.getScriptType(edid), TES5TypeFactory.ScriptsPrefix);
         }
 
         public TES5GlobalScope buildScope(string scriptPath, TES5GlobalVariables globalVariables)
         {
             TES4Script parsedScript = this.standaloneParsingService.parseScript(scriptPath);
             TES5ScriptHeader scriptHeader = this.createHeader(parsedScript);
-            TES4VariableDeclarationList variableList = parsedScript.getVariableDeclarationList();
+            TES4VariableDeclarationList variableList = parsedScript.VariableDeclarationList;
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
             if (variableList != null)
             {

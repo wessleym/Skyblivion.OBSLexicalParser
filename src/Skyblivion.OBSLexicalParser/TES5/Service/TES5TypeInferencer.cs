@@ -17,13 +17,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
     class TES5TypeInferencer
     {
         private string otherScriptsFolder;
-        private string[] otherScripts;
+        private string[] otherScriptsLower;
         private ESMAnalyzer esmAnalyzer;
         public TES5TypeInferencer(ESMAnalyzer ESMAnalyzer, string otherScriptsFolder)
         {
             this.esmAnalyzer = ESMAnalyzer;
             this.otherScriptsFolder = otherScriptsFolder;
-            otherScripts = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path)).ToArray();
+            otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
         }
 
         /*
@@ -123,7 +123,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             /*
              * We"re referencing another script - find the script and make it a variable that property will track remotely
              */
-            TES5ScriptHeader scriptHeader = multipleScriptsScope.getScriptHeaderOfScript(type.value());
+            TES5ScriptHeader scriptHeader = multipleScriptsScope.getScriptHeaderOfScript(type.getOriginalName());
             variable.trackRemoteScript(scriptHeader);
         }
 
@@ -166,13 +166,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                     namesToTry.AddRange(new string[] { tryAsRef, tryAsRef + "Script" });
                 }
                 namesToTry = namesToTry.Distinct().ToList();
-                foreach (var nameToTry in namesToTry)
-                {
-                    if (this.otherScripts.Contains(nameToTry.ToLower()))
-                    {
-                        return TES5TypeFactory.memberByValue(nameToTry);
-                    }
-                }
+                string firstNameMatch = namesToTry.Where(n => this.otherScriptsLower.Contains(n.ToLower())).FirstOrDefault();
+                if (firstNameMatch != null) { return TES5TypeFactory.memberByValue(firstNameMatch); }
             }
 
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type

@@ -7,31 +7,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
     class TES5Script : ITES5Outputtable
     {
-        private TES5ScriptHeader scriptHeader;
-        private TES5GlobalScope globalScope;
-        private TES5BlockList blockList;
+        public TES5ScriptHeader ScriptHeader { get; private set; }
+        public TES5GlobalScope GlobalScope { get; private set; }
+        public TES5BlockList BlockList { get; private set; }
         public TES5Script(TES5GlobalScope globalScope, TES5BlockList blockList = null)
         {
-            this.scriptHeader = globalScope.getScriptHeader();
-            this.globalScope = globalScope;
-            this.blockList = blockList;
+            this.ScriptHeader = globalScope.ScriptHeader;
+            this.GlobalScope = globalScope;
+            this.BlockList = blockList;
         }
 
-        public IEnumerable<string> Output => this.scriptHeader.Output.Concat(this.globalScope.Output).Concat(this.blockList.Output);
-
-        public TES5BlockList getBlockList()
-        {
-            return this.blockList;
-        }
-
-        public TES5ScriptHeader getScriptHeader()
-        {
-            return this.scriptHeader;
-        }
-
-        public TES5GlobalScope getGlobalScope()
-        {
-            return this.globalScope;
-        }
+        public IEnumerable<string> Output => this.ScriptHeader.Output.Concat(this.GlobalScope.Output).Concat(this.BlockList.Output);
     }
 }

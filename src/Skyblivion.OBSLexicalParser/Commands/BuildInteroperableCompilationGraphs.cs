@@ -1,6 +1,5 @@
 using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.Builds;
-using Skyblivion.OBSLexicalParser.Extensions.StreamExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -11,7 +10,6 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -53,9 +51,9 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
                 ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.getTotalSourceFiles());
                 TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(), BuildTarget.StandaloneSourcePath);
-                using (FileStream errorLog = new FileStream(TES5ScriptDependencyGraph.ErrorLogPath, FileMode.Create))
+                using (StreamWriter errorLog = new StreamWriter(TES5ScriptDependencyGraph.ErrorLogPath, false))
                 {
-                    using (FileStream debugLog = new FileStream(TES5ScriptDependencyGraph.DebugLogPath, FileMode.Create))
+                    using (StreamWriter debugLog = new StreamWriter(TES5ScriptDependencyGraph.DebugLogPath, false))
                     {
                         foreach (var kvp in sourceFiles)
                         {
@@ -73,7 +71,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
                                 /*catch (UnexpectedTokenException ex)
                                 {//Exceptions no longer occur, so this code should not be invoked.
-                                    errorLog.WriteUTF8(sourceFile + ":  " + ex.Message + Environment.NewLine);
+                                    errorLog.WriteLine(sourceFile + ":  " + ex.Message + Environment.NewLine);
                                     continue;
                                 }*/
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
@@ -107,7 +105,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     }
                                 }
 
-                                debugLog.WriteUTF8(scriptName + " - " + preparedProperties.Count + " prepared" + Environment.NewLine);
+                                debugLog.WriteLine(scriptName + " - " + preparedProperties.Count + " prepared");
                                 string lowerScriptType = scriptName.ToLower();
                                 foreach (var kvp2 in preparedProperties)
                                 {
@@ -118,7 +116,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string lowerPropertyType = propertyTypeName.ToLower();
                                     dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
                                     usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
-                                    debugLog.WriteUTF8("Registering a dependency from " + scriptName + " to " + propertyTypeName + Environment.NewLine);
+                                    debugLog.WriteLine("Registering a dependency from " + scriptName + " to " + propertyTypeName);
                                 }
 
                                 progressWriter.IncrementAndWrite();

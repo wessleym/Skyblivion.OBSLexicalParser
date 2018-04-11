@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.functionCall.Filter(predicate).Concat(this.arguments.filter(predicate)).ToArray();
+            return this.functionCall.Filter(predicate).Concat(this.arguments.Filter(predicate)).ToArray();
         }
     }
 }

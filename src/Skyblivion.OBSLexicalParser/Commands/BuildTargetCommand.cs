@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     public class BuildTargetCommand : LPCommand
     {
-        public const int DefaultThreads = 4;
+        public const int DefaultThreads = 1;
 
         public BuildTargetCommand()
             : base("skyblivion:parser:build", "Build Target", "Create artifact(s) from OBScript source")
@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                /*if (!buildTargets.canBuild())
+                if (!buildTargets.canBuild())
                 {
                     WriteUncleanMessage();
                     return;
@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
                 WriteTranspiled(buildTargets, buildTracker);
                 ESMAnalyzer.deallocate();//Hack - force ESM analyzer deallocation.
-                PrepareWorkspace(buildTargets);*/
+                PrepareWorkspace(buildTargets);
                 Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             var buildPlan = buildTargets.getBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);
-            using (FileStream errorLog = new FileStream(build.getErrorLogPath(), FileMode.Create))
+            using (StreamWriter errorLog = new StreamWriter(build.getErrorLogPath(), false))
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {

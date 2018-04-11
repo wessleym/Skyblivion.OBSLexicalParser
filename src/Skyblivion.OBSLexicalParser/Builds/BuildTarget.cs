@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.IO;
 using System.Linq;
 
@@ -146,7 +147,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public string getTranspileToPath(string scriptName)
         {
-            string transformedName = TES5NameTransformer.TransformLongName(scriptName, this.filePrefix);
+            string transformedName = NameTransformer.Limit(scriptName, this.filePrefix);
             return this.getTranspiledPath()+this.filePrefix+transformedName+".psc";
         }
 

@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static TES5SelfReference CreateReferenceToSelf(TES5GlobalScope globalScope)
         {
             //todo perhaps move tes5scriptAsVariable to a new factory
-            return new TES5SelfReference(new TES5ScriptAsVariable(globalScope.getScriptHeader()));
+            return new TES5SelfReference(new TES5ScriptAsVariable(globalScope.ScriptHeader));
         }
 
         public static TES5Reference CreateReferenceToVariable(ITES5Variable variable)
@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         public ITES5Referencer extractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            ITES5Type type = globalScope.getScriptHeader().getBasicScriptType();
+            ITES5Type type = globalScope.ScriptHeader.getBasicScriptType();
             if (type == TES5BasicType.T_OBJECTREFERENCE || type==TES5BasicType.T_ACTOR)//Change:  WTM:  Added Actor here.
             {
                 return TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
@@ -120,7 +120,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
             if (referenceName.ToLower() == "player")
             {
-                return TES5ReferenceFactory.CreateReferenceToPlayer();
+                return CreateReferenceToPlayer();
             }
 
             Match match = PropertyNameRegex.Match(referenceName);

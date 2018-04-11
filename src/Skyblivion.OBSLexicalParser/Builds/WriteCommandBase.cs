@@ -16,9 +16,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 {
                     string o = output[i];
                     writer.Write(o);
-                    if(i < output.Count - 1)
+                    if (i < output.Count - 1)
                     {
-                        writer.WriteLine();
+                        writer.Write("\r\n");
                     }
                 }
             }
@@ -28,8 +28,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             foreach (TES5Target target in targets)
             {
-                string[] outputString = target.getScript().Output.ToArray();
-                Write(target.getOutputPath(), outputString);
+                string[] outputString = target.Script.Output.ToArray();
+                Write(target.OutputPath, outputString);
                 progressWriter.IncrementAndWrite();
             }
         }

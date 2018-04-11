@@ -1,6 +1,5 @@
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 
@@ -8,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5TypeFactory
     {
-        private const string scriptsPrefix = "TES4";
+        public const string ScriptsPrefix = "TES4";
         public static ITES5Type _void()
         {
             return memberByValue("void");
@@ -30,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 ESMAnalyzer analyzer = ESMAnalyzer._instance();
                 basicType = analyzer.getScriptType(memberByValue);
             }
-            return new TES5CustomType(TES5NameTransformer.TransformLongName(memberByValue, scriptsPrefix), scriptsPrefix, memberByValue, basicType);
+            return new TES5CustomType(memberByValue, ScriptsPrefix, basicType);
         }
     }
 }

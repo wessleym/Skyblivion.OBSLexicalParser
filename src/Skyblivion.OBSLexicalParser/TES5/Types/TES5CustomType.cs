@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     {
         const string T_TES4CONTAINER = "TES4Container";
         const string T_TES4TIMERHELPER = "TES4TimerHelper";
-        private string typeName;
+        private string escapedName;
         private ITES5Type nativeType;
         /*
         * Original type name
@@ -15,9 +16,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         */
         private string originalName;
         private string prefix;
-        public TES5CustomType(string typeName, string prefix, string originalName, ITES5Type nativeType)
+        public TES5CustomType(string originalName, string prefix, ITES5Type nativeType)
         {
-            this.typeName = typeName;
+            this.escapedName = NameTransformer.Limit(originalName, prefix);
             this.prefix = prefix;
             this.originalName = originalName;
             //qt = new ReflectionClass(get_class(this));WTM:  Change:  Unused
@@ -33,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             if (leftIsNull && rightIsNull) { return true; }
             if (leftIsNull || rightIsNull) { return false; }
             return
-                left.typeName == right.typeName &&
+                left.escapedName == right.escapedName &&
                 left.nativeType == right.nativeType &&
                 left.prefix == right.prefix;
         }
@@ -49,7 +50,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public override int GetHashCode()
         {
-            return (typeName + "|" + nativeType + "|" + prefix).GetHashCode();
+            return (escapedName + "|" + nativeType + "|" + prefix).GetHashCode();
         }
 
         public static bool operator ==(TES5CustomType left, TES5CustomType right)
@@ -64,15 +65,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public string value()
         {
-            return this.typeName;
+            return this.escapedName;
         }
 
         public IEnumerable<string> Output
         {
             get
             {
-                bool includePrefix = this.typeName != "TES4TimerHelper" && this.typeName != "TES4Container";//no time to refactor now, later.
-                return new string[] { (includePrefix ? this.prefix : "") + this.value() };
+                bool includePrefix = this.escapedName != "TES4TimerHelper" && this.escapedName != "TES4Container";//no time to refactor now, later.
+                return new string[] { (includePrefix ? this.prefix : "") + this.escapedName };
             }
         }
 

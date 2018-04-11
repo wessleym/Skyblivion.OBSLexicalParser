@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
@@ -17,13 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         private TES5GlobalVariables globalVariables;
         public TES5MultipleScriptsScope(IEnumerable<TES5GlobalScope> globalScopes, TES5GlobalVariables globalVariables)
         {
-            Dictionary<string, TES5GlobalScope> globalScopesMapped = new Dictionary<string, TES5GlobalScope>();
-            foreach (var globalScope in globalScopes)
-            {
-                globalScopesMapped.Add(globalScope.getScriptHeader().getScriptName().ToLower(), globalScope);
-            }
-
-            this.globalScopes = globalScopesMapped;
+            this.globalScopes = globalScopes.ToDictionary(x => x.ScriptHeader.OriginalScriptName.ToLower(), x => x);
             this.globalVariables = globalVariables;
         }
 
@@ -34,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
             }
-            return globalScope.getScriptHeader();
+            return globalScope.ScriptHeader;
         }
 
         public TES5Property getPropertyFromScript(string scriptName, string propertyName)
