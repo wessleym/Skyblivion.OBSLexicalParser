@@ -11,8 +11,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     {
         public static ITES5Primitive createValue(ITES4Primitive value)
         {
-            TES4Type valueType = value.getType();
-            object valueData = value.getData();
+            TES4Type valueType = value.Type;
+            object valueData = value.Data;
             if (valueType == TES4Type.T_INT)
             {
                 return new TES5Integer((int)valueData);

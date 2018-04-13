@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         {
             get
             {
-                string returnTypeValue = this.returnType.value();
+                string returnTypeValue = this.returnType.Value;
                 string functionReturnType = returnTypeValue != "" ? returnTypeValue + " " :
 #if PHP_COMPAT
                 isStandalone ? "" : " "

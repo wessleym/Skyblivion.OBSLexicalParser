@@ -36,27 +36,33 @@ namespace Dissect.Lexer
         * encountering a token.
         */
         public const int POP_STATE = 1;
-        /*
-        * Adds a new token definition. If given only one argument,
-        * it assumes that the token type and recognized value are
-        * identical.
-        */
-        public StatefulLexer token(string type, string value = null)
+
+        private void CheckLexerState()
         {
             if (this.stateBeingBuilt == null)
             {
                 throw new InvalidOperationException("Define a lexer state first.");
             }
+        }
 
-            if (value == null)
-            {
-                value = type;
-            }
-
+        private void AddRecognizer(string type, IRecognizer recognizer)
+        {
+            CheckLexerState();
             State state = this.states[this.stateBeingBuilt];
-            state.Recognizers.Add(type, new SimpleRecognizer(value));
+            state.Recognizers.Add(type, recognizer);
             state.Actions.Add(type, NO_ACTION);
             this.typeBeingBuilt = type;
+        }
+
+        /*
+        * Adds a new token definition. If given only one argument,
+        * it assumes that the token type and recognized value are
+        * identical.
+        */
+        public StatefulLexer token(string type, string value = null, bool ignoreCase = false)
+        {
+            if (value == null) { value = type; }
+            AddRecognizer(type, new SimpleRecognizer(value, ignoreCase));
             return this;
         }
 
@@ -65,19 +71,11 @@ namespace Dissect.Lexer
         */
         public StatefulLexer regex(string type, Regex regex)
         {
-            if (this.stateBeingBuilt == null)
-            {
-                throw new InvalidOperationException("Define a lexer state first.");
-            }
             if (!regex.Options.HasFlag(RegexOptions.Compiled))
             {
-                //throw new InvalidOperationException("Regex was not compiled.");
+                throw new InvalidOperationException("Regex was not compiled.");
             }
-
-            State state = this.states[this.stateBeingBuilt];
-            state.Recognizers.Add(type, new RegexRecognizer(regex));
-            state.Actions.Add(type, NO_ACTION);
-            this.typeBeingBuilt = type;
+            AddRecognizer(type, new RegexRecognizer(regex));
             return this;
         }
         private StatefulLexer regex(string type, string pattern, RegexOptions options)
@@ -101,11 +99,7 @@ namespace Dissect.Lexer
         */
         public StatefulLexer skip(params string[] args)
         {
-            if (this.stateBeingBuilt == null)
-            {
-                throw new InvalidOperationException("Define a lexer state first.");
-            }
-
+            CheckLexerState();
             State state = this.states[this.stateBeingBuilt];
             state.SkipTokens = args;
             return this;

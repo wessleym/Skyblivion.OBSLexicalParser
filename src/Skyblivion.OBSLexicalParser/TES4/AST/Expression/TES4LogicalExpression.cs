@@ -34,25 +34,25 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             return this.rightValue;
         }
 
-        public object getData()
+        public object Data
         {
-            bool leftValue = Convert.ToBoolean(this.leftValue.getData());
-            bool rightValue = Convert.ToBoolean(this.rightValue.getData());
-            if (op == TES4LogicalExpressionOperator.OPERATOR_AND)
+            get
             {
-                return leftValue && rightValue;
+                bool leftValue = Convert.ToBoolean(this.leftValue.Data);
+                bool rightValue = Convert.ToBoolean(this.rightValue.Data);
+                if (op == TES4LogicalExpressionOperator.OPERATOR_AND)
+                {
+                    return leftValue && rightValue;
+                }
+                else if (op == TES4LogicalExpressionOperator.OPERATOR_OR)
+                {
+                    return leftValue || rightValue;
+                }
+                throw new ConversionException("Unknown TES4LogicalExpressionOperator");
             }
-            else if (op == TES4LogicalExpressionOperator.OPERATOR_OR)
-            {
-                return leftValue || rightValue;
-            }
-            throw new ConversionException("Unknown TES4LogicalExpressionOperator");
         }
 
-        public bool hasFixedValue()
-        {
-            return this.leftValue.hasFixedValue() && this.rightValue.hasFixedValue();
-        }
+        public bool HasFixedValue => this.leftValue.HasFixedValue && this.rightValue.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(calledOn);
@@ -54,10 +54,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (optionalFlag != null)
             {
                 string optionalFlagDataString = optionalFlag.StringValue;
-                if (ESMAnalyzer._instance().getFormTypeByEDID(optionalFlagDataString).value() != TES4RecordType.REFR.Name)
+                if (ESMAnalyzer._instance().getFormTypeByEDID(optionalFlagDataString).Value!= TES4RecordType.REFR.Name)
                 {
                     this.metadataLogService.WriteLine("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
-                    optionalFlag = new TES4ApiToken(optionalFlag.getData()+"Ref");
+                    optionalFlag = new TES4ApiToken(optionalFlag.Data+"Ref");
                 }
 
                 arguments.Add(this.valueFactory.createValue(optionalFlag, codeScope, globalScope, multipleScriptsScope));

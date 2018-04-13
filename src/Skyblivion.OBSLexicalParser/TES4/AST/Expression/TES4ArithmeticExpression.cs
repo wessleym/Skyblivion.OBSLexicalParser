@@ -34,41 +34,41 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             return this.rightValue;
         }
 
-        public object getData()
+        public object Data
         {
-            decimal left = Convert.ToDecimal(this.leftValue.getData());
-            decimal right = Convert.ToDecimal(this.rightValue.getData());
-            if (op == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL)
+            get
             {
-                return left == right;
+                decimal left = Convert.ToDecimal(this.leftValue.Data);
+                decimal right = Convert.ToDecimal(this.rightValue.Data);
+                if (op == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL)
+                {
+                    return left == right;
+                }
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER)
+                {
+                    return left > right;
+                }
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER_OR_EQUAL)
+                {
+                    return left >= right;
+                }
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS)
+                {
+                    return left < right;
+                }
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS_OR_EQUAL)
+                {
+                    return left <= right;
+                }
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL)
+                {
+                    return left != right;
+                }
+                throw new ConversionException("Unknown TES4ArithmeticExpressionOperator");
             }
-            else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER)
-            {
-                return left > right;
-            }
-            else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER_OR_EQUAL)
-            {
-                return left >= right;
-            }
-            else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS)
-            {
-                return left < right;
-            }
-            else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS_OR_EQUAL)
-            {
-                return left <= right;
-            }
-            else if (op == TES4ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL)
-            {
-                return left != right;
-            }
-            throw new ConversionException("Unknown TES4ArithmeticExpressionOperator");
         }
 
-        public bool hasFixedValue()
-        {
-            return this.leftValue.hasFixedValue() && this.rightValue.hasFixedValue();
-        }
+        public bool HasFixedValue => this.leftValue.HasFixedValue && this.rightValue.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

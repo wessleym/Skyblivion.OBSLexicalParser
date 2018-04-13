@@ -38,10 +38,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer fameReference = this.referenceFactory.createReadReference("Infamy", globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            TES5BinaryExpression binaryExpression = TES5ExpressionFactory.createBinaryExpression(fameReference, TES5BinaryExpressionOperator.OPERATOR_ADD, new TES5Integer((int)functionArguments[0].getData()));
+            TES5BinaryExpression binaryExpression = TES5ExpressionFactory.createBinaryExpression(fameReference, TES5BinaryExpressionOperator.OPERATOR_ADD, new TES5Integer((int)functionArguments[0].Data));
             fameArguments.Add(binaryExpression);
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
             return newFunction;

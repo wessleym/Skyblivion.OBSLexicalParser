@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public override ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;
             ITES4StringValue firstArg = functionArguments[0];
@@ -104,7 +104,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "aggression":
                     {
                         ITES4StringValue secondArg = functionArguments[1];
-                        object secondArgObject = secondArg.getData();
+                        object secondArgObject = secondArg.Data;
                         Nullable<int> secondArgNullableInt = secondArgObject as Nullable<int>;
                         AST.Value.ITES5Value convertedArgument2;
                         if (secondArgNullableInt != null)
@@ -143,7 +143,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "confidence":
                     {
                         ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.getData();
+                        int secondArgData = (int)secondArg.Data;
                         float newValue;
                         if (secondArgData == 0)
                         {

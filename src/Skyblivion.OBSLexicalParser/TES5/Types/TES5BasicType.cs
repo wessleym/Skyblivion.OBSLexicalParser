@@ -12,10 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             Name = name;
         }
 
-        public string getOriginalName()
-        {
-            return Name;
-        }
+        public string OriginalName => Name;
 
         public static readonly TES5BasicType
             T_ACTIVEMAGICEFFECT = new TES5BasicType("ActiveMagicEffect"),
@@ -210,31 +207,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return all.Where(t => t.Name == name).FirstOrDefault();
         }
 
-        public bool isPrimitive()
-        {
-            return this == T_BOOL || this == T_INT || this == T_FLOAT || this == T_STRING;
-        }
+        public bool IsPrimitive => this == T_BOOL || this == T_INT || this == T_FLOAT || this == T_STRING;
 
-        public bool isNativePapyrusType()
-        {
-            return true;
-        }
+        public bool IsNativePapyrusType => true;
 
-        public string value()
-        {
-            return Name;
-        }
+        public string Value => Name;
 
         public IEnumerable<string> Output => new string[] { Name };
 
-        public void setNativeType(ITES5Type basicType)
-        {
-            throw new ConversionException("Cannot set native type on basic type - wrong logic.");
-        }
-
-        public ITES5Type getNativeType()
-        {
-            return this;
-        }
+        public ITES5Type NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
     }
 }

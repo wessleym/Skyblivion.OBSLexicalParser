@@ -34,8 +34,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
-            if ((int)functionArguments[0].getData() == 0)
+            TES4FunctionArguments functionArguments = function.Arguments;
+            if ((int)functionArguments[0].Data== 0)
             {
                 //@INCONSISTENCE - Cannot unsneak a character.
                 return new TES5Filler();

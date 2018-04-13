@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             //We move the called upon to function arg ( cloned object ) and we replace placed upon to player
             TES4ApiToken newToken = new TES4ApiToken(calledOn.Name);
             ITES5Referencer newCalledOn = TES5ReferenceFactory.CreateReferenceToPlayer();

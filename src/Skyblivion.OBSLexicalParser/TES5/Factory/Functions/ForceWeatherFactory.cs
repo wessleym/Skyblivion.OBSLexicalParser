@@ -36,17 +36,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             TES5Bool force;
-            if (functionArguments.Count== 1)
+            if (functionArguments.Count == 1)
             {
                 force = new TES5Bool(false);
             }
             else
             {
-                force = new TES5Bool((int)functionArguments[1].getData() == 1);
+                force = new TES5Bool((int)functionArguments[1].Data == 1);
             }
             arguments.Add(force);
             return this.objectCallFactory.CreateObjectCall(newCalledOn, "ForceActive", multipleScriptsScope, arguments);

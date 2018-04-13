@@ -15,8 +15,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
      */
     class StageMap
     {
-        private OrderableDictionary<int, List<int>> stageMap =  new OrderableDictionary<int, List<int>>(); 
-        private Dictionary<int, List<int>> mappedTargetsIndex =  new Dictionary<int, List<int>>(); 
+        private OrderableDictionary<int, List<int>> stageMap =  new OrderableDictionary<int, List<int>>();
+        public Dictionary<int, List<int>> MappedTargetsIndex { get; private set; } = new Dictionary<int, List<int>>();
         public StageMap(IDictionary<int, List<int>> stageMapUnordered)
         {
             stageMap = new OrderableDictionary<int, List<int>>(stageMapUnordered);
@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
              * Sort them by stage ids
              */
             stageMap.OrderBy(s => s.Key);
-            mappedTargetsIndex = new Dictionary<int, List<int>>();
+            MappedTargetsIndex = new Dictionary<int, List<int>>();
             /*
              * Do some validation
              */
@@ -68,7 +68,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                                 if (!targetState)
                                 {
                                     //We're changing the state from not used to used, in which case we need to do the duplication
-                                    mappedTargetsIndex.AddNewListIfNotContainsKeyAndAddValueToList(targetIndex, nextFreeIndex);
+                                    MappedTargetsIndex.AddNewListIfNotContainsKeyAndAddValueToList(targetIndex, nextFreeIndex);
                                     int fillInValue = 0;
                                     foreach (var kvp2 in resultStageMap)
                                     {
@@ -123,19 +123,11 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
             this.stageMap = resultStageMap;
         }
 
-        public IEnumerable<int> getStageIds()
-        {
-            return stageMap.Select(s => s.Key);
-        }
+        public IEnumerable<int> StageIDs => stageMap.Select(s => s.Key);
 
-        public List<int> getStageTargetsMap(int stageId)
+        public List<int> GetStageTargetsMap(int stageId)
         {
             return this.stageMap[stageId];
-        }
-
-        public Dictionary<int, List<int>> getMappedTargetsIndex()
-        {
-            return this.mappedTargetsIndex;
         }
     }
 }

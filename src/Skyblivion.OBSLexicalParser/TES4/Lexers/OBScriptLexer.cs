@@ -56,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             .token("(")
             .token(")")
             .token(",")
-            .token("TimerDescending") //idk wtf is that.
+            .token("TimerDescending") //idk what this is.
             .skip("WSP", "WSPEOL", "Comment", "", "to ", "(", ")", ",", "TimerDescending", "NotNeededTrash");
         }
 
@@ -65,9 +65,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             //Global scope.
             this._state("globalScope");
             this.regex("WSP", @"^[ \r\n\t]+");
-            this.regexIgnoreCase("ScriptHeaderToken", "^(scn|scriptName)").action("ScriptHeaderScope");
-            this.regexIgnoreCase("VariableDeclarationType", @"^(ref|short|long|float|int)").action("VariableDeclarationScope");
-            this.regexIgnoreCase("BlockStart", @"^Begin").action("BlockStartNameScope");
+            this.regexIgnoreCase("ScriptHeaderToken", "^(scn|scriptName)")
+                .action("ScriptHeaderScope");
+            this.regexIgnoreCase("VariableDeclarationType", @"^(ref|short|long|float|int)")
+                .action("VariableDeclarationScope");
+            this.token("BlockStart", "Begin", true)//WTM:  Change:  this.regexIgnoreCase("BlockStart", @"^Begin")
+                .action("BlockStartNameScope");
             this.addCommentsRecognition();
 
             this._state("ExpressionScope")
@@ -75,11 +78,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .regex("NWL", @"^[\r\n]+").action("BlockScope")
                 .regex("FunctionCallToken", FUNCTION_REGEX).action("FunctionScope")
                 .regexIgnoreCase("Boolean", @"^(true|false)")
-                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
-                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
-                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
-                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
-                .regexIgnoreCase("TokenDelimiter", @"\.")
+                .regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .regex("Float", @"^(-)?([0-9]*)\.[0-9]+")//WTM:  Change:  regexIgnoreCase
+                .regex("Integer", @"^(-)?(0|[1-9][0-9]*)")//WTM:  Change:  regexIgnoreCase
+                .regex("String", @"^""((?:(?<=\\)[""]|[^""])*)""")//WTM:  Change:  regexIgnoreCase
+                .token("TokenDelimiter", ".")//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"\.")
                 .token("+")
                 .token("-")
                 .token("*")
@@ -101,32 +104,33 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .regexIgnoreCase("BlockEnd", @"^end( [a-zA-Z]+)?").action("BlockEndScope")
                 .regexIgnoreCase("BranchElseifToken", @"^else[ ]?if(\()?[ \r\n\t]+").action("ExpressionScope")
                 .regexIgnoreCase("BranchStartToken", @"^if(\()?[ \r\n\t]+").action("ExpressionScope")
-                .regexIgnoreCase("BranchElseToken", @"^else")
-                .regexIgnoreCase("BranchEndToken", @"^endif")
+                .token("BranchElseToken", "else", true)//WTM:  Change:  .regexIgnoreCase("BranchElseToken", @"^else")
+                .token("BranchEndToken", "endif", true)//WTM:  Change:  .regexIgnoreCase("BranchEndToken", @"^endif")
                 .regexIgnoreCase("SetInitialization", @"^set[ \t]+").action("SetScope")
-                .regexIgnoreCase("ReturnToken", @"^return")
-                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
-                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
-                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
+                .token("ReturnToken", "return", true)//WTM:  Change:  .regexIgnoreCase("ReturnToken", @"^return")
+                .regex("Float", @"^(-)?([0-9]*)\.[0-9]+")//WTM:  Change:  regexIgnoreCase
+                .regex("Integer", @"^(-)?(0|[1-9][0-9]*)")//WTM:  Change:  regexIgnoreCase
+                .regex("String", @"^""((?:(?<=\\)[""]|[^""])*)""")//WTM:  Change:  regexIgnoreCase
                 .regexIgnoreCase("Boolean", @"^(true|false)")
                 .regex("FunctionCallToken", FUNCTION_REGEX).action("FunctionScope")
-                .regexIgnoreCase("LocalVariableDeclarationType", @"^(ref|short|long|float|int)").action("VariableDeclarationScope")
-                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
-                .regexIgnoreCase("TokenDelimiter", @"^\.");
+                .regexIgnoreCase("LocalVariableDeclarationType", @"^(ref|short|long|float|int)")
+                .action("VariableDeclarationScope")
+                .regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .token("TokenDelimiter", ".");//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"^\.")
 
             this.addCommentsRecognition();
 
             this._state("FunctionScope")
                 .regex("WSP", @"^[ \t]+")
                 .regex("NWL", @"^[\r\n]+").action("BlockScope")
-                .regexIgnoreCase("ReturnToken", @"^return")
-                .regexIgnoreCase("Float", @"^(-)?([0-9]*)\.[0-9]+")
-                .regexIgnoreCase("Integer", @"^(-)?(0|[1-9][0-9]*)")
-                .regexIgnoreCase("String", @"^""((?:(?<=\\)[""]|[^""])*)""")
+                .token("ReturnToken", "return", true)//WTM:  Change:  .regexIgnoreCase("ReturnToken", @"^return")
+                .regex("Float", @"^(-)?([0-9]*)\.[0-9]+")//WTM:  Change:  regexIgnoreCase
+                .regex("Integer", @"^(-)?(0|[1-9][0-9]*)")//WTM:  Change:  regexIgnoreCase
+                .regex("String", @"^""((?:(?<=\\)[""]|[^""])*)""")//WTM:  Change:  regexIgnoreCase
                 .regexIgnoreCase("Boolean", @"^(true|false)")
                 .regex("FunctionCallToken", FUNCTION_REGEX)
-                .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
-                .regexIgnoreCase("TokenDelimiter", @"^\.")
+                .regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .token("TokenDelimiter", ".")//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"^\.")
                 .token("+").action(POP_STATE)
                 .token("-").action(POP_STATE)
                 .token("*").action(POP_STATE)
@@ -145,12 +149,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 
 
             this._state("SetScope")
-                 .regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
-                 .regexIgnoreCase("TokenDelimiter", @"\.")
-                 .token("To ").action("ExpressionScope")
-                 .token("to ").action("ExpressionScope")
-                 .regex("WSP", @"^[ \t]+")
-                 .regex("NWL", @"^[\r\n]+").action(POP_STATE);
+                .regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
+                .token("TokenDelimiter", ".")//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"\.")
+                .token("To ").action("ExpressionScope")
+                .token("to ").action("ExpressionScope")
+                .regex("WSP", @"^[ \t]+")
+                .regex("NWL", @"^[\r\n]+").action(POP_STATE);
             this.addCommentsRecognition();
 
             this._state("BlockEndScope")
@@ -161,23 +165,26 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 
             this._state("BlockStartNameScope")
                 .regex("WSP", @"^[ \t]+")
-                .regexIgnoreCase("BlockType", @"^([a-zA-Z0-9_-]+)").action("BlockStartParameterScope");
+                .regex("BlockType", @"^([a-zA-Z0-9_-]+)")//WTM:  Change:  .regexIgnoreCase
+                .action("BlockStartParameterScope");
             this.addCommentsRecognition();
 
             this._state("BlockStartParameterScope")
                 .regex("WSP", @"^[ \t]+")
-                .regexIgnoreCase("BlockParameterToken", @"[a-zA-Z0-9_-]+")
+                .regex("BlockParameterToken", @"[a-zA-Z0-9_-]+")//WTM:  Change:  .regexIgnoreCase
                 .regex("WSPEOL", @"^[\r\n]+").action("BlockScope");
             this.addCommentsRecognition();
 
             this._state("ScriptHeaderScope")
                 .regex("WSP", @"^[ \r\n\t]+")
-                .regexIgnoreCase("ScriptName", @"^([a-zA-Z0-9_-]+)").action(POP_STATE);
+                .regex("ScriptName", @"^([a-zA-Z0-9_-]+)")//WTM:  Change:  .regexIgnoreCase
+                .action(POP_STATE);
             this.addCommentsRecognition();
 
             this._state("VariableDeclarationScope")
                 .regex("WSP", @"^[ \r\n\t]+")
-                .regexIgnoreCase("VariableName", @"^([a-zA-Z0-9_-]+)").action(POP_STATE);
+                .regex("VariableName", @"^([a-zA-Z0-9_-]+)")//WTM:  Change:  .regexIgnoreCase
+                .action(POP_STATE);
             this.addCommentsRecognition();
         }
 

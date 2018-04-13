@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 string propertyNameLowerWithSuffix = TES5Property.AddPropertyNameSuffix(propertyNameLower, false);
                 foreach (var property in this.Properties)
                 {
-                    string currentPropertyNameLower = property.getPropertyName().ToLower();
+                    string currentPropertyNameLower = property.GetPropertyNameWithSuffix().ToLower();
                     if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix==currentPropertyNameLower)
                     {
                         //Token found.

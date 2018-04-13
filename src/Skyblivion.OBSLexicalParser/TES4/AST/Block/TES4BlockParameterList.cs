@@ -7,20 +7,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
     class TES4BlockParameterList : ITES4CodeFilterable
     {
-        private List<TES4BlockParameter> variableList = new List<TES4BlockParameter>();
+        public List<TES4BlockParameter> VariableList { get; private set; } = new List<TES4BlockParameter>();
         public void add(TES4BlockParameter declaration)
         {
-            this.variableList.Add(declaration);
-        }
-
-        public List<TES4BlockParameter> getVariableList()
-        {
-            return this.variableList;
+            this.VariableList.Add(declaration);
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.variableList.SelectMany(v => v.Filter(predicate)).ToArray();
+            return this.VariableList.SelectMany(v => v.Filter(predicate)).ToArray();
         }
     }
 }

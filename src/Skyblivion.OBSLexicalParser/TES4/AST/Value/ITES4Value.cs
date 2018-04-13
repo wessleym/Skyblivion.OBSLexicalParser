@@ -7,10 +7,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value
         /*
         * Get the value representation
         */
-        object getData();
+        object Data { get; }
+
         /*
         * Is this value related to execution or not?
         */
-        bool hasFixedValue();
+        bool HasFixedValue { get; }
     }
 }

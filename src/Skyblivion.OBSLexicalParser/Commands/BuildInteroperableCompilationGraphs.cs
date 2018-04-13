@@ -111,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 {
                                     var preparedPropertyKey = kvp2.Key;
                                     var preparedProperty = kvp2.Value;
-                                    string propertyTypeName = preparedPropertiesTypes[preparedPropertyKey].getOriginalName();
+                                    string propertyTypeName = preparedPropertiesTypes[preparedPropertyKey].OriginalName;
                                     //Only keys are lowercased.
                                     string lowerPropertyType = propertyTypeName.ToLower();
                                     dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);

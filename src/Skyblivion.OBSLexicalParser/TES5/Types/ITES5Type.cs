@@ -6,14 +6,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     {
         //Get native type on which this type is based
         //If this type is native, it will return itself.
-        ITES5Type getNativeType();
-        void setNativeType(ITES5Type basicType);
-        string value();
-        bool isPrimitive();
+        ITES5Type NativeType { get; set; }
+        string Value { get; }
+        bool IsPrimitive { get; }
         /*
         * Is this type a native papyrus type ( the one defined by skyrim itself ) or a custom script?
         */
-        bool isNativePapyrusType();
-        string getOriginalName();//WTM:  Change:  I added this.
+        bool IsNativePapyrusType { get; }
+        string OriginalName { get; }//WTM:  Change:  I added this.
     }
 }

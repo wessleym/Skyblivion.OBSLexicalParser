@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             string arg0 = functionArguments.Pop(0).StringValue;
             string arg0Lower = arg0.ToLower();
             if (arg0Lower != "x" && arg0Lower != "y" && arg0Lower != "z") { throw new ConversionException("getPos can handle only X,Y,Z parameters."); }

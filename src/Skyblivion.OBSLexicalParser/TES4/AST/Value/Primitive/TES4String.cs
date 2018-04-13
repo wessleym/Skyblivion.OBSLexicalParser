@@ -4,7 +4,7 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
-    class TES4String : ITES4Primitive, ITES4StringValue
+    class TES4String : ITES4Primitive
     {
         private string data;
         public TES4String(string data)
@@ -12,22 +12,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
             this.data = data.Trim('"');
         }
 
-        public object getData()
-        {
-            return StringValue;
-        }
+        public object Data => StringValue;
 
         public string StringValue => this.data;
 
-        public TES4Type getType()
-        {
-            return TES4Type.T_STRING;
-        }
+        public TES4Type Type => TES4Type.T_STRING;
 
-        public bool hasFixedValue()
-        {
-            return true;
-        }
+        public bool HasFixedValue => true;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

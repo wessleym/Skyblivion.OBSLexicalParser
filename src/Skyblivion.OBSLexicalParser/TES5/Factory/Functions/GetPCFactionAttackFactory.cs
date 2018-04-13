@@ -38,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             //WARNING: This is not an exact implementation
             //According to cs.elderscrolls.com, its about being in the faction AND having an attack on them ( violent crime )
             //It"s similar but groups all violent wrongdoings ( including assaults, murders etc ).

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5ReferenceFactory
     {
         public const string MESSAGEBOX_VARIABLE_CONST = "TES4_MESSAGEBOX_RESULT";
-        public static Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        public static Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ObjectPropertyFactory objectPropertyFactory;
         private Dictionary<string, ITES5Type> specialConversions;

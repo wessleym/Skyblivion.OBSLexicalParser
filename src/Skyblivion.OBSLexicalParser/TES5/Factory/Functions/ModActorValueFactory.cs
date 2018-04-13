@@ -42,9 +42,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
-            if (function.getFunctionCall().getFunctionName().Equals("modpcskill", StringComparison.OrdinalIgnoreCase))
+            if (function.FunctionCall.getFunctionName().Equals("modpcskill", StringComparison.OrdinalIgnoreCase))
             {
                 /*
                  * MODPCSkill means we will need to call upon the player object
@@ -114,7 +114,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "ModActorValue";
                         ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.getData();
+                        int secondArgData = (int)secondArg.Data;
                         int newValue;
                         if (secondArgData < -80)
                         {
@@ -155,7 +155,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         string functionName = "ModActorValue";
                         ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.getData();
+                        int secondArgData = (int)secondArg.Data;
                         int newValue;
                         if (secondArgData == -100)
                         {

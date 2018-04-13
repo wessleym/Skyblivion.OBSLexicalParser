@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "SetActorOwner";
             TES5LocalScope localScope = codeScope.LocalScope;
-            ITES4StringValue tes4Cell = function.getArguments()[0];
+            ITES4StringValue tes4Cell = function.Arguments[0];
             ITES5Referencer tes5Cell = this.referenceFactory.createReference(tes4Cell.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(objectCallFactory.CreateGetActorBaseOfPlayer(multipleScriptsScope));

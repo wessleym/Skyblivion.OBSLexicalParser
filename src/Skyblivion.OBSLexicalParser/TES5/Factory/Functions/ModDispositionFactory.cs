@@ -35,10 +35,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             //Faction Reactions are Per-Faction not per-Actor, so we just simulate what would potentially happen in Skyrim
             var argument1 = functionArguments[1];
-            Nullable<int> argument1NullableInt = argument1.getData() as Nullable<int>;
+            Nullable<int> argument1NullableInt = argument1.Data as Nullable<int>;
             if (argument1NullableInt != null && argument1NullableInt.Value==-100)
             {
                 string functionName = "StartCombat";

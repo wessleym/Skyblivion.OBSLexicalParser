@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             string dataString = functionArguments[0].StringValue;
             string referenceName = NameTransformer.GetEscapedName(calledOn.Name + dataString, "TES4SCENE_", true);
             this.metadataLogService.WriteLine("ADD_SCRIPT_SCENE", new string[] { dataString, referenceName });

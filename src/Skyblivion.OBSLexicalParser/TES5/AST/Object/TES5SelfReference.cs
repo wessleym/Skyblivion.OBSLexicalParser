@@ -18,6 +18,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public ITES5Variable ReferencesTo => this.scriptAsVariable;
 
-        public ITES5Type TES5Type => this.scriptAsVariable.getPropertyType();
+        public ITES5Type TES5Type => this.scriptAsVariable.PropertyType;
     }
 }

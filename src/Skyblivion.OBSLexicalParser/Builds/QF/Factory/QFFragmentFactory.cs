@@ -76,14 +76,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                      * Move over the properties to the new global scope
                      */
                     string propertyName;
-                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.getPropertyName()))
+                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.GetPropertyNameWithSuffix()))
                     {
                         propertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
-                        subfragmentProperty.renameTo(propertyName);
+                        subfragmentProperty.Rename(propertyName);
                     }
                     else
                     {
-                        propertyName = subfragmentProperty.getPropertyName();
+                        propertyName = subfragmentProperty.GetPropertyNameWithSuffix();
                     }
 
                     propertiesNamesDeclared.Add(propertyName, true);
@@ -109,7 +109,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 subfragmentBlock.getFunctionScope().renameTo(newFragmentFunctionName);
-                var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.getStageTargetsMap(subfragment.getStage()));
+                var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.getStage()));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
                     subfragmentBlock.addChunk(newCodeChunk);
@@ -122,15 +122,15 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             /*
              * Diff to find stages which we still need to mark
              */
-            int[] nonDoneStages = stageMap.getStageIds().Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
+            int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
             foreach (int nonDoneStage in nonDoneStages)
             {
-                TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.createEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.getStageTargetsMap(nonDoneStage));
+                TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.createEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
                 resultingBlockList.add(fragment);
             }
 
             this.mappedTargetsLogService.WriteScriptName(resultingFragmentName);
-            foreach (var kvp in stageMap.getMappedTargetsIndex())
+            foreach (var kvp in stageMap.MappedTargetsIndex)
             {
                 var originalTargetIndex = kvp.Key;
                 var mappedTargetIndexes = kvp.Value;

@@ -42,8 +42,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            string functionName = function.getFunctionCall().getFunctionName();
-            TES4FunctionArguments functionArguments = function.getArguments();
+            string functionName = function.FunctionCall.getFunctionName();
+            TES4FunctionArguments functionArguments = function.Arguments;
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;
             ITES4StringValue firstArg = functionArguments[0];
@@ -62,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         if (calledOn.Name != "player")
                         {
-                            if (calledOn.TES5Type.getNativeType() == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
+                            if (calledOn.TES5Type.NativeType== TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
                             {
                                 TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
                                 return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);

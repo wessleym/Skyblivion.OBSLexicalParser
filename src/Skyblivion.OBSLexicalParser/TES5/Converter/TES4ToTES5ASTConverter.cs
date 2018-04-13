@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             Dictionary<string, List<TES5EventCodeBlock>> createdBlocks = new Dictionary<string, List<TES5EventCodeBlock>>();
             if (parsedBlockList != null)
             {
-                foreach (TES4CodeBlock block in parsedBlockList.getBlocks())
+                foreach (TES4CodeBlock block in parsedBlockList.Blocks)
                 {
                     TES5EventBlockList newBlockList = this.blockFactory.createBlock(multipleScriptsScope, globalScope, block);
                     foreach (TES5EventCodeBlock newBlock in newBlockList.getBlocks())

@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST
             }
             if (this.BlockList != null)
             {
-                filtered = filtered.Concat(this.BlockList.filter(predicate));
+                filtered = filtered.Concat(this.BlockList.Filter(predicate));
             }
             return filtered.ToArray();
         }

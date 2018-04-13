@@ -220,7 +220,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 List<TES4Grup> scpts = esm.getGrup(TES4RecordType.SCPT);
                 foreach (ITES4Record scpt in scpts.SelectMany(s=>s.Select(r=>r)))
                 {
-                    string schr = scpt.getSubrecord("SCHR");
+                    string schr = scpt.getSubrecordString("SCHR");
                     string edid = scpt.getSubrecordTrimLower("EDID");
                     if (string.IsNullOrWhiteSpace(schr) || string.IsNullOrWhiteSpace(edid))
                     {

@@ -58,7 +58,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             List<TES5LocalVariable> variables = this.getVariables();
             foreach (var variable in variables)
             {
-                if (variable.getPropertyName() == name)
+                if (variable.GetPropertyNameWithSuffix() == name)
                 {
                     return variable;
                 }

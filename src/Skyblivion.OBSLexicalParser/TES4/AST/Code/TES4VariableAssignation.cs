@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            IEnumerable<ITES4CodeFilterable> filtered = new List<ITES4CodeFilterable>();
+            IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
             if (predicate(this.Reference))
             {
                 filtered = filtered.Concat(new ITES4CodeFilterable[] { this.Reference });

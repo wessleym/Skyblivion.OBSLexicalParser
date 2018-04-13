@@ -11,17 +11,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value
             this.token = token;
         }
 
-        public object getData()
-        {
-            return StringValue;
-        }
+        public object Data => StringValue;
 
         public string StringValue => token;
 
-        public bool hasFixedValue()
-        {
-            return true;
-        }
+        public bool HasFixedValue => true;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

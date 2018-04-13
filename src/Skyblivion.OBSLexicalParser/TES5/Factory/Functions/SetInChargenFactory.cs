@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             ITES5Referencer newCalledOn = TES5StaticReference.Game;
             const string functionName = "SetInChargen";
-            bool argumentBool = ((int)function.getArguments()[0].getData()) == 1;
+            bool argumentBool = ((int)function.Arguments[0].Data) == 1;
             ITES5Value argumentValue = new TES5Bool(argumentBool);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(argumentValue);

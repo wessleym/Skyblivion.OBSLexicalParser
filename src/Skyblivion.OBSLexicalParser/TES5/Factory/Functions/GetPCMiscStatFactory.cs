@@ -28,8 +28,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "QueryStat";
             ITES5Referencer newCalledOn = TES5StaticReference.Game;
-            TES4FunctionArguments functionArguments = function.getArguments();
-            int oldArgValue = (int)functionArguments.Single().getData();
+            TES4FunctionArguments functionArguments = function.Arguments;
+            int oldArgValue = (int)functionArguments.Single().Data;
             string newArgValue = statMap[oldArgValue];
             TES4FunctionArguments tes4Arguments = new TES4FunctionArguments();
             tes4Arguments.Add(new TES4String(newArgValue));

@@ -36,11 +36,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
             methodArguments.Add(new TES5Bool(false)); //override different behaviour
             ITES4StringValue lockAsOwner = functionArguments.GetOrNull(1);
-            bool lockAsOwnerBool = lockAsOwner != null && (bool)lockAsOwner.getData();
+            bool lockAsOwnerBool = lockAsOwner != null && (bool)lockAsOwner.Data;
             methodArguments.Add(new TES5Bool(lockAsOwnerBool));
             return this.objectCallFactory.CreateObjectCall(calledOn, "Lock", multipleScriptsScope, methodArguments);
         }

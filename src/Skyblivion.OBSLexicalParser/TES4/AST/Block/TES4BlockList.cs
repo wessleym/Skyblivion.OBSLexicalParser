@@ -5,22 +5,18 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
-    class TES4BlockList
+    class TES4BlockList : ITES4CodeFilterable
     {
-        private List<TES4CodeBlock> blocks = new List<TES4CodeBlock>();
-        public List<TES4CodeBlock> getBlocks()
-        {
-            return this.blocks;
-        }
+        public List<TES4CodeBlock> Blocks { get; private set; } = new List<TES4CodeBlock>();
 
         public void add(TES4CodeBlock block)
         {
-            this.blocks.Add(block);
+            this.Blocks.Add(block);
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return blocks.SelectMany(b=>b.Filter(predicate)).ToArray();
+            return this.Blocks.SelectMany(b=>b.Filter(predicate)).ToArray();
         }
     }
 }

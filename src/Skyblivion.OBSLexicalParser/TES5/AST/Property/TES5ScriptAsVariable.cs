@@ -12,29 +12,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.scriptHeader = scriptHeader;
         }
 
-        public string getPropertyName()
+        public string GetPropertyNameWithSuffix()
         {
             return "self";
         }
 
         public IEnumerable<string> Output => new string[] { "self" };
 
-        public ITES5Type getPropertyType()
+        public ITES5Type PropertyType
         {
-            return this.scriptHeader.getScriptType();
+            get { return this.scriptHeader.getScriptType(); }
+            set { this.scriptHeader.setNativeType(value); }
         }
 
-        public void setPropertyType(ITES5Type type)
-        {
-            this.scriptHeader.setNativeType(type);
-        }
+        public string ReferenceEDID => this.scriptHeader.Edid;
 
-        public string getReferenceEdid()
-        {
-            return this.scriptHeader.getEdid();
-        }
-
-        public void trackRemoteScript(TES5ScriptHeader scriptHeader)
+        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             throw new ConversionException("Cannot track TES5ScriptAsVariable as it tracks already.");
         }

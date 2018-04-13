@@ -33,8 +33,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public void addVariable(TES5LocalVariable localVariable)
         {
-            this.variables.Add(localVariable.getPropertyName(), localVariable);
-            foreach (TES5LocalVariableParameterMeaning meaning in localVariable.getMeanings())
+            this.variables.Add(localVariable.GetPropertyNameWithSuffix(), localVariable);
+            foreach (TES5LocalVariableParameterMeaning meaning in localVariable.Meanings)
             {
                 try
                 {
@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 }
                 catch (ArgumentException)
                 {
-                    throw new ConversionException("Cannot register variable " + localVariable.getPropertyName() + " - it has a meaning " + meaning.Name + " that was already registered before.");
+                    throw new ConversionException("Cannot register variable " + localVariable.GetPropertyNameWithSuffix() + " - it has a meaning " + meaning.Name + " that was already registered before.");
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public IEnumerable<string> getVariablesOutput()
         {
-            return this.getVariables().Values.Select(v => v.getPropertyType().Output.Single() + " " + v.getPropertyName());
+            return this.getVariables().Values.Select(v => v.PropertyType.Output.Single() + " " + v.GetPropertyNameWithSuffix());
         }
 
         public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)

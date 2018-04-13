@@ -10,6 +10,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
         */
         public ITES5Type ManualCastTo = null;
 
-        public string ManualCastToOutput => ManualCastTo != null ? " as " + ManualCastTo.value() : "";
+        public string ManualCastToOutput => ManualCastTo != null ? " as " + ManualCastTo.Value: "";
     }
 }

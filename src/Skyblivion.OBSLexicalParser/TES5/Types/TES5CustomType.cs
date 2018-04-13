@@ -63,10 +63,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return !Equals(left, right);
         }
 
-        public string value()
-        {
-            return this.escapedName;
-        }
+        public string Value => this.escapedName;
 
         public IEnumerable<string> Output
         {
@@ -77,29 +74,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         }
 
-        public bool isPrimitive()
-        {
-            return this.nativeType.isPrimitive();
-        }
+        public bool IsPrimitive => this.nativeType.IsPrimitive;
 
-        public bool isNativePapyrusType()
-        {
-            return false;
-        }
+        public bool IsNativePapyrusType => false;
 
-        public ITES5Type getNativeType()
-        {
-            return this.nativeType;
-        }
+        public ITES5Type NativeType { get => this.nativeType; set => this.nativeType = value; }
 
-        public void setNativeType(ITES5Type basicType)
-        {
-            this.nativeType = basicType;
-        }
-
-        public string getOriginalName()
-        {
-            return this.originalName;
-        }
+        public string OriginalName => this.originalName;
     }
 }

@@ -12,10 +12,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.ReferencesTo = referencesTo;
         }
 
-        public IEnumerable<string> Output => new string[] { this.ReferencesTo.getPropertyName() + ManualCastToOutput };
+        public IEnumerable<string> Output => new string[] { this.ReferencesTo.GetPropertyNameWithSuffix() + ManualCastToOutput };
 
-        public string Name => this.ReferencesTo.getPropertyName();
+        public string Name => this.ReferencesTo.GetPropertyNameWithSuffix();
 
-        public ITES5Type TES5Type => this.ReferencesTo.getPropertyType();
+        public ITES5Type TES5Type => this.ReferencesTo.PropertyType;
     }
 }

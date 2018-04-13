@@ -8,17 +8,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      */
     interface ITES5Variable : ITES5Outputtable
     {
-        string getPropertyName();
-        ITES5Type getPropertyType();
-        void setPropertyType(ITES5Type type);
+        string GetPropertyNameWithSuffix();
+        ITES5Type PropertyType { get; set; }
         /*
         * Get the reference EDID
         */
-        string getReferenceEdid();
+        string ReferenceEDID { get; }
+
         /*
-        * Marks this variable to track a remote script - to be able to exchange inferencing information between multiple
-         * scripts
-        */
-        void trackRemoteScript(TES5ScriptHeader scriptHeader);
+* Marks this variable to track a remote script - to be able to exchange inferencing information between multiple
+* scripts
+*/
+        void TrackRemoteScript(TES5ScriptHeader scriptHeader);
     }
 }

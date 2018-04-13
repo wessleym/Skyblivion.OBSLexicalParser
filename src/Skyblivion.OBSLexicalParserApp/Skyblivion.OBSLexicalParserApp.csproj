@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>6a8e85e6-ef60-4bbf-ac35-f97fd51d55cf</ProjectGuid>
+    <ProjectGuid>{00A5BF2B-179D-4B49-B0A2-C6D7B7827F1C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Skyblivion.OBSLexicalParserApp</RootNamespace>
     <AssemblyName>Skyblivion.OBSLexicalParserApp</AssemblyName>
@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParser.csproj">
-      <Project>{933f0062-641c-4051-a573-5a704968e8f5}</Project>
+      <Project>{933F0062-641C-4051-A573-5A704968E8F5}</Project>
       <Name>Skyblivion.OBSLexicalParser</Name>
     </ProjectReference>
   </ItemGroup>

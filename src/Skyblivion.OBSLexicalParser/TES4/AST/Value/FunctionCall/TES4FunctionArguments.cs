@@ -1,6 +1,4 @@
-using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;

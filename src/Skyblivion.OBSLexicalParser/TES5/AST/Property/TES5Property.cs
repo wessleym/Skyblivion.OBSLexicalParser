@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         /*
         * Each property may be referencing to a specific EDID ( either it"s a converted property and its name minus prefix should match it, or it"s a new property created and then it ,,inherits" :)
         */
-        private string referenceEdid;
+        public string ReferenceEDID { get; private set; }
         /*
         * Tracked remote script, if any
         */
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             this.propertyName = AddPropertyNameSuffix(propertyName);
             this.propertyType = propertyType; //If we"re tracking a script, this won"t be used anymore
-            this.referenceEdid = referenceEdid;
+            this.ReferenceEDID = referenceEdid;
             this.trackedScript = null;
         }
 
@@ -38,25 +38,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             get
             {
-                string propertyTypeName = this.getPropertyType().Output.Single();
+                string propertyTypeName = this.PropertyType.Output.Single();
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
                 return new string[] { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
             }
         }
 
-        public string getPropertyName()
+        public string GetPropertyNameWithSuffix()
         {
             return this.propertyName;
-        }
-
-        public void renameTo(string newName)
-        {
-            this.propertyName = AddPropertyNameSuffix(newName);
         }
 
         public string GetPropertyNameWithoutSuffix()
         {
             return RemovePropertyNameSuffix(this.propertyName);
+        }
+
+        public void Rename(string newNameWithoutSuffix)
+        {
+            this.propertyName = AddPropertyNameSuffix(newNameWithoutSuffix);
         }
 
         public static string AddPropertyNameSuffix(string propertyName, bool throwExceptionIfSuffixAlreadyPresent = true)
@@ -73,33 +73,30 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             return propertyName.Substring(0, propertyName.Length - PROPERTY_SUFFIX.Length);
         }
 
-        public ITES5Type getPropertyType()
+        public ITES5Type PropertyType
         {
-            return this.trackedScript != null ? this.trackedScript.getScriptType() : this.propertyType;
-        }
-
-        public void setPropertyType(ITES5Type type)
-        {
-            if (this.trackedScript != null)
+            get
             {
-                this.trackedScript.setNativeType(type);
+                return this.trackedScript != null ? this.trackedScript.getScriptType() : this.propertyType;
             }
-            else
+            set
             {
-                this.propertyType = type;
+                if (this.trackedScript != null)
+                {
+                    this.trackedScript.setNativeType(value);
+                }
+                else
+                {
+                    this.propertyType = value;
+                }
             }
         }
 
-        public string getReferenceEdid()
-        {
-            return this.referenceEdid;
-        }
-
-        public void trackRemoteScript(TES5ScriptHeader scriptHeader)
+        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             this.trackedScript = scriptHeader;
-            ITES5Type ourNativeType = this.propertyType.getNativeType();
-            ITES5Type remoteNativeType = this.trackedScript.getScriptType().getNativeType();
+            ITES5Type ourNativeType = this.propertyType.NativeType;
+            ITES5Type remoteNativeType = this.trackedScript.getScriptType().NativeType;
             /*
              * Scenario 1 - types are equal or the remote type is higher than ours in which case we do nothing as they have the good type anyway
              */
@@ -117,7 +114,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
             else 
             {
-                throw new ConversionException("TES5Property.trackRemoteScript() - The definitions of local property type and remote property type have diverged(ours: " + ourNativeType.value() + ", remote: " + remoteNativeType.value());
+                throw new ConversionException("TES5Property.trackRemoteScript() - The definitions of local property type and remote property type have diverged(ours: " + ourNativeType.Value+ ", remote: " + remoteNativeType.Value);
             }
         }
     }

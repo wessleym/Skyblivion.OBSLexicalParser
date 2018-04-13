@@ -13,17 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
             this.accessField = accessField;
         }
 
-        public object getData()
-        {
-            return StringValue;
-        }
+        public object Data => StringValue;
 
         public string StringValue => this.parentReference.StringValue + "." + this.accessField.StringValue;
 
-        public bool hasFixedValue()
-        {
-            return false;
-        }
+        public bool HasFixedValue => false;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

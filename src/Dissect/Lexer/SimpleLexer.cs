@@ -23,7 +23,8 @@ namespace Dissect.Lexer
         */
         public SimpleLexer token(string type, string value = null)
         {
-            this.recognizers.Add(type, new SimpleRecognizer(value != null ? value : type));
+            if (value == null) { value = type; }
+            this.recognizers.Add(type, new SimpleRecognizer(value));
             return this;
         }
 
@@ -34,7 +35,7 @@ namespace Dissect.Lexer
         {
             if (!regex.Options.HasFlag(RegexOptions.Compiled))
             {
-                //throw new InvalidOperationException("Regex was not compiled.");
+                throw new InvalidOperationException("Regex was not compiled.");
             }
             this.recognizers.Add(type, new RegexRecognizer(regex));
             return this;

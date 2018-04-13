@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 
             if (this.elseBranch != null)
             {
-                filtered = filtered.Concat(this.elseBranch.filter(predicate));
+                filtered = filtered.Concat(this.elseBranch.Filter(predicate));
             }
 
             return filtered.ToArray();

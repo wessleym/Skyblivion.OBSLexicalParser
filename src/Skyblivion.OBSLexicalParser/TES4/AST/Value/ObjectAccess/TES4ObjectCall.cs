@@ -17,27 +17,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
             this.function = function;
         }
 
-        public TES4ApiToken getCalledOn()
-        {
-            return this.called;
-        }
+        public TES4ApiToken CalledOn => this.called;
 
-        public TES4Function getFunction()
-        {
-            return this.function;
-        }
+        public TES4Function Function => this.function;
 
-        public object getData()
-        {
-            return StringValue;
-        }
+        public object Data => StringValue;
 
         public string StringValue => throw new NotImplementedException(nameof(TES4ObjectCall) + "." + nameof(StringValue) + " is not supported.");
 
-        public bool hasFixedValue()
-        {
-            return false;
-        }
+        public bool HasFixedValue => false;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

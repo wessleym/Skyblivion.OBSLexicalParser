@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
-    class TES4ElseSubBranch
+    class TES4ElseSubBranch : ITES4CodeFilterable
     {
         public TES4CodeChunks CodeChunks { get; private set; }
         public TES4ElseSubBranch(TES4CodeChunks codeChunks = null)
@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
             this.CodeChunks = codeChunks;
         }
 
-        public ITES4CodeFilterable[] filter(Func<ITES4CodeFilterable, bool> predicate)
+        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
             if (this.CodeChunks != null)

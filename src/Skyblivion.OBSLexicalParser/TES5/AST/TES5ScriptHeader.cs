@@ -20,12 +20,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         private TES5InheritanceGraphAnalyzer inheritanceAnalyzer;
         private string scriptNamePrefix;
         private bool isHidden;
-        private string edid;
+        public string Edid { get; private set; }
         public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden = false)
         {
             this.OriginalScriptName = scriptName;
             this.EscapedScriptName = NameTransformer.Limit(scriptName, scriptNamePrefix);
-            this.edid = scriptName;
+            this.Edid = scriptName;
             this.scriptNamePrefix = scriptNamePrefix;
             this.scriptType = TES5TypeFactory.memberByValue(scriptName, scriptType);
             this.basicScriptType = scriptType;
@@ -33,28 +33,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             this.inheritanceAnalyzer = new TES5InheritanceGraphAnalyzer();
         }
 
-        /*
-        * Gets the EDID of this script as it was in oblivion.
-         * Script name may be obfuscated with md5 if the name is too long
-        */
-        public string getEdid()
-        {
-            return this.edid;
-        }
-
-        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.EscapedScriptName + " extends " + this.scriptType.getNativeType().Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
+        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.EscapedScriptName + " extends " + this.scriptType.NativeType.Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
 
         /*
              * @throws ConversionException
         */
         public void setNativeType(ITES5Type scriptType)
         {
-            if (!TES5InheritanceGraphAnalyzer.isExtending(scriptType, this.scriptType.getNativeType()))
+            if (!TES5InheritanceGraphAnalyzer.isExtending(scriptType, this.scriptType.NativeType))
             {
-                throw new ConversionException("Cannot set script type to non-extending type - current native type " + this.scriptType.getNativeType().value() + ", new type " + scriptType.value());
+                throw new ConversionException("Cannot set script type to non-extending type - current native type " + this.scriptType.NativeType.Value+ ", new type " + scriptType.Value);
             }
 
-            this.scriptType.setNativeType(scriptType.getNativeType());
+            this.scriptType.NativeType = scriptType.NativeType;
         }
 
         public ITES5Type getScriptType()

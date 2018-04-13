@@ -35,10 +35,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
             int x = 0, y = 0, z = 0;
-            int secondArgumentData = (int)functionArguments[1].getData();
+            int secondArgumentData = (int)functionArguments[1].Data;
             switch ((functionArguments[0].StringValue).ToLower())
             {
                 case "x":

@@ -67,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             break;
                         }
 
-                        List<TES4BlockParameter> blockParameterListParameterList = blockParameterList.getVariableList();
+                        List<TES4BlockParameter> blockParameterListParameterList = blockParameterList.VariableList;
                         TES4BlockParameter tesEquippedTarget = blockParameterListParameterList[0];
                         TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
@@ -97,7 +97,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         if (parameterList != null)
                         {
                             //NOT TESTED
-                            List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                            List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                             ITES5Referencer targetActor = this.referenceFactory.createReadReference(parameterListVariableList[0].getBlockParameter(), globalScope, multipleScriptsScope, localScope);
                             TES5ArithmeticExpression interExpression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(activator), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, targetActor);
                             //TES5CodeScope interBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.getCodeScope()));//WTM:  Change:  Why serialize and then deserialize?
@@ -126,7 +126,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             break;
                         }
 
-                        List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                        List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
                         TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
@@ -148,7 +148,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             break;
                         }
 
-                        List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                        List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
                         TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
@@ -170,7 +170,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             break;
                         }
 
-                        List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                        List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
                         TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
@@ -189,7 +189,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onpackageend":
                     {
                         TES4BlockParameterList parameterList = block.getBlockParameterList();
-                        List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                        List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                         TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
                         TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                         ITES5Referencer newContainer = this.referenceFactory.createReadReference(tesEquippedTarget.getBlockParameter(), globalScope, multipleScriptsScope, localScope);
@@ -260,7 +260,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         if (block.getBlockParameterList() != null)
                         {
                             TES4BlockParameterList parameterList = block.getBlockParameterList();
-                            List<TES4BlockParameter> parameterListVariableList = parameterList.getVariableList();
+                            List<TES4BlockParameter> parameterListVariableList = parameterList.VariableList;
                             TES4BlockParameter equipActor = parameterListVariableList[0];
                             TES5LocalScope localScope = newBlock.getCodeScope().LocalScope;
                             ITES5Referencer equipActorRef = this.referenceFactory.createReference(equipActor.getBlockParameter(), globalScope, multipleScriptsScope, localScope);

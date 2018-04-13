@@ -63,9 +63,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 ITES4Callable setItem1Callable = set.Item1 as ITES4Callable;
                 if (setItem1Callable == null) { continue; }
 
-                TES4Function function = setItem1Callable.getFunction();
+                TES4Function function = setItem1Callable.Function;
 
-                switch (function.getFunctionCall().getFunctionName().ToLower())
+                switch (function.FunctionCall.getFunctionName().ToLower())
                 {
                     case "getweaponanimtype":
                         {
@@ -73,7 +73,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             TES5ObjectCall equippedWeaponLeftValue = this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(calledOn, "GetEquippedWeapon", multipleScriptsScope), "GetWeaponType", multipleScriptsScope);
 
                             int[] targetedWeaponTypes;
-                            switch ((int)set.Item2.getData())
+                            switch ((int)set.Item2.Data)
                             {
 
                                 case 0:
@@ -127,27 +127,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         {
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments();
                             inversedArgument.Add(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope));
-                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.getArguments()[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument);
-                            TES5Integer getDetectedRightValue = new TES5Integer(((int)set.Item2.getData() == 0) ? 0 : 1);
+                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument);
+                            TES5Integer getDetectedRightValue = new TES5Integer(((int)set.Item2.Data== 0) ? 0 : 1);
                             return TES5ExpressionFactory.createArithmeticExpression(getDetectedLeftValue, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, getDetectedRightValue);
                         }
 
                     case "getdetectionlevel":
                         {
 
-                            if (!set.Item2.hasFixedValue())
+                            if (!set.Item2.HasFixedValue)
                             {
                                 throw new ConversionException("Cannot convert getDetectionLevel calls with dynamic comparision");
                             }
 
-                            TES5Bool tes5Bool = new TES5Bool(((int)set.Item2.getData()) == 3); //true only if the compared value was 3
+                            TES5Bool tes5Bool = new TES5Bool(((int)set.Item2.Data) == 3); //true only if the compared value was 3
 
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments();
                             inversedArgument.Add(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope));
 
                             return TES5ExpressionFactory.createArithmeticExpression
                                 (
-                                    this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.getArguments()[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument),
+                                    this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument),
                                     TES5ArithmeticExpressionOperator.OPERATOR_EQUAL,
                                     tes5Bool
                                 );
@@ -156,12 +156,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     case "getcurrentaiprocedure":
                         {
 
-                            if (!set.Item2.hasFixedValue())
+                            if (!set.Item2.HasFixedValue)
                             {
                                 throw new ConversionException("Cannot convert getCurrentAIProcedure() calls with dynamic comparision");
                             }
 
-                            switch ((int)set.Item2.getData())
+                            switch ((int)set.Item2.Data)
                             {
                                 case 4:
                                     {
@@ -204,7 +204,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                     }
                                 default:
                                     {
-                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)set.Item2.getData()).ToString());
+                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)set.Item2.Data).ToString());
                                     }
                             }
                         }
@@ -221,7 +221,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             //WARNING: Needs to implement Horse sittings, too.
                             //SEE: http://www.gameskyrim.com/papyrus-isridinghorse-function-t255012.html
                             int goTo;
-                            switch ((int)set.Item2.getData())
+                            switch ((int)set.Item2.Data)
                             {
                                 case 0:
                                     {
@@ -291,7 +291,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             foreach (var tes5set in tes5sets)
             {
                 TES5ArithmeticExpressionOperator newOp = !flipOperator ? op : op.Flip();
-                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type, objectReferenceType) || TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type.getNativeType(), objectReferenceType))
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type, objectReferenceType) || TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type.NativeType, objectReferenceType))
                 {
                     if (tes5set.Item2.TES5Type == TES5BasicType.T_INT)
                     {
@@ -313,7 +313,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         }
                     }
                 }
-                else if (tes5set.Item1.TES5Type.getOriginalName() == TES5TypeFactory._void().getOriginalName())
+                else if (tes5set.Item1.TES5Type.OriginalName== TES5TypeFactory._void().OriginalName)
                 {
 #if !PHP_COMPAT
                     TES5IntegerOrFloat tes5SetItem2Number = tes5set.Item2 as TES5IntegerOrFloat;
@@ -327,7 +327,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsImplicitlyComparable(tes5set.Item1.TES5Type, tes5set.Item2.TES5Type))
                 {//WTM:  Change:  Added entire if branch
-                    if (tes5set.Item1.TES5Type.getNativeType() == TES5BasicType.T_QUEST && tes5set.Item2.TES5Type == TES5BasicType.T_INT)
+                    if (tes5set.Item1.TES5Type.NativeType== TES5BasicType.T_QUEST && tes5set.Item2.TES5Type == TES5BasicType.T_INT)
                     {
                         TES5ObjectCall getStage = this.objectCallFactory.CreateObjectCall((ITES5Referencer)tes5set.Item1, "GetStage", multipleScriptsScope);
                         return TES5ExpressionFactory.createArithmeticExpression(getStage, newOp, tes5set.Item2);
@@ -384,9 +384,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public ITES5ValueCodeChunk createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4Function function = chunk.getFunction();
+            TES4Function function = chunk.Function;
             ITES5Referencer calledOnReference = this.createCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
-            string functionName = function.getFunctionCall().getFunctionName();
+            string functionName = function.FunctionCall.getFunctionName();
             string functionKey = functionName.ToLower();
             IFunctionFactory factory;
             if (!this.functionFactories.TryGetValue(functionKey, out factory))
@@ -410,7 +410,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         private ITES5Referencer createCalledOnReferenceOfCalledFunction(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4ApiToken calledOn = chunk.getCalledOn();
+            TES4ApiToken calledOn = chunk.CalledOn;
             if (calledOn != null)
             {
                 return this.referenceFactory.createReference(calledOn.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope);

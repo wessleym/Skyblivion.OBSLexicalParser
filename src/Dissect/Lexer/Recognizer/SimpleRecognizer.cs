@@ -1,3 +1,5 @@
+using System;
+
 namespace Dissect.Lexer.Recognizer
 {
     /*
@@ -8,19 +10,30 @@ namespace Dissect.Lexer.Recognizer
      */
     class SimpleRecognizer : IRecognizer
     {
-        protected string str; /*
+        protected string needle;
+        protected bool ignoreCase;//WTM:  Change:  I added ignoreCase and its functionality.
+        /*
         * Constructor.
         */
-        public SimpleRecognizer(string str)
+        public SimpleRecognizer(string needle, bool ignoreCase = false)
         {
-            this.str = str;
+            this.needle = needle;
+            this.ignoreCase = ignoreCase;
         }
 
-        public bool match(string str, out string result)
+        private bool NeedleStartsWith(string haystack)
         {
-            if (str.StartsWith(this.str))
+            return
+                !ignoreCase ?
+                haystack.StartsWith(needle) :
+                haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        public bool match(string haystack, out string result)
+        {
+            if (NeedleStartsWith(haystack))
             {
-                result = this.str;
+                result = needle;
                 return true;
             }
             result = null;

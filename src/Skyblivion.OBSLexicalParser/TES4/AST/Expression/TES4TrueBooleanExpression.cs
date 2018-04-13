@@ -29,17 +29,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             return TES4ArithmeticExpressionOperator.OPERATOR_EQUAL;
         }
 
-        public object getData()
-        {
-            return BoolValue;
-        }
+        public object Data => BoolValue;
 
-        public bool BoolValue => (bool)this.value.getData();
+        public bool BoolValue => (bool)this.value.Data;
 
-        public bool hasFixedValue()
-        {
-            return this.value.hasFixedValue();
-        }
+        public bool HasFixedValue => this.value.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {

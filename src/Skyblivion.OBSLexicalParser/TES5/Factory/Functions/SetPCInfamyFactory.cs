@@ -39,10 +39,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.getArguments();
+            TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
             ITES4StringValue argument0 = functionArguments[0];
-            Nullable<int> argument0Int = argument0.getData() as Nullable<int>;
+            Nullable<int> argument0Int = argument0.Data as Nullable<int>;
             ITES5Value newArgument;
             if (argument0Int != null)
             {

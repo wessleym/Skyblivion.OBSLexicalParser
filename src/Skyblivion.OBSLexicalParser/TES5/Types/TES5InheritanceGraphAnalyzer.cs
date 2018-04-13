@@ -4554,12 +4554,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public static bool isExtending(ITES5Type extendingType, ITES5Type baseType)
         {
-            TES5InheritanceItemCollection subTree = findSubtreeFor(baseType.value());
+            TES5InheritanceItemCollection subTree = findSubtreeFor(baseType.Value);
             if (subTree == null)
             {
                 return false;
             }
-            return treeContains(extendingType.value(), subTree);
+            return treeContains(extendingType.Value, subTree);
         }
 
         public static bool IsTypeOrExtendsType(ITES5Type extendingType, ITES5Type baseType)
@@ -4571,7 +4571,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             if (IsTypeOrExtendsType(extendingType, baseType)) { return true; }
             if (IsNumberType(extendingType) && IsNumberType(baseType)) { return true; }
-            return IsTypeOrExtendsType(extendingType.getNativeType(), baseType.getNativeType()) || IsTypeOrExtendsType(baseType.getNativeType(), extendingType.getNativeType());
+            return IsTypeOrExtendsType(extendingType.NativeType, baseType.NativeType) || IsTypeOrExtendsType(baseType.NativeType, extendingType.NativeType);
         }
 
         public static bool IsNumberType(ITES5Type type)
@@ -4581,7 +4581,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         private static string targetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
         {
-            string targetClassName = type.value();
+            string targetClassName = type.Value;
             string baseClassForNode = baseClass.Name;
             TES5InheritanceItemCollection baseClassExtenders = baseClass.Items;
             if (baseClassExtenders.Any())
@@ -4656,9 +4656,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         public static ITES5Type findTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
-            if (!callReturns.TryGetValue(calledOnType.value(), out callReturnsOfCalledOnType) && calledOnType.isNativePapyrusType())
+            if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType) && calledOnType.IsNativePapyrusType)
             {
-                throw new ConversionException("Inference type exception - no methods found for " + calledOnType.value() + "!");
+                throw new ConversionException("Inference type exception - no methods found for " + calledOnType.Value+ "!");
             }
 
             foreach (var callReturn in callReturnsOfCalledOnType)
@@ -4673,7 +4673,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        throw new InvalidOperationException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.value(), ex);
+                        throw new InvalidOperationException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.Value, ex);
                     }
                     return TES5TypeFactory.memberByValue(argument);
                 }
@@ -4686,7 +4686,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
             catch (ConversionException ex)
             {
-                throw new ConversionException("Method " + methodName + " not found in type " + calledOnType.value(), ex);
+                throw new ConversionException("Method " + methodName + " not found in type " + calledOnType.Value, ex);
             }
             return findTypeByMethodParameter(calledOnTypeBaseClass, methodName, parameterIndex);
         }
@@ -4694,18 +4694,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         public static ITES5Type findReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
-            if (!callReturns.TryGetValue(calledOnType.value(), out callReturnsOfCalledOnType))
+            if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType))
             {
                 //Type not present in inheritance graph, check if its a basic type ( which means its basically an exception )
-                if (calledOnType.isNativePapyrusType())
+                if (calledOnType.IsNativePapyrusType)
                 {
-                    throw new ConversionException("Inference type exception - no call returns for " + calledOnType.value() + "!");
+                    throw new ConversionException("Inference type exception - no call returns for " + calledOnType.Value+ "!");
                 }
                 else
                 {
                     //Otherwise, treat it like a base script
-                    calledOnType = calledOnType.getNativeType();
-                    callReturnsOfCalledOnType = callReturns[calledOnType.value()];
+                    calledOnType = calledOnType.NativeType;
+                    callReturnsOfCalledOnType = callReturns[calledOnType.Value];
                 }
             }
 
@@ -4739,7 +4739,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
             ITES5Variable calledOn = objectCall.AccessedObject.ReferencesTo;
             List<ITES5Type> extendingMatches = new List<ITES5Type>();
-            ITES5Type actualType = calledOn.getPropertyType().getNativeType();
+            ITES5Type actualType = calledOn.PropertyType.NativeType;
             foreach (ITES5Type possibleMatch in possibleMatches)
             {
                 if (possibleMatch == actualType)
@@ -4761,10 +4761,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         List<string> concatTypes = new List<string>();
                         foreach (var possibleMatch in possibleMatches)
                         {
-                            concatTypes.Add(possibleMatch.value());
+                            concatTypes.Add(possibleMatch.Value);
                         }
 
-                        throw new ConversionException("Cannot find any possible type for method " + methodName + ", trying to extend " + actualType.value() + " with following types: " + string.Join(", ", concatTypes));
+                        throw new ConversionException("Cannot find any possible type for method " + methodName + ", trying to extend " + actualType.Value+ " with following types: " + string.Join(", ", concatTypes));
                     }
 
                 case 1:
@@ -4776,7 +4776,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         //We analyze the property name and check inside the ESM analyzer.
                         ESMAnalyzer analyzer = ESMAnalyzer._instance();
-                        ITES5Type formType = analyzer.getFormTypeByEDID(calledOn.getReferenceEdid());
+                        ITES5Type formType = analyzer.getFormTypeByEDID(calledOn.ReferenceEDID);
                         //WTM:  Change:  I added matching on the type and on its base classes this so that functions like SetFactionOwner will work.
                         //SetFactionOwner gives two extendingMatches:  Cell and ObjectReference (since both classes have the SetFactionOwner function).
                         //But the EDID "WeynonHorsePlayer" results in a type of Actor.  In this case, the base class of Actor (ObjectReference)
@@ -4784,7 +4784,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         IEnumerable<ITES5Type> formTypeAndBaseTypes = GetSelfAndBaseClasses(formType);
                         if (!formTypeAndBaseTypes.Any(bt => extendingMatches.Contains(bt)))
                         {
-                            throw new ConversionException("ESM <-> Inheritance Graph conflict.  ESM returned " + formType.value() + ", which is not present in possible matches from inheritance graph:  " + string.Join(", ", extendingMatches.Select(em => em.value())));
+                            throw new ConversionException("ESM <-> Inheritance Graph conflict.  ESM returned " + formType.Value+ ", which is not present in possible matches from inheritance graph:  " + string.Join(", ", extendingMatches.Select(em => em.Value)));
                         }
                         return formType;
                     }

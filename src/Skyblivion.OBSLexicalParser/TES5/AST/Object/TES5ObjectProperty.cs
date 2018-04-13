@@ -20,16 +20,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             get
             {
                 string referenceOutput = this.objectReference.Output.Single();
-                return new string[] { referenceOutput + "." + this.property.getPropertyName() + ManualCastToOutput };
+                return new string[] { referenceOutput + "." + this.property.GetPropertyNameWithSuffix() + ManualCastToOutput };
             }
         }
 
-        public ITES5Type TES5Type => this.property.getPropertyType();
+        public ITES5Type TES5Type => this.property.PropertyType;
 
         public ITES5Referencer AccessedObject => this.objectReference;
 
         public ITES5Variable ReferencesTo => this.property;
 
-        public string Name => this.property.getPropertyName();
+        public string Name => this.property.GetPropertyNameWithSuffix();
     }
 }

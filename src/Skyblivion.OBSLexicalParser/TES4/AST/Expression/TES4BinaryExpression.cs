@@ -34,33 +34,33 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             return this.rightValue;
         }
 
-        public object getData()
+        public object Data
         {
-            decimal leftValue = Convert.ToDecimal(this.leftValue.getData());
-            decimal rightValue = Convert.ToDecimal(this.rightValue.getData());
-            if (op == TES4BinaryExpressionOperator.OPERATOR_ADD)
+            get
             {
-                return leftValue + rightValue;
+                decimal leftValue = Convert.ToDecimal(this.leftValue.Data);
+                decimal rightValue = Convert.ToDecimal(this.rightValue.Data);
+                if (op == TES4BinaryExpressionOperator.OPERATOR_ADD)
+                {
+                    return leftValue + rightValue;
+                }
+                else if (op == TES4BinaryExpressionOperator.OPERATOR_DIVIDE)
+                {
+                    return leftValue / rightValue;
+                }
+                else if (op == TES4BinaryExpressionOperator.OPERATOR_MULTIPLY)
+                {
+                    return leftValue * rightValue;
+                }
+                else if (op == TES4BinaryExpressionOperator.OPERATOR_SUBSTRACT)
+                {
+                    return leftValue - rightValue;
+                }
+                throw new ConversionException("Unknown TES4BinaryExpressionOperator");
             }
-            else if (op == TES4BinaryExpressionOperator.OPERATOR_DIVIDE)
-            {
-                return leftValue / rightValue;
-            }
-            else if (op == TES4BinaryExpressionOperator.OPERATOR_MULTIPLY)
-            {
-                return leftValue * rightValue;
-            }
-            else if (op == TES4BinaryExpressionOperator.OPERATOR_SUBSTRACT)
-            {
-                return leftValue - rightValue;
-            }
-            throw new ConversionException("Unknown TES4BinaryExpressionOperator");
         }
 
-        public bool hasFixedValue()
-        {
-            return this.leftValue.hasFixedValue() && this.rightValue.hasFixedValue();
-        }
+        public bool HasFixedValue => this.leftValue.HasFixedValue && this.rightValue.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
