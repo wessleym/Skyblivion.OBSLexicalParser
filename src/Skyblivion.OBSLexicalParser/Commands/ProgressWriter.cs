@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -7,12 +8,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private string label;
         private int total;
         private int current;
+        private Stopwatch stopwatch;
         public ProgressWriter(string label, int total)
         {
             this.label = label;
             this.total = total;
             current = 0;
             Write(null);
+            stopwatch = Stopwatch.StartNew();
         }
 
         public void Write(string progress)
@@ -29,7 +32,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public void WriteLast()
         {
-            Write("Complete");
+            stopwatch.Stop();
+            Write("Complete (" + stopwatch.ElapsedMilliseconds + " ms)");
             Console.WriteLine();
         }
     }
