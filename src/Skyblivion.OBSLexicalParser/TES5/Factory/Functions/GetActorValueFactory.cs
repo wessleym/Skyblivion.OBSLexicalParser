@@ -60,9 +60,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "personality":
                 case "luck":
                     {
-                        if (calledOn.Name != "player")
+                        if (!TES5PlayerReference.EqualsPlayer(calledOn.Name))
                         {
-                            if (calledOn.TES5Type.NativeType== TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
+                            if (calledOn.TES5Type.NativeType == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
                             {
                                 TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
                                 return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
@@ -74,7 +74,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         /*
                          *  Switch out callee with the reference to attr
                          */
-                        return this.referenceFactory.createReadReference("TES4Attr" + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
+                        return this.referenceFactory.createReadReference(TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
                     }
 
                 case "fatigue":

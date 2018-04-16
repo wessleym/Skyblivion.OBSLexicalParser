@@ -67,15 +67,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "personality":
                 case "luck":
                     {
-                        if (calledOn.Name != "player")
+                        if (!TES5PlayerReference.EqualsPlayer(calledOn.Name))
                         {
                             //We can"t convert those.. and shouldn"t be any, too.
                             throw new ConversionException(nameof(ModActorValueFactory) + ":  Cannot set attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);
                         }
 
                         string functionName = "SetValue";
-                        string firstArgDataLowerUCWords = PHPFunction.UCWords(firstArgStringLower);
-                        string tes4AttrFirstArg = "TES4Attr" + firstArgDataLowerUCWords;
+                        string tes4AttrFirstArg = TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower);
                         /*
                          *  Switch out callee with the reference to attr
                          */

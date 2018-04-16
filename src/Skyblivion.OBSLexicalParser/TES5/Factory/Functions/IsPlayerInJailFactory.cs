@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             //Using Legacy TES4 Connector Plugin
-            return this.objectPropertyFactory.createObjectProperty(multipleScriptsScope, this.referenceFactory.createReadReference("tContainer", globalScope, multipleScriptsScope, localScope), "isInJail");
+            return this.objectPropertyFactory.createObjectProperty(multipleScriptsScope, this.referenceFactory.CreateContainerReadReference(globalScope, multipleScriptsScope, localScope), "isInJail");
         }
     }
 }

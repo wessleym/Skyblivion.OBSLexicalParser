@@ -59,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     aliasesDeclared.Add(trimmedAlias, true);
                 }
                 catch (ArgumentException) { continue; }
-                resultingGlobalScope.add(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
+                resultingGlobalScope.Add(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
             }
 
             Dictionary<int, bool> implementedStages = new Dictionary<int, bool>();
@@ -76,18 +76,18 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                      * Move over the properties to the new global scope
                      */
                     string propertyName;
-                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.GetPropertyNameWithSuffix()))
+                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.PropertyNameWithSuffix))
                     {
                         propertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
                         subfragmentProperty.Rename(propertyName);
                     }
                     else
                     {
-                        propertyName = subfragmentProperty.GetPropertyNameWithSuffix();
+                        propertyName = subfragmentProperty.PropertyNameWithSuffix;
                     }
 
                     propertiesNamesDeclared.Add(propertyName, true);
-                    resultingGlobalScope.add(subfragmentProperty);
+                    resultingGlobalScope.Add(subfragmentProperty);
                 }
 
                 List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.getBlocks();
@@ -97,9 +97,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 ITES5CodeBlock subfragmentBlock = subfragmentBlocks[0];
-                if (subfragmentBlock.getFunctionScope().getBlockName() != "Fragment_0")
+                if (subfragmentBlock.FunctionScope.BlockName!= "Fragment_0")
                 {
-                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.getFunctionScope().getBlockName() + "..");
+                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName+ "..");
                 }
 
                 string newFragmentFunctionName = "Fragment_" + subfragment.getStage().ToString();
@@ -108,11 +108,11 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     newFragmentFunctionName += "_" + subfragment.getLogIndex();
                 }
 
-                subfragmentBlock.getFunctionScope().renameTo(newFragmentFunctionName);
+                subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
                 var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.getStage()));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
-                    subfragmentBlock.addChunk(newCodeChunk);
+                    subfragmentBlock.AddChunk(newCodeChunk);
                 }
 
                 resultingBlockList.add(subfragmentBlock);

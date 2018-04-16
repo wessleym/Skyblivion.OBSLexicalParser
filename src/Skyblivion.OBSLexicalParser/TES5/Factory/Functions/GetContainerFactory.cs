@@ -38,10 +38,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //TODO: This function is nonexistent in Papyrus and most likely should be deleted
-            TES5LocalVariable containerVariable = codeScope.FindVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);
+            TES5LocalVariable containerVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);
             if (containerVariable == null)
             {
-                throw new ConversionException("TES4.getContainer() - Cannot convert to Skyrim in other contexts than onEquip/onUnequip", expected: true);
+                throw new ConversionException("getContainer() - Cannot convert to Skyrim in other contexts than onEquip/onUnequip", expected: true);
             }
             return TES5ReferenceFactory.CreateReferenceToVariable(containerVariable);
         }

@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      */
     interface ITES5Variable : ITES5Outputtable
     {
-        string GetPropertyNameWithSuffix();
+        string PropertyNameWithSuffix { get; }
         ITES5Type PropertyType { get; set; }
         /*
         * Get the reference EDID

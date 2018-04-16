@@ -38,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.FunctionCall.getFunctionName();
             TES4FunctionArguments functionArguments = function.Arguments;
             //This will sum the bounties from all the factions.
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference("CyrodiilCrimeFaction", globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer newCalledOn = this.referenceFactory.CreateCyrodiilCrimeFactionReadReference(globalScope, multipleScriptsScope, localScope);
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }

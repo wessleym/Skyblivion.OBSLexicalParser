@@ -11,32 +11,36 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5ReferenceFactory
     {
-        public const string MESSAGEBOX_VARIABLE_CONST = "TES4_MESSAGEBOX_RESULT";
-        public static Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
+        public const string MESSAGEBOX_VARIABLE_CONST = TES5TypeFactory.TES4Prefix + "_MESSAGEBOX_RESULT";
+        public static readonly Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
+        private const string tContainerName = "tContainer";
+        private const string tTimerName = "tTimer";
+        private const string tGSPLocalTimerName = "tGSPLocalTimer";
+        private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
+        public const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
+        //Those are used to hook in the internal Skyblivion systems.
+        private static readonly Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
+            {
+                { TES4Attr + "Strength",  TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Intelligence", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Willpower", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Agility", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Speed", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
+                { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
+                { tContainerName, TES5TypeFactory.memberByValue(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST) },//Data container
+                { tTimerName, TES5TypeFactory.memberByValue(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST) },//Timer functions
+                { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
+                { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
+                { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT }//set by script instead of original messageBox
+            };
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ObjectPropertyFactory objectPropertyFactory;
-        private Dictionary<string, ITES5Type> specialConversions;
         public TES5ReferenceFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectPropertyFactory objectPropertyFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectPropertyFactory = objectPropertyFactory;
-            //Those are used to hook in the internal Skyblivion systems.
-            specialConversions = new Dictionary<string, ITES5Type>()
-            {
-                { "TES4AttrStrength",  TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrIntelligence", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrWillpower", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrAgility", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrSpeed", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrEndurance", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrPersonality", TES5BasicType.T_GLOBALVARIABLE },
-                { "TES4AttrLuck", TES5BasicType.T_GLOBALVARIABLE },
-                { "tContainer", TES5TypeFactory.memberByValue("TES4Container", TES5BasicType.T_QUEST) },//Data container
-                { "tTimer", TES5TypeFactory.memberByValue("TES4TimerHelper", TES5BasicType.T_QUEST) },//Timer functions
-                { "tGSPLocalTimer", TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
-                { "CyrodiilCrimeFaction", TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
-                { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT }//set by script instead of original messageBox
-            };
         }
 
         public static TES5SelfReference CreateReferenceToSelf(TES5GlobalScope globalScope)
@@ -50,7 +54,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5Reference(variable);
         }
 
-        public static TES5PlayerReference CreateReferenceToPlayer()
+        public static ITES5Referencer CreateReferenceToPlayer()
         {
             return new TES5PlayerReference();
         }
@@ -68,11 +72,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES5Type type = globalScope.ScriptHeader.getBasicScriptType();
             if (type == TES5BasicType.T_OBJECTREFERENCE || type==TES5BasicType.T_ACTOR)//Change:  WTM:  Added Actor here.
             {
-                return TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
+                return CreateReferenceToSelf(globalScope);
             }
             else if (type == TES5BasicType.T_ACTIVEMAGICEFFECT)
             {
-                TES5SelfReference self = TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
+                TES5SelfReference self = CreateReferenceToSelf(globalScope);
                 return this.objectCallFactory.CreateObjectCall(self, "GetTargetActor", multipleScriptsScope);
             }
             else if (type == TES5BasicType.T_QUEST)
@@ -80,7 +84,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 //todo - this should not be done like this
                 //we should actually not try to extract the implicit reference on the non-reference oblivion functions like "stopQuest"
                 //think of this line as a hacky way to just get code forward.
-                return TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
+                return CreateReferenceToSelf(globalScope);
             }
             else if (type == TES5BasicType.T_TOPICINFO)
             {
@@ -111,18 +115,37 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
         }
 
+        public ITES5Referencer CreateContainerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return createReadReference(tContainerName, globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return createReadReference(tTimerName, globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateGSPLocalTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return createReadReference(tGSPLocalTimerName, globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateCyrodiilCrimeFactionReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return createReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
+        }
+
         /*
         * Create a generic-purpose reference.
         */
         public ITES5Referencer createReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            referenceName = PapyrusCompiler.FixReferenceName(referenceName);
-
-            if (referenceName.ToLower() == "player")
+            if (TES5PlayerReference.EqualsPlayer(referenceName))
             {
                 return CreateReferenceToPlayer();
             }
 
+            referenceName = PapyrusCompiler.FixReferenceName(referenceName);
             Match match = PropertyNameRegex.Match(referenceName);
             if (match.Success)
             {
@@ -131,7 +154,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 return propertyReference;
             }
 
-            ITES5Variable property = localScope.getVariableByName(referenceName);
+            ITES5Variable property = localScope.GetVariable(referenceName);
             if (property == null)
             {
                 property = globalScope.getPropertyByName(referenceName); //todo rethink how to unify the prefix searching
@@ -139,7 +162,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 {
                     TES5Property propertyToAddToGlobalScope = null;
                     ITES5Type specialConversion;
-                    if (this.specialConversions.TryGetValue(referenceName, out specialConversion))
+                    if (specialConversions.TryGetValue(referenceName, out specialConversion))
                     {
                         propertyToAddToGlobalScope = new TES5Property(referenceName, specialConversion, referenceName);
                     }
@@ -155,7 +178,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_GLOBALVARIABLE, referenceName);
                         }
                     }
-                    globalScope.add(propertyToAddToGlobalScope);
+                    globalScope.Add(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
             }

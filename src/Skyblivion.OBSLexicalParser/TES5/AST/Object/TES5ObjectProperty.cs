@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             get
             {
                 string referenceOutput = this.objectReference.Output.Single();
-                return new string[] { referenceOutput + "." + this.property.GetPropertyNameWithSuffix() + ManualCastToOutput };
+                return new string[] { referenceOutput + "." + this.property.PropertyNameWithSuffix+ ManualCastToOutput };
             }
         }
 
@@ -30,6 +30,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public ITES5Variable ReferencesTo => this.property;
 
-        public string Name => this.property.GetPropertyNameWithSuffix();
+        public string Name => this.property.PropertyNameWithSuffix;
     }
 }

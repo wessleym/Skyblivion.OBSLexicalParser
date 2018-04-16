@@ -33,12 +33,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         public void AddVariable(TES5LocalVariable localVariable)
         {
-            this.LocalScope.addVariable(localVariable);
+            this.LocalScope.AddVariable(localVariable);
         }
 
-        public TES5LocalVariable FindVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.LocalScope.findVariableWithMeaning(meaning);
+            return this.LocalScope.GetVariableWithMeaning(meaning);
         }
     }
 }

@@ -12,10 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.scriptHeader = scriptHeader;
         }
 
-        public string GetPropertyNameWithSuffix()
-        {
-            return "self";
-        }
+        public string PropertyNameWithSuffix => "self";
 
         public IEnumerable<string> Output => new string[] { "self" };
 

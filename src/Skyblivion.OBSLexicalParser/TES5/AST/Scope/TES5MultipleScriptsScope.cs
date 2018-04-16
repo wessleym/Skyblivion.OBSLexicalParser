@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             TES5GlobalScope globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
+                throw new ConversionException(nameof(TES5MultipleScriptsScope)+"."+nameof(getScriptHeaderOfScript) +":  Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
             }
             return globalScope.ScriptHeader;
         }
@@ -37,12 +37,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             TES5GlobalScope globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a global scope for script "+scriptName+" - make sure that the multiple scripts scope is built correctly.");
+                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(getPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
             }
             TES5Property property = globalScope.getPropertyByName(propertyName);
             if (property == null)
             {
-                throw new ConversionException("TES5MultipleScriptsScope.getPropertyFromScript() - Cannot find a property "+propertyName+" in script name "+scriptName);
+                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(getPropertyFromScript) + ": - Cannot find a property " + propertyName+" in script name "+scriptName);
             }
             return property;
         }

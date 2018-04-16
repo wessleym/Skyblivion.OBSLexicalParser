@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             /*
              * @todo - Rework the block types so that the information about the block type and its name is not carried within one field
              */
-            if (functionScope.getBlockName() == "OnUpdate")
+            if (functionScope.BlockName== "OnUpdate")
             {
                 TES5ObjectCallArguments args = new TES5ObjectCallArguments();
                 args.Add(new TES5Float(TES5AdditionalBlockChangesPass.ON_UPDATE_TICK));

@@ -66,7 +66,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     throw new ConversionException("Unknown variable declaration type.");
                 }
 
-                globalScope.add(property);
+                globalScope.Add(property);
                 alreadyDefinedVariables.Add(variableNameLower, variable);
             }
         }

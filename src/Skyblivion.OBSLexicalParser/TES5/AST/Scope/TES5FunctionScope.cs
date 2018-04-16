@@ -15,10 +15,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     class TES5FunctionScope
     {
         /*
-        *  Block name
+        *  This might be the Event"s name, or Function"s name.
         */
-        private string blockName;
-        private Dictionary<string, TES5LocalVariable> variables = new Dictionary<string, TES5LocalVariable>();
+        public string BlockName { get; private set; }
+        public Dictionary<string, TES5LocalVariable> Variables { get; private set; } = new Dictionary<string, TES5LocalVariable>();
         /*
         * A hashmap to speedup the search
         */
@@ -28,12 +28,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         */
         public TES5FunctionScope(string blockName)
         {
-            this.blockName = blockName;
+            this.BlockName = blockName;
         }
 
-        public void addVariable(TES5LocalVariable localVariable)
+        public void AddVariable(TES5LocalVariable localVariable)
         {
-            this.variables.Add(localVariable.GetPropertyNameWithSuffix(), localVariable);
+            this.Variables.Add(localVariable.PropertyNameWithSuffix, localVariable);
             foreach (TES5LocalVariableParameterMeaning meaning in localVariable.Meanings)
             {
                 try
@@ -42,42 +42,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 }
                 catch (ArgumentException)
                 {
-                    throw new ConversionException("Cannot register variable " + localVariable.GetPropertyNameWithSuffix() + " - it has a meaning " + meaning.Name + " that was already registered before.");
+                    throw new ConversionException("Cannot register variable " + localVariable.PropertyNameWithSuffix+ " - it has a meaning " + meaning.Name + " that was already registered before.");
                 }
             }
         }
 
-        public void renameTo(string newName)
+        public void Rename(string newName)
         {
-            this.blockName = newName;
+            this.BlockName = newName;
         }
 
-        public TES5LocalVariable getVariableByName(string name)
+        public TES5LocalVariable GetVariable(string name)
         {
-            return this.variables.GetWithFallback(name, () => null);
+            return this.Variables.GetWithFallback(name, () => null);
         }
 
-        public Dictionary<string, TES5LocalVariable> getVariables()
+        public IEnumerable<string> GetVariablesOutput()
         {
-            return this.variables;
+            return this.Variables.Values.Select(v => v.PropertyType.Output.Single() + " " + v.PropertyNameWithSuffix);
         }
 
-        public IEnumerable<string> getVariablesOutput()
-        {
-            return this.getVariables().Values.Select(v => v.PropertyType.Output.Single() + " " + v.GetPropertyNameWithSuffix());
-        }
-
-        public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
             return this.variablesByMeanings.GetWithFallback(meaning, () => null);
-        }
-
-        /*
-        * Get the block name. This might be the Event"s name, or Function"s name.
-        */
-        public string getBlockName()
-        {
-            return this.blockName;
         }
     }
 }

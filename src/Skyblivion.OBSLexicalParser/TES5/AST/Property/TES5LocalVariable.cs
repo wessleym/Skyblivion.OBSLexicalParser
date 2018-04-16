@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -10,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
     {
         private string variableName;
         public ITES5Type PropertyType { get; set; }
-        public TES5LocalVariableParameterMeaning[] Meanings { get; set; }
+        public TES5LocalVariableParameterMeaning[] Meanings { get; private set; }
         public TES5LocalVariable(string variableName, TES5BasicType type, TES5LocalVariableParameterMeaning[] meanings = null)
         {
             if (meanings == null) { meanings = new TES5LocalVariableParameterMeaning[] { }; }
@@ -21,10 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 
         public IEnumerable<string> Output => new string[] { this.PropertyType.Value+ " " + this.variableName };
 
-        public string GetPropertyNameWithSuffix()
-        {
-            return this.variableName;
-        }
+        public string PropertyNameWithSuffix => this.variableName;
 
         /*
         * Todo - following two methods should not be in this interface but TES5Property interface

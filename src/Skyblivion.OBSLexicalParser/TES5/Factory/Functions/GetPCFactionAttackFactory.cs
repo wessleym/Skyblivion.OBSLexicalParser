@@ -48,8 +48,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCall isInFaction = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "IsInFaction", multipleScriptsScope, arguments);
             TES5TrueBooleanExpression leftExpression = TES5ExpressionFactory.createTrueBooleanExpression(isInFaction);
             TES5ObjectCall crimeGoldViolent = this.objectCallFactory.CreateObjectCall(factionReference, "GetCrimeGoldViolent", multipleScriptsScope);
-            TES5ArithmeticExpression right_expression = TES5ExpressionFactory.createArithmeticExpression(crimeGoldViolent, TES5ArithmeticExpressionOperator.OPERATOR_GREATER, new TES5Integer(0));
-            TES5LogicalExpression logicalExpression = TES5ExpressionFactory.createLogicalExpression(leftExpression, TES5LogicalExpressionOperator.OPERATOR_AND, right_expression);
+            TES5ArithmeticExpression rightExpression = TES5ExpressionFactory.createArithmeticExpression(crimeGoldViolent, TES5ArithmeticExpressionOperator.OPERATOR_GREATER, new TES5Integer(0));
+            TES5LogicalExpression logicalExpression = TES5ExpressionFactory.createLogicalExpression(leftExpression, TES5LogicalExpressionOperator.OPERATOR_AND, rightExpression);
             return logicalExpression;
         }
     }

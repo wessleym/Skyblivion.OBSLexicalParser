@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
@@ -5,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -34,21 +36,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            /*string firstArg = function.Arguments[0].StringValue;
+            string md5 = TES5TypeFactory.TES4Prefix + "SCENE_" + PHPFunction.MD5(calledOn.ReferencesTo.ReferenceEDID + firstArg).Substring(0, 16);
+            List<string> sceneData = new List<string>() { md5, firstArg };
+            if (function.Arguments.Count >= 2)
+            {
+                sceneData.Add(function.Arguments[1].StringValue);
+            }
+            this.metadataLogService.WriteLine("ADD_FORCEGREET_SCENE", sceneData);
+            ITES5Referencer reference = this.referenceFactory.createReference(md5, globalScope, multipleScriptsScope, codeScope.LocalScope);
+            TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();*/
             /*
-             * md5 = "TES4SCENE_" . substr(md5(calledOn.getReferencesTo().getReferenceEdid() . functionArguments.getValue(0).getData()), 0, 16);
-             * sceneData = [md5, functionArguments.getValue(0).getData()];
-             * if(functionArguments.getValue(1) != null)
-             * {
-             * sceneData[] = functionArguments.getValue(1).getData();
-             * }
-             *
-             * this.metadataLogService.add("ADD_FORCEGREET_SCENE", sceneData);
-             * reference = this.referenceFactory.createReference(md5, globalScope, multipleScriptsScope, localScope);
-             * funcArgs = new TES5ObjectCallArguments();
-             * /*
-             * Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
-             * return this.objectCallFactory.createObjectCall(reference, "ForceStart",multipleScriptsScope, funcArgs);
-             */
+            Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
+            return this.objectCallFactory.createObjectCall(reference, "ForceStart",multipleScriptsScope, funcArgs);
+            */
+
             return new TES5Filler();
         }
     }

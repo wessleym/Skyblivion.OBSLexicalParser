@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
 using System.Linq;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
@@ -14,76 +15,48 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
      */
     class TES5LocalScope : ITES5Outputtable
     {
-        private TES5FunctionScope functionScope;
-        private TES5LocalScope parentScope;
-        private List<TES5LocalVariable> variables = new List<TES5LocalVariable>();
+        public TES5FunctionScope FunctionScope { get; private set; }
+        public TES5LocalScope ParentScope { get; set; }
+        private List<TES5LocalVariable> LocalVariables = new List<TES5LocalVariable>();
         /*
         * TES5LocalScope constructor.
         */
         public TES5LocalScope(TES5FunctionScope functionScope, TES5LocalScope parentScope = null)
         {
-            this.functionScope = functionScope;
-            this.parentScope = parentScope;
+            this.FunctionScope = functionScope;
+            this.ParentScope = parentScope;
         }
 
-        public IEnumerable<string> Output => variables.SelectMany(v => v.Output);
+        public IEnumerable<string> Output => LocalVariables.SelectMany(v => v.Output);
 
-        public void addVariable(TES5LocalVariable localVariable)
+        public void AddVariable(TES5LocalVariable localVariable)
         {
-            this.variables.Add(localVariable);
-        }
-        
-        public TES5LocalScope getParentScope()
-        {
-            return this.parentScope;
+            this.LocalVariables.Add(localVariable);
         }
 
-        public TES5FunctionScope getFunctionScope()
+        public TES5LocalVariable GetVariable(string name)
         {
-            return this.functionScope;
+            return this.GetAllVariables().Where(v => v.PropertyNameWithSuffix == name).FirstOrDefault();
         }
 
-        public void setParentScope(TES5LocalScope parentScope)
-        {
-            this.parentScope = parentScope;
-        }
-
-        public List<TES5LocalVariable> getLocalVariables()
-        {
-            return this.variables;
-        }
-
-        public TES5LocalVariable getVariableByName(string name)
-        {
-            List<TES5LocalVariable> variables = this.getVariables();
-            foreach (var variable in variables)
-            {
-                if (variable.GetPropertyNameWithSuffix() == name)
-                {
-                    return variable;
-                }
-            }
-            return null;
-        }
-
-        public List<TES5LocalVariable> getVariables()
+        public List<TES5LocalVariable> GetAllVariables()
         {
             List<TES5LocalVariable> variables = new List<TES5LocalVariable>();
             TES5LocalScope scope = this;
             do
             {
-                List<TES5LocalVariable> variablePack = scope.getLocalVariables();
+                List<TES5LocalVariable> variablePack = scope.LocalVariables;
                 variables.AddRange(variablePack);
-                scope = scope.getParentScope();
+                scope = scope.ParentScope;
             }
             while (scope != null);
-            variables.AddRange(this.functionScope.getVariables().Values);
+            variables.AddRange(this.FunctionScope.Variables.Values);
             return variables;
         }
 
-        public TES5LocalVariable findVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.functionScope.findVariableWithMeaning(meaning);
+            return this.FunctionScope.GetVariableWithMeaning(meaning);
         }
     }
 }

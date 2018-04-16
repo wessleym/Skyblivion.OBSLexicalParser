@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
                 ""
 #endif
                 ;
-                return (new string[] { functionReturnType + "Function " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
+                return (new string[] { functionReturnType + "Function " + this.functionScope.BlockName+ "(" + string.Join(", ", this.functionScope.GetVariablesOutput()) + ")" })
                     .Concat(this.codeScope.Output)
                     .Concat(new string[] { "EndFunction" });
             }
@@ -42,22 +42,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public string getFunctionName()
         {
-            return this.functionScope.getBlockName();
+            return this.functionScope.BlockName;
         }
 
-        public TES5CodeScope getCodeScope()
-        {
-            return this.codeScope;
-        }
+        public TES5CodeScope CodeScope => this.codeScope;
 
-        public void addChunk(ITES5CodeChunk chunk)
+        public void AddChunk(ITES5CodeChunk chunk)
         {
             this.codeScope.Add(chunk);
         }
 
-        public TES5FunctionScope getFunctionScope()
-        {
-            return this.functionScope;
-        }
+        public TES5FunctionScope FunctionScope => this.functionScope;
     }
 }

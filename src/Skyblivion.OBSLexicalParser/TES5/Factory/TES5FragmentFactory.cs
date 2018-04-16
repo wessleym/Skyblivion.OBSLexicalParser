@@ -25,12 +25,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(fragmentLocalScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(fragmentLocalScope)), new TES5VoidType());
             foreach (var codeChunk in chunks.CodeChunks)
             {
-                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, function.getCodeScope(), globalScope, multipleScriptsScope);
+                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, function.CodeScope, globalScope, multipleScriptsScope);
                 if (codeChunks != null)
                 {
                     foreach (var newCodeChunk in codeChunks)
                     {
-                        function.addChunk(newCodeChunk);
+                        function.AddChunk(newCodeChunk);
                     }
                 }
             }

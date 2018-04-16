@@ -5,8 +5,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     interface ITES5CodeBlock : ITES5Outputtable
     {
-        TES5CodeScope getCodeScope();
-        TES5FunctionScope getFunctionScope();
-        void addChunk(ITES5CodeChunk chunk);
+        TES5CodeScope CodeScope { get; }
+
+        TES5FunctionScope FunctionScope { get; }
+
+        void AddChunk(ITES5CodeChunk chunk);
     }
 }

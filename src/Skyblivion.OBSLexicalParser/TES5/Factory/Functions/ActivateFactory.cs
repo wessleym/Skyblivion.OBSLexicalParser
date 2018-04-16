@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments == null || !functionArguments.Any())
             {
                 TES5ObjectCallArguments constantArgumentForNoFunctionArguments = new TES5ObjectCallArguments();
-                TES5LocalVariable meaningVariable = codeScope.FindVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+                TES5LocalVariable meaningVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                 if (meaningVariable != null)
                 {
                     constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(meaningVariable));

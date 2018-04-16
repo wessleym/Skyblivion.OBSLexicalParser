@@ -63,8 +63,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     { "Projectile" },
                     { "Enchantment" },
                     { "Quest", new TES5InheritanceItemCollection(){
-                        "TES4TimerHelper",
-                        "TES4Container"
+                        TES5BasicType.TES4TimerHelperName,
+                        TES5BasicType.TES4ContainerName
                     } },
                     { "EncounterZone" },
                     { "Race" },
@@ -4483,7 +4483,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         },
         //Conversion hooks,
-        { "TES4TimerHelper",
+        { TES5BasicType.TES4TimerHelperName,
             new TES5InheritanceFunctionSignature[] {
                 new TES5InheritanceFunctionSignature("GetDayOfWeek", new string[] {}, "int"),
 
@@ -4504,7 +4504,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     }, "Float")
             }
         },
-        { "TES4Container",
+        { TES5BasicType.TES4ContainerName,
             new TES5InheritanceFunctionSignature[] {
 
             }

@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5LocalVariable activatorVariable = codeScope.FindVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+            TES5LocalVariable activatorVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
             if (activatorVariable == null)
             {
                 throw new ConversionException("getActionRef in non-activator scope found. Cannot convert that one.", expected: true);

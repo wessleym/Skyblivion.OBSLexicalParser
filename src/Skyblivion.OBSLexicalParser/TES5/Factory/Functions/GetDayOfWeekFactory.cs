@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             string functionName = function.FunctionCall.getFunctionName();
             TES4FunctionArguments functionArguments = function.Arguments;
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference("tTimer", globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer newCalledOn = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }

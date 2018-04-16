@@ -7,41 +7,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5EventCodeBlock : ITES5CodeBlock
     {
-        private TES5CodeScope codeScope;
-        private TES5FunctionScope functionScope;
+        public TES5CodeScope CodeScope { get; set; }
+        public TES5FunctionScope FunctionScope { get; private set; }
         public TES5EventCodeBlock(TES5FunctionScope functionScope, TES5CodeScope chunks)
         {
-            this.functionScope = functionScope;
-            this.codeScope = chunks;
+            this.FunctionScope = functionScope;
+            this.CodeScope = chunks;
         }
 
-        public IEnumerable<string> Output => (new string[] { "Event " + this.functionScope.getBlockName() + "(" + string.Join(", ", this.functionScope.getVariablesOutput()) + ")" })
-                .Concat(this.codeScope.Output)
+        public IEnumerable<string> Output => (new string[] { "Event " + this.FunctionScope.BlockName+ "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
+                .Concat(this.CodeScope.Output)
                 .Concat(new string[] { "EndEvent" });
 
-        public string getBlockType()
-        {
-            return this.functionScope.getBlockName();
-        }
+        public string BlockType => this.FunctionScope.BlockName;
 
-        public TES5CodeScope getCodeScope()
+        public void AddChunk(ITES5CodeChunk chunk)
         {
-            return this.codeScope;
-        }
-
-        public void setCodeScope(TES5CodeScope codeScope)
-        {
-            this.codeScope = codeScope;
-        }
-
-        public void addChunk(ITES5CodeChunk chunk)
-        {
-            this.codeScope.Add(chunk);
-        }
-
-        public TES5FunctionScope getFunctionScope()
-        {
-            return this.functionScope;
+            this.CodeScope.Add(chunk);
         }
     }
 }

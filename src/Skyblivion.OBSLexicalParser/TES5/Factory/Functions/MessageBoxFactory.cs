@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                string edid = NameTransformer.GetEscapedName(string.Join("", functionArguments.Select(v => v.StringValue)), "TES4MessageBox_", true);//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
+                string edid = NameTransformer.GetEscapedName(string.Join("", functionArguments.Select(v => v.StringValue)), TES5TypeFactory.TES4Prefix + "MessageBox_", true);//WTM:  Change:  PHPFunction.MD5(PHPFunction.Serialize(functionArguments.getValues()))
                 IEnumerable<string> messageArguments = (new string[] { edid }).Concat(functionArguments.Select(a => a.StringValue));
                 this.metadataLogService.WriteLine("ADD_MESSAGE", messageArguments);
                 ITES5Referencer messageBoxResult = this.referenceFactory.createReadReference(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST, globalScope, multipleScriptsScope, localScope);

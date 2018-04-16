@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             List<ITES5CodeChunk> chunks = this.generateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {
-                codeBlock.addChunk(chunk);
+                codeBlock.AddChunk(chunk);
             }
             return codeBlock;
         }
@@ -50,8 +50,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
             TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);
             result.Add(variableAssignationFactory.createAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope)));
-            TES5LocalScope localScope = codeBlock.getCodeScope().LocalScope;
-            localScope.addVariable(castedToQuest);
+            TES5LocalScope localScope = codeBlock.CodeScope.LocalScope;
+            localScope.AddVariable(castedToQuest);
             int i = 0;
             foreach (var stageTargetState in stageMap)
             {

@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.ScriptHeader = scriptHeader;
         }
 
-        public void add(TES5Property declaration)
+        public void Add(TES5Property declaration)
         {
             this.Properties.Add(declaration);
         }
@@ -32,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 string propertyNameLowerWithSuffix = TES5Property.AddPropertyNameSuffix(propertyNameLower, false);
                 foreach (var property in this.Properties)
                 {
-                    string currentPropertyNameLower = property.GetPropertyNameWithSuffix().ToLower();
+                    string currentPropertyNameLower = property.PropertyNameWithSuffix.ToLower();
                     if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix==currentPropertyNameLower)
                     {
                         //Token found.

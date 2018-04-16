@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public string OriginalName => Name;
 
+        public const string TES4ContainerName = TES5TypeFactory.TES4Prefix + "Container";
+        public const string TES4TimerHelperName = TES5TypeFactory.TES4Prefix + "TimerHelper";
         public static readonly TES5BasicType
             T_ACTIVEMAGICEFFECT = new TES5BasicType("ActiveMagicEffect"),
             T_ALIAS = new TES5BasicType("Alias"),
@@ -105,7 +108,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE = new TES5BasicType("SKSE"),
             T_STRINGUTIL = new TES5BasicType("StringUtil"),
             T_UI = new TES5BasicType("UI"),
-            T_TES4TIMERHELPER = new TES5BasicType("TES4TimerHelper");
+            T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName);
 
             public static readonly TES5BasicType[] all = new TES5BasicType[]
             {

@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public TES4ApiToken CalledOn => null;
 
-        public object Data => throw new ConversionException("TES4Function.getData() - not supported");
+        public object Data => throw new NotImplementedException();
 
         public TES4Function Function => this;
 

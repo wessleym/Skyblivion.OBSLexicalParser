@@ -44,10 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
         }
 
-        public string GetPropertyNameWithSuffix()
-        {
-            return this.propertyName;
-        }
+        public string PropertyNameWithSuffix => this.propertyName;
 
         public string GetPropertyNameWithoutSuffix()
         {
@@ -114,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
             else 
             {
-                throw new ConversionException("TES5Property.trackRemoteScript() - The definitions of local property type and remote property type have diverged(ours: " + ourNativeType.Value+ ", remote: " + remoteNativeType.Value);
+                throw new ConversionException(nameof(TES5Property) + "." + nameof(TrackRemoteScript) + ":  The definitions of local property type and remote property type have diverged.  (Ours: " + ourNativeType.Value + ", remote: " + remoteNativeType.Value);
             }
         }
     }

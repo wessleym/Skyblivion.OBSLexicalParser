@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 {
                     throw new ConversionException("Unknown local variable declaration type.");
                 }
-                codeScope.LocalScope.addVariable(property);
+                codeScope.LocalScope.AddVariable(property);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public static TES5LocalScope createRecursiveScope(TES5LocalScope parentScope)
         {
-            return new TES5LocalScope(parentScope.getFunctionScope(), parentScope);
+            return new TES5LocalScope(parentScope.FunctionScope, parentScope);
         }
     }
 }

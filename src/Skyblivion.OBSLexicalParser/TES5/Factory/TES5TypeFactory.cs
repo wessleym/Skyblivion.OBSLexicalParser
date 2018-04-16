@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5TypeFactory
     {
-        public const string ScriptsPrefix = "TES4";
+        public const string TES4Prefix = "TES4";
         public static ITES5Type _void()
         {
             return memberByValue("void");
@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 ESMAnalyzer analyzer = ESMAnalyzer._instance();
                 basicType = analyzer.getScriptType(memberByValue);
             }
-            return new TES5CustomType(memberByValue, ScriptsPrefix, basicType);
+            return new TES5CustomType(memberByValue, TES4Prefix, basicType);
         }
     }
 }

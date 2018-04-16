@@ -57,14 +57,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "personality":
                 case "luck":
                     {
-                        if (calledOn.Name != "player")
+                        if (!TES5PlayerReference.EqualsPlayer(calledOn.Name))
                         {
                             //We can"t convert those.. and shouldn"t be any, too.
                             throw new ConversionException("[" + TES4FunctionName + "] Cannot set attributes on non-player");
                         }
 
                         const string functionName = "SetValue";
-                        calledOn = this.referenceFactory.createReference("TES4Attr" + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
+                        calledOn = this.referenceFactory.createReference(TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);

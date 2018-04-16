@@ -225,7 +225,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 foreach (ITES4CodeChunk codeChunk in chunks.CodeChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.getCodeScope(), globalScope, multipleScriptsScope);
+                    TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.CodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)

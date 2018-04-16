@@ -6,8 +6,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5CustomType : ITES5Type, IEquatable<TES5CustomType>
     {
-        const string T_TES4CONTAINER = "TES4Container";
-        const string T_TES4TIMERHELPER = "TES4TimerHelper";
         private string escapedName;
         private ITES5Type nativeType;
         /*
@@ -69,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             get
             {
-                bool includePrefix = this.escapedName != "TES4TimerHelper" && this.escapedName != "TES4Container";//no time to refactor now, later.
+                bool includePrefix = this.escapedName != TES5BasicType.TES4TimerHelperName && this.escapedName != TES5BasicType.TES4ContainerName;//no time to refactor now, later.
                 return new string[] { (includePrefix ? this.prefix : "") + this.escapedName };
             }
         }
