@@ -228,7 +228,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                     }
 
                     TES5BasicType scriptType;
-                    if (edid == "dark09skeletonsuicidescript" || edid == "xpebroccabossscript" || edid == "se09altarscript")//WTM:  Change:  Added special condition
+                    if (edid == "dark09skeletonsuicidescript" || edid == "xpebroccabossscript")//WTM:  Change:  Added special condition
                     {
                         scriptType = TES5BasicType.T_ACTOR;
                     }

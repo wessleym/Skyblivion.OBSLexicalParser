@@ -11,6 +11,7 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -42,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            string functionName = function.FunctionCall.getFunctionName();
+            const string functionName = "GetActorValue";
             TES4FunctionArguments functionArguments = function.Arguments;
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
             Dictionary<string, string> actorValueMap = ActorValueMap.Map;

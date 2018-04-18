@@ -38,24 +38,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "gamemode":
                 case "scripteffectupdate":
                     {
-                        TES5FunctionScope onInitFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType("OnInit");
-                        TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
+                        TES5EventCodeBlock onInitBlock = TES5BlockFunctionScopeFactory.CreateOnInit();
                         TES5ObjectCallArguments args = new TES5ObjectCallArguments();
                         args.Add(new TES5Float(ON_UPDATE_TICK));
                         TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
-                        newInitBlock.AddChunk(function);
-                        blockList.add(newInitBlock);
+                        onInitBlock.AddChunk(function);
+                        blockList.add(onInitBlock);
                         newBlock.AddChunk(function);
                         break;
                     }
 
                 case "onactivate":
                     {
-                        TES5FunctionScope onInitFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType("OnInit");
-                        TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
+                        TES5EventCodeBlock onInitBlock = TES5BlockFunctionScopeFactory.CreateOnInit();
                         TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation", multipleScriptsScope);
-                        newInitBlock.AddChunk(function);
-                        blockList.add(newInitBlock);
+                        onInitBlock.AddChunk(function);
+                        blockList.add(onInitBlock);
                         break;
                     }
 

@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -161,6 +162,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
 
             return localScope;
+        }
+
+        public static TES5EventCodeBlock CreateOnInit()
+        {
+            TES5FunctionScope onInitFunctionScope = createFromBlockType("OnInit");
+            TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
+            return newInitBlock;
         }
     }
 }

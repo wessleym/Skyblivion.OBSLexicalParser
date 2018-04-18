@@ -315,7 +315,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else if (tes5set.Item1.TES5Type.OriginalName== TES5TypeFactory._void().OriginalName)
                 {
-#if !PHP_COMPAT
+#if PHP_COMPAT
                     TES5IntegerOrFloat tes5SetItem2Number = tes5set.Item2 as TES5IntegerOrFloat;
                     if (tes5SetItem2Number != null && tes5SetItem2Number.ConvertedIntValue == 0)
                     {

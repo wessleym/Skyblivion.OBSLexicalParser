@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
             else
             {
-                if (!reference.ReferencesTo.PropertyType.IsPrimitive&& value.TES5Type.IsPrimitive)
+                if (!reference.ReferencesTo.PropertyType.IsPrimitive && value.TES5Type.IsPrimitive)
                 {
                     //Hacky!
                     TES5IntegerOrFloat valueNumber = value as TES5IntegerOrFloat;
