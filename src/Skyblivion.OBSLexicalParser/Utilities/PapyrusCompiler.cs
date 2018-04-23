@@ -44,9 +44,11 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             outputPath = outputPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             standardOutputFilePath = standardOutputFilePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             string compilerDirectory = DataDirectory.GetCompilerDirectoryPath();
+            string compilerPath = compilerDirectory + "PapyrusCompiler.exe";
+            string flagsPath = compilerDirectory.Replace("\\", "/") + "TESV_Papyrus_Flags.flg";
             bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-            string fileName = (isWindows ? "\"" : "") + "." + Path.DirectorySeparatorChar + compilerDirectory + "PapyrusCompiler.exe" + (isWindows ? "\"" : "");
-            string arguments = "\"" + sourcePath + "\" -f=\"" + compilerDirectory + "TESV_Papyrus_Flags.flg\" -i=\"" + workspacePath + "\" -o=\"" + outputPath + "\" -a";
+            string fileName = (isWindows ? "\"" : "") + "." + Path.DirectorySeparatorChar + compilerPath + (isWindows ? "\"" : "");
+            string arguments = "\"" + sourcePath + "\" -f=\"" + flagsPath + "\" -i=\"" + workspacePath + "\" -o=\"" + outputPath + "\" -a";
             Console.WriteLine("Executing PapyrusCompiler.exe:  " + fileName + " " + arguments);
             ProcessStart(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
             Console.WriteLine("PapyrusCompiler.exe Complete");

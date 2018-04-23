@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
-    class TES5InheritanceGraphAnalyzer
+    static class TES5InheritanceGraphAnalyzer
     {
         private static Dictionary<ITES5Type, ITES5Type> inheritanceCache = new Dictionary<ITES5Type, ITES5Type>();
         private static TES5InheritanceItemCollection inheritance = new TES5InheritanceItemCollection()
@@ -4554,6 +4554,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public static bool isExtending(ITES5Type extendingType, ITES5Type baseType)
         {
+            if (!extendingType.IsNativePapyrusType && baseType.IsNativePapyrusType)
+            {
+                return IsTypeOrExtendsType(extendingType.NativeType, baseType);
+            }
             TES5InheritanceItemCollection subTree = findSubtreeFor(baseType.Value);
             if (subTree == null)
             {

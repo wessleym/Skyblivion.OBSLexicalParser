@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         * Joins N QF subfragments into one QF fragment that can be properly binded into Skyrim VM
         * @throws ConversionException
         */
-        public TES5Target joinQFFragments(BuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
+        public TES5Target JoinQFFragments(BuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
         {
             StageMap stageMap = BuildStageMap(target, resultingFragmentName);
             /*
@@ -66,19 +66,18 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             Dictionary<string, bool> propertiesNamesDeclared = new Dictionary<string, bool>();
             foreach (var subfragment in subfragmentsTrees)
             {
-                TES5Target subfragmentsTree = subfragment.getScript();
+                TES5Target subfragmentsTree = subfragment.Script;
                 TES5Script subfragmentScript = subfragmentsTree.Script;
                 TES5GlobalScope subfragmentGlobalScope = subfragmentScript.GlobalScope;
-                for (int i = 0; i < subfragmentGlobalScope.Properties.Count; i++)
+                foreach (TES5Property subfragmentProperty in subfragmentGlobalScope.Properties)
                 {
-                    TES5Property subfragmentProperty = subfragmentGlobalScope.Properties[i];
                     /*
                      * Move over the properties to the new global scope
                      */
                     string propertyName;
                     if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.PropertyNameWithSuffix))
                     {
-                        propertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
+                        propertyName = GeneratePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty);
                         subfragmentProperty.Rename(propertyName);
                     }
                     else
@@ -88,6 +87,36 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
                     propertiesNamesDeclared.Add(propertyName, true);
                     resultingGlobalScope.Add(subfragmentProperty);
+                    //WTM:  Note:  See QF_FGD03Viranus_0102d154.  Since ViranusDontonREF is present in multiple of the original fragments,
+                    //ViranusDontonREF gets renamed by the above.  So multiple ViranusDontonREF variables are output.
+                    //Below I tried not renaming, assuming instead that variables with matching names and types within a set of fragments were intended to be the same variable.
+                    //It had OK results, but I'm leaving it commented for now.
+                    /*string propertyNameWithSuffix = subfragmentProperty.PropertyNameWithSuffix;
+                    TES5Property existingProperty = resultingGlobalScope.Properties.Where(p => p.PropertyNameWithSuffix == propertyNameWithSuffix).FirstOrDefault();
+                    if (existingProperty != null && TES5InheritanceGraphAnalyzer.isExtending(subfragmentProperty.PropertyType, existingProperty.PropertyType))
+                    {
+                        existingProperty.PropertyType = subfragmentProperty.PropertyType;
+                    }
+                    else
+                    {
+                        bool add = true;
+                        if (existingProperty != null)
+                        {
+                            if (TES5InheritanceGraphAnalyzer.isExtending(existingProperty.PropertyType, subfragmentProperty.PropertyType))
+                            {
+                                add = false;
+                            }
+                            else
+                            {
+                                string generatedPropertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
+                                subfragmentProperty.Rename(generatedPropertyName);
+                            }
+                        }
+                        if (add)
+                        {
+                            resultingGlobalScope.Add(subfragmentProperty);
+                        }
+                    }*/
                 }
 
                 List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.getBlocks();
@@ -102,21 +131,21 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName+ "..");
                 }
 
-                string newFragmentFunctionName = "Fragment_" + subfragment.getStage().ToString();
-                if (subfragment.getLogIndex() != 0)
+                string newFragmentFunctionName = "Fragment_" + subfragment.Stage.ToString();
+                if (subfragment.LogIndex!= 0)
                 {
-                    newFragmentFunctionName += "_" + subfragment.getLogIndex();
+                    newFragmentFunctionName += "_" + subfragment.LogIndex;
                 }
 
                 subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
-                var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.getStage()));
+                var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
                     subfragmentBlock.AddChunk(newCodeChunk);
                 }
 
                 resultingBlockList.add(subfragmentBlock);
-                implementedStages[subfragment.getStage()] = true;
+                implementedStages[subfragment.Stage] = true;
             }
 
             /*
@@ -142,14 +171,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return new TES5Target(resultingTree, outputPath);
         }
 
-        private static string generatePropertyName(TES5ScriptHeader header, TES5Property property, int index)
+        private static string GeneratePropertyName(TES5ScriptHeader header, TES5Property property)
         {
             return "col_" + property.GetPropertyNameWithoutSuffix() + "_" +
-#if PHP_COMPAT
-                PHPFunction.MD5(header.getScriptName()).Substring(0, 4)
-#else
-                header.EscapedScriptName + "_" + index;
-#endif
+                PHPFunction.MD5(header.EscapedScriptName).Substring(0, 4)
+                //WTM:  Note:  Instead of using an MD5 hash, I tried the below (where index was the property index within the script's TES5GlobalScope.
+                //It worked, but I don't think the names matched up well with what GECK generates, so I've commented it for now.
+                //header.EscapedScriptName + "_" + index
                 ;
         }
 
@@ -184,6 +212,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
             return stageMap;
         }
+
         private static StageMap BuildStageMap(BuildTarget target, string resultingFragmentName)
         {
             Dictionary<int, List<int>> stageMap = BuildStageMapDictionary(target, resultingFragmentName);

@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
         public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            var scripts = buildTracker.getBuiltScripts(target.getTargetName());
+            Dictionary<string, TES5Target> scripts = buildTracker.getBuiltScripts(target.getTargetName());
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
             /*
@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             {
                 var resultingFragmentName = kvp.Key;
                 var subfragmentsTrees = kvp.Value;
-                connectedQuestFragments.Add(this.QFFragmentFactory.joinQFFragments(target, resultingFragmentName, subfragmentsTrees));
+                connectedQuestFragments.Add(this.QFFragmentFactory.JoinQFFragments(target, resultingFragmentName, subfragmentsTrees));
             }
 
             Write(connectedQuestFragments, progressWriter);

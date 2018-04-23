@@ -158,7 +158,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             //So the content of this if statement must be skipped.
             if (edid != "SEBrithaurRef")
             {
-                List<string> namesToTry = new List<string>() { edid, edid + "QuestScript", edid + "Script" };//WTM:  I added the "QuestScript" item.  This was needed for MQDragonArmorQuestScript.
+                //WTM:  Change:  I added the "FurnScript" (for qf_housebravil_01085480_10_0 and other house quests) and "QuestScript" (for MQDragonArmorQuestScript) items.
+                List<string> namesToTry = new List<string>() { edid, edid + "QuestScript", edid + "FurnScript", edid + "Script" };
                 int edidLength = edid.Length;
                 if (edid.Substring(edidLength - 3, 3).Equals("ref", StringComparison.OrdinalIgnoreCase))
                 {

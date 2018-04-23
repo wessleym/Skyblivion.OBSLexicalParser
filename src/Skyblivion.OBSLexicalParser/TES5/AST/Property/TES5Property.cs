@@ -74,7 +74,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             get
             {
-                return this.trackedScript != null ? this.trackedScript.getScriptType() : this.propertyType;
+                return this.trackedScript != null ? this.trackedScript.ScriptType: this.propertyType;
             }
             set
             {
@@ -93,7 +93,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             this.trackedScript = scriptHeader;
             ITES5Type ourNativeType = this.propertyType.NativeType;
-            ITES5Type remoteNativeType = this.trackedScript.getScriptType().NativeType;
+            ITES5Type remoteNativeType = this.trackedScript.ScriptType.NativeType;
             /*
              * Scenario 1 - types are equal or the remote type is higher than ours in which case we do nothing as they have the good type anyway
              */

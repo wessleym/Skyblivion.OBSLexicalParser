@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         public ITES5Referencer extractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            ITES5Type type = globalScope.ScriptHeader.getBasicScriptType();
+            ITES5Type type = globalScope.ScriptHeader.BasicScriptType;
             if (type == TES5BasicType.T_OBJECTREFERENCE || type==TES5BasicType.T_ACTOR)//Change:  WTM:  Added Actor here.
             {
                 return CreateReferenceToSelf(globalScope);

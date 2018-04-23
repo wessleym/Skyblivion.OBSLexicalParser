@@ -199,7 +199,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setallreachable", new FillerFactory());
             valueFactory.addFunctionFactory("setallvisible", new FillerFactory());
             valueFactory.addFunctionFactory("setangle", new SetAngleFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("setcellfullname", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("setcellfullname", new SetCellFullNameFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.addFunctionFactory("setcellownership", new SetCellOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("setclass", new FillerFactory());

@@ -4,29 +4,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
 {
     class QuestStageScript
     {
-        private TES5Target script;
-        private int stage;
-        private int logIndex;
+        public TES5Target Script { get; private set; }
+        public int Stage { get; private set; }
+        public int LogIndex { get; private set; }
         public QuestStageScript(TES5Target script, int stage, int logIndex)
         {
-            this.script = script;
-            this.stage = stage;
-            this.logIndex = logIndex;
-        }
-
-        public TES5Target getScript()
-        {
-            return this.script;
-        }
-
-        public int getStage()
-        {
-            return this.stage;
-        }
-
-        public int getLogIndex()
-        {
-            return this.logIndex;
+            this.Script = script;
+            this.Stage = stage;
+            this.LogIndex = logIndex;
         }
     }
 }
