@@ -3,7 +3,6 @@ using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
 using System.IO;
 

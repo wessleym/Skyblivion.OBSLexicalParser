@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -53,19 +54,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             return TES5ExpressionFactory.createArithmeticExpression(substring, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
             */
             //WTM:  Change:  The above method doesn't work.  It originally used GetParentCell(), which seems to have a string value of just "[Cell" (no closing right bracket).
-            //I tried adding GetName(), but in the case of TES4FGD03ViranusScript, it returned "Nonwyll Cavern" which fails to match "NonwyllCavern" from Oblivion's script.
-            //So I'm now trying to add spaces between the pascal-case words.  If I could do something like GetName().Replace(" ", ""), and then compare strings case-insensitively,
-            //that would be best.  But I don't know if that's possible in Papyrus and with this script converter.
-            string cellNameWithSpaces = cellName.Select(c => c.ToString()).Aggregate((accumluatedString, currentCharacter) =>
-                {
-                    return accumluatedString +
-                    ((char.IsUpper(currentCharacter[0]) || char.IsNumber(currentCharacter[0])) && !(char.IsUpper(accumluatedString[accumluatedString.Length - 1]) || char.IsNumber(accumluatedString[accumluatedString.Length - 1])) ? " " : "") +
-                    currentCharacter;
-                });
-            cellNameWithSpaces = cellNameWithSpaces.Replace("ofthe ", " of the ");
-            cellNameWithSpaces = cellNameWithSpaces.Replace("I C ", "IC ");
-            cellNameWithSpaces = cellNameWithSpaces.Replace("M Q", "MQ ");
-            cellNameWithSpaces = cellNameWithSpaces.Replace("Chapelof ", "Chapel of ");
+            //Skyrim's GetName() gets a name with spaces.  To get the same name in Oblivion, I need to take the name that is present in Oblivion's scripts and look it up in the ESMAnalyzer.
+            //This required adding "FULL" to the records that are collected from "CELL."  If the below method becomes unused, "FULL" records will no longer be necessary for "CELL."
+            TES4LoadedRecord cellRecord = ESMAnalyzer._instance().FindInTES4Collection(cellName, false);
+            string cellNameWithSpaces = cellRecord.getSubrecordTrim("FULL");
+            if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
             TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
             return TES5ExpressionFactory.createArithmeticExpression(getParentCellName, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
         }
