@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 {
-    class TES5ArithmeticExpressionOperator : TES5ExpressionOperator//WTM:  Was the name of this accidently switched with TES5ArithmeticExpressionOperator?
+    class TES5ArithmeticExpressionOperator : TES5ExpressionOperator
     {
         private TES5ArithmeticExpressionOperator(string name) : base(name) { }
 
