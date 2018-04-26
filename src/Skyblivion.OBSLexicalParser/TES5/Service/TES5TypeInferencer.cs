@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -44,50 +45,48 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             /*
              * Inference the arguments
              */
-            int argumentNumber = 0;
+            int argumentIndex = 0;
             ITES5Type calledOnType = objectCall.AccessedObject.TES5Type.NativeType;
             foreach (ITES5Value argument in objectCall.Arguments)
             {
                 /*
                  * Get the argument type according to TES5Inheritance graph.
                  */
-                ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.findTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentNumber);
-                if (argument.TES5Type == argumentTargetType)
+                ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.findTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentIndex);
+                if (argument.TES5Type != argumentTargetType)
                 {
-                    argumentNumber++;
-                    continue; //Same type matched. We do not need to do anything :)
-                }
-
-                /*
-                 * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
-                 */
-                ITES5Referencer referencerArgument = argument as ITES5Referencer;
-                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.TES5Type.NativeType))
-                { //HACKY!
-                    this.inferenceType(referencerArgument.ReferencesTo, argumentTargetType, multipleScriptsScope);
-                }
-                else
-                {
-                    //So there"s one , one special case where we actually have to cast a var from one to another even though they are not ,,inheriting" from themselves, because they are primitives.
-                    //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
-                    //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
-                    //float assigment somewhere in the code )
-                    if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
+                    /*
+                     * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
+                     */
+                    ITES5Referencer referencerArgument = argument as ITES5Referencer;
+                    if (referencerArgument != null && TES5InheritanceGraphAnalyzer.isExtending(argumentTargetType, argument.TES5Type.NativeType))
+                    { //HACKY!
+                        this.inferenceType(referencerArgument.ReferencesTo, argumentTargetType, multipleScriptsScope);
+                    }
+                    else
                     {
-                        TES5Castable argumentCastable = argument as TES5Castable;
-                        if (argumentCastable != null)
-                        { //HACKY! When we"ll clean up this interface, it will dissapear :)
-                            argumentCastable.ManualCastTo = argumentTargetType;
+                        //So there"s one , one special case where we actually have to cast a var from one to another even though they are not ,,inheriting" from themselves, because they are primitives.
+                        //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
+                        //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
+                        //float assigment somewhere in the code )
+                        if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
+                        {
+                            TES5Castable argumentCastable = argument as TES5Castable;
+                            if (argumentCastable != null)
+                            { //HACKY! When we"ll clean up this interface, it will dissapear :)
+                                argumentCastable.ManualCastTo = argumentTargetType;
+                            }
+                        }
+                        else if (
+                            !TES5InheritanceGraphAnalyzer.isExtending(argument.TES5Type, argumentTargetType) &&
+                            !TES5InheritanceGraphAnalyzer.IsImplicitlyComparable(argument.TES5Type, argumentTargetType) &&
+                            !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
+                        {
+                            throw new ConversionException("Argument type mismatch at index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: true);
                         }
                     }
-                    //WTM:  Note:  I added the below as a safeguard, but it threw exceptions a lot.  So I'm removing it for now.  Maybe someday I'll find the right criteria to bring it back.
-                    /*else if (!TES5InheritanceGraphAnalyzer.isExtending(argument.getType(), argumentTargetType))
-                    {
-                        throw new InvalidOperationException("Argument type mismatch.  Expected " + argumentTargetType.getOriginalName() + ".  Found " + argument.getType().getOriginalName() + ".");
-                    }*/
                 }
-
-                argumentNumber++;
+                argumentIndex++;
             }
         }
 

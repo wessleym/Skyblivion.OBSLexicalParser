@@ -56,9 +56,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
                         TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
                         TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
-                        TES5BranchFactory branchFactory = new TES5BranchFactory(valueFactory);
                         TES5VariableAssignationFactory variableAssignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, buildLogServices.MetadataLogService, new QF.TranspileCommand(fragmentsParsingService), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), new QF.WriteCommand(new QFFragmentFactory(buildLogServices.MappedTargetsLogService, new ObjectiveHandlingFactory(branchFactory, variableAssignationFactory, referenceFactory))));
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, buildLogServices.MetadataLogService, new QF.TranspileCommand(fragmentsParsingService), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), new QF.WriteCommand(new QFFragmentFactory(buildLogServices.MappedTargetsLogService, new ObjectiveHandlingFactory(variableAssignationFactory, referenceFactory))));
                     }
 
                 default:

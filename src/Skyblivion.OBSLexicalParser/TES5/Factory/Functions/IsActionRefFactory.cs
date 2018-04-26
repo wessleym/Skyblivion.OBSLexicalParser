@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
 
             string dataString = functionArguments[0].StringValue;
-            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(TES5ReferenceFactory.CreateReferenceToVariable(activatorVariable), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope));
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariable(activatorVariable), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope));
             return expression;
         }
     }

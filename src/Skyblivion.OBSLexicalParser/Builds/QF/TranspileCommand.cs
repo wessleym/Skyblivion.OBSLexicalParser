@@ -34,11 +34,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
             TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
-            TES5BranchFactory branchFactory = new TES5BranchFactory(valueFactory);
-            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, branchFactory, typeInferencer);
+            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, typeInferencer);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory, referenceFactory);
-            TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory, branchFactory);
-            converter = new TES4ToTES5ASTQFFragmentConverter(analyzer, new TES5FragmentFactory(chainedCodeChunkFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, branchFactory, assignationFactory)), valueFactory, referenceFactory);
+            TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
+            converter = new TES4ToTES5ASTQFFragmentConverter(analyzer, new TES5FragmentFactory(chainedCodeChunkFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, assignationFactory)), valueFactory, referenceFactory);
         }
 
         public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

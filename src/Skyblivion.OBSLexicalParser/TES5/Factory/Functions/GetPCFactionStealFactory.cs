@@ -46,10 +46,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(factionReference);
             TES5ObjectCall isInFaction = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "IsInFaction", multipleScriptsScope, arguments);
-            TES5TrueBooleanExpression leftExpression = TES5ExpressionFactory.createTrueBooleanExpression(isInFaction);
+            TES5TrueBooleanExpression leftExpression = TES5ExpressionFactory.CreateTrueBooleanExpression(isInFaction);
             TES5ObjectCall crimeGoldNonViolent = this.objectCallFactory.CreateObjectCall(factionReference, "GetCrimeGoldNonViolent", multipleScriptsScope);
-            TES5ArithmeticExpression rightExpression = TES5ExpressionFactory.createArithmeticExpression(crimeGoldNonViolent, TES5ArithmeticExpressionOperator.OPERATOR_GREATER, new TES5Integer(0));
-            TES5LogicalExpression logicalExpression = TES5ExpressionFactory.createLogicalExpression(leftExpression, TES5LogicalExpressionOperator.OPERATOR_AND, rightExpression);
+            TES5ComparisonExpression rightExpression = TES5ExpressionFactory.CreateComparisonExpression(crimeGoldNonViolent, TES5ComparisonExpressionOperator.OPERATOR_GREATER, new TES5Integer(0));
+            TES5LogicalExpression logicalExpression = TES5ExpressionFactory.CreateLogicalExpression(leftExpression, TES5LogicalExpressionOperator.OPERATOR_AND, rightExpression);
             return logicalExpression;
         }
     }

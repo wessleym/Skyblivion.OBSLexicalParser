@@ -18,12 +18,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
     {
         private TES5ReferenceFactory referenceFactory;
         private TES5VariableAssignationFactory variableAssignationFactory;
-        private TES5BranchFactory branchFactory;
-        public ObjectiveHandlingFactory(TES5BranchFactory branchFactory, TES5VariableAssignationFactory variableAssignationFactory, TES5ReferenceFactory referenceFactory)
+        public ObjectiveHandlingFactory(TES5VariableAssignationFactory variableAssignationFactory, TES5ReferenceFactory referenceFactory)
         {
             this.variableAssignationFactory = variableAssignationFactory;
             this.referenceFactory = referenceFactory;
-            this.branchFactory = branchFactory;
         }
 
         /*
@@ -62,13 +60,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
                     displayedArguments.Add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
-                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
+                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                     arguments.Add(targetIndex);
                     arguments.Add(new TES5Integer(1));
                     TES5ObjectCall showTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments);
-                    TES5Branch branch = this.branchFactory.createSimpleBranch(expression, localScope);
-                    branch.getMainBranch().getCodeScope().Add(showTheObjective);
+                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
+                    branch.MainBranch.CodeScope.Add(showTheObjective);
                     result.Add(branch);
                 }
                 else
@@ -76,13 +74,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
                     displayedArguments.Add(targetIndex);
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
-                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(isObjectiveDisplayed, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
+                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
                     arguments.Add(targetIndex);
                     arguments.Add(new TES5Integer(1));
                     TES5ObjectCall completeTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments);
-                    TES5Branch branch = this.branchFactory.createSimpleBranch(expression, localScope);
-                    branch.getMainBranch().getCodeScope().Add(completeTheObjective);
+                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
+                    branch.MainBranch.CodeScope.Add(completeTheObjective);
                     result.Add(branch);
                 }
 

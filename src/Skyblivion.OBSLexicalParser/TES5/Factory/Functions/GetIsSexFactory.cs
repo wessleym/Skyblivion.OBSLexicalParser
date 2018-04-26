@@ -61,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
             }
 
-            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(functionThis, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Integer(operand));
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(functionThis, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(operand));
             return expression;
         }
     }

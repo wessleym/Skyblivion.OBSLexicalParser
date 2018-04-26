@@ -5,47 +5,32 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
     class TES5Branch : ITES5CodeChunk
     {
-        private TES5SubBranch mainBranch;
-        private TES5SubBranchList elseifBranches;
-        private TES5ElseSubBranch elseBranch;
+        public TES5SubBranch MainBranch { get; private set; }
+        public TES5SubBranchList ElseIfBranches { get; private set; }
+        public TES5ElseSubBranch ElseBranch { get; private set; }
         public TES5Branch(TES5SubBranch mainBranch, TES5SubBranchList elseifBranches = null, TES5ElseSubBranch elseBranch = null)
         {
-            this.mainBranch = mainBranch;
-            this.elseifBranches = elseifBranches;
-            this.elseBranch = elseBranch;
+            this.MainBranch = mainBranch;
+            this.ElseIfBranches = elseifBranches;
+            this.ElseBranch = elseBranch;
         }
 
         public IEnumerable<string> Output
         {
             get
             {
-                IEnumerable<string> lines = this.mainBranch.GetOutput("If");
-                if (this.elseifBranches != null)
+                IEnumerable<string> lines = this.MainBranch.GetOutput("If");
+                if (this.ElseIfBranches != null)
                 {
-                    lines = lines.Concat(elseifBranches.GetElseIfOutput());
+                    lines = lines.Concat(ElseIfBranches.GetElseIfOutput());
                 }
-                if (this.elseBranch != null)
+                if (this.ElseBranch != null)
                 {
-                    lines = lines.Concat(this.elseBranch.Output());
+                    lines = lines.Concat(this.ElseBranch.Output());
                 }
                 lines = lines.Concat(new string[] { "EndIf" });
                 return lines;
             }
-        }
-
-        public TES5ElseSubBranch getElseBranch()
-        {
-            return this.elseBranch;
-        }
-
-        public TES5SubBranchList getElseifBranches()
-        {
-            return this.elseifBranches;
-        }
-
-        public TES5SubBranch getMainBranch()
-        {
-            return this.mainBranch;
         }
     }
 }

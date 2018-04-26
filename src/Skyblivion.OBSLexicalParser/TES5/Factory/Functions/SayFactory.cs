@@ -47,7 +47,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (argument1.TES5Type != TES5BasicType.T_TOPIC)
             {
                 TES5Castable argument1Castable = argument1 as TES5Reference;
-                if (argument1Castable != null) { argument1Castable.ManualCastTo = TES5BasicType.T_TOPIC; }
+                if (argument1Castable != null && TES5InheritanceGraphAnalyzer.isExtending(TES5BasicType.T_TOPIC, argument1.TES5Type))
+                {
+                    argument1Castable.ManualCastTo = TES5BasicType.T_TOPIC;
+                }
             }
             arguments.Add(argument1);
             ITES4StringValue optionalFlag = functionArguments.GetOrNull(2);

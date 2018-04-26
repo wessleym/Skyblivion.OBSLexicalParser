@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
                 string destinationPath = destinationDirectory + fileName;
                 File.Copy(path, destinationPath, overwrite);
             }
-            foreach(string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
+            foreach (string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
             {
                 DirectoryInfo sourceSubDirectory = new DirectoryInfo(sourceSubDirectoryPath);
                 string destinationSubDirectoryPath = Path.Combine(destinationDirectory, sourceSubDirectory.Name) + Path.DirectorySeparatorChar;

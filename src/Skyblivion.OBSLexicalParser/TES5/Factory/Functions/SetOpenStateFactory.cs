@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -37,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments();
-            constantArgument.Add(new TES5Bool((int)functionArguments[0].Data== 1));
+            constantArgument.Add(new TES5Bool(((TES4Integer)functionArguments[0]).IntValue== 1));
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(calledOn, "SetOpen", multipleScriptsScope, constantArgument);
             return newFunction;
         }

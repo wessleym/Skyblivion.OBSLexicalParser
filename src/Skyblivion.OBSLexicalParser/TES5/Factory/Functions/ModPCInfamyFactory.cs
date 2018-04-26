@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -41,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer fameReference = this.referenceFactory.createReadReference("Infamy", globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            TES5BinaryExpression binaryExpression = TES5ExpressionFactory.createBinaryExpression(fameReference, TES5BinaryExpressionOperator.OPERATOR_ADD, new TES5Integer((int)functionArguments[0].Data));
+            TES5ArithmeticExpression binaryExpression = TES5ExpressionFactory.CreateArithmeticExpression(fameReference, TES5ArithmeticExpressionOperator.OPERATOR_ADD, new TES5Integer(((TES4Integer)functionArguments[0]).IntValue));
             fameArguments.Add(binaryExpression);
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
             return newFunction;

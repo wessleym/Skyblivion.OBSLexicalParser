@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -39,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             int arg;
-            switch ((int)functionArguments[1].Data)
+            switch (((TES4Integer)functionArguments[1]).IntValue)
             {
                 case 0:
                 {

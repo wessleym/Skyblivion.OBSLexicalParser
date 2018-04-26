@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer argument = this.referenceFactory.createReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
-            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(calledOn, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, argument);
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(calledOn, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, argument);
             return expression;
         }
     }

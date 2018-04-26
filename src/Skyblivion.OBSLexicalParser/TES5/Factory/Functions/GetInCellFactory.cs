@@ -39,28 +39,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            //GetInCell checks if a cell name starts with the argument string:  https://cs.elderscrolls.com/index.php?title=GetInCell
+            //The below will probably not always work.
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES4StringValue apiToken = functionArguments[0];
             string cellName = apiToken.StringValue;
             TES5ObjectCall getParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell", multipleScriptsScope);
             TES5ObjectCall getParentCellName = this.objectCallFactory.CreateObjectCall(getParentCell, "GetName", multipleScriptsScope);
-            /*int length = cellName.Length;
+            int length = cellName.Length;
             TES5ObjectCallArguments substringArguments = new TES5ObjectCallArguments();
             substringArguments.Add(getParentCellName);
             substringArguments.Add(new TES5Integer(0));
             substringArguments.Add(new TES5Integer(length));
             TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReference.StringUtil, "Substring", multipleScriptsScope, substringArguments);
-            TES5String cellNameTES5String = new TES5String(cellName);
-            return TES5ExpressionFactory.createArithmeticExpression(substring, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
-            */
-            //WTM:  Change:  The above method doesn't work.  It originally used GetParentCell(), which seems to have a string value of just "[Cell" (no closing right bracket).
-            //Skyrim's GetName() gets a name with spaces.  To get the same name in Oblivion, I need to take the name that is present in Oblivion's scripts and look it up in the ESMAnalyzer.
-            //This required adding "FULL" to the records that are collected from "CELL."  If the below method becomes unused, "FULL" records will no longer be necessary for "CELL."
             TES4LoadedRecord cellRecord = ESMAnalyzer._instance().FindInTES4Collection(cellName, false);
             string cellNameWithSpaces = cellRecord.getSubrecordTrim("FULL");
             if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
             TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
-            return TES5ExpressionFactory.createArithmeticExpression(getParentCellName, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
+            return TES5ExpressionFactory.CreateComparisonExpression(substring, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
         }
     }
 }

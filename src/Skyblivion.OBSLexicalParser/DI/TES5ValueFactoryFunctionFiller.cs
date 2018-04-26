@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("deletefullactorcopy", new RenamedFunctionFactory("Delete", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("disablelinkedpathpoints", new FillerFactory());
             valueFactory.addFunctionFactory("disableplayercontrols", new DisablePlayerControlsFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("disable", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.addFunctionFactory("disable", new DisableFactory(objectCallFactory));
             valueFactory.addFunctionFactory("dispel", new RenamedFunctionFactory("DispelSpell", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("dropme", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("drop", new RenamedFunctionFactory("DropObject", objectCallFactory, objectCallArgumentsFactory));
@@ -211,7 +211,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("setfactionrank", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setfactionreaction", new PopCalledRenameFunctionFactory("SetReaction", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setforcerun", new SetForceRunFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("setforcesneak", new SetForceSneakFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("setforcesneak", new SetForceSneakFactory(objectCallFactory));
             valueFactory.addFunctionFactory("setghost", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("setignorefriendlyhits", new FillerFactory());
             valueFactory.addFunctionFactory("setinchargen", new SetInChargenFactory(objectCallFactory));//WTM:  Change:  Added

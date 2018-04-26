@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             get
             {
                 TES5Bool trueBool = new TES5Bool(true);
-                TES5ArithmeticExpressionOperator op = TES5ArithmeticExpressionOperator.OPERATOR_EQUAL;
+                TES5ComparisonExpressionOperator op = TES5ComparisonExpressionOperator.OPERATOR_EQUAL;
                 string outputValue = this.value.Output.Single();
                 string trueOutputValue = trueBool.Output.Single();
                 return new string[] { "(" + outputValue + " " + op.Name + " " + trueOutputValue + ")" };

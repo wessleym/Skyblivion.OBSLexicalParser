@@ -6,15 +6,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
     class TES4Integer : ITES4Primitive
     {
-        private int data;
+        public int IntValue { get; private set; }
         public TES4Integer(int data)
         {
-            this.data = data;
+            this.IntValue = data;
         }
 
-        public object Data => this.data;
+        public object Data => this.IntValue;
 
-        public string StringValue => data.ToString();
+        public string StringValue => IntValue.ToString();
 
         public TES4Type Type => TES4Type.T_INT;
 

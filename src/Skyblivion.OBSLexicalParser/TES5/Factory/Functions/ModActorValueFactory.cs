@@ -81,7 +81,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         ITES5Referencer newCalledOn = this.referenceFactory.createReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
                         ITES4StringValue secondArg = functionArguments[1];
                         ITES5Value addedValue = this.valueFactory.createValue(secondArg, codeScope, globalScope, multipleScriptsScope);
-                        convertedArguments.Add(TES5ExpressionFactory.createBinaryExpression(addedValue, TES5BinaryExpressionOperator.OPERATOR_ADD, this.referenceFactory.createReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
+                        convertedArguments.Add(TES5ExpressionFactory.CreateArithmeticExpression(addedValue, TES5ArithmeticExpressionOperator.OPERATOR_ADD, this.referenceFactory.createReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
                         return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, convertedArguments);
                     }
 

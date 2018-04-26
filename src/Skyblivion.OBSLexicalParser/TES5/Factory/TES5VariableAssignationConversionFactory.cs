@@ -1,17 +1,15 @@
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -21,15 +19,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private TES5ReferenceFactory referenceFactory;
         private TES5ValueFactory valueFactory;
         private TES5VariableAssignationFactory assignationFactory;
-        private TES5BranchFactory branchFactory;
         private TES5TypeInferencer typeInferencer;
-        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5VariableAssignationFactory assignationFactory, TES5BranchFactory branchFactory, TES5TypeInferencer typeInferencer)
+        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5VariableAssignationFactory assignationFactory, TES5TypeInferencer typeInferencer)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
             this.valueFactory = valueFactory;
             this.assignationFactory = assignationFactory;
-            this.branchFactory = branchFactory;
             this.typeInferencer = typeInferencer;
         }
 
@@ -75,10 +71,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                      * endIf
                      */
                     TES5Integer minusOne = new TES5Integer(-1);
-                    TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(reference, TES5ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL, minusOne);
+                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(reference, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, minusOne);
                     TES5VariableAssignation reassignation = this.assignationFactory.createAssignation(referencerValue, minusOne);
-                    TES5Branch branch = this.branchFactory.createSimpleBranch(expression, codeScope.LocalScope);
-                    branch.getMainBranch().getCodeScope().Add(reassignation);
+                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, codeScope.LocalScope);
+                    branch.MainBranch.CodeScope.Add(reassignation);
                     codeChunkCollection.add(branch);
                 }
             }

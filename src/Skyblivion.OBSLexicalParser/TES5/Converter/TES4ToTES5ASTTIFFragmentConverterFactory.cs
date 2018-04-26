@@ -20,11 +20,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
             TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
-            TES5BranchFactory branchFactory = new TES5BranchFactory(valueFactory);
-            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, branchFactory, typeInferencer);
+            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, typeInferencer);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory, referenceFactory);
-            TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory, branchFactory);
-            return new TES4ToTES5ASTTIFFragmentConverter(analyzer, new TES5FragmentFactory(chainedCodeChunkFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, branchFactory, assignationFactory)), valueFactory, referenceFactory);
+            TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
+            return new TES4ToTES5ASTTIFFragmentConverter(analyzer, new TES5FragmentFactory(chainedCodeChunkFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, assignationFactory)), valueFactory, referenceFactory);
         }
     }
 }

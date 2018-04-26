@@ -12,12 +12,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5InitialBlockCodeFactory
     {
-        private TES5BranchFactory branchFactory;
         private TES5ReferenceFactory referenceFactory;
         private TES5ObjectCallFactory objectCallFactory;
-        public TES5InitialBlockCodeFactory(TES5BranchFactory branchFactory, TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
+        public TES5InitialBlockCodeFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
         {
-            this.branchFactory = branchFactory;
             this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
         }
@@ -39,12 +37,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     {
                         if (globalScope.ScriptHeader.BasicScriptType== TES5BasicType.T_QUEST)
                         {
-                            TES5Branch branch = this.branchFactory.createSimpleBranch(TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
+                            TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
                             //Even though we"d like this script to not do anything at this time, it seems like sometimes condition races, so we"re putting it into a loop anyways but with early return bailout
                             TES5ObjectCallArguments args = new TES5ObjectCallArguments();
                             args.Add(new TES5Float(TES5AdditionalBlockChangesPass.ON_UPDATE_TICK));
-                            branch.getMainBranch().getCodeScope().Add(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args));
-                            branch.getMainBranch().getCodeScope().Add(new TES5Return());
+                            branch.MainBranch.CodeScope.Add(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args));
+                            branch.MainBranch.CodeScope.Add(new TES5Return());
                             eventCodeBlock.AddChunk(branch);
                             return eventCodeBlock.CodeScope;
                         }
@@ -52,9 +50,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         else if (globalScope.ScriptHeader.BasicScriptType== TES5BasicType.T_OBJECTREFERENCE)
                         {
                             TES5LocalScope localScope = eventCodeBlock.CodeScope.LocalScope;
-                            TES5Branch branch = this.branchFactory.createSimpleBranch(TES5ExpressionFactory.createArithmeticExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments())), localScope);
+                            TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments())), localScope);
                             eventCodeBlock.AddChunk(branch);
-                            return branch.getMainBranch().getCodeScope();
+                            return branch.MainBranch.CodeScope;
                         }
                         else
                         {

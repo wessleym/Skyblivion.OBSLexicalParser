@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -38,7 +39,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "SetActive";
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, newArguments);
         }
     }
 }

@@ -1,32 +1,18 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch;
-using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5BranchFactory
+    static class TES5BranchFactory
     {
-        private TES5ChainedCodeChunkFactory codeChunkFactory;
-        private TES5ValueFactory valueFactory;
-        public TES5BranchFactory(TES5ValueFactory valueFactory)
+        public static TES5CodeChunkCollection CreateCodeChunk(TES4Branch chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory, TES5ValueFactory valueFactory)
         {
-            this.valueFactory = valueFactory;
-        }
-
-        //UGLY but w/e PLEASE FIX THAT PLEASEE :((
-        public void setCodeChunkFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory)
-        {
-            this.codeChunkFactory = chainedCodeChunkFactory;
-        }
-
-        public TES5CodeChunkCollection createCodeChunk(TES4Branch chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
-        {
-            TES5SubBranch mainBranch = this.convertSubBranch(chunk.getMainBranch(), codeScope, globalScope, multipleScriptsScope);
+            TES5SubBranch mainBranch = ConvertSubBranch(chunk.getMainBranch(), codeScope, globalScope, multipleScriptsScope, codeChunkFactory, valueFactory);
             TES4SubBranchList branchList = chunk.getElseifBranches();
             TES5SubBranchList convertedElseIfBranches = null;
             if (branchList != null)
@@ -34,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 convertedElseIfBranches = new TES5SubBranchList();
                 foreach (TES4SubBranch subBranch in branchList.getSubBranches())
                 {
-                    convertedElseIfBranches.add(this.convertSubBranch(subBranch, codeScope, globalScope, multipleScriptsScope));
+                    convertedElseIfBranches.add(ConvertSubBranch(subBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory, valueFactory));
                 }
             }
 
@@ -42,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5ElseSubBranch convertedElseBranch = null;
             if (elseBranch != null)
             {
-                convertedElseBranch = this.convertElseBranch(elseBranch, codeScope, globalScope, multipleScriptsScope);
+                convertedElseBranch = ConvertElseBranch(elseBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory);
             }
 
             TES5CodeChunkCollection collection = new TES5CodeChunkCollection();
@@ -50,12 +36,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return collection;
         }
 
-        public TES5Branch createSimpleBranch(ITES5Expression expression, TES5LocalScope parentScope)
+        public static TES5Branch CreateSimpleBranch(ITES5Expression expression, TES5LocalScope parentScope)
         {
             return new TES5Branch(new TES5SubBranch(expression, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRecursiveScope(parentScope))));
         }
 
-        private TES5ElseSubBranch convertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private static TES5ElseSubBranch ConvertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory)
         {
             TES5LocalScope outerLocalScope = outerCodeScope.LocalScope;
             TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
@@ -65,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 foreach (ITES4CodeChunk codeChunk in branchChunks.CodeChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                    TES5CodeChunkCollection codeChunks = codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)
@@ -79,10 +65,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5ElseSubBranch(newCodeScope);
         }
 
-        private TES5SubBranch convertSubBranch(TES4SubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private static TES5SubBranch ConvertSubBranch(TES4SubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory, TES5ValueFactory valueFactory)
         {
             TES5LocalScope outerLocalScope = outerCodeScope.LocalScope;
-            ITES5Value expression = this.valueFactory.createValue(branch.Expression, outerCodeScope, globalScope, multipleScriptsScope);
+            ITES5Value expression = valueFactory.createValue(branch.Expression, outerCodeScope, globalScope, multipleScriptsScope);
             TES5LocalScope newScope = TES5LocalScopeFactory.createRecursiveScope(outerLocalScope);
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.createCodeScope(newScope);
             TES4CodeChunks branchChunks = branch.CodeChunks;
@@ -90,7 +76,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 foreach (ITES4CodeChunk codeChunk in branchChunks.CodeChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                    TES5CodeChunkCollection codeChunks = codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)
                     {
                         foreach (ITES5CodeChunk newCodeChunk in codeChunks)

@@ -1,4 +1,5 @@
 ﻿using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
+using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -20,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             ITES5Referencer newCalledOn = TES5StaticReference.Game;
             const string functionName = "SetInChargen";
-            bool argumentBool = ((int)function.Arguments[0].Data) == 1;
+            bool argumentBool = ((TES4Integer)function.Arguments[0]).IntValue == 1;
             ITES5Value argumentValue = new TES5Bool(argumentBool);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(argumentValue);

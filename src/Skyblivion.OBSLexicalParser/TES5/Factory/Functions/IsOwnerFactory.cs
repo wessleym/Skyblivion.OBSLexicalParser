@@ -55,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 baseReference = this.objectCallFactory.CreateGetActorBase(targetReference, multipleScriptsScope);
             }
 
-            TES5ArithmeticExpression expression = TES5ExpressionFactory.createArithmeticExpression(owner, TES5ArithmeticExpressionOperator.OPERATOR_EQUAL, baseReference);
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(owner, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, baseReference);
             return expression;
         }
     }
