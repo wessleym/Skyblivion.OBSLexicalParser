@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
-    class TES5Branch : ITES5CodeChunk
+    class TES5Branch : ITES5ValueCodeChunk//WTM:  Note:  This class needs ITES5ValueCodeChunk instead of just ITES5CodeChunk for SetForceSteakFactory.
     {
         public TES5SubBranch MainBranch { get; private set; }
         public TES5SubBranchList ElseIfBranches { get; private set; }
@@ -32,5 +34,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
                 return lines;
             }
         }
+
+        //WTM:  Note:  This is needed because I need to implement ITES5ValueCodeChunk which requires this.
+        public ITES5Type TES5Type => throw new NotImplementedException();
     }
 }

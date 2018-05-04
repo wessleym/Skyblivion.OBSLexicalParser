@@ -31,8 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 TES5ComparisonExpression playerIsNotSneaking = TES5ExpressionFactory.CreateComparisonExpression(isSneaking, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                 TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(playerIsNotSneaking, codeScope.LocalScope);
                 branch.MainBranch.CodeScope.Add(startSneaking);
-                //return branch;//I can't return a TES5Branch.  How can I do this?
-                return new TES5Filler();
+                return branch;
             }
             return startSneaking;
         }
