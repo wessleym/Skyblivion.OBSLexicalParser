@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 functionName.Equals("GetIsPlayerBirthsign", StringComparison.OrdinalIgnoreCase) ? "Skyrim doesn't have birthsigns--only standing stones." :
                 functionName.Equals("GetStartingPos", StringComparison.OrdinalIgnoreCase) ? "Papyrus doesn't seem to know the original location of items (before they were moved)." :
                 functionName.Equals("ModAmountSoldStolen", StringComparison.OrdinalIgnoreCase) ? "Skyrim doesn't track how much gold was earned with stolen goods." :
-                functionName.Equals("SetLevel", StringComparison.OrdinalIgnoreCase) ? "SKSE has Game.SetPlayerLevel(int level), but Oblivion calls this function on other actors." :
+                functionName.Equals("SetLevel", StringComparison.OrdinalIgnoreCase) ? "SKSE has Game.SetPlayerLevel(int level), but Oblivion calls this function on non-player actors." :
                 null;
             string message = "Function " + functionName + " not supported." + (reason != null ? "  " + reason : "");
             throw new ConversionException(message, expected: true);
