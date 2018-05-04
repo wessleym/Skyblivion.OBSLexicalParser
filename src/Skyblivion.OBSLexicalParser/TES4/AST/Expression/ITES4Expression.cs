@@ -5,8 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
     interface ITES4Expression : ITES4Value
     {
-        ITES4Value getLeftValue();
-        TES4ExpressionOperator getOperator();
-        ITES4Value getRightValue();
+        ITES4Value LeftValue { get; }
+        TES4ExpressionOperator Operator { get; }
+        ITES4Value RightValue { get; }
     }
 }

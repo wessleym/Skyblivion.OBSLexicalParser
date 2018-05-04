@@ -9,58 +9,45 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
     class TES4ArithmeticExpression : ITES4Expression
     {
-        private ITES4Value leftValue;
-        private TES4ArithmeticExpressionOperator op;
-        private ITES4Value rightValue;
+        public ITES4Value LeftValue { get; private set; }
+        private TES4ArithmeticExpressionOperator arithmeticExpressionOperator;
+        public ITES4Value RightValue { get; private set; }
         public TES4ArithmeticExpression(ITES4Value leftValue, TES4ArithmeticExpressionOperator op, ITES4Value rightValue)
         {
-            this.leftValue = leftValue;
-            this.op = op;
-            this.rightValue = rightValue;
+            this.LeftValue = leftValue;
+            this.arithmeticExpressionOperator = op;
+            this.RightValue = rightValue;
         }
 
-        public ITES4Value getLeftValue()
-        {
-            return this.leftValue;
-        }
-
-        public TES4ExpressionOperator getOperator()
-        {
-            return this.op;
-        }
-
-        public ITES4Value getRightValue()
-        {
-            return this.rightValue;
-        }
+        public TES4ExpressionOperator Operator => this.arithmeticExpressionOperator;
 
         public object Data
         {
             get
             {
-                decimal left = Convert.ToDecimal(this.leftValue.Data);
-                decimal right = Convert.ToDecimal(this.rightValue.Data);
-                if (op == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL)
+                decimal left = Convert.ToDecimal(this.LeftValue.Data);
+                decimal right = Convert.ToDecimal(this.RightValue.Data);
+                if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL)
                 {
                     return left == right;
                 }
-                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER)
+                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_GREATER)
                 {
                     return left > right;
                 }
-                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_GREATER_OR_EQUAL)
+                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_GREATER_OR_EQUAL)
                 {
                     return left >= right;
                 }
-                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS)
+                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_LESS)
                 {
                     return left < right;
                 }
-                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_LESS_OR_EQUAL)
+                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_LESS_OR_EQUAL)
                 {
                     return left <= right;
                 }
-                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL)
+                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL)
                 {
                     return left != right;
                 }
@@ -68,11 +55,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             }
         }
 
-        public bool HasFixedValue => this.leftValue.HasFixedValue && this.rightValue.HasFixedValue;
+        public bool HasFixedValue => this.LeftValue.HasFixedValue && this.RightValue.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.leftValue.Filter(predicate).Concat(this.rightValue.Filter(predicate)).ToArray();
+            return this.LeftValue.Filter(predicate).Concat(this.RightValue.Filter(predicate)).ToArray();
         }
     }
 }

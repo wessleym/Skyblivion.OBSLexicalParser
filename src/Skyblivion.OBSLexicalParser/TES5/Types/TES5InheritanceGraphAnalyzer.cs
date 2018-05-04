@@ -4571,15 +4571,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return extendingType == baseType || isExtending(extendingType, baseType);
         }
 
-        public static bool IsTypeOrExtendsTypeOrIsImplicitlyComparable(ITES5Type extendingType, ITES5Type baseType)
+        public static bool IsTypeOrExtendsTypeOrIsNumberType(ITES5Type extendingType, ITES5Type baseType)
         {
             return IsTypeOrExtendsType(extendingType, baseType) ||
-                IsImplicitlyComparable(extendingType, baseType) ||
+                (IsNumberType(extendingType) && IsNumberType(baseType)) ||
                 IsTypeOrExtendsType(extendingType.NativeType, baseType.NativeType) ||
                 IsTypeOrExtendsType(baseType.NativeType, extendingType.NativeType);
         }
 
-        public static bool IsImplicitlyComparable(ITES5Type type1, ITES5Type type2)
+        public static bool IsNumberTypeOrBoolAndInt(ITES5Type type1, ITES5Type type2)
         {
             return (IsNumberType(type1) && IsNumberType(type2)) ||
                 (type1 == TES5BasicType.T_INT && type2 == TES5BasicType.T_BOOL) ||

@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
-            if (function.FunctionCall.getFunctionName().Equals("modpcskill", StringComparison.OrdinalIgnoreCase))
+            if (function.FunctionCall.FunctionName.Equals("modpcskill", StringComparison.OrdinalIgnoreCase))
             {
                 /*
                  * MODPCSkill means we will need to call upon the player object

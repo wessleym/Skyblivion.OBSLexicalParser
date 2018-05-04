@@ -5,15 +5,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
     class TES4FunctionCall : ITES4CodeFilterable
     {
-        private string functionName;
+        public string FunctionName { get; private set; }
         public TES4FunctionCall(string functionName)
         {
-            this.functionName = functionName;
-        }
-
-        public string getFunctionName()
-        {
-            return this.functionName;
+            this.FunctionName = functionName;
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)

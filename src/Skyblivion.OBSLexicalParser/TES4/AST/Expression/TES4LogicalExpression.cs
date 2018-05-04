@@ -19,20 +19,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             this.rightValue = right;
         }
 
-        public ITES4Value getLeftValue()
-        {
-            return this.leftValue;
-        }
+        public ITES4Value LeftValue => this.leftValue;
 
-        public TES4ExpressionOperator getOperator()
-        {
-            return this.op;
-        }
+        public TES4ExpressionOperator Operator => this.op;
 
-        public ITES4Value getRightValue()
-        {
-            return this.rightValue;
-        }
+        public ITES4Value RightValue => this.rightValue;
 
         public object Data
         {

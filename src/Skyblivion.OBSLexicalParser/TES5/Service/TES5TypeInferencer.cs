@@ -79,7 +79,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                         }
                         else if (
                             !TES5InheritanceGraphAnalyzer.isExtending(argument.TES5Type, argumentTargetType) &&
-                            !TES5InheritanceGraphAnalyzer.IsImplicitlyComparable(argument.TES5Type, argumentTargetType) &&
+                            !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
                             !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
                         {
                             throw new ConversionException("Argument type mismatch at index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: true);

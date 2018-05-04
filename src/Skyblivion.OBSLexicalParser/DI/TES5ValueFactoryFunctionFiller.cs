@@ -83,7 +83,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("getiscurrentpackage", new GetIsCurrentPackageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getiscurrentweather", new GetIsCurrentWeatherFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getisid", new GetIsIdFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("getisplayablerace", new NotSupportedFactory());
+            valueFactory.addFunctionFactory("getisplayablerace", new GetIsPlayableRaceFactory(objectCallFactory));
             valueFactory.addFunctionFactory("getisplayerbirthsign", new NotSupportedFactory());
             valueFactory.addFunctionFactory("getisrace", new GetIsRaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getisreference", new GetIsReferenceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -125,7 +125,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("hasvampirefed", new ReturnFalseFactory());
             valueFactory.addFunctionFactory("isactionref", new IsActionRefFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("isactorusingatorch", new RenamedFunctionFactory("IsTorchOut", objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.addFunctionFactory("isactor", new IsActorFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("isactor", new IsActorFactory());
             valueFactory.addFunctionFactory("isanimplaying", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("isessential", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("isguard", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
@@ -163,7 +163,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("movetomarker", new RenamedFunctionFactory("MoveTo", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("moveto", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("payfine", new PayFineFactory(objectCallFactory, referenceFactory));
-            valueFactory.addFunctionFactory("payfinethief", new NotSupportedFactory());//WTM:  Change:  Added
+            valueFactory.addFunctionFactory("payfinethief", new PayFineThiefFactory(objectCallFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.addFunctionFactory("pickidle", new FillerFactory());
             valueFactory.addFunctionFactory("placeatme", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("playbink", new PlayBinkFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
@@ -271,7 +271,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.addFunctionFactory("getav", new GetActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getbaseav", new GetBaseActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("getgs", new GetGameSettingFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.addFunctionFactory("getiscreature", new IsActorFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.addFunctionFactory("getiscreature", new GetIsCreatureFactory(objectCallFactory));//WTM:  Change:  This previously used IsActorFactory.
             valueFactory.addFunctionFactory("this", new GetSelfFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.addFunctionFactory("isactordetected", new RenamedFunctionFactory("IsInCombat", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.addFunctionFactory("modav", new ModActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));

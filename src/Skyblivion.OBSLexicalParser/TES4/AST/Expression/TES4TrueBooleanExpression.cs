@@ -14,20 +14,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             this.value = value;
         }
 
-        public ITES4Value getLeftValue()
-        {
-            return this.value;
-        }
+        public ITES4Value LeftValue => this.value;
 
-        public ITES4Value getRightValue()
-        {
-            return new TES4Integer(1);
-        }
+        public ITES4Value RightValue => new TES4Integer(1);
 
-        public TES4ExpressionOperator getOperator()
-        {
-            return TES4ArithmeticExpressionOperator.OPERATOR_EQUAL;
-        }
+        public TES4ExpressionOperator Operator => TES4ArithmeticExpressionOperator.OPERATOR_EQUAL;
 
         public object Data => BoolValue;
 

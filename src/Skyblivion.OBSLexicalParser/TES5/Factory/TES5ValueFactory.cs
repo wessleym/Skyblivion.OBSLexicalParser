@@ -51,8 +51,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             Tuple<ITES4Value, ITES4Value>[] sets = new Tuple<ITES4Value, ITES4Value>[]
             {
-                new Tuple<ITES4Value, ITES4Value>(expression.getLeftValue(), expression.getRightValue()),
-                new Tuple<ITES4Value, ITES4Value>(expression.getRightValue(), expression.getLeftValue())
+                new Tuple<ITES4Value, ITES4Value>(expression.LeftValue, expression.RightValue),
+                new Tuple<ITES4Value, ITES4Value>(expression.RightValue, expression.LeftValue)
             };
 
             /*
@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                 TES4Function function = setItem1Callable.Function;
 
-                switch (function.FunctionCall.getFunctionName().ToLower())
+                switch (function.FunctionCall.FunctionName.ToLower())
                 {
                     case "getweaponanimtype":
                         {
@@ -169,7 +169,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.getOperator() == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
@@ -190,7 +190,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.getOperator() == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
@@ -200,7 +200,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                 case 17:
                                     {
                                         //@INCONSISTENCE Wander.. idk how to check it tbh. We return always true. Think about better representation
-                                        return new TES5Bool(expression.getOperator() == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL);
+                                        return new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL);
                                     }
                                 default:
                                     {
@@ -262,7 +262,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             return TES5ExpressionFactory.CreateComparisonExpression
                             (
                                 this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "GetSitState", multipleScriptsScope),
-                                TES5ComparisonExpressionOperator.GetFirst(expression.getOperator().Name),
+                                TES5ComparisonExpressionOperator.GetFirst(expression.Operator.Name),
                                 new TES5Integer(goTo)
                             );
 
@@ -272,8 +272,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
             }
 
-            ITES5Value leftValue = this.createValue(expression.getLeftValue(), codeScope, globalScope, multipleScriptsScope);
-            ITES5Value rightValue = this.createValue(expression.getRightValue(), codeScope, globalScope, multipleScriptsScope);
+            ITES5Value leftValue = this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope);
+            ITES5Value rightValue = this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope);
 
             Tuple<ITES5Value, ITES5Value>[] tes5sets = new Tuple<ITES5Value, ITES5Value>[]
             {
@@ -282,7 +282,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             };
 
             TES5BasicType objectReferenceType = TES5BasicType.T_FORM; //used just to make sure.
-            TES5ComparisonExpressionOperator op = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.getOperator().Name);
+            TES5ComparisonExpressionOperator op = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
 
             /*
              * Scenario 2: Comparision of ObjectReferences to integers ( quick formid check )
@@ -325,7 +325,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     throw new ConversionException("Type was void.");//This shouldn't happen anymore.
 #endif
                 }
-                if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsImplicitlyComparable(tes5set.Item1.TES5Type, tes5set.Item2.TES5Type))
+                if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(tes5set.Item1.TES5Type, tes5set.Item2.TES5Type))
                 {//WTM:  Change:  Added entire if branch
                     if (tes5set.Item1.TES5Type.NativeType== TES5BasicType.T_QUEST && tes5set.Item2.TES5Type == TES5BasicType.T_INT)
                     {
@@ -348,20 +348,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         }
         public ITES5Value convertExpression(ITES4Expression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5ComparisonExpressionOperator aeOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.getOperator().Name);
+            TES5ComparisonExpressionOperator aeOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (aeOp != null)
             {
                 return this.convertArithmeticExpression(expression, codeScope, globalScope, multipleScriptsScope);
             }
-            TES5LogicalExpressionOperator leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.getOperator().Name);
+            TES5LogicalExpressionOperator leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (leOp != null)
             {
-                return TES5ExpressionFactory.CreateLogicalExpression(this.createValue(expression.getLeftValue(), codeScope, globalScope, multipleScriptsScope), leOp, this.createValue(expression.getRightValue(), codeScope, globalScope, multipleScriptsScope));
+                return TES5ExpressionFactory.CreateLogicalExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), leOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
-            TES5ArithmeticExpressionOperator beOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.getOperator().Name);
+            TES5ArithmeticExpressionOperator beOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (beOp != null)
             {
-                return TES5ExpressionFactory.CreateArithmeticExpression(this.createValue(expression.getLeftValue(), codeScope, globalScope, multipleScriptsScope), beOp, this.createValue(expression.getRightValue(), codeScope, globalScope, multipleScriptsScope));
+                return TES5ExpressionFactory.CreateArithmeticExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), beOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
             throw new ConversionException("Unknown expression op");
         }
@@ -386,7 +386,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES4Function function = chunk.Function;
             ITES5Referencer calledOnReference = this.createCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
-            string functionName = function.FunctionCall.getFunctionName();
+            string functionName = function.FunctionCall.FunctionName;
             string functionKey = functionName.ToLower();
             IFunctionFactory factory;
             if (!this.functionFactories.TryGetValue(functionKey, out factory))

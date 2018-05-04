@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string functionName = function.FunctionCall.getFunctionName();
+            string functionName = function.FunctionCall.FunctionName;
             /* Emulating just the same disable player control as in Oblivion */
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
             newArgs.Add(new TES5Bool(true));

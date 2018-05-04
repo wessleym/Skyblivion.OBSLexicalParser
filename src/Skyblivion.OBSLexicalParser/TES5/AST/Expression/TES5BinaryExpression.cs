@@ -6,24 +6,24 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 {
-    abstract class TES5LeftOpRightExpression<T> : ITES5Expression where T : TES5ExpressionOperator
+    abstract class TES5BinaryExpression<T> : ITES5Expression where T : TES5ExpressionOperator
     {
-        private ITES5Value leftValue;
+        protected ITES5Value LeftValue { get; private set; }
         private T op;
-        private ITES5Value rightValue;
-        public TES5LeftOpRightExpression(ITES5Value leftValue, T op, ITES5Value rightValue)
+        protected ITES5Value RightValue { get; private set; }
+        public TES5BinaryExpression(ITES5Value leftValue, T op, ITES5Value rightValue)
         {
-            this.leftValue = leftValue;
+            this.LeftValue = leftValue;
             this.op = op;
-            this.rightValue = rightValue;
+            this.RightValue = rightValue;
         }
 
         public IEnumerable<string> Output
         {
             get
             {
-                string leftOutput = this.leftValue.Output.Single();
-                string rightOutput = this.rightValue.Output.Single();
+                string leftOutput = this.LeftValue.Output.Single();
+                string rightOutput = this.RightValue.Output.Single();
                 return new string[] { "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")" };
             }
         }

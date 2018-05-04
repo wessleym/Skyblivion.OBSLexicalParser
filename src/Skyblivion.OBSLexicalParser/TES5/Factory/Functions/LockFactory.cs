@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            string functionName = function.FunctionCall.getFunctionName();
+            string functionName = function.FunctionCall.FunctionName;
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments();
             methodArguments.Add(new TES5Bool(true)); //override different behaviour
             ITES4StringValue lockAsOwnerBool = functionArguments.GetOrNull(1);
