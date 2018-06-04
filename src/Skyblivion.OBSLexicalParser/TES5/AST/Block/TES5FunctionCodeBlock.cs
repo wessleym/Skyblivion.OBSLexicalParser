@@ -9,15 +9,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5FunctionCodeBlock : ITES5CodeBlock
     {
-        private TES5CodeScope codeScope;
-        private TES5FunctionScope functionScope;
+        public TES5FunctionScope FunctionScope { get; private set; }
+        public TES5CodeScope CodeScope { get; private set; }
         private ITES5Type returnType;
         private bool isStandalone;//Only needed for PHP_COMPAT
         public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone = false)
         {
             if (returnType == null) { throw new ArgumentNullException(nameof(returnType)); }
-            this.functionScope = functionScope;
-            this.codeScope = codeScope;
+            this.FunctionScope = functionScope;
+            this.CodeScope = codeScope;
             this.returnType = returnType;
             this.isStandalone = isStandalone;
         }
@@ -34,24 +34,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
                 ""
 #endif
                 ;
-                return (new string[] { functionReturnType + "Function " + this.functionScope.BlockName+ "(" + string.Join(", ", this.functionScope.GetVariablesOutput()) + ")" })
-                    .Concat(this.codeScope.Output)
+                return (new string[] { functionReturnType + "Function " + this.FunctionScope.BlockName+ "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
+                    .Concat(this.CodeScope.Output)
                     .Concat(new string[] { "EndFunction" });
             }
         }
 
         public string getFunctionName()
         {
-            return this.functionScope.BlockName;
+            return this.FunctionScope.BlockName;
         }
-
-        public TES5CodeScope CodeScope => this.codeScope;
 
         public void AddChunk(ITES5CodeChunk chunk)
         {
-            this.codeScope.Add(chunk);
+            this.CodeScope.Add(chunk);
         }
-
-        public TES5FunctionScope FunctionScope => this.functionScope;
     }
 }

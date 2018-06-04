@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             calledOn = TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
             string functionName = "Delete";
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

@@ -1,6 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.IO;
 using System.Linq;
@@ -17,32 +16,28 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
-        protected void execute(LPCommandInput input)
+        protected void Execute(LPCommandInput input)
         {
             string scriptName = input.GetArgumentValue("scriptName");
             string targets = input.GetArgumentValue("targets");
             string buildPath = input.GetArgumentValue("buildPath");
-            execute(scriptName, targets, buildPath);
+            Execute(scriptName, targets, buildPath);
         }
 
-        public override void execute()
+        public override void Execute()
         {
             throw new NotImplementedException();
         }
 
-        public void execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string buildPath = null)
+        public void Execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string buildPath = null)
         {
+            if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                if (!buildTargets.canBuild())
-                {
-                    WriteUncleanMessage();
-                    return;
-                }
-
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices);
+                if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
                 TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName);
 #if !DEBUG
                 try
@@ -61,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
-            string compileLog = File.ReadAllText(build.getCompileStandardOutputPath());
+            string compileLog = File.ReadAllText(build.GetCompileStandardOutputPath());
             Console.WriteLine(compileLog);
         }
 

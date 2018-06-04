@@ -38,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.FunctionCall.FunctionName;
             TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer newCalledOn = this.referenceFactory.CreateCyrodiilCrimeFactionReadReference(globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

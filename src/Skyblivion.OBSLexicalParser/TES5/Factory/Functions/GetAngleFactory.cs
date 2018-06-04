@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string arg0Lower = arg0.ToLower();
             if (arg0Lower != "x" && arg0Lower != "y" && arg0Lower != "z") { throw new ConversionException("getAngle can handle only X,Y,Z parameters."); }
             string functionName = "GetAngle" + PHPFunction.UCWords(arg0);
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }

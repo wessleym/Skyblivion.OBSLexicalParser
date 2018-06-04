@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.Utilities;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -46,124 +47,120 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.writeCommand = writeCommand;
         }
 
-        public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
+        public TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
         {
             if (!this.transpileInitialized)
             {
                 this.transpileCommand.initialize(this.build, metadataLogService);
                 this.transpileInitialized = true;
             }
-
             return this.transpileCommand.transpile(sourcePath, outputPath, globalScope, compilingScope);
         }
 
-        public void compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
+        public void Compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
             if (!this.compileInitialized)
             {
                 this.compileCommand.initialize();
                 this.compileInitialized = true;
             }
-
             this.compileCommand.compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
         }
 
-        public ITES4CodeFilterable getAST(string sourcePath)
+        public ITES4CodeFilterable GetAST(string sourcePath)
         {
             if (!this.ASTInitialized)
             {
                 this.ASTCommand.initialize();
                 this.ASTInitialized = true;
             }
-
             return this.ASTCommand.getAST(sourcePath);
         }
 
-        public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope BuildScope(string sourcePath, TES5GlobalVariables globalVariables)
         {
             if (!this.scopeInitialized)
             {
                 this.buildScopeCommand.initialize();
                 this.scopeInitialized = true;
             }
-
             return this.buildScopeCommand.buildScope(sourcePath, globalVariables);
         }
 
-        public void write(BuildTracker buildTracker, ProgressWriter progressWriter)
+        public void Write(BuildTracker buildTracker, ProgressWriter progressWriter)
         {
             this.writeCommand.write(this, buildTracker, progressWriter);
         }
 
-        public string getTargetName()
+        public string GetTargetName()
         {
             return this.targetName;
         }
 
-        public string getSourcePath()
+        public string GetSourcePath()
         {
-            return Path.Combine(this.getRootBuildTargetPath(), "Source")+Path.DirectorySeparatorChar;
+            return Path.Combine(this.GetRootBuildTargetPath(), "Source")+Path.DirectorySeparatorChar;
         }
 
-        public string getDependenciesPath()
+        public string GetDependenciesPath()
         {
-            return Path.Combine(this.getRootBuildTargetPath(), "Dependencies")+ Path.DirectorySeparatorChar;
+            return Path.Combine(this.GetRootBuildTargetPath(), "Dependencies")+ Path.DirectorySeparatorChar;
         }
 
-        public string getArchivePath()
+        public string GetArchivePath()
         {
-            return Path.Combine(this.getRootBuildTargetPath(), "Archive")+ Path.DirectorySeparatorChar;
+            return Path.Combine(this.GetRootBuildTargetPath(), "Archive")+ Path.DirectorySeparatorChar;
         }
 
-        public string getArchivedBuildPath(int buildNumber)
+        public string GetArchivedBuildPath(int buildNumber)
         {
-            return Path.Combine(this.getRootBuildTargetPath(), "Archive", buildNumber.ToString()) + Path.DirectorySeparatorChar;
+            return Path.Combine(this.GetRootBuildTargetPath(), "Archive", buildNumber.ToString()) + Path.DirectorySeparatorChar;
         }
 
-        public string getSourceFromPath(string scriptName)
+        public string GetSourceFromPath(string scriptName)
         {
-            return this.getSourcePath()+scriptName+".txt";
+            return this.GetSourcePath()+scriptName+".txt";
         }
 
-        public string getWorkspaceFromPath(string scriptName)
+        public string GetWorkspaceFromPath(string scriptName)
         {
-            return this.build.getWorkspacePath() + scriptName + ".psc";
+            return this.build.GetWorkspacePath() + scriptName + ".psc";
         }
 
-        public string getTranspiledPath()
+        public string GetTranspiledPath()
         {
-            return this.build.GetBuildPath(Path.Combine("Transpiled", this.targetName)) + Path.DirectorySeparatorChar;
+            return this.build.CombineWithBuildPath(Path.Combine("Transpiled", this.targetName)) + Path.DirectorySeparatorChar;
         }
 
-        public string getArtifactsPath()
+        public string GetArtifactsPath()
         {
-            return this.build.GetBuildPath(Path.Combine("Artifacts", this.targetName)) + Path.DirectorySeparatorChar;
+            return this.build.CombineWithBuildPath(Path.Combine("Artifacts", this.targetName)) + Path.DirectorySeparatorChar;
         }
 
-        public string getWorkspacePath()
+        public string GetWorkspacePath()
         {
-            return this.build.getWorkspacePath();
+            return this.build.GetWorkspacePath();
         }
 
-        public string getTranspileToPath(string scriptName)
+        public string GetTranspileToPath(string scriptName)
         {
             string transformedName = NameTransformer.Limit(scriptName, this.filePrefix);
-            return this.getTranspiledPath()+this.filePrefix+transformedName+".psc";
+            return this.GetTranspiledPath()+this.filePrefix+transformedName+".psc";
         }
 
-        public string getCompileToPath(string scriptName)
+        public string GetCompileToPath(string scriptName)
         {
-            return this.getArtifactsPath()+scriptName+".pex";
+            return this.GetArtifactsPath()+scriptName+".pex";
         }
 
-        private string getRootBuildTargetPath()
+        private string GetRootBuildTargetPath()
         {
-            return Path.Combine(DataDirectory.GetBuildTargetsPath(), this.getTargetName()) + Path.DirectorySeparatorChar;
+            return Path.Combine(DataDirectory.GetBuildTargetsPath(), this.GetTargetName()) + Path.DirectorySeparatorChar;
         }
 
-        public bool canBuild()
+        public bool CanBuild(bool deleteFiles)
         {
-            return !(Directory.EnumerateFileSystemEntries(getTranspiledPath()).Any() || Directory.EnumerateFileSystemEntries(getArtifactsPath()).Any()) && this.build.canBuild();
+            return Build.CanBuildIn(GetTranspiledPath(), deleteFiles) && Build.CanBuildIn(GetArtifactsPath(), deleteFiles) && this.build.CanBuild(deleteFiles);
         }
 
         /*
@@ -171,13 +168,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public string[] getSourceFileList(string[] intersectedSourceFiles = null)
+        public string[] GetSourceFileList(string[] intersectedSourceFiles = null)
         {
             /*
              * Only files without extension or .txt are considered sources
              * You can add metadata next to those files, but they cannot have those extensions.
              */
-            string[] sourcePaths = Directory.EnumerateFiles(getSourcePath(), "*.txt").Select(path=>Path.GetFileName(path)).ToArray();
+            string[] sourcePaths = Directory.EnumerateFiles(GetSourcePath(), "*.txt").Select(path=>Path.GetFileName(path)).ToArray();
             if (intersectedSourceFiles != null)
             {
                 sourcePaths = sourcePaths.Where(p=>intersectedSourceFiles.Contains(p)).ToArray();

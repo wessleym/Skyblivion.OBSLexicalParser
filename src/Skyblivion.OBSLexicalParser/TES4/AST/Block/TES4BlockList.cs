@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
     {
         public List<TES4CodeBlock> Blocks { get; private set; } = new List<TES4CodeBlock>();
 
-        public void add(TES4CodeBlock block)
+        public void Add(TES4CodeBlock block)
         {
             this.Blocks.Add(block);
         }

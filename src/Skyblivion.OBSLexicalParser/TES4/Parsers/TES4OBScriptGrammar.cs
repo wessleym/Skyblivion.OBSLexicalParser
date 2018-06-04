@@ -64,14 +64,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             ;
             __invoke("Block+")._is("Block+", "Block").call((TES4BlockList list, TES4CodeBlock blockDeclaration)=>
             {
-                list.add(blockDeclaration);
+                list.Add(blockDeclaration);
                 return list;
             } ) .
 
             _is("Block").call((TES4CodeBlock blockDeclaration)=>
             {
                 TES4BlockList list = new TES4BlockList();
-                list.add(blockDeclaration);
+                list.Add(blockDeclaration);
                 return list;
             } )
 
@@ -100,14 +100,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             ; //rare empty block
             __invoke("BlockParameter+")._is("BlockParameter+", "BlockParameter").call((TES4BlockParameterList list, TES4BlockParameter blockParameter)=>
             {
-                list.add(blockParameter);
+                list.Add(blockParameter);
                 return list;
             } ) .
 
             _is("BlockParameter").call((TES4BlockParameter blockParameter)=>
             {
                 TES4BlockParameterList block = new TES4BlockParameterList();
-                block.add(blockParameter);
+                block.Add(blockParameter);
                 return block;
             } )
 

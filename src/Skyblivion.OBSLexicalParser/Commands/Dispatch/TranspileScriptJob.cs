@@ -25,8 +25,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 
         public void run()
         {
-            string[] scripts = this.buildTargets.getScriptsToCompile(this.scriptName);
-            BuildSourceFilesCollection partitionedScripts = this.buildTargets.getSourceFiles(scripts);
+            string[] scripts = this.buildTargets.GetScriptsToCompile(this.scriptName);
+            BuildSourceFilesCollection partitionedScripts = this.buildTargets.GetSourceFiles(scripts);
             TES5GlobalVariables globalVariables = this.esmAnalyzer.getGlobalVariables();
             foreach (var buildTarget in this.buildTargets)
             {
@@ -34,19 +34,19 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 foreach (var buildScript in scripts)
                 {
                     string scriptName = Path.GetFileNameWithoutExtension(buildScript);
-                    string sourcePath = buildTarget.getSourceFromPath(scriptName);
+                    string sourcePath = buildTarget.GetSourceFromPath(scriptName);
                     //string outputPath = buildTarget.getTranspileToPath(scriptName);
-                    scriptsScopes.Add(scriptName, buildTarget.buildScope(sourcePath, globalVariables));
+                    scriptsScopes.Add(scriptName, buildTarget.BuildScope(sourcePath, globalVariables));
                 }
 
                 TES5MultipleScriptsScope multipleScriptsScope = new TES5MultipleScriptsScope(scriptsScopes.Values, globalVariables);
                 foreach (var buildScript in scripts)
                 {
                     string scriptName = Path.GetFileNameWithoutExtension(buildScript);
-                    string sourcePath = buildTarget.getSourceFromPath(scriptName);
-                    string outputPath = buildTarget.getTranspileToPath(scriptName);
-                    TES5GlobalScope globalScope = buildTarget.buildScope(sourcePath, globalVariables);
-                    buildTarget.transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
+                    string sourcePath = buildTarget.GetSourceFromPath(scriptName);
+                    string outputPath = buildTarget.GetTranspileToPath(scriptName);
+                    TES5GlobalScope globalScope = buildTarget.BuildScope(sourcePath, globalVariables);
+                    buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
                 }
             }
         }

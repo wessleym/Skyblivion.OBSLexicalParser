@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
             }
         }
 
-        //WTM:  Note:  This is needed because I need to implement ITES5ValueCodeChunk which requires this.
+        //WTM:  Note:  This is needed because I needed to implement ITES5ValueCodeChunk which requires this.
         public ITES5Type TES5Type => throw new NotImplementedException();
     }
 }

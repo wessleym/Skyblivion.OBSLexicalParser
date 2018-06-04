@@ -16,10 +16,10 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             foreach (var buildTarget in buildTargetCollection)
             {
-                string workspacePath = buildTarget.getWorkspacePath();
-                FileTransfer.CopyDirectoryFiles(buildTarget.getTranspiledPath(), workspacePath, false);
+                string workspacePath = buildTarget.GetWorkspacePath();
+                FileTransfer.CopyDirectoryFiles(buildTarget.GetTranspiledPath(), workspacePath, false);
                 progressWriter.IncrementAndWrite();
-                FileTransfer.CopyDirectoryFiles(buildTarget.getDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) conflict.
+                FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) conflict.
                 progressWriter.IncrementAndWrite();
             }
         }

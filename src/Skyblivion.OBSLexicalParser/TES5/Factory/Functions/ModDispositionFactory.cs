@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 string functionName = "StartCombat";
                 functionArguments.RemoveAt(1);
-                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else
             {

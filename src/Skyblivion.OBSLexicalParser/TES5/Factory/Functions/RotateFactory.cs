@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             int x = 0, y = 0, z = 0;
             int secondArgumentData = (int)functionArguments[1].Data;
-            switch ((functionArguments[0].StringValue).ToLower())
+            switch (functionArguments[0].StringValue.ToLower())
             {
                 case "x":
                     {

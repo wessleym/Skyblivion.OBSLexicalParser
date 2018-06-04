@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.valueFactory = factory;
         }
 
-        public TES5ObjectCallArguments createArgumentList(TES4FunctionArguments arguments, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5ObjectCallArguments CreateArgumentList(TES4FunctionArguments arguments, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5ObjectCallArguments list = new TES5ObjectCallArguments();
             if (arguments == null)

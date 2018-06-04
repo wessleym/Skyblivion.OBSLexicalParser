@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
             IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
             if (this.CodeChunks != null)
             {
-                foreach (var codeChunk in this.CodeChunks.CodeChunks)
+                foreach (var codeChunk in this.CodeChunks)
                 {
                     filtered = filtered.Concat(codeChunk.Filter(predicate));
                 }

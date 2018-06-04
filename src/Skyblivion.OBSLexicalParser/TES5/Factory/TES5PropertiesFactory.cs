@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         private static TES5Property createPropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
         {
-            string variableName = declaration.getVariableName();
+            string variableName = declaration.VariableName;
             if (globalVariables.hasGlobalVariable(variableName))
             {
                 return new TES5Property(variableName, TES5BasicType.T_GLOBALVARIABLE, variableName);
@@ -35,27 +35,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
             foreach (TES4VariableDeclaration variable in variableList.getVariableList())
             {
-                string variableName = variable.getVariableName();
+                string variableName = variable.VariableName;
                 string variableNameLower = variableName.ToLower();
-                TES4Type variableType = variable.getVariableType();
+                TES4Type variableType = variable.VariableType;
                 TES4VariableDeclaration alreadyDefinedVariable;
                 if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
                 {
-                    if (variableType == alreadyDefinedVariable.getVariableType())
+                    if (variableType == alreadyDefinedVariable.VariableType)
                     {
                         continue; //Same variable defined twice, smack the original script developer and fallthrough silently.
                     }
-                    throw new ConversionException("Double definition of variable named " + variableName + " with different types ( " + alreadyDefinedVariables[variableNameLower].getVariableType().Name + " and " + variable.getVariableType().Name + " )");
+                    throw new ConversionException("Double definition of variable named " + variableName + " with different types ( " + alreadyDefinedVariables[variableNameLower].VariableType.Name + " and " + variable.VariableType.Name + " )");
                 }
 
                 TES5Property property;
                 if (variableType == TES4Type.T_FLOAT)
                 {
-                    property = new TES5Property(variable.getVariableName(), TES5BasicType.T_FLOAT, null);
+                    property = new TES5Property(variable.VariableName, TES5BasicType.T_FLOAT, null);
                 }
                 else if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
                 {
-                    property = new TES5Property(variable.getVariableName(), TES5BasicType.T_INT, null);
+                    property = new TES5Property(variable.VariableName, TES5BasicType.T_INT, null);
                 }
                 else if (variableType == TES4Type.T_REF)
                 {

@@ -12,19 +12,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
      */
     class TES5CodeScope : ITES5Outputtable
     {
-        public List<ITES5CodeChunk> CodeChunks { get; private set; } = new List<ITES5CodeChunk>();
+        public TES5CodeChunkCollection CodeChunks { get; private set; } = new TES5CodeChunkCollection();
         public TES5LocalScope LocalScope { get; private set; }
         public TES5CodeScope(TES5LocalScope localScope)
         {
             this.LocalScope = localScope;
         }
 
-        public IEnumerable<string> Output => this.LocalScope.Output.Concat(this.CodeChunks.SelectMany(c => c.Output));
-
-        public void Clear()
-        {
-            this.CodeChunks.Clear();
-        }
+        public IEnumerable<string> Output => this.LocalScope.Output.Concat(this.CodeChunks.Output);
 
         public void Add(ITES5CodeChunk chunk)
         {

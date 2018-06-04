@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -203,15 +204,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 functionScope = new TES5FunctionScope(blockType);
             }
 
-            TES5EventCodeBlock newBlock = new TES5EventCodeBlock(functionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(functionScope)));
+            TES5EventCodeBlock newBlock = new TES5EventCodeBlock(functionScope, TES5CodeScopeFactory.CreateCodeScope(TES5LocalScopeFactory.createRootScope(functionScope)));
             return newBlock;
         }
 
         public TES5EventBlockList createBlock(TES5MultipleScriptsScope multipleScriptsScope, TES5GlobalScope globalScope, TES4CodeBlock block)
         {
             TES5EventBlockList blockList = new TES5EventBlockList();
-            string blockType = block.getBlockType();
-            if (blockType.ToLower() == "menumode")
+            string blockType = block.BlockType;
+            if (blockType.Equals("menumode", StringComparison.OrdinalIgnoreCase))
             {
                 return blockList;
             }
@@ -220,10 +221,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5FunctionScope blockFunctionScope = TES5BlockFunctionScopeFactory.createFromBlockType(newBlockType);
             TES5EventCodeBlock newBlock = this.createNewBlock(newBlockType, blockFunctionScope);
             TES5CodeScope conversionScope = this.initialBlockCodeFactory.addInitialCode(multipleScriptsScope, globalScope, newBlock);
-            TES4CodeChunks chunks = block.getChunks();
+            TES4CodeChunks chunks = block.Chunks;
             if (chunks != null)
             {
-                foreach (ITES4CodeChunk codeChunk in chunks.CodeChunks)
+                foreach (ITES4CodeChunk codeChunk in chunks)
                 {
                     TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.CodeScope, globalScope, multipleScriptsScope);
                     if (codeChunks != null)

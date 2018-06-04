@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 TES5ObjectCallArguments objectCallArguments = new TES5ObjectCallArguments();
                 objectCallArguments.Add(value);
                 TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", multipleScriptsScope, objectCallArguments);
-                codeChunkCollection.add(objectCall);
+                codeChunkCollection.Add(objectCall);
             }
             else
             {
@@ -57,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                 TES5VariableAssignation assignation = this.assignationFactory.createAssignation(reference, value);
                 this.typeInferencer.inferenceObjectByAssignation(reference, value, multipleScriptsScope);
-                codeChunkCollection.add(assignation);
+                codeChunkCollection.Add(assignation);
                 //post analysis.
                 //Todo - rethink the prefix here
                 ITES5Referencer referencerValue = value as ITES5Referencer;
@@ -75,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     TES5VariableAssignation reassignation = this.assignationFactory.createAssignation(referencerValue, minusOne);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, codeScope.LocalScope);
                     branch.MainBranch.CodeScope.Add(reassignation);
-                    codeChunkCollection.add(branch);
+                    codeChunkCollection.Add(branch);
                 }
             }
 

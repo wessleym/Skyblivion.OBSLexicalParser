@@ -1,5 +1,6 @@
 using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
 using Skyblivion.ESReader.PHP;
+using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
@@ -20,17 +21,33 @@ namespace Skyblivion.OBSLexicalParser.Builds
             dependencyGraph = new Lazy<TES5ScriptDependencyGraph>(() => ReadGraph());
         }
 
-        public void add(BuildTarget buildTarget)
+        public void Add(BuildTarget buildTarget)
         {
-            this.buildTargets.Add(buildTarget.getTargetName(), buildTarget);
+            this.buildTargets.Add(buildTarget.GetTargetName(), buildTarget);
         }
 
-        public bool canBuild()
+        private bool CanBuild(bool deleteFiles)
         {
-            return buildTargets.All(bt => bt.Value.canBuild());
+            return buildTargets.Values.All(bt=>bt.CanBuild(deleteFiles));
+        }
+        public bool CanBuild()
+        {
+            return CanBuild(false);
         }
 
-        public BuildTarget getByName(string name)
+        public bool CanBuildAndWarnIfNot()
+        {
+            if (CanBuild(false)) { return true; }
+            Console.WriteLine(DataDirectory.GetBuildPath() + " had old files.  Clear them manually, or use " + BuildFileDeleteCommand.FriendlyNameConst + ".");
+            return false;
+        }
+
+        public void DeleteBuildFiles()
+        {
+            CanBuild(true);
+        }
+
+        public BuildTarget GetByName(string name)
         {
             try
             {
@@ -42,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
         }
 
-        public BuildTarget getByNameOrNull(string name)
+        public BuildTarget GetByNameOrNull(string name)
         {
             return this.buildTargets.GetWithFallback(name, () => null);
         }
@@ -52,20 +69,20 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public BuildSourceFilesCollection getSourceFiles(string[] intersectedSourceFiles = null)
+        public BuildSourceFilesCollection GetSourceFiles(string[] intersectedSourceFiles = null)
         {
             BuildSourceFilesCollection collection = new BuildSourceFilesCollection();
-            foreach (var buildTarget in this.buildTargets.Select(kvp=>kvp.Value))
+            foreach (var buildTarget in this.buildTargets.Values)
             {
-                collection.add(buildTarget, buildTarget.getSourceFileList(intersectedSourceFiles));
+                collection.add(buildTarget, buildTarget.GetSourceFileList(intersectedSourceFiles));
             }
 
             return collection;
         }
 
-        public int getTotalSourceFiles()
+        public int GetTotalSourceFiles()
         {
-            BuildSourceFilesCollection sourceFiles = this.getSourceFiles();
+            BuildSourceFilesCollection sourceFiles = this.GetSourceFiles();
             return sourceFiles.Sum(sf => sf.Value.Length);
         }
 
@@ -74,8 +91,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
         */
         public Dictionary<int, List<Dictionary<string, List<string>>>> getBuildPlan(int workers)
         {
-            BuildSourceFilesCollection sourceFiles = this.getSourceFiles();
-            TES5BuildPlanBuilder buildPlanBuilder = new TES5BuildPlanBuilder(this.getDependencyGraph());
+            BuildSourceFilesCollection sourceFiles = this.GetSourceFiles();
+            TES5BuildPlanBuilder buildPlanBuilder = new TES5BuildPlanBuilder(this.GetDependencyGraph());
             Dictionary<int, List<Dictionary<string, List<string>>>> buildPlan = buildPlanBuilder.createBuildPlan(sourceFiles, workers);
             return buildPlan;
         }
@@ -90,12 +107,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return GetEnumerator();
         }
 
-        public string[] getScriptsToCompile(string scriptName)
+        public string[] GetScriptsToCompile(string scriptName)
         {
-            return this.getDependencyGraph().getScriptsToCompile(scriptName);
+            return this.GetDependencyGraph().getScriptsToCompile(scriptName);
         }
 
-        private string getUniqueBuildFingerprint()
+        private string GetUniqueBuildFingerprint()
         {
 #if PHP_COMPAT
             string md5 = PHPFunction.MD5("randomseed");
@@ -114,14 +131,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
 #endif
         }
 
-        private TES5ScriptDependencyGraph getDependencyGraph()
+        private TES5ScriptDependencyGraph GetDependencyGraph()
         {
             return this.dependencyGraph.Value;
         }
 
         private string GetFilePath()
         {
-            return DataDirectory.GetGraphPath("graph_" + this.getUniqueBuildFingerprint());
+            return DataDirectory.GetGraphPath("graph_" + this.GetUniqueBuildFingerprint());
         }
 
         private TES5ScriptDependencyGraph ReadGraph()

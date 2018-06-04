@@ -55,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         throw new ConversionException("Unknown setAlert value, must be 0 or 1");
                     }
             }
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
         }
     }

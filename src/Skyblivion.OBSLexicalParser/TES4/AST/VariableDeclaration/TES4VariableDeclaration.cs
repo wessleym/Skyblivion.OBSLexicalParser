@@ -7,22 +7,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
 {
     class TES4VariableDeclaration : ITES4CodeChunk//WTM:  Change:  I added ITES4CodeChunk to this class.  It was previously used on TES4VariableDeclarationList.
     {
-        private string variableName;
-        private TES4Type variableType;
+        public string VariableName { get; private set; }
+        public TES4Type VariableType { get; private set; }
         public TES4VariableDeclaration(string variableName, TES4Type variableType)
         {
-            this.variableName = PapyrusCompiler.FixReferenceName(variableName);
-            this.variableType = variableType;
-        }
-
-        public string getVariableName()
-        {
-            return variableName;
-        }
-
-        public TES4Type getVariableType()
-        {
-            return this.variableType;
+            this.VariableName = PapyrusCompiler.FixReferenceName(variableName);
+            this.VariableType = variableType;
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)

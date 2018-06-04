@@ -110,14 +110,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             ;
             __invoke("BranchSubBranch+")._is("BranchSubBranch+", "BranchSubBranch").call((TES4SubBranchList list, TES4SubBranch branchSubBranchDeclaration)=>
             {
-                list.add(branchSubBranchDeclaration);
+                list.Add(branchSubBranchDeclaration);
                 return list;
             } ) .
 
             _is("BranchSubBranch").call((TES4SubBranch branchSubBranchDeclaration)=>
             {
                 TES4SubBranchList list = new TES4SubBranchList();
-                list.add(branchSubBranchDeclaration);
+                list.Add(branchSubBranchDeclaration);
                 return list;
             } )
 
@@ -135,32 +135,32 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             ;
             __invoke("MathOperator")._is("==").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("!=").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is(">").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("<").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("<=").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is(">=").call((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
+                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
             } )
 
             ;
@@ -181,37 +181,37 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } ) .
 
             _is("NotLogicalValue");
-            __invoke("NotLogicalValue")._is("NotLogicalValue", "MathOperator", "NotLogicalAndBinaryValue").call((ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)=>
+            __invoke("NotLogicalValue")._is("NotLogicalValue", "MathOperator", "NotLogicalAndBinaryValue").call((ITES4Value left, TES4ComparisonExpressionOperator op, ITES4Value right)=>
             {
-                return new TES4ArithmeticExpression(left, op, right);
+                return new TES4ComparisonExpression(left, op, right);
             } ) .
 
             _is("NotLogicalAndBinaryValue");
-            __invoke("NotLogicalAndBinaryValue")._is("NotLogicalAndBinaryValue", "BinaryOperator", "NonExpressionValue").call((ITES4Value left, TES4BinaryExpressionOperator op, ITES4Value right)=>
+            __invoke("NotLogicalAndBinaryValue")._is("NotLogicalAndBinaryValue", "BinaryOperator", "NonExpressionValue").call((ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)=>
             {
-                return new TES4BinaryExpression(left, op, right);
+                return new TES4ArithmeticExpression(left, op, right);
             } ) .
 
             _is("NonExpressionValue");
             __invoke("NonExpressionValue")._is("ObjectAccess")._is("Function")._is("APIToken")._is("Primitive");
             __invoke("BinaryOperator")._is("+").call((CommonToken op)=>
             {
-                return TES4BinaryExpressionOperator.GetFirst(op.getValue());
+                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("-").call((CommonToken op)=>
             {
-                return TES4BinaryExpressionOperator.GetFirst(op.getValue());
+                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("*").call((CommonToken op)=>
             {
-                return TES4BinaryExpressionOperator.GetFirst(op.getValue());
+                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
             } ) .
 
             _is("/").call((CommonToken op)=>
             {
-                return TES4BinaryExpressionOperator.GetFirst(op.getValue());
+                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
             } )
 
             ;

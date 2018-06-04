@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName;
             if (functionArguments.Any())
             {
-                args = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+                args = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
                 ITES5Type arg0Type = ESMAnalyzer._instance().getFormTypeByEDID(functionArguments[0].StringValue);
                 if (arg0Type == TES5BasicType.T_ACTOR)
                 {

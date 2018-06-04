@@ -7,51 +7,43 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
-    class TES4ArithmeticExpression : ITES4Expression
+    class TES4ArithmeticExpression : ITES4BinaryExpression
     {
         public ITES4Value LeftValue { get; private set; }
-        private TES4ArithmeticExpressionOperator arithmeticExpressionOperator;
+        private TES4ArithmeticExpressionOperator op;
         public ITES4Value RightValue { get; private set; }
-        public TES4ArithmeticExpression(ITES4Value leftValue, TES4ArithmeticExpressionOperator op, ITES4Value rightValue)
+        public TES4ArithmeticExpression(ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)
         {
-            this.LeftValue = leftValue;
-            this.arithmeticExpressionOperator = op;
-            this.RightValue = rightValue;
+            this.LeftValue = left;
+            this.op = op;
+            this.RightValue = right;
         }
 
-        public TES4ExpressionOperator Operator => this.arithmeticExpressionOperator;
+        public TES4ExpressionOperator Operator => this.op;
 
         public object Data
         {
             get
             {
-                decimal left = Convert.ToDecimal(this.LeftValue.Data);
-                decimal right = Convert.ToDecimal(this.RightValue.Data);
-                if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_EQUAL)
+                decimal leftValue = Convert.ToDecimal(this.LeftValue.Data);
+                decimal rightValue = Convert.ToDecimal(this.RightValue.Data);
+                if (op == TES4ArithmeticExpressionOperator.OPERATOR_ADD)
                 {
-                    return left == right;
+                    return leftValue + rightValue;
                 }
-                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_GREATER)
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_DIVIDE)
                 {
-                    return left > right;
+                    return leftValue / rightValue;
                 }
-                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_GREATER_OR_EQUAL)
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_MULTIPLY)
                 {
-                    return left >= right;
+                    return leftValue * rightValue;
                 }
-                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_LESS)
+                else if (op == TES4ArithmeticExpressionOperator.OPERATOR_SUBSTRACT)
                 {
-                    return left < right;
+                    return leftValue - rightValue;
                 }
-                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_LESS_OR_EQUAL)
-                {
-                    return left <= right;
-                }
-                else if (arithmeticExpressionOperator == TES4ArithmeticExpressionOperator.OPERATOR_NOT_EQUAL)
-                {
-                    return left != right;
-                }
-                throw new ConversionException("Unknown TES4ArithmeticExpressionOperator");
+                throw new ConversionException("Unknown TES4BinaryExpressionOperator");
             }
         }
 

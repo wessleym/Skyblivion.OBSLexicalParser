@@ -13,20 +13,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             foreach (TES4VariableDeclaration variable in chunk.getVariableList())
             {
-                TES4Type variableType = variable.getVariableType();
+                TES4Type variableType = variable.VariableType;
                 TES5LocalVariable property;
                 if (variableType == TES4Type.T_FLOAT)
                 {
-                    property = new TES5LocalVariable(variable.getVariableName(), TES5BasicType.T_FLOAT);
+                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_FLOAT);
                 }
                 else if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
                 {
-                    property = new TES5LocalVariable(variable.getVariableName(), TES5BasicType.T_INT);
+                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_INT);
                 }
                 else if (variableType == TES4Type.T_REF)
                 {
                     //most basic one, if something from inherited class is used, we will set to the inheriting class
-                    property = new TES5LocalVariable(variable.getVariableName(), TES5BasicType.T_FORM);
+                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_FORM);
                 }
                 else
                 {

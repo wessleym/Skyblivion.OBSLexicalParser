@@ -6,7 +6,7 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
-    class TES4TrueBooleanExpression : ITES4Expression
+    class TES4TrueBooleanExpression : ITES4BinaryExpression
     {
         private ITES4Value value;
         public TES4TrueBooleanExpression(ITES4Value value)
@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 
         public ITES4Value RightValue => new TES4Integer(1);
 
-        public TES4ExpressionOperator Operator => TES4ArithmeticExpressionOperator.OPERATOR_EQUAL;
+        public TES4ExpressionOperator Operator => TES4ComparisonExpressionOperator.OPERATOR_EQUAL;
 
         public object Data => BoolValue;
 

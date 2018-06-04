@@ -9,21 +9,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
         { }
 
         public static readonly TES4ArithmeticExpressionOperator
-            OPERATOR_EQUAL = new TES4ArithmeticExpressionOperator("=="),
-            OPERATOR_NOT_EQUAL = new TES4ArithmeticExpressionOperator("!="),
-            OPERATOR_GREATER = new TES4ArithmeticExpressionOperator(">"),
-            OPERATOR_GREATER_OR_EQUAL = new TES4ArithmeticExpressionOperator(">="),
-            OPERATOR_LESS = new TES4ArithmeticExpressionOperator("<"),
-            OPERATOR_LESS_OR_EQUAL = new TES4ArithmeticExpressionOperator("<=");
+            OPERATOR_ADD = new TES4ArithmeticExpressionOperator("+"),
+            OPERATOR_SUBSTRACT = new TES4ArithmeticExpressionOperator("-"),
+            OPERATOR_MULTIPLY = new TES4ArithmeticExpressionOperator("*"),
+            OPERATOR_DIVIDE = new TES4ArithmeticExpressionOperator("/");
 
         public static readonly TES4ArithmeticExpressionOperator[] all = new TES4ArithmeticExpressionOperator[]
         {
-            OPERATOR_EQUAL,
-            OPERATOR_NOT_EQUAL,
-            OPERATOR_GREATER,
-            OPERATOR_GREATER_OR_EQUAL,
-            OPERATOR_LESS,
-            OPERATOR_LESS_OR_EQUAL
+            OPERATOR_ADD,
+            OPERATOR_SUBSTRACT,
+            OPERATOR_MULTIPLY,
+            OPERATOR_DIVIDE
         };
 
         public static TES4ArithmeticExpressionOperator GetFirst(string name)

@@ -12,7 +12,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             new BuildInteroperableCompilationGraphs(),
             new BuildTargetCommand(),
-            new TestStageMap()
+            new TestStageMap(),
+            new BuildFileDeleteCommand()
         };
 
         public static void Run()
@@ -22,9 +23,9 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.WriteLine("    " + dataPath + "Build" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + "BuildTargets" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + "Compiler" + Path.DirectorySeparatorChar);
-            Console.WriteLine("    " + dataPath + "Graph" + Path.DirectorySeparatorChar);
+            Console.WriteLine("    " + dataPath + "Graph" + Path.DirectorySeparatorChar + " [Generated from " + BuildInteroperableCompilationGraphs.FriendlyNameConst + "]");
             Console.WriteLine("    " + dataPath + DataDirectory.TES4GameFileName);
-            Console.WriteLine("Type a number to run a command:");
+            Console.WriteLine("Type a number below to run a command.");
             for (int i = 0; i < commands.Length; i++)
             {
                 Console.WriteLine((i + 1).ToString() + ".  " + commands[i].FriendlyName);
@@ -34,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             LPCommand command = commands[commandIndex];
             Console.Clear();
             Console.WriteLine("Running " + command.FriendlyName + ":");
-            command.execute();
+            command.Execute();
             Console.WriteLine("Press any key to exit.");
             while (Console.KeyAvailable) { Console.ReadKey(true); }//Clear buffered keys
             Console.ReadKey(true);

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Skyblivion.OBSLexicalParser.Data;
+using System;
+using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -8,7 +10,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public string FriendlyName { get; private set; }
         public string Description { get; private set; }
         protected LPCommandInput Input = new LPCommandInput();
-        public abstract void execute();
         protected LPCommand(string commandName, string friendlyName, string description)
         {
             CommandName = commandName;
@@ -16,9 +17,48 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Description = description;
         }
 
-        protected static void WriteUncleanMessage()
+        public abstract void Execute();
+
+        protected bool PreExecutionChecks(bool requireESM, bool requireBuildTargets, bool requireGraph, bool requireCompiler)
         {
-            Console.WriteLine("Targets current build directory not clean.  Archive them manually, or run clean.sh.");
+            if (requireESM)
+            {
+                string esmPath = DataDirectory.GetESMDefaultFilePath();
+                if (!File.Exists(esmPath))
+                {
+                    Console.WriteLine("Please add " + esmPath);
+                    return false;
+                }
+            }
+            if (requireBuildTargets)
+            {
+                string buildTargetsPath = DataDirectory.GetBuildTargetsPath();
+                if (!Directory.Exists(buildTargetsPath))
+                {
+                    Console.WriteLine("Please add " + buildTargetsPath + " with all of its contents.");
+                    return false;
+                }
+            }
+            if (requireGraph)
+            {
+                string graphPath = DataDirectory.GetGraphDirectoryPath();
+                if (!Directory.Exists(graphPath))
+                {
+                    Console.WriteLine("Please add " + graphPath + " by running " + BuildInteroperableCompilationGraphs.FriendlyNameConst + ".");
+                    return false;
+                }
+            }
+            if (requireCompiler)
+            {
+                string compilerPath = DataDirectory.GetCompilerDirectoryPath();
+                if (!Directory.Exists(compilerPath))
+                {
+                    Console.WriteLine("Please add compiler binaries to " + compilerPath + ".");
+                    return false;
+                }
+            }
+            Directory.CreateDirectory(DataDirectory.GetBuildPath());
+            return true;
         }
     }
 }

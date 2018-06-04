@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         private Dictionary<string, string[]> sourceFiles = new Dictionary<string, string[]>();
         public void add(BuildTarget buildTarget, string[] sourceFiles)
         {
-            string targetName = buildTarget.getTargetName();
+            string targetName = buildTarget.GetTargetName();
             this.sourceFiles[targetName] = this.sourceFiles.GetWithFallback(targetName, () => new string[] { }).Concat(sourceFiles).Distinct().ToArray();
         }
 

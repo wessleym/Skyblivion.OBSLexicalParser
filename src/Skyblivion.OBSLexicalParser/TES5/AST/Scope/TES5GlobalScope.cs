@@ -12,7 +12,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         /*
         * TES5GlobalScope constructor.
         */
-        public bool IsSpecial = false;
         public TES5GlobalScope(TES5ScriptHeader scriptHeader)
         {
             this.ScriptHeader = scriptHeader;

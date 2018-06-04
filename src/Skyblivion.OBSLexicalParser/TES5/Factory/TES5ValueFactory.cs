@@ -42,12 +42,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
         }
-        public void addFunctionFactory(string functionName, IFunctionFactory factory)
+        public void AddFunctionFactory(string functionName, IFunctionFactory factory)
         {
             string key = functionName.ToLower();
             this.functionFactories.Add(key, factory);
         }
-        private ITES5Value convertArithmeticExpression(ITES4Expression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private ITES5Value ConvertComparisonExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             Tuple<ITES4Value, ITES4Value>[] sets = new Tuple<ITES4Value, ITES4Value>[]
             {
@@ -169,7 +169,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
@@ -190,17 +190,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
-                                case 0:
-                                case 7:
-                                case 15:
-                                case 17:
+                                case 0://Travel
+                                case 7://Wander
+                                case 15://Pursue
+                                case 17://Done
                                     {
-                                        //@INCONSISTENCE Wander.. idk how to check it tbh. We return always true. Think about better representation
-                                        return new TES5Bool(expression.Operator== TES4ArithmeticExpressionOperator.OPERATOR_EQUAL);
+                                        //@INCONSISTENCE idk how to check it tbh. We return always true. Think about better representation
+                                        return new TES5Bool(expression.Operator == TES4ComparisonExpressionOperator.OPERATOR_EQUAL);
                                     }
                                 default:
                                     {
@@ -346,24 +346,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
             return TES5ExpressionFactory.CreateComparisonExpression(leftValue, op, rightValue);
         }
-        public ITES5Value convertExpression(ITES4Expression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+
+        public ITES5Value ConvertExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5ComparisonExpressionOperator aeOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
-            if (aeOp != null)
+            TES5ComparisonExpressionOperator ceOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            if (ceOp != null)
             {
-                return this.convertArithmeticExpression(expression, codeScope, globalScope, multipleScriptsScope);
+                return this.ConvertComparisonExpression(expression, codeScope, globalScope, multipleScriptsScope);
             }
             TES5LogicalExpressionOperator leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (leOp != null)
             {
                 return TES5ExpressionFactory.CreateLogicalExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), leOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
-            TES5ArithmeticExpressionOperator beOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
-            if (beOp != null)
+            TES5ArithmeticExpressionOperator aeOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            if (aeOp != null)
             {
-                return TES5ExpressionFactory.CreateArithmeticExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), beOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
+                return TES5ExpressionFactory.CreateArithmeticExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), aeOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
-            throw new ConversionException("Unknown expression op");
+            throw new ConversionException("Unknown expression op:  " + expression.Operator.Name);
         }
 
         /*
@@ -377,8 +378,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (reference != null) { return this.referenceFactory.createReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope); }
             ITES4Callable callable = value as ITES4Callable;
             if (callable != null) { return this.createCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
-            ITES4Expression expression = value as ITES4Expression;
-            if (expression != null) { return this.convertExpression(expression, codeScope, globalScope, multipleScriptsScope); }
+            ITES4BinaryExpression expression = value as ITES4BinaryExpression;
+            if (expression != null) { return this.ConvertExpression(expression, codeScope, globalScope, multipleScriptsScope); }
             throw new ConversionException("Unknown ITES4Value: " + value.GetType().FullName);
         }
 
@@ -401,7 +402,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             ITES5CodeChunk codeChunk = createCodeChunk(chunk, codeScope, globalScope, multipleScriptsScope);
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
-            codeChunks.add(codeChunk);
+            codeChunks.Add(codeChunk);
             return codeChunks;
         }
 

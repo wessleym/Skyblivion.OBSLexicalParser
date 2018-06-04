@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
             //@INCONSISTENCE @TODO: Entering an interior Cell and then exiting to an exterior will reset Fast Travel to the enabled state.
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

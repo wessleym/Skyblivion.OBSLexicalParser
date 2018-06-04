@@ -336,7 +336,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         * @todo REFACTOR, it"s really ugly!
         * @throws ConversionException
         */
-        public ITES5Type resolveScriptTypeByItsAttachedName(string attachedName)
+        public ITES5Type ResolveScriptTypeByItsAttachedName(string attachedName)
         {
             string attachedNameLower = attachedName.ToLower();
             ITES5Type value;

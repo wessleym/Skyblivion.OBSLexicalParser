@@ -7,42 +7,27 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
     class TES4CodeBlock : ITES4CodeFilterable
     {
-        private string blockType;
-        private TES4CodeChunks chunks;
-        private TES4BlockParameterList blockParameterList;
+        public string BlockType { get; private set; }
+        public TES4BlockParameterList BlockParameterList { get; private set; }
+        public TES4CodeChunks Chunks { get; private set; }
         public TES4CodeBlock(string blockType, TES4BlockParameterList blockParameterList = null, TES4CodeChunks chunks = null)
         {
-            this.blockType = blockType;
-            this.blockParameterList = blockParameterList;
-            this.chunks = chunks;
-        }
-
-        public TES4BlockParameterList getBlockParameterList()
-        {
-            return this.blockParameterList;
-        }
-
-        public string getBlockType()
-        {
-            return this.blockType;
-        }
-
-        public TES4CodeChunks getChunks()
-        {
-            return this.chunks;
+            this.BlockType = blockType;
+            this.BlockParameterList = blockParameterList;
+            this.Chunks = chunks;
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
             IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
-            if (this.blockParameterList != null)
+            if (this.BlockParameterList != null)
             {
-                filtered = filtered.Concat(this.blockParameterList.Filter(predicate));
+                filtered = filtered.Concat(this.BlockParameterList.Filter(predicate));
             }
 
-            if (this.chunks != null)
+            if (this.Chunks != null)
             {
-                filtered = filtered.Concat(this.chunks.Filter(predicate));
+                filtered = filtered.Concat(this.Chunks.Filter(predicate));
             }
 
             return filtered.ToArray();

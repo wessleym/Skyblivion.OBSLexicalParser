@@ -19,8 +19,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             Build build = null;//WTM:  Change:  BuildTargetFactory.get takes two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTarget buildTarget = BuildTargetFactory.get(this.buildTarget, build, buildLogServices);
-                int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.getArchivePath())
+                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices);
+                int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
                     .Select(path => Path.GetFileName(path))
                     .Select(name =>
                     {
@@ -29,10 +29,10 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     })
                     .Max();
                 int archivedBuild = latestBuild + 1;
-                Directory.CreateDirectory(buildTarget.getArchivedBuildPath(archivedBuild));
+                Directory.CreateDirectory(buildTarget.GetArchivedBuildPath(archivedBuild));
                 //WTM:  Change:  buildTarget.getBuildPath() is not a valid method.
                 string sourcePath = null;//buildTarget.getBuildPath()
-                string destinationPath = buildTarget.getArchivedBuildPath(archivedBuild);
+                string destinationPath = buildTarget.GetArchivedBuildPath(archivedBuild);
                 FileTransfer.CopyDirectoryFiles(sourcePath, destinationPath, false);
             }
             Process.Start("clean.sh", this.buildTarget);

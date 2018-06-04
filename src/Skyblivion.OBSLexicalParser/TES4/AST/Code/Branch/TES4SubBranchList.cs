@@ -4,15 +4,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
     class TES4SubBranchList
     {
-        private List<TES4SubBranch> variableList = new List<TES4SubBranch>();
-        public void add(TES4SubBranch declaration)
+        public List<TES4SubBranch> Branches { get; private set; } = new List<TES4SubBranch>();
+        public void Add(TES4SubBranch declaration)
         {
-            this.variableList.Add(declaration);
-        }
-
-        public List<TES4SubBranch> getSubBranches()
-        {
-            return this.variableList;
+            this.Branches.Add(declaration);
         }
     }
 }

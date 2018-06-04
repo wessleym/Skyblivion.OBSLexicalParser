@@ -6,47 +6,30 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
     class TES4Branch : ITES4CodeChunk
     {
-        private TES4SubBranch mainBranch;
-        private TES4SubBranchList elseifBranches;
-        private TES4ElseSubBranch elseBranch;
+        public TES4SubBranch MainBranch { get; private set; }
+        public TES4SubBranchList ElseifBranches { get; private set; }
+        public TES4ElseSubBranch ElseBranch { get; private set; }
         public TES4Branch(TES4SubBranch mainBranch, TES4SubBranchList elseifBranches = null, TES4ElseSubBranch elseBranch = null)
         {
-            this.mainBranch = mainBranch;
-            this.elseifBranches = elseifBranches;
-            this.elseBranch = elseBranch;
-        }
-
-        public TES4ElseSubBranch getElseBranch()
-        {
-            return this.elseBranch;
-        }
-
-        public TES4SubBranchList getElseifBranches()
-        {
-            return this.elseifBranches;
-        }
-
-        public TES4SubBranch getMainBranch()
-        {
-            return this.mainBranch;
+            this.MainBranch = mainBranch;
+            this.ElseifBranches = elseifBranches;
+            this.ElseBranch = elseBranch;
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            IEnumerable<ITES4CodeFilterable> filtered = this.mainBranch.Filter(predicate);
-            if (this.elseifBranches != null)
+            IEnumerable<ITES4CodeFilterable> filtered = this.MainBranch.Filter(predicate);
+            if (this.ElseifBranches != null)
             {
-                foreach (var elseifBranch in this.elseifBranches.getSubBranches())
+                foreach (var elseifBranch in this.ElseifBranches.Branches)
                 {
                     filtered = filtered.Concat(elseifBranch.Filter(predicate));
                 }
             }
-
-            if (this.elseBranch != null)
+            if (this.ElseBranch != null)
             {
-                filtered = filtered.Concat(this.elseBranch.Filter(predicate));
+                filtered = filtered.Concat(this.ElseBranch.Filter(predicate));
             }
-
             return filtered.ToArray();
         }
     }

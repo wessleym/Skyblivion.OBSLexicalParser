@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     class TES5CustomType : ITES5Type, IEquatable<TES5CustomType>
     {
         private string escapedName;
-        private ITES5Type nativeType;
+        public ITES5Type NativeType { get; set; }
         /*
         * Original type name
          * Needed only for compilation graph build.. will be scrapped once this is cleaned up properly.
@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             this.originalName = originalName;
             //qt = new ReflectionClass(get_class(this));WTM:  Change:  Unused
             //this.constants = qt.getConstants();
-            this.nativeType = nativeType;
+            this.NativeType = nativeType;
         }
 
         private static bool Equals(TES5CustomType left, TES5CustomType right)
@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             if (leftIsNull || rightIsNull) { return false; }
             return
                 left.escapedName == right.escapedName &&
-                left.nativeType == right.nativeType &&
+                left.NativeType == right.NativeType &&
                 left.prefix == right.prefix;
         }
         public bool Equals(TES5CustomType other)
@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public override int GetHashCode()
         {
-            return (escapedName + "|" + nativeType + "|" + prefix).GetHashCode();
+            return (escapedName + "|" + NativeType.Value + "|" + prefix).GetHashCode();
         }
 
         public static bool operator ==(TES5CustomType left, TES5CustomType right)
@@ -72,11 +72,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         }
 
-        public bool IsPrimitive => this.nativeType.IsPrimitive;
+        public bool IsPrimitive => this.NativeType.IsPrimitive;
 
         public bool IsNativePapyrusType => false;
-
-        public ITES5Type NativeType { get => this.nativeType; set => this.nativeType = value; }
 
         public string OriginalName => this.originalName;
     }

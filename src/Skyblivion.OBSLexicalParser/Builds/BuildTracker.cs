@@ -19,13 +19,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.buildTargetCollection = buildTargetCollection;
             foreach (var buildTarget in buildTargetCollection)
             {
-                this.builtScripts.Add(buildTarget.getTargetName(), new Dictionary<string, TES5Target>());
+                this.builtScripts.Add(buildTarget.GetTargetName(), new Dictionary<string, TES5Target>());
             }
         }
 
         public void registerBuiltScript(BuildTarget buildTarget, TES5Target script)
         {
-            this.builtScripts[buildTarget.getTargetName()][script.Script.ScriptHeader.OriginalScriptName] = script;
+            this.builtScripts[buildTarget.GetTargetName()][script.Script.ScriptHeader.OriginalScriptName] = script;
         }
 
         public Dictionary<string, TES5Target> getBuiltScripts(string targetName)

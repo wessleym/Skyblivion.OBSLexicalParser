@@ -7,30 +7,26 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
-    class TES4LogicalExpression : ITES4Expression
+    class TES4LogicalExpression : ITES4BinaryExpression
     {
-        private ITES4Value leftValue;
-        private ITES4Value rightValue;
+        public ITES4Value LeftValue { get; private set; }
         private TES4LogicalExpressionOperator op;
+        public ITES4Value RightValue { get; private set; }
         public TES4LogicalExpression(ITES4Value left, TES4LogicalExpressionOperator op, ITES4Value right)
         {
-            this.leftValue = left;
+            this.LeftValue = left;
             this.op = op;
-            this.rightValue = right;
+            this.RightValue = right;
         }
 
-        public ITES4Value LeftValue => this.leftValue;
-
         public TES4ExpressionOperator Operator => this.op;
-
-        public ITES4Value RightValue => this.rightValue;
 
         public object Data
         {
             get
             {
-                bool leftValue = Convert.ToBoolean(this.leftValue.Data);
-                bool rightValue = Convert.ToBoolean(this.rightValue.Data);
+                bool leftValue = Convert.ToBoolean(this.LeftValue.Data);
+                bool rightValue = Convert.ToBoolean(this.RightValue.Data);
                 if (op == TES4LogicalExpressionOperator.OPERATOR_AND)
                 {
                     return leftValue && rightValue;
@@ -43,11 +39,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             }
         }
 
-        public bool HasFixedValue => this.leftValue.HasFixedValue && this.rightValue.HasFixedValue;
+        public bool HasFixedValue => this.LeftValue.HasFixedValue && this.RightValue.HasFixedValue;
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return this.leftValue.Filter(predicate).Concat(this.rightValue.Filter(predicate)).ToArray();
+            return this.LeftValue.Filter(predicate).Concat(this.RightValue.Filter(predicate)).ToArray();
         }
     }
 }

@@ -20,31 +20,28 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
-        public void execute(List<LPCommandArgument> input)
+        public void Execute(List<LPCommandArgument> input)
         {
             string targets = input.Where(i => i.Name == "targets").First().Value;
             int threadsNumber = int.Parse(input.Where(i => i.Name == "threadsNumber").First().Value);
             string buildPath = input.Where(i => i.Name == "buildPath").First().Value;
-            execute(targets, threadsNumber, buildPath);
+            Execute(targets, threadsNumber, buildPath);
         }
 
-        public override void execute()
+        public override void Execute()
         {
-            execute(BuildTarget.DEFAULT_TARGETS);
+            Execute(BuildTarget.DEFAULT_TARGETS);
         }
 
-        public void execute(string targets, int threadsNumber = DefaultThreads, string buildPath = null)
+        public void Execute(string targets, int threadsNumber = DefaultThreads, string buildPath = null)
         {
+            if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                if (!buildTargets.canBuild())
-                {
-                    WriteUncleanMessage();
-                    return;
-                }
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices);
+                if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
                 WriteTranspiled(buildTargets, buildTracker);
@@ -60,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             var buildPlan = buildTargets.getBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);
-            using (StreamWriter errorLog = new StreamWriter(build.getErrorLogPath(), false))
+            using (StreamWriter errorLog = new StreamWriter(build.GetErrorLogPath(), false))
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {
@@ -73,10 +70,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
         {
-            ProgressWriter writingTranspiledScriptsProgressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => bt.getSourceFileList().Count()));
+            ProgressWriter writingTranspiledScriptsProgressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => bt.GetSourceFileList().Count()));
             foreach (var buildTarget in buildTargets)
             {
-                buildTarget.write(buildTracker, writingTranspiledScriptsProgressWriter);
+                buildTarget.Write(buildTracker, writingTranspiledScriptsProgressWriter);
             }
             writingTranspiledScriptsProgressWriter.WriteLast();
         }

@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
 
         public static string GetPath(Build build)
         {
-            return build.GetBuildPath("TargetsMapping.txt");
+            return build.CombineWithBuildPath("TargetsMapping.txt");
         }
 
         public static void DeleteFile(Build build)

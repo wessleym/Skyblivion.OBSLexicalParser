@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "SetActive";
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, newArguments);
         }
     }

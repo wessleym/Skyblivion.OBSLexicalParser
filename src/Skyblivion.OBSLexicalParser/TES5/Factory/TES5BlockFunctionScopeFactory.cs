@@ -167,7 +167,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static TES5EventCodeBlock CreateOnInit()
         {
             TES5FunctionScope onInitFunctionScope = createFromBlockType("OnInit");
-            TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.createCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
+            TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.CreateCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
             return newInitBlock;
         }
     }

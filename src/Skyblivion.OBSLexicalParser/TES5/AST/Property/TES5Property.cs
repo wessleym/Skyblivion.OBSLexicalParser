@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         /*
         * The property"s name as seen in script
         */
-        private string propertyName;
+        public string PropertyNameWithSuffix { get; private set; }
         /*
         * Property"s type
         */
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         private TES5ScriptHeader trackedScript;
         public TES5Property(string propertyName, ITES5Type propertyType, string referenceEdid)
         {
-            this.propertyName = AddPropertyNameSuffix(propertyName);
+            this.PropertyNameWithSuffix = AddPropertyNameSuffix(propertyName);
             this.propertyType = propertyType; //If we"re tracking a script, this won"t be used anymore
             this.ReferenceEDID = referenceEdid;
             this.trackedScript = null;
@@ -40,20 +40,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             {
                 string propertyTypeName = this.PropertyType.Output.Single();
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
-                return new string[] { propertyTypeName + " Property " + this.propertyName + " Auto Conditional" };
+                return new string[] { propertyTypeName + " Property " + this.PropertyNameWithSuffix + " Auto Conditional" };
             }
         }
 
-        public string PropertyNameWithSuffix => this.propertyName;
-
         public string GetPropertyNameWithoutSuffix()
         {
-            return RemovePropertyNameSuffix(this.propertyName);
+            return RemovePropertyNameSuffix(this.PropertyNameWithSuffix);
         }
 
         public void Rename(string newNameWithoutSuffix)
         {
-            this.propertyName = AddPropertyNameSuffix(newNameWithoutSuffix);
+            this.PropertyNameWithSuffix = AddPropertyNameSuffix(newNameWithoutSuffix);
         }
 
         public static string AddPropertyNameSuffix(string propertyName, bool throwExceptionIfSuffixAlreadyPresent = true)

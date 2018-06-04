@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
         }
     }

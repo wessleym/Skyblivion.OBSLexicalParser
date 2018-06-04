@@ -1876,7 +1876,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("ShowFirstPersonGeometry", new string[] {
                                 "bool"
                             }, "void"),
-                new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new string[] {}, "int"),
+                new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new string[] {
+                            }, "int"),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("GetForm", new string[] {
                                 "int"
                             }, "Form"),
@@ -1936,7 +1937,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, "bool"),
                 new TES5InheritanceFunctionSignature("IsMovementControlsEnabled", new string[] {
                             }, "bool"),
-                new TES5InheritanceFunctionSignature("IsPCAMurderer", new string[] {}, "int"),
+                new TES5InheritanceFunctionSignature("IsPCAMurderer", new string[] {
+                            }, "int"),
                 new TES5InheritanceFunctionSignature("IsPlayerSungazing", new string[] {
                             }, "bool"),
                 new TES5InheritanceFunctionSignature("IsSneakingControlsEnabled", new string[] {
@@ -2457,13 +2459,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, "Location"),
                 new TES5InheritanceFunctionSignature("GetCurrentScene", new string[] {
                             }, "Scene"),
-                new TES5InheritanceFunctionSignature("GetDestroyed", new string[] {}, "int"),
+                new TES5InheritanceFunctionSignature("GetDestroyed", new string[] {
+                            }, "int"),
                 new TES5InheritanceFunctionSignature("GetDistance", new string[] {
                                 "ObjectReference"
                             }, "float"),
                 new TES5InheritanceFunctionSignature("GetEditorLocation", new string[] {
                             }, "Location"),
-                new TES5InheritanceFunctionSignature("GetEnableParent", new string[]{ }, "ObjectReference"),//Only SKSE function atm used
+                new TES5InheritanceFunctionSignature("GetEnableParent", new string[] {
+                            }, "ObjectReference"),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("GetFactionOwner", new string[] {
                             }, "Faction"),
                 new TES5InheritanceFunctionSignature("GetHeadingAngle", new string[] {
@@ -4485,7 +4489,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         //Conversion hooks,
         { TES5BasicType.TES4TimerHelperName,
             new TES5InheritanceFunctionSignature[] {
-                new TES5InheritanceFunctionSignature("GetDayOfWeek", new string[] {}, "int"),
+                new TES5InheritanceFunctionSignature("GetDayOfWeek", new string[] { }, "int"),
 
                 new TES5InheritanceFunctionSignature("GetSecondsPassed", new string[] {
                         "Float"
@@ -4683,9 +4687,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         argument = arguments[parameterIndex];
                     }
-                    catch (ArgumentOutOfRangeException ex)
+                    catch (IndexOutOfRangeException ex)
                     {
-                        throw new InvalidOperationException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.Value, ex);
+                        throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.Value, ex);
                     }
                     return TES5TypeFactory.memberByValue(argument);
                 }

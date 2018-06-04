@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.Count== 1)
             {
                 TES5StaticReference calledOnRef = TES5StaticReference.Debug;
-                return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else
             {

@@ -12,9 +12,19 @@ namespace Skyblivion.OBSLexicalParser.Data
             return path;
         }
 
+        public static string GetESMDefaultFilePath()
+        {
+            return GetESMDirectoryPath() + TES4GameFileName;
+        }
+
+        public static string GetGraphDirectoryPath()
+        {
+            return path + "Graph" + Path.DirectorySeparatorChar;
+        }
+
         public static string GetGraphPath(string fileName)
         {
-            return path + "Graph" + Path.DirectorySeparatorChar + fileName;
+            return GetGraphDirectoryPath() + fileName;
         }
 
         public static string GetBuildPath()

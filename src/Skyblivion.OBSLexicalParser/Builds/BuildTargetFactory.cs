@@ -12,18 +12,18 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     static class BuildTargetFactory
     {
-        public static BuildTargetCollection getCollection(string targetsString, Build build, BuildLogServices buildLogServices)
+        public static BuildTargetCollection GetCollection(string targetsString, Build build, BuildLogServices buildLogServices, bool includeQFWriteCommand = true)
         {
             string[] targets = targetsString.Split(',');
             BuildTargetCollection collection = new BuildTargetCollection();
             foreach (var target in targets)
             {
-                collection.add(get(target, build, buildLogServices));
+                collection.Add(Get(target, build, buildLogServices, includeQFWriteCommand));
             }
             return collection;
         }
 
-        public static BuildTarget get(string target, Build build, BuildLogServices buildLogServices)
+        public static BuildTarget Get(string target, Build build, BuildLogServices buildLogServices, bool includeQFWriteCommand = true)
         {
             switch (target)
             {
@@ -47,17 +47,28 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 case BuildTarget.BUILD_TARGET_QF:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
-                        ESMAnalyzer analyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
-                        TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, BuildTarget.StandaloneSourcePath);
-                        TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
-                        TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
-                        TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
-                        TES5VariableAssignationFactory assignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-                        TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
-                        TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-                        TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
-                        TES5VariableAssignationFactory variableAssignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, buildLogServices.MetadataLogService, new QF.TranspileCommand(fragmentsParsingService), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), new QF.WriteCommand(new QFFragmentFactory(buildLogServices.MappedTargetsLogService, new ObjectiveHandlingFactory(variableAssignationFactory, referenceFactory))));
+                        QF.WriteCommand writeCommand;
+                        if (includeQFWriteCommand)
+                        {//Allows for skipping TES4 file loading when using BuildFileDeleteCommand
+                            ESMAnalyzer analyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
+                            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, BuildTarget.StandaloneSourcePath);
+                            TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
+                            TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
+                            TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
+                            TES5VariableAssignationFactory assignationFactory = new TES5VariableAssignationFactory(referenceFactory);
+                            TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
+                            TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
+                            TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
+                            TES5VariableAssignationFactory variableAssignationFactory = new TES5VariableAssignationFactory(referenceFactory);
+                            ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(variableAssignationFactory, referenceFactory);
+                            QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
+                            writeCommand = new QF.WriteCommand(qfFragmentFactory);
+                        }
+                        else
+                        {
+                            writeCommand = null;
+                        }
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, buildLogServices.MetadataLogService, new QF.TranspileCommand(fragmentsParsingService), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), writeCommand);
                     }
 
                 default:

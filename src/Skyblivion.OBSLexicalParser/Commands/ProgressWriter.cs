@@ -8,12 +8,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private string label;
         private int total;
         private int current;
+        private int percent;
         private Stopwatch stopwatch;
         public ProgressWriter(string label, int total)
         {
             this.label = label;
             this.total = total;
             current = 0;
+            percent = 0;
             Write(null);
             stopwatch = Stopwatch.StartNew();
         }
@@ -26,8 +28,12 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public void IncrementAndWrite()
         {
             current++;
-            int percent = (int)Math.Floor(((float)current / total) * 100);
-            Write(percent.ToString() + "%");
+            int newPercent = (int)Math.Floor(((float)current / total) * 100);
+            if (newPercent != percent)
+            {
+                percent = newPercent;
+                Write(newPercent.ToString() + "%");
+            }
         }
 
         public void WriteLast()

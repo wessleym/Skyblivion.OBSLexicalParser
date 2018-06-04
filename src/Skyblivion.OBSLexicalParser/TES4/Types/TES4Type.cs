@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Types
             T_INT = new TES4Type("int"),
             T_STRING = new TES4Type("string");
 
-        public static readonly TES4Type[] all = new TES4Type[]
+        private static readonly TES4Type[] all = new TES4Type[]
         {
             T_REF,
             T_SHORT,

@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, multipleScriptsScope, this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

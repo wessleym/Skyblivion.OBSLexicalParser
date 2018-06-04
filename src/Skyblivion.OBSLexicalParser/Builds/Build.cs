@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.Data;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -13,34 +14,67 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.buildPath = buildPath;
         }
 
-        public string GetBuildPath(string additionalPath)
+        public string CombineWithBuildPath(string additionalPath)
         {
             return Path.Combine(this.buildPath, additionalPath);
         }
 
-        public string getErrorLogPath()
+        public string GetErrorLogPath()
         {
-            return GetBuildPath("build_error_log.txt");
+            return CombineWithBuildPath("build_error_log.txt");
         }
 
-        public string getCompileStandardOutputPath()
+        public string GetCompileStandardOutputPath()
         {
-            return GetBuildPath("compile_stdout_log.txt");
+            return CombineWithBuildPath("compile_stdout_log.txt");
         }
 
-        public string getCompileStandardErrorPath()
+        public string GetCompileStandardErrorPath()
         {
-            return GetBuildPath("compile_stderr_log.txt");
+            return CombineWithBuildPath("compile_stderr_log.txt");
         }
 
-        public string getWorkspacePath()
+        public string GetWorkspacePath()
         {
-            return GetBuildPath("Workspace") + Path.DirectorySeparatorChar;
+            return CombineWithBuildPath("Workspace") + Path.DirectorySeparatorChar;
         }
 
-        public bool canBuild()
+        public static bool CanBuildIn(string directory, bool deleteFiles)
         {
-            return !Directory.EnumerateFileSystemEntries(this.getWorkspacePath()).Any();
+            IEnumerable<string> fileSystemEntries;
+            try
+            {
+                fileSystemEntries = Directory.EnumerateFileSystemEntries(directory);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Directory.CreateDirectory(directory);
+                return true;
+            }
+            if (!fileSystemEntries.Any()) { return true; }
+            if (deleteFiles)
+            {
+                foreach (string file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
+                {
+                    File.Delete(file);
+                }
+                foreach (string dir in Directory.EnumerateDirectories(directory, "*", SearchOption.AllDirectories))
+                {
+                    Directory.Delete(dir);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool CanBuild(bool deleteFiles)
+        {
+            return CanBuildIn(this.GetWorkspacePath(), deleteFiles);
+        }
+
+        public void CreateBuildPathDirectory()
+        {
+            Directory.CreateDirectory(buildPath);
         }
     }
 }

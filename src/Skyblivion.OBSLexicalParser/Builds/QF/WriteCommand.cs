@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
         public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Dictionary<string, TES5Target> scripts = buildTracker.getBuiltScripts(target.getTargetName());
+            Dictionary<string, TES5Target> scripts = buildTracker.getBuiltScripts(target.GetTargetName());
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
             /*
@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
              * Reason is that in case we"ve got a quest with no fragments to anything whatsoever, we"ll have to go
              * through it too ( just with empty subfragments trees ), to generate the objective handlings
              */
-            string sourcePath = target.getSourcePath();
+            string sourcePath = target.GetSourcePath();
             foreach (var mapFilePath in Directory.EnumerateFiles(sourcePath, "*.map"))
             {
                 string mapFileName = Path.GetFileNameWithoutExtension(mapFilePath);

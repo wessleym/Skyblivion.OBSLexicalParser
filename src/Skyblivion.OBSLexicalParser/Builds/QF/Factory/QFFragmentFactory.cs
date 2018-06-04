@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * At some point, we might port the conversion so it doesn"t use the directly injected property,
              * but instead has a map to aliases and we"ll map accordingly and have references point to aliases instead
              */
-            string sourcePath = target.getSourceFromPath(resultingFragmentName);
+            string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string aliasesFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".aliases");
             string[] aliasesLines = File.ReadAllLines(aliasesFile);
@@ -167,7 +167,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             }
 
             TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList);
-            string outputPath = target.getTranspileToPath(resultingFragmentName);
+            string outputPath = target.GetTranspileToPath(resultingFragmentName);
             return new TES5Target(resultingTree, outputPath);
         }
 
@@ -183,7 +183,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
         public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)
         {
-            string sourcePath = target.getSourceFromPath(resultingFragmentName);
+            string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             //ToLower() is needed for Linux's case-sensitive file system since these files seem to all be lowercase.
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath).ToLower();
             string stageMapFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".map");

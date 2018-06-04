@@ -20,9 +20,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         private string otherScriptsFolder;
         private string[] otherScriptsLower;
         private ESMAnalyzer esmAnalyzer;
-        public TES5TypeInferencer(ESMAnalyzer ESMAnalyzer, string otherScriptsFolder)
+        public TES5TypeInferencer(ESMAnalyzer esmAnalyzer, string otherScriptsFolder)
         {
-            this.esmAnalyzer = ESMAnalyzer;
+            this.esmAnalyzer = esmAnalyzer;
             this.otherScriptsFolder = otherScriptsFolder;
             otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
         }
@@ -82,7 +82,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                             !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
                             !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
                         {
-                            throw new ConversionException("Argument type mismatch at index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: true);
+                            bool expected = objectCall.AccessedObject.TES5Type.OriginalName == "TES4TimerHelper" && objectCall.FunctionName == "LegacySay";
+                            throw new ConversionException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: expected);
                         }
                     }
                 }
@@ -171,7 +172,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             }
 
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type
-            return this.esmAnalyzer.resolveScriptTypeByItsAttachedName(variable.ReferenceEDID);
+            return this.esmAnalyzer.ResolveScriptTypeByItsAttachedName(variable.ReferenceEDID);
         }
 
         /*

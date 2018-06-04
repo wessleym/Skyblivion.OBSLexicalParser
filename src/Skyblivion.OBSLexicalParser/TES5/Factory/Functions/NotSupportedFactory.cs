@@ -16,9 +16,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string reason =
                 functionName.Equals("ForceFlee", StringComparison.OrdinalIgnoreCase) ? "Papyrus doesn't seem to be able to force NPCs to flee." :
                 functionName.Equals("GetIsPlayerBirthsign", StringComparison.OrdinalIgnoreCase) ? "Skyrim doesn't have birthsigns--only standing stones." :
-                functionName.Equals("GetStartingPos", StringComparison.OrdinalIgnoreCase) ? "Papyrus doesn't seem to know the original location of items (before they were moved)." :
+                //WTM:  Note:  Oddly, this project can handle GetAmountSoldStolen, even though that's not a Papyrus function.  But it is an SKSE function, as is ModAmountSoldStolen:
+                //http://skse.silverlock.org/vanilla_commands.html
+                //Maybe SKSE's function can be used some day.
                 functionName.Equals("ModAmountSoldStolen", StringComparison.OrdinalIgnoreCase) ? "Skyrim doesn't track how much gold was earned with stolen goods." :
-                functionName.Equals("SetLevel", StringComparison.OrdinalIgnoreCase) ? "SKSE has Game.SetPlayerLevel(int level), but Oblivion calls this function on non-player actors." :
+                //WTM:  Note:  GetStartingPos is treated as a special case in TES5ValueFactory.  If the below occurs, the special case didn't catch it.
+                functionName.Equals("GetStartingPos", StringComparison.OrdinalIgnoreCase) ? "GetStartingPos isn't directly convertable." :
                 null;
             string message = "Function " + functionName + " not supported." + (reason != null ? "  " + reason : "");
             throw new ConversionException(message, expected: true);

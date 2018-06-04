@@ -14,13 +14,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
             : base("skyblivion:testStageMap", "Test Stage Map", null)
         { }
 
-        public override void execute()
+        public override void Execute()
         {
+            if (!PreExecutionChecks(false, false, false, false)) { return; }
             Build build = new Build(Build.DEFAULT_BUILD_PATH);
             Dictionary<int, List<int>> originalStageMap;
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTarget buildTarget = BuildTargetFactory.get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices);
+                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices);
                 originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
             }
             StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary

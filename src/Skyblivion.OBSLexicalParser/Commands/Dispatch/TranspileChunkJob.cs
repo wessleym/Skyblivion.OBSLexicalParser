@@ -53,8 +53,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     foreach (var buildScript in buildScripts)
                     {
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
-                        string sourcePath = buildTarget.getSourceFromPath(scriptName);
-                        scriptsScopes.Add(scriptName, buildTarget.buildScope(sourcePath, globalVariables));
+                        string sourcePath = buildTarget.GetSourceFromPath(scriptName);
+                        scriptsScopes.Add(scriptName, buildTarget.BuildScope(sourcePath, globalVariables));
                     }
                 }
 
@@ -79,12 +79,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         BuildTarget buildTarget = this.getBuildTarget(buildTargetName);
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
-                        string sourcePath = buildTarget.getSourceFromPath(scriptName);
-                        string outputPath = buildTarget.getTranspileToPath(scriptName);
+                        string sourcePath = buildTarget.GetSourceFromPath(scriptName);
+                        string outputPath = buildTarget.GetTranspileToPath(scriptName);
                         TES5Target convertedScript;
                         try
                         {
-                            convertedScript = buildTarget.transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
+                            convertedScript = buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
                         }
                         catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
 #if !DEBUG || LOG_EXCEPTIONS
@@ -110,12 +110,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 
         private BuildTarget getBuildTarget(string targetName)
         {
-            if (this.buildTargets.getByNameOrNull(targetName) == null)
+            if (this.buildTargets.GetByNameOrNull(targetName) == null)
             {
-                this.buildTargets.add(BuildTargetFactory.get(targetName, this.build, buildLogServices));
+                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices));
             }
 
-            BuildTarget result = this.buildTargets.getByName(targetName);
+            BuildTarget result = this.buildTargets.GetByName(targetName);
             return result;
         }
     }

@@ -1,5 +1,6 @@
 using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -18,38 +19,37 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     public class BuildInteroperableCompilationGraphs : LPCommand
     {
+        public const string FriendlyNameConst = "Build Interoperable Compilation Graphs";
         public BuildInteroperableCompilationGraphs()
-            : base("skyblivion:parser:buildGraphs", "Build Interoperable Compilation Graphs", "Build graphs of scripts which are interconnected to be transpiled together")
+            : base("skyblivion:parser:buildGraphs", FriendlyNameConst, "Build graphs of scripts which are interconnected to be transpiled together")
         {
             Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
         }
 
-        public void execute(LPCommandInput input)
+        public void Execute(LPCommandInput input)
         {
             string targets = input.GetArgumentValue("targets");
-            execute(targets);
+            Execute(targets);
         }
 
-        public override void execute()
+        public override void Execute()
         {
-            execute(BuildTarget.DEFAULT_TARGETS);
+            Execute(BuildTarget.DEFAULT_TARGETS);
         }
 
-        public void execute(string targets)
+        public void Execute(string targets)
         {
+            if (!PreExecutionChecks(true, true, false, false)) { return; }
+            Directory.CreateDirectory(DataDirectory.GetGraphDirectoryPath());
             Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.getCollection(targets, build, buildLogServices);
-                if (!buildTargets.canBuild())
-                {
-                    WriteUncleanMessage();
-                    return;
-                }
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices);
+                //if (!buildTargets.CanBuildAndWarnIfNot()) { return; }//WTM:  Change:  This doesn't matter for building graphs.
                 Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
                 Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
-                BuildSourceFilesCollection sourceFiles = buildTargets.getSourceFiles();
-                ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.getTotalSourceFiles());
+                BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
+                ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
                 TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(), BuildTarget.StandaloneSourcePath);
                 using (StreamWriter errorLog = new StreamWriter(TES5ScriptDependencyGraph.ErrorLogPath, false))
                 {
@@ -59,14 +59,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
                         {
                             var buildTargetName = kvp.Key;
                             var sourceBuildFiles = kvp.Value;
-                            BuildTarget buildTarget = buildTargets.getByName(buildTargetName);
+                            BuildTarget buildTarget = buildTargets.GetByName(buildTargetName);
                             foreach (var sourceFile in sourceBuildFiles)
                             {
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);
                                 ITES4CodeFilterable AST;
                                 try
                                 {
-                                    AST = buildTarget.getAST(buildTarget.getSourceFromPath(scriptName));
+                                    AST = buildTarget.GetAST(buildTarget.GetSourceFromPath(scriptName));
                                 }
                                 catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
                                 /*catch (UnexpectedTokenException ex)

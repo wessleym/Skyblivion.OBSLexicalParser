@@ -7,12 +7,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
     {
-        private ITES5Referencer called;
+
+        public ITES5Referencer AccessedObject { get; private set; }
         public string FunctionName { get; private set; }
         public TES5ObjectCallArguments Arguments { get; private set; }
         public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments arguments = null)
         {
-            this.called = called;
+            this.AccessedObject = called;
             this.FunctionName = functionName;
             this.Arguments = arguments;
         }
@@ -26,17 +27,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                 {
                     argumentsCode = this.Arguments.Output.Single();
                 }
-                string calledFirst = this.called.Output.Single();
+                string calledFirst = this.AccessedObject.Output.Single();
                 return new string[] { calledFirst + "." + this.FunctionName + "(" + argumentsCode + ")" };
             }
         }
-
-        public ITES5Referencer AccessedObject => this.called;
 
         public ITES5Variable ReferencesTo => null;
 
         public string Name => "ObjectCall";
 
-        public ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.findReturnTypeForObjectCall(this.called.TES5Type, this.FunctionName);
+        public ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.findReturnTypeForObjectCall(this.AccessedObject.TES5Type, this.FunctionName);
     }
 }

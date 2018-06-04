@@ -5,6 +5,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     abstract class TES5IntegerOrFloat : ITES5Primitive
     {
+        protected TES5IntegerOrFloat() { }
         public abstract ITES5Type TES5Type { get; }
         public abstract IEnumerable<string> Output { get; }
         public abstract int ConvertedIntValue { get; }

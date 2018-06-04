@@ -92,7 +92,8 @@ namespace Dissect.Parser.LALR1
                     }
                 }
             }
-            throw new InvalidOperationException();//WTM:  Note:  In PHP, this function did not return here.
+            //WTM:  Note:  In PHP, this function did not return here, so I'm throwing an exception to complete the function.  I don't think this line is ever invoked
+            throw new InvalidOperationException();
         }
     }
 }

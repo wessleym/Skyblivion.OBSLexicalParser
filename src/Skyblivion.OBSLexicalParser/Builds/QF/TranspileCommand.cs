@@ -1,13 +1,11 @@
 using Skyblivion.OBSLexicalParser.Builds.Service;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.DI;
-using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
@@ -37,13 +35,16 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, typeInferencer);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory, referenceFactory);
             TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
-            converter = new TES4ToTES5ASTQFFragmentConverter(analyzer, new TES5FragmentFactory(chainedCodeChunkFactory, new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, assignationFactory)), valueFactory, referenceFactory);
+            TES5AdditionalBlockChangesPass additionalBlockChangesPass = new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, assignationFactory);
+            TES5FragmentFactory fragmentFactory = new TES5FragmentFactory(chainedCodeChunkFactory, additionalBlockChangesPass);
+            converter = new TES4ToTES5ASTQFFragmentConverter(analyzer, fragmentFactory, valueFactory, referenceFactory);
         }
 
         public TES5Target transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4CodeChunks AST = this.parsingService.parseScript(sourcePath);
-            TES5Target convertedScript = this.converter.convert(new TES4FragmentTarget(AST, outputPath), globalScope, multipleScriptsScope);
+            TES4FragmentTarget fragmentTarget = new TES4FragmentTarget(AST, outputPath);
+            TES5Target convertedScript = this.converter.convert(fragmentTarget, globalScope, multipleScriptsScope);
             return convertedScript;
         }
     }
