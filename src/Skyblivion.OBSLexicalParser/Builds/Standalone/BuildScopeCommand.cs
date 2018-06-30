@@ -17,10 +17,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         public BuildScopeCommand(StandaloneParsingService standaloneParsing)
         {
             this.standaloneParsingService = standaloneParsing;
-        }
-
-        public void initialize()
-        {
             this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
         
@@ -30,9 +26,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             return new TES5ScriptHeader(edid, this.esmAnalyzer.getScriptType(edid), TES5TypeFactory.TES4Prefix);
         }
 
-        public TES5GlobalScope buildScope(string scriptPath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope Build(string scriptPath, TES5GlobalVariables globalVariables)
         {
-            TES4Script parsedScript = this.standaloneParsingService.parseScript(scriptPath);
+            TES4Script parsedScript = this.standaloneParsingService.ParseOrGetFromCache(scriptPath);
             TES5ScriptHeader scriptHeader = this.createHeader(parsedScript);
             TES4VariableDeclarationList variableList = parsedScript.VariableDeclarationList;
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);

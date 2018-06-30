@@ -12,10 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
     class BuildScopeCommand : IBuildScopeCommand
     {
-        public void initialize()
-        { }
-
-        public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");

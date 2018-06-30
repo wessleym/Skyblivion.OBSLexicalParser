@@ -5,7 +5,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     interface IBuildScopeCommand
     {
-        void initialize();
         /*
         * Build a global scope for a given source path.
          *
@@ -18,6 +17,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
          * 
          *  Defined global variables used within the scope
         */
-        TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables);
+        TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables);
     }
 }

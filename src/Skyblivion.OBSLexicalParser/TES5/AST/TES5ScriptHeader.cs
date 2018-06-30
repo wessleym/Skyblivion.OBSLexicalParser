@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             this.EscapedScriptName = NameTransformer.Limit(scriptName, scriptNamePrefix);
             this.EDID = scriptName;
             this.scriptNamePrefix = scriptNamePrefix;
-            this.ScriptType = TES5TypeFactory.memberByValue(scriptName, scriptType);
+            this.ScriptType = TES5TypeFactory.MemberByValue(scriptName, scriptType);
             this.BasicScriptType = scriptType;
             this.isHidden = isHidden;
         }

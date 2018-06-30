@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public IEnumerable<string> Output => new string[] { this.Name };
 
-        public ITES5Type TES5Type => TES5TypeFactory.memberByValue(this.Name);
+        public ITES5Type TES5Type => TES5TypeFactory.MemberByValue(this.Name);
 
         public ITES5Variable ReferencesTo => null;
 

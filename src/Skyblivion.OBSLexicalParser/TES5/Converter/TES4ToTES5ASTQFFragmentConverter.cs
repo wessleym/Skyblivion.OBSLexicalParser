@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         {
             TES5FunctionCodeBlock fragment = this.fragmentFactory.createFragment(TES5FragmentType.T_QF, "Fragment_0", globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
             TES5BlockList blockList = new TES5BlockList();
-            blockList.add(fragment);
+            blockList.Add(fragment);
             TES5Script script = new TES5Script(globalScope, blockList);
             TES5Target target = new TES5Target(script, fragmentTarget.OutputPath);
             return target;

@@ -6,16 +6,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.PF
 {
     class BuildScopeCommand : IBuildScopeCommand
     {
-        public void initialize()
+        public TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables)
         {
+            // TODO: Implement Build() method.
             throw new NotImplementedException();
-            // TODO: Implement initialize() method.
-        }
-
-        public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
-        {
-            throw new NotImplementedException();
-        // TODO: Implement buildScope() method.
         }
     }
 }

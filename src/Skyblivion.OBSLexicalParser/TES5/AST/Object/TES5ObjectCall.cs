@@ -7,7 +7,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
     {
-
         public ITES5Referencer AccessedObject { get; private set; }
         public string FunctionName { get; private set; }
         public TES5ObjectCallArguments Arguments { get; private set; }

@@ -29,8 +29,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
                 { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
                 { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
-                { tContainerName, TES5TypeFactory.memberByValue(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST) },//Data container
-                { tTimerName, TES5TypeFactory.memberByValue(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST) },//Timer functions
+                { tContainerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST) },//Data container
+                { tTimerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST) },//Timer functions
                 { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
                 { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
                 { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT }//set by script instead of original messageBox

@@ -10,6 +10,7 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter
 {
@@ -42,15 +43,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             TES4Script script = target.getScript();
             TES5BlockList blockList = new TES5BlockList();
             TES4BlockList parsedBlockList = script.BlockList;
-            Dictionary<string, List<TES5EventCodeBlock>> createdBlocks = new Dictionary<string, List<TES5EventCodeBlock>>();
+            Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
             if (parsedBlockList != null)
             {
                 foreach (TES4CodeBlock block in parsedBlockList.Blocks)
                 {
-                    TES5EventBlockList newBlockList = this.blockFactory.createBlock(multipleScriptsScope, globalScope, block);
-                    foreach (TES5EventCodeBlock newBlock in newBlockList.getBlocks())
+                    TES5BlockList newBlockList = this.blockFactory.createBlock(block, globalScope, multipleScriptsScope);
+                    foreach (ITES5CodeBlock newBlock in newBlockList.Blocks)
                     {
-                        createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockType, newBlock);
+                        createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
                     }
                 }
             }
@@ -66,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
                     int i = 1;
                     TES5ObjectCallArguments localScopeArguments = null;
-                    foreach (TES5EventCodeBlock block in blocks)
+                    foreach (TES5CodeBlock block in blocks)
                     {
                         TES5FunctionScope newFunctionScope = new TES5FunctionScope(blockType+"_"+i.ToString());
                         foreach (var variable in block.FunctionScope.Variables.Values)
@@ -89,8 +90,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     }
 
                     //Create the proxy block.
-                    TES5EventCodeBlock lastBlock = System.Linq.Enumerable.Last(blocks);
-                    TES5EventCodeBlock proxyBlock = this.blockFactory.createNewBlock(blockType,
+                    ITES5CodeBlock lastBlock = blocks.Last();
+                    TES5EventCodeBlock proxyBlock = TES5BlockFactory.CreateEventCodeBlock(blockType,
                         /*
                         //WTM:  Change:  block was used below, but block is out of scope.  The PHP must have been using the last defined block from above.
                         //WTM:  Change:  PHP called "clone" below, but I'm not sure if this is necessary or would even operate the same in C#.
@@ -98,18 +99,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         lastBlock.FunctionScope);
                     foreach (var function in functions)
                     {
-                        blockList.add(function);
-                        TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.getFunctionName(), multipleScriptsScope, localScopeArguments, false // hacky.
+                        blockList.Add(function);
+                        TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.BlockName, multipleScriptsScope, localScopeArguments, false // hacky.
                         );
                         proxyBlock.AddChunk(functionCall);
                     }
 
-                    blockList.add(proxyBlock);
+                    blockList.Add(proxyBlock);
                 }
                 else
                 {
-                    TES5EventCodeBlock block = blocks[0];
-                    blockList.add(block);
+                    ITES5CodeBlock block = blocks[0];
+                    blockList.Add(block);
                 }
             }
 

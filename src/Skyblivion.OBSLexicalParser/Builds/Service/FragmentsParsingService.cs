@@ -4,7 +4,7 @@ using Skyblivion.OBSLexicalParser.TES4.Parsers;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
-    class FragmentsParsingService : ParsingService<TES4CodeChunks>
+    class FragmentsParsingService : ParsingServiceWithCache<TES4CodeChunks>
     {
         public FragmentsParsingService(SyntaxErrorCleanParser parser)
             : base(parser)

@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             if (!fileSystemEntries.Any()) { return true; }
             if (deleteFiles)
             {
+                Console.WriteLine("Deleting Files from " + directory + "...");
                 foreach (string file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
                 {
                     File.Delete(file);

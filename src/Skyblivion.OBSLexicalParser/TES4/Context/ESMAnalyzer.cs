@@ -361,7 +361,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             }
 
             TES4LoadedRecord scriptRecord = esm.findByFormid(scriptFormid.Value);
-            ITES5Type customType = TES5TypeFactory.memberByValue(scriptRecord.getSubrecordTrim("EDID"));
+            ITES5Type customType = TES5TypeFactory.MemberByValue(scriptRecord.getSubrecordTrim("EDID"));
             this.attachedNameCache.Add(attachedNameLower, customType);
             return customType;
         }

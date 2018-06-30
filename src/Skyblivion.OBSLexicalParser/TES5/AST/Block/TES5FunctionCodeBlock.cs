@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
-    class TES5FunctionCodeBlock : ITES5CodeBlock
+    class TES5FunctionCodeBlock : TES5CodeBlock
     {
-        public TES5FunctionScope FunctionScope { get; private set; }
-        public TES5CodeScope CodeScope { get; private set; }
+        public override TES5CodeScope CodeScope { get; set; }
+        public override TES5FunctionScope FunctionScope { get; protected set; }
         private ITES5Type returnType;
         private bool isStandalone;//Only needed for PHP_COMPAT
         public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone = false)
@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             this.isStandalone = isStandalone;
         }
 
-        public IEnumerable<string> Output
+        public override IEnumerable<string> Output
         {
             get
             {
@@ -40,12 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             }
         }
 
-        public string getFunctionName()
-        {
-            return this.FunctionScope.BlockName;
-        }
-
-        public void AddChunk(ITES5CodeChunk chunk)
+        public override void AddChunk(ITES5CodeChunk chunk)
         {
             this.CodeScope.Add(chunk);
         }

@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 using System.Linq;
 

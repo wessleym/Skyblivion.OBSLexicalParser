@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -38,15 +39,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             string[] attributes = new string[] { "Health", "Magicka", "Stamina" };
-            foreach (string attribute in attributes)
-            {
-                codeChunks.Add(objectCallFactory.CreateObjectCall(calledOn, newFunctionName, multipleScriptsScope, new TES5ObjectCallArguments() { new TES5String(attribute), new TES5Float(attributeLevel) }));
-            }
+            codeChunks.AddRange(attributes.Select(a => objectCallFactory.CreateObjectCall(calledOn, newFunctionName, multipleScriptsScope, new TES5ObjectCallArguments() { new TES5String(a), new TES5Float(attributeLevel) })));
             string[] skills = new string[] { "OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak", "Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting" };
-            foreach (string skill in skills)
-            {
-                codeChunks.Add(objectCallFactory.CreateObjectCall(calledOn, newFunctionName, multipleScriptsScope, new TES5ObjectCallArguments() { new TES5String(skill), new TES5Float(skillLevel) }));
-            }
+            codeChunks.AddRange(skills.Select(s => objectCallFactory.CreateObjectCall(calledOn, newFunctionName, multipleScriptsScope, new TES5ObjectCallArguments() { new TES5String(s), new TES5Float(skillLevel) })));
             return codeChunks;
         }
     }

@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
      * It was created because both BuildScopeCommand and TranspileCommand need the parsed TES4Script and we didn"t
      * want to parse twice.
      */
-    class StandaloneParsingService : ParsingService<TES4Script>
+    class StandaloneParsingService : ParsingServiceWithCache<TES4Script>
     {
         public StandaloneParsingService(SyntaxErrorCleanParser parser)
             : base(parser)

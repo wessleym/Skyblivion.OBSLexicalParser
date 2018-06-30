@@ -13,6 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     static class TES5InheritanceGraphAnalyzer
     {
         private static Dictionary<ITES5Type, ITES5Type> inheritanceCache = new Dictionary<ITES5Type, ITES5Type>();
+        //WTM:  Note:  This includes some SKSE functions:  http://skse.silverlock.org/vanilla_commands.html
         private static TES5InheritanceItemCollection inheritance = new TES5InheritanceItemCollection()
         {
             { "Alias",
@@ -240,7 +241,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, "void"),
                 new TES5InheritanceFunctionSignature("UnregisterForActorAction", new string[] {
                                 "int"
-                            }, "void")
+                            }, "void"),
+                new TES5InheritanceFunctionSignature("OnUpdate", new string[] {
+                            }, "void"),//WTM:  Change:  Added
+                new TES5InheritanceFunctionSignature("GotoState", new string[] {
+                                "string"
+                            }, "void")//WTM:  Change:  Added
                 }
             },
         { "Actor",
@@ -856,7 +862,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("IsSwimming", new string[] {
                             }, "bool"),
                 new TES5InheritanceFunctionSignature("SheatheWeapon", new string[] {
-                            }, "void")
+                            }, "void"),
+                new TES5InheritanceFunctionSignature("ForceFlee", new string[] {
+                                "Cell",
+                                "ObjectReference"
+                            }, "void")//WTM:  Note:  SKSE
             }
         },
         { "ActorBase",
@@ -1877,7 +1887,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 "bool"
                             }, "void"),
                 new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new string[] {
-                            }, "int"),//WTM:  Note:  SKSE
+                            }, "int"),//WTM:  Note:  SKSE,
+                new TES5InheritanceFunctionSignature("ModAmountSoldStolen", new string[] {
+                                "int"
+                            }, "void"),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("GetForm", new string[] {
                                 "int"
                             }, "Form"),
@@ -2496,13 +2509,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("GetNthLinkedRef", new string[] {
                                 "int"
                             }, "ObjectReference"),
-                //WTM:  Change:  These methods don't seem to exist for ObjectReference:
-                /*new TES5InheritanceFunctionSignature("GetStartingAngle", new string[] {
+                new TES5InheritanceFunctionSignature("GetStartingAngle", new string[] {
                                 "string"
-                            }, "float"),
+                            }, "float"),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("GetStartingPos", new string[] {
                                 "string"
-                            }, "float"),*/
+                            }, "float"),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("EnableLinkChain", new string[] {
                                 "Keyword"
                             }, "void"),
@@ -2827,7 +2839,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("IsOffLimits", new string[] {
                             }, "bool"),
                 new TES5InheritanceFunctionSignature("isAnimPlaying", new string[] {
-                            }, "int")
+                            }, "int"),
+                new TES5InheritanceFunctionSignature("OnUpdate", new string[] {
+                            }, "void"),//WTM:  Change:  Added
+                new TES5InheritanceFunctionSignature("GotoState", new string[] {
+                                "string"
+                            }, "void")//WTM:  Change:  Added
             }
         },
         { "Outfit",
@@ -4646,7 +4663,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return inheritanceCache.GetOrAdd(type, () =>
             {
                 string baseTypeName = targetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: true);
-                return TES5TypeFactory.memberByValue(baseTypeName);
+                return TES5TypeFactory.MemberByValue(baseTypeName);
             });
         }
 
@@ -4654,7 +4671,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             string baseTypeName = targetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: false);
             if (baseTypeName == null) { return null; }
-            return TES5TypeFactory.memberByValue(baseTypeName);
+            return TES5TypeFactory.MemberByValue(baseTypeName);
         }
 
         public static IEnumerable<ITES5Type> GetSelfAndBaseClasses(ITES5Type type)
@@ -4691,7 +4708,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.Value, ex);
                     }
-                    return TES5TypeFactory.memberByValue(argument);
+                    return TES5TypeFactory.MemberByValue(argument);
                 }
             }
 
@@ -4729,7 +4746,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 if (method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return TES5TypeFactory.memberByValue(method.ReturnType);
+                    return TES5TypeFactory.MemberByValue(method.ReturnType);
                 }
             }
 
@@ -4748,7 +4765,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 {
                     if (method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                     {
-                        possibleMatches.Add(TES5TypeFactory.memberByValue(type));
+                        possibleMatches.Add(TES5TypeFactory.MemberByValue(type));
                     }
                 }
             }

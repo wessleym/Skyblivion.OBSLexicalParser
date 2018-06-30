@@ -5,19 +5,19 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5TypeFactory
+    static class TES5TypeFactory
     {
         public const string TES4Prefix = "TES4";
-        public static ITES5Type _void()
+        public static ITES5Type Void()
         {
-            return memberByValue("void");
+            return MemberByValue("void");
         }
 
         /*
         * @param memberByValue string Type to be created.
         * @param basicType TES5BasicType You might override the basic type for this custom type created.
         */
-        public static ITES5Type memberByValue(string memberByValue, ITES5Type basicType = null)
+        public static ITES5Type MemberByValue(string memberByValue, ITES5Type basicType = null)
         {
             if (memberByValue == null) { throw new ArgumentNullException(nameof(memberByValue)); }
             if (memberByValue == "void") { return new TES5VoidType(); }

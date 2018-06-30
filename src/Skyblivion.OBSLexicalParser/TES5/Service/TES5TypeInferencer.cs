@@ -168,7 +168,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 }
                 namesToTry = namesToTry.Distinct().ToList();
                 string firstNameMatch = namesToTry.Where(n => this.otherScriptsLower.Contains(n.ToLower())).FirstOrDefault();
-                if (firstNameMatch != null) { return TES5TypeFactory.memberByValue(firstNameMatch); }
+                if (firstNameMatch != null) { return TES5TypeFactory.MemberByValue(firstNameMatch); }
             }
 
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type

@@ -119,7 +119,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     }*/
                 }
 
-                List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.getBlocks();
+                List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.Blocks;
                 if (subfragmentBlocks.Count != 1)
                 {
                     throw new ConversionException("Wrong QF fragment, actual function count: " + subfragmentBlocks.Count + "..");
@@ -144,7 +144,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     subfragmentBlock.AddChunk(newCodeChunk);
                 }
 
-                resultingBlockList.add(subfragmentBlock);
+                resultingBlockList.Add(subfragmentBlock);
                 implementedStages[subfragment.Stage] = true;
             }
 
@@ -155,7 +155,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             foreach (int nonDoneStage in nonDoneStages)
             {
                 TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.createEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
-                resultingBlockList.add(fragment);
+                resultingBlockList.Add(fragment);
             }
 
             this.mappedTargetsLogService.WriteScriptName(resultingFragmentName);

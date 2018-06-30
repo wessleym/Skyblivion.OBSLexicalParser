@@ -7,9 +7,9 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    static class TES5BlockFunctionScopeFactory
+    static class TES5FunctionScopeFactory
     {
-        public static TES5FunctionScope createFromBlockType(string blockType)
+        public static TES5FunctionScope CreateFromBlockType(string blockType)
         {
             TES5FunctionScope localScope = new TES5FunctionScope(blockType);
             switch (blockType)
@@ -32,8 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                 case "OnSell":
                 {
-                    localScope.AddVariable(new TES5LocalVariable("akSeller", TES5BasicType.T_ACTOR, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }) //todo not sure about activator meaning
-                    );
+                    localScope.AddVariable(new TES5LocalVariable("akSeller", TES5BasicType.T_ACTOR, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR })); //todo not sure about activator meaning
                     break;
                 }
 
@@ -162,13 +161,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
 
             return localScope;
-        }
-
-        public static TES5EventCodeBlock CreateOnInit()
-        {
-            TES5FunctionScope onInitFunctionScope = createFromBlockType("OnInit");
-            TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.CreateCodeScope(TES5LocalScopeFactory.createRootScope(onInitFunctionScope)));
-            return newInitBlock;
         }
     }
 }

@@ -6,7 +6,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.Utilities;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -20,71 +19,46 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public const string BUILD_TARGET_PF = "PF";
         public const string DEFAULT_TARGETS = BUILD_TARGET_STANDALONE+ "," + BUILD_TARGET_TIF+ "," +BUILD_TARGET_QF;
         public static string StandaloneSourcePath = Path.Combine(DataDirectory.GetBuildTargetsPath(), "Standalone", "Source") + Path.DirectorySeparatorChar;
-        private bool transpileInitialized, compileInitialized, ASTInitialized, scopeInitialized;
         private string targetName;
         private string filePrefix;
         private Build build;
         private MetadataLogService metadataLogService;
         private ITranspileCommand transpileCommand;
         private ICompileCommand compileCommand;
-        private IASTCommand ASTCommand;
+        private IASTCommand astCommand;
         private IBuildScopeCommand buildScopeCommand;
         private IWriteCommand writeCommand;
-        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand ASTCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
+        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand astCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
         {
-            this.transpileInitialized = false;
-            this.compileInitialized = false;
-            this.ASTInitialized = false;
-            this.scopeInitialized = false;
             this.targetName = targetName;
             this.build = build;
             this.metadataLogService = metadataLogService;
             this.filePrefix = filePrefix;
             this.transpileCommand = transpileCommand;
             this.compileCommand = compileCommand;
-            this.ASTCommand = ASTCommand;
+            this.astCommand = astCommand;
             this.buildScopeCommand = buildScopeCommand;
             this.writeCommand = writeCommand;
         }
 
         public TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
         {
-            if (!this.transpileInitialized)
-            {
-                this.transpileCommand.initialize(this.build, metadataLogService);
-                this.transpileInitialized = true;
-            }
-            return this.transpileCommand.transpile(sourcePath, outputPath, globalScope, compilingScope);
+            return this.transpileCommand.Transpile(sourcePath, outputPath, globalScope, compilingScope);
         }
 
         public void Compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
-            if (!this.compileInitialized)
-            {
-                this.compileCommand.initialize();
-                this.compileInitialized = true;
-            }
-            this.compileCommand.compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
+            this.compileCommand.Compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
         }
 
         public ITES4CodeFilterable GetAST(string sourcePath)
         {
-            if (!this.ASTInitialized)
-            {
-                this.ASTCommand.initialize();
-                this.ASTInitialized = true;
-            }
-            return this.ASTCommand.getAST(sourcePath);
+            return this.astCommand.Parse(sourcePath);
         }
 
         public TES5GlobalScope BuildScope(string sourcePath, TES5GlobalVariables globalVariables)
         {
-            if (!this.scopeInitialized)
-            {
-                this.buildScopeCommand.initialize();
-                this.scopeInitialized = true;
-            }
-            return this.buildScopeCommand.buildScope(sourcePath, globalVariables);
+            return this.buildScopeCommand.Build(sourcePath, globalVariables);
         }
 
         public void Write(BuildTracker buildTracker, ProgressWriter progressWriter)

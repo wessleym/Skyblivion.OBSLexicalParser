@@ -417,7 +417,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
                 }
             }
 
-            return TES5TypeFactory.memberByValue(propertyType);
+            return TES5TypeFactory.MemberByValue(propertyType);
         }
     }
 }

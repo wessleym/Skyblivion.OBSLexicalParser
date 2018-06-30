@@ -10,5 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         TES5FunctionScope FunctionScope { get; }
 
         void AddChunk(ITES5CodeChunk chunk);
+
+        string BlockName { get; }
     }
 }

@@ -4,7 +4,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     interface IASTCommand
     {
-        void initialize();
-        ITES4CodeFilterable getAST(string sourcePath);
+        ITES4CodeFilterable Parse(string sourcePath);
     }
 }

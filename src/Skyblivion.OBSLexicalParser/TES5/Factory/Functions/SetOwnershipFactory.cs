@@ -15,11 +15,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         private TES5ReferenceFactory referenceFactory;
         private TES5ObjectCallFactory objectCallFactory;
         private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory)
+        private ESMAnalyzer analyzer;
+        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer analyzer)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
+            this.analyzer = analyzer;
         }
 
         public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -30,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.Any())
             {
                 args = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-                ITES5Type arg0Type = ESMAnalyzer._instance().getFormTypeByEDID(functionArguments[0].StringValue);
+                ITES5Type arg0Type = analyzer.getFormTypeByEDID(functionArguments[0].StringValue);
                 if (arg0Type == TES5BasicType.T_ACTOR)
                 {
                     functionName = "SetActorOwner";

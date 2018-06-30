@@ -30,14 +30,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             return buildTargets.Values.All(bt=>bt.CanBuild(deleteFiles));
         }
-        public bool CanBuild()
+        private bool CanBuild()
         {
             return CanBuild(false);
         }
 
         public bool CanBuildAndWarnIfNot()
         {
-            if (CanBuild(false)) { return true; }
+            if (CanBuild()) { return true; }
             Console.WriteLine(DataDirectory.GetBuildPath() + " had old files.  Clear them manually, or use " + BuildFileDeleteCommand.FriendlyNameConst + ".");
             return false;
         }

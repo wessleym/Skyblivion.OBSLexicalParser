@@ -188,6 +188,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             this.addCommentsRecognition();
         }
 
+        private static readonly Regex getStartingPosOrAngleUnquotedArguments = new Regex("(getstartingpos|getstartingangle) (x|y|z)", RegexOptions.Compiled);
         public ArrayTokenStream LexWithFixes(string str)
         {
             //WTM:  Change:  In tif__0101efc0 and other TGExpelledScripts, PayFine gets misunderstood as a function call instead of a variable.
@@ -211,7 +212,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                     .Replace("set Look to ", "set LookTemp to ");
             }
             //WTM:  Change:  In qf_tg03elven_01034ea2_100_0, a variable is apparently accidentally quoted.
-            str = str.Replace("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\"", "TG03LlathasasBustMarker.PlaceAtMe TG03LlathasasBust");
+            if (str.Contains("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\""))
+            {
+                str = str.Replace("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\"", "TG03LlathasasBustMarker.PlaceAtMe TG03LlathasasBust");
+            }
+            //WTM:  Change:  In sebruscusdannusitemscript, getstartingpos's arguments are not quoted.
+            if (str.StartsWith("scn SEBruscusDannusItemSCRIPT"))
+            {
+                str = getStartingPosOrAngleUnquotedArguments.Replace(str, "$1 \"$2\"");
+            }
             ArrayTokenStream tokens = lex(str);
             return tokens;
         }

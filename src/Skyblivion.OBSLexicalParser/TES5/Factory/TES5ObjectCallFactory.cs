@@ -1,7 +1,8 @@
-using System;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -30,7 +31,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5ObjectCall CreateGetActorBaseOfPlayer(TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "GetActorBase", multipleScriptsScope);
+            return CreateGetActorBase(TES5ReferenceFactory.CreateReferenceToPlayer(), multipleScriptsScope);
+        }
+
+        public TES5ObjectCall CreateRegisterForSingleUpdate(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            float interval = globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST ? 5 : 1;
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5Float(interval) };
+            return CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, arguments);
+        }
+
+        public TES5ObjectCall CreateGotoState(string stateName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5String(stateName) };
+            return CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "GotoState", multipleScriptsScope, arguments);
         }
     }
 }

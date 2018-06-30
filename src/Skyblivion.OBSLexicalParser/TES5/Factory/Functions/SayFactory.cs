@@ -57,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (optionalFlag != null)
             {
                 string optionalFlagDataString = optionalFlag.StringValue;
-                if (ESMAnalyzer._instance().getFormTypeByEDID(optionalFlagDataString).Value!= TES4RecordType.REFR.Name)
+                if (this.analyzer.getFormTypeByEDID(optionalFlagDataString).Value!= TES4RecordType.REFR.Name)
                 {
                     this.metadataLogService.WriteLine("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
                     optionalFlag = new TES4ApiToken(optionalFlag.Data+"Ref");

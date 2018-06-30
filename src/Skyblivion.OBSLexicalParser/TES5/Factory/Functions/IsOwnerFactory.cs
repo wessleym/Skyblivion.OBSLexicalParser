@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             string dataString = functionArguments[0].StringValue;
             ITES5Referencer targetReference = this.referenceFactory.createReadReference(dataString, globalScope, multipleScriptsScope, localScope);
-            ITES5Type dataType = ESMAnalyzer._instance().getFormTypeByEDID(dataString);
+            ITES5Type dataType = this.analyzer.getFormTypeByEDID(dataString);
             TES5ObjectCall owner;
             ITES5Referencer baseReference;
             if (dataType == TES5BasicType.T_FACTION)

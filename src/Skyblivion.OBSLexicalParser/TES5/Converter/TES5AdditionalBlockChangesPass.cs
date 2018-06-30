@@ -26,9 +26,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             this.referenceFactory = referenceFactory;
             this.assignationFactory = assignationFactory;
         }
-
-        public const int ON_UPDATE_TICK = 1;
-        public void modify(TES4CodeBlock block, TES5EventBlockList blockList, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        
+        public void Modify(TES4CodeBlock block, TES5BlockList blockList, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5FunctionScope blockFunctionScope = newBlock.FunctionScope;
             switch (block.BlockType.ToLower())
@@ -36,22 +35,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "gamemode":
                 case "scripteffectupdate":
                     {
-                        TES5EventCodeBlock onInitBlock = TES5BlockFunctionScopeFactory.CreateOnInit();
-                        TES5ObjectCallArguments args = new TES5ObjectCallArguments();
-                        args.Add(new TES5Float(ON_UPDATE_TICK));
-                        TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, args);
-                        onInitBlock.AddChunk(function);
-                        blockList.add(onInitBlock);
+                        TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope, multipleScriptsScope);
                         newBlock.AddChunk(function);
+                        if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
+                        {
+                            TES5EventCodeBlock onInitBlock = TES5BlockFactory.CreateOnInit();
+                            onInitBlock.AddChunk(function);
+                            blockList.Add(onInitBlock);
+                        }
                         break;
                     }
 
                 case "onactivate":
                     {
-                        TES5EventCodeBlock onInitBlock = TES5BlockFunctionScopeFactory.CreateOnInit();
+                        TES5EventCodeBlock onInitBlock = TES5BlockFactory.CreateOnInit();
                         TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation", multipleScriptsScope);
                         onInitBlock.AddChunk(function);
-                        blockList.add(onInitBlock);
+                        blockList.Add(onInitBlock);
                         break;
                     }
 

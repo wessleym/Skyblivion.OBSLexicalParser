@@ -9,9 +9,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
     class TES5CodeChunkCollection : IEnumerable<ITES5CodeChunk>, ITES5ValueCodeChunk//ITES5ValueCodeChunk is needed for SetLevelFactory.
     {
         List<ITES5CodeChunk> values = new List<ITES5CodeChunk>();
-        public void Add(ITES5CodeChunk value)
+        public void Add(ITES5CodeChunk chunk)
         {
-            values.Add(value);
+            values.Add(chunk);
+        }
+
+        public void AddRange(IEnumerable<ITES5CodeChunk> chunks)
+        {
+            foreach(ITES5CodeChunk chunk in chunks)
+            {
+                Add(chunk);
+            }
         }
 
         public IEnumerator<ITES5CodeChunk> GetEnumerator()

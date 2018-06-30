@@ -5,17 +5,13 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using Skyblivion.OBSLexicalParser.Utilities;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {
     class BuildScopeCommand : IBuildScopeCommand
     {
-        public void initialize()
-        { }
-
-        public TES5GlobalScope buildScope(string sourcePath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");

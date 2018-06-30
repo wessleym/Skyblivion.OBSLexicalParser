@@ -1,21 +1,27 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
-    class TES5BlockList : ITES5Outputtable
+    class TES5BlockList : ITES5Outputtable, IEnumerable<ITES5CodeBlock>
     {
-        private List<ITES5CodeBlock> blocks = new List<ITES5CodeBlock>();
-        public List<ITES5CodeBlock> getBlocks()
+        public List<ITES5CodeBlock> Blocks { get; private set; } = new List<ITES5CodeBlock>();
+
+        public IEnumerable<string> Output => Blocks.SelectMany(b => b.Output);
+
+        public void Add(ITES5CodeBlock block)
         {
-            return this.blocks;
+            Blocks.Add(block);
         }
 
-        public IEnumerable<string> Output => blocks.SelectMany(b => b.Output);
-
-        public void add(ITES5CodeBlock block)
+        public IEnumerator<ITES5CodeBlock> GetEnumerator()
         {
-            blocks.Add(block);
+            return Blocks.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

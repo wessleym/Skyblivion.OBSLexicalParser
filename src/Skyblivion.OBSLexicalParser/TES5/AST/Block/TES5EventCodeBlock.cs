@@ -5,23 +5,22 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
-    class TES5EventCodeBlock : ITES5CodeBlock
+    class TES5EventCodeBlock : TES5CodeBlock
     {
-        public TES5CodeScope CodeScope { get; set; }
-        public TES5FunctionScope FunctionScope { get; private set; }
-        public TES5EventCodeBlock(TES5FunctionScope functionScope, TES5CodeScope chunks)
+        public override TES5CodeScope CodeScope { get; set; }
+        public override TES5FunctionScope FunctionScope { get; protected set; }
+        public TES5EventCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope)
         {
             this.FunctionScope = functionScope;
-            this.CodeScope = chunks;
+            this.CodeScope = codeScope;
         }
 
-        public IEnumerable<string> Output => (new string[] { "Event " + this.FunctionScope.BlockName+ "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
-                .Concat(this.CodeScope.Output)
-                .Concat(new string[] { "EndEvent" });
+        public override IEnumerable<string> Output =>
+            (new string[] { "Event " + this.BlockName + "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
+            .Concat(this.CodeScope.Output)
+            .Concat(new string[] { "EndEvent" });
 
-        public string BlockType => this.FunctionScope.BlockName;
-
-        public void AddChunk(ITES5CodeChunk chunk)
+        public override void AddChunk(ITES5CodeChunk chunk)
         {
             this.CodeScope.Add(chunk);
         }
