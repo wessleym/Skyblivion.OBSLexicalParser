@@ -413,7 +413,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
 
                 default:
                 {
-                    throw new ConversionException("Unknown "+type+" formid reference.");
+                    throw new ConversionException("Unknown "+type.Name+" formid reference.");
                 }
             }
 

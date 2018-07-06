@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             };
             TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReference.StringUtil, "Substring", multipleScriptsScope, substringArguments);
             TES4LoadedRecord cellRecord = ESMAnalyzer._instance().FindInTES4Collection(cellName, false);
-            string cellNameWithSpaces = cellRecord.getSubrecordTrim("FULL");
+            string cellNameWithSpaces = cellRecord.GetSubrecordTrim("FULL");
             if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
             TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
             return TES5ExpressionFactory.CreateComparisonExpression(substring, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);

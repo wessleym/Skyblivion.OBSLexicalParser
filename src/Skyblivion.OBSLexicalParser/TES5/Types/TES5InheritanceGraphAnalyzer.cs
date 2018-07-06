@@ -4509,13 +4509,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         { TES5BasicType.TES4TimerHelperName,
             new TES5InheritanceFunctionSignature[] {
                 new TES5InheritanceFunctionSignature("GetDayOfWeek", new string[] { }, "int"),
-
-                new TES5InheritanceFunctionSignature("GetSecondsPassed", new string[] {
+                /*new TES5InheritanceFunctionSignature("GetSecondsPassed", new string[] {
                         "Float"
-                    }, "Float"),
-                new TES5InheritanceFunctionSignature("GetSecondsPassed2", new string[] {
-                        "Form"
-                    }, "Float"),//WTM:  Change:  Added
+                    }, "Float"),*///WTM:  Change:  Deleted
                 new TES5InheritanceFunctionSignature("Rotate", new string[] {
                         "ObjectReference",
                         "Float",
