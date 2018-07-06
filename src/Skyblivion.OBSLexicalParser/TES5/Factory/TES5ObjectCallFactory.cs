@@ -54,12 +54,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else
                 {
-                    arguments.Add(new TES5Float(5));
+                    arguments.Add(new TES5Float(5f));
                 }
             }
             else
             {
-                arguments.Add(new TES5Float(1));
+                arguments.Add(new TES5Float(0.04f));
             }
             return CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", multipleScriptsScope, arguments);
         }

@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 calledOn,
                 this.valueFactory.CreateValue(functionArguments[1], codeScope, globalScope, multipleScriptsScope),
-                new TES5None(),
+                this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope),
                 new TES5Bool(true)
             };
             ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);

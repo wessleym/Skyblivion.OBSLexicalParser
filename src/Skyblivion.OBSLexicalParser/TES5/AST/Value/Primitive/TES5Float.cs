@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
@@ -11,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.f = f;
         }
 
-        public override IEnumerable<string> Output => new string[] { f.ToString() };
+        public override IEnumerable<string> Output => new string[] { f.ToString(CultureInfo.InvariantCulture) };
 
         public override ITES5Type TES5Type => TES5BasicType.T_FLOAT;
 

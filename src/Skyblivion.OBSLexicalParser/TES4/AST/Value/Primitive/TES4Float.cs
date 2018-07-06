@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
 using System;
+using System.Globalization;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
@@ -14,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 
         public object Data => this.data;
 
-        public string StringValue => this.data.ToString();
+        public string StringValue => this.data.ToString(CultureInfo.InvariantCulture);
 
         public TES4Type Type => TES4Type.T_FLOAT;
 
