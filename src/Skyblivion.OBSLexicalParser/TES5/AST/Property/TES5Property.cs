@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
@@ -7,51 +6,40 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5Property : ITES5Variable
+    class TES5Property : TES5VariableOrProperty
     {
-        const string PROPERTY_SUFFIX = "_p";
-        /*
-        * The property"s name as seen in script
-        */
-        public string PropertyNameWithSuffix { get; private set; }
-        /*
-        * Property"s type
-        */
+        private const string PROPERTY_SUFFIX = "_p";
         private ITES5Type propertyType;
-        /*
-        * Each property may be referencing to a specific EDID ( either it"s a converted property and its name minus prefix should match it, or it"s a new property created and then it ,,inherits" :)
-        */
-        public string ReferenceEDID { get; private set; }
-        /*
-        * Tracked remote script, if any
-        */
         private TES5ScriptHeader trackedScript;
-        public TES5Property(string propertyName, ITES5Type propertyType, string referenceEdid)
+        private readonly string referenceEDID;
+        public TES5Property(string propertyName, ITES5Type propertyType, string referenceEDID)
+            : base(AddPropertyNameSuffix(propertyName))
         {
-            this.PropertyNameWithSuffix = AddPropertyNameSuffix(propertyName);
             this.propertyType = propertyType; //If we"re tracking a script, this won"t be used anymore
-            this.ReferenceEDID = referenceEdid;
+            this.referenceEDID = referenceEDID;
             this.trackedScript = null;
         }
 
-        public IEnumerable<string> Output
+        public override IEnumerable<string> Output
         {
             get
             {
-                string propertyTypeName = this.PropertyType.Output.Single();
+                string propertyTypeName = this.TES5Type.Output.Single();
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
-                return new string[] { propertyTypeName + " Property " + this.PropertyNameWithSuffix + " Auto Conditional" };
+                yield return propertyTypeName + " Property " + this.Name + " Auto Conditional";
             }
         }
 
+        public override string ReferenceEDID => referenceEDID;
+
         public string GetPropertyNameWithoutSuffix()
         {
-            return RemovePropertyNameSuffix(this.PropertyNameWithSuffix);
+            return RemovePropertyNameSuffix(this.Name);
         }
 
         public void Rename(string newNameWithoutSuffix)
         {
-            this.PropertyNameWithSuffix = AddPropertyNameSuffix(newNameWithoutSuffix);
+            this.Name = AddPropertyNameSuffix(newNameWithoutSuffix);
         }
 
         public static string AddPropertyNameSuffix(string propertyName, bool throwExceptionIfSuffixAlreadyPresent = true)
@@ -68,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             return propertyName.Substring(0, propertyName.Length - PROPERTY_SUFFIX.Length);
         }
 
-        public ITES5Type PropertyType
+        public override ITES5Type TES5Type
         {
             get
             {
@@ -78,7 +66,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             {
                 if (this.trackedScript != null)
                 {
-                    this.trackedScript.setNativeType(value);
+                    this.trackedScript.SetNativeType(value);
                 }
                 else
                 {
@@ -87,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
         }
 
-        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
+        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             this.trackedScript = scriptHeader;
             ITES5Type ourNativeType = this.propertyType.NativeType;
@@ -95,7 +83,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             /*
              * Scenario 1 - types are equal or the remote type is higher than ours in which case we do nothing as they have the good type anyway
              */
-            if (ourNativeType == remoteNativeType || TES5InheritanceGraphAnalyzer.isExtending(remoteNativeType, ourNativeType))
+            if (ourNativeType == remoteNativeType || TES5InheritanceGraphAnalyzer.IsExtending(remoteNativeType, ourNativeType))
             {
                 return;
             }
@@ -103,9 +91,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             /*
              * Scenario 2 - Our current native type is extending remote script"s extended type - we need to set it properly
              */
-            else if(TES5InheritanceGraphAnalyzer.isExtending(ourNativeType, remoteNativeType))
+            else if(TES5InheritanceGraphAnalyzer.IsExtending(ourNativeType, remoteNativeType))
             {
-                this.trackedScript.setNativeType(ourNativeType);
+                this.trackedScript.SetNativeType(ourNativeType);
             }
             else 
             {

@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
                 WriteTranspiled(buildTargets, buildTracker);
-                ESMAnalyzer.deallocate();//Hack - force ESM analyzer deallocation.
+                ESMAnalyzer.Deallocate();//Hack - force ESM analyzer deallocation.
                 PrepareWorkspace(buildTargets);
                 Compile(build, buildTargets);
             }
@@ -54,7 +54,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber)
         {
-            var buildPlan = buildTargets.getBuildPlan(threadsNumber);
+            var buildPlan = buildTargets.GetBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);
             using (StreamWriter errorLog = new StreamWriter(build.GetErrorLogPath(), false))
@@ -62,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 foreach (var threadBuildPlan in buildPlan)
                 {
                     TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value);
-                    task.runTask(errorLog, progressWriter);
+                    task.RunTask(errorLog, progressWriter);
                 }
             }
             progressWriter.WriteLast();
@@ -82,14 +82,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
-            prepareCommand.run(preparingBuildWorkspaceProgressWriter);
+            prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
         private static void Compile(Build build, BuildTargetCollection buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
-            task.run();
+            task.Run();
         }
     }
 }

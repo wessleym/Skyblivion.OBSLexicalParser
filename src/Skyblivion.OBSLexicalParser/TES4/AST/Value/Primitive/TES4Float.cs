@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
     class TES4Float : ITES4Primitive
     {
-        private float data;
+        private readonly float data;
         public TES4Float(float data)
         {
             this.data = data;

@@ -2,7 +2,7 @@
 {
     public class LPCommandOption : LPCommandArgumentOrOption
     {
-        private string shortName;
+        private readonly string shortName;
         public LPCommandOption(string name, string shortName, string description, string defaultValue = null)
             : base(name, description, defaultValue)
         {

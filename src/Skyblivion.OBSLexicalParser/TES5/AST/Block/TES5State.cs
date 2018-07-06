@@ -7,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5State : TES5CodeBlock
     {
-        private string name;
-        private bool auto;
-        private TES5BlockList codeBlocks;
+        private readonly string name;
+        private readonly bool auto;
+        private readonly TES5BlockList codeBlocks;
         public TES5State(string name, bool auto, TES5FunctionScope functionScope, TES5CodeScope codeScope)
         {
             this.name = name;
@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public override void AddChunk(ITES5CodeChunk chunk)
         {
-            this.CodeScope.Add(chunk);
+            this.CodeScope.AddChunk(chunk);
         }
     }
 }

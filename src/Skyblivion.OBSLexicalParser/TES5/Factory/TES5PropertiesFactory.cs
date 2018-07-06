@@ -14,10 +14,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         /*
         * Create an pre-defined property from a ref VariableDeclaration
         */
-        private static TES5Property createPropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
+        private static TES5Property CreatePropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
         {
             string variableName = declaration.VariableName;
-            if (globalVariables.hasGlobalVariable(variableName))
+            if (globalVariables.ContainsName(variableName))
             {
                 return new TES5Property(variableName, TES5BasicType.T_GLOBALVARIABLE, variableName);
             }
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         /*
         * @throws ConversionException
         */
-        public static void createProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        public static void CreateProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
         {
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
             foreach (TES4VariableDeclaration variable in variableList.getVariableList())
@@ -59,14 +59,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else if (variableType == TES4Type.T_REF)
                 {
-                    property = createPropertyFromReference(variable, globalVariables);
+                    property = CreatePropertyFromReference(variable, globalVariables);
                 }
                 else
                 {
                     throw new ConversionException("Unknown variable declaration type.");
                 }
 
-                globalScope.Add(property);
+                globalScope.AddProperty(property);
                 alreadyDefinedVariables.Add(variableNameLower, variable);
             }
         }

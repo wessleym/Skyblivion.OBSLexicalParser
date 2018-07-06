@@ -5,11 +5,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     class ProgressWriter
     {
-        private string label;
-        private int total;
+        private readonly string label;
+        private readonly int total;
         private int current;
         private int percent;
-        private Stopwatch stopwatch;
+        private readonly Stopwatch stopwatch;
         public ProgressWriter(string label, int total)
         {
             this.label = label;

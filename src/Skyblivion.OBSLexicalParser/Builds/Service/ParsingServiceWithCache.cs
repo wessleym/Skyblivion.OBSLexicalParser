@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
     abstract class ParsingServiceWithCache<T> : ParsingService<T> where T : ITES4CodeFilterable
     {
         private Dictionary<string, T> parsingCache = new Dictionary<string, T>();
-        private SyntaxErrorCleanParser parser;
+        private readonly SyntaxErrorCleanParser parser;
         public ParsingServiceWithCache(SyntaxErrorCleanParser parser)
             : base()
         {

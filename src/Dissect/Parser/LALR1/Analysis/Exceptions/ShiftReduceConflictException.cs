@@ -1,5 +1,3 @@
-using Dissect.Parser.LALR1.Analysis;
-using Dissect.Parser;
 using System.Linq;
 
 namespace Dissect.Parser.LALR1.Analysis.Exceptions
@@ -12,8 +10,18 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
      */
     class ShiftReduceConflictException : ConflictException
     {
-        protected Rule rule;
-        protected string lookahead;
+        /*
+        * Returns the conflicting rule.
+         *
+         *  The conflicting rule.
+        */
+        public Rule Rule { get; protected set; }
+        /*
+        * Returns the conflicting lookahead.
+         *
+         *  The conflicting lookahead.
+        */
+        public string Lookahead { get; protected set; }
         /*
         * Constructor.
          *
@@ -24,39 +32,19 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
         public ShiftReduceConflictException(int state, Rule rule, string lookahead, Automaton automaton)
             : base(GetMessage(rule, state, lookahead), state, automaton)
         {
-            this.rule = rule;
-            this.lookahead = lookahead;
+            this.Rule = rule;
+            this.Lookahead = lookahead;
         }
 
         private static string GetMessage(Rule rule, int state, string lookahead)
         {
-            string[] components = rule.getComponents();
+            string[] components = rule.Components;
             return
 @"The grammar exhibits a shift/reduce conflict on rule:
 
-  " + rule.getNumber() + @". " + rule.getName() + @" -> " + (!components.Any() ? "/* empty */" : string.Join(" ", components)) + @"
+  " + rule.Number+ @". " + rule.Name+ @" -> " + (!components.Any() ? "/* empty */" : string.Join(" ", components)) + @"
 
 (on lookahead """ + lookahead + @""" in state " + state + @"). Restructure your grammar or choose a conflict resolution mode.";
-        }
-
-        /*
-        * Returns the conflicting rule.
-         *
-         *  The conflicting rule.
-        */
-        public Dissect.Parser.Rule getRule()
-        {
-            return this.rule;
-        }
-
-        /*
-        * Returns the conflicting lookahead.
-         *
-         *  The conflicting lookahead.
-        */
-        public string getLookahead()
-        {
-            return this.lookahead;
         }
     }
 }

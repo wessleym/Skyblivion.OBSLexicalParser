@@ -9,8 +9,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
     abstract class ParsingService<T> where T : ITES4CodeFilterable
     {
-        private Lazy<OBScriptLexer> lexerLazy;
-        private Lazy<SyntaxErrorCleanParser> parserLazy;
+        private readonly Lazy<OBScriptLexer> lexerLazy;
+        private readonly Lazy<SyntaxErrorCleanParser> parserLazy;
         public ParsingService()
         {
             lexerLazy = new Lazy<OBScriptLexer>(() => GetLexer());

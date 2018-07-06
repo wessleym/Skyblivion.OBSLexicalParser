@@ -1,24 +1,18 @@
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5LocalVariable : ITES5Variable
+    class TES5LocalVariable : TES5VariableOrProperty
     {
-        public string PropertyNameWithSuffix { get; private set; }
-        public ITES5Type PropertyType { get; set; }
         public TES5LocalVariableParameterMeaning[] Meanings { get; private set; }
-        public TES5LocalVariable(string propertyNameWithSuffix, TES5BasicType type, TES5LocalVariableParameterMeaning[] meanings = null)
+        public TES5LocalVariable(string nameWithSuffix, TES5BasicType type, TES5LocalVariableParameterMeaning[] meanings = null)
+            : base(nameWithSuffix, type)
         {
             if (meanings == null) { meanings = new TES5LocalVariableParameterMeaning[] { }; }
-            this.PropertyNameWithSuffix = propertyNameWithSuffix;
-            this.PropertyType = type;
             this.Meanings = meanings;
         }
-
-        public IEnumerable<string> Output => new string[] { this.PropertyType.Value+ " " + this.PropertyNameWithSuffix };
 
         /*
         * Todo - following two methods should not be in this interface but TES5Property interface
@@ -26,9 +20,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
          * inference information if any available
          * @throws ConversionException
         */
-        public string ReferenceEDID => throw new ConversionException("Local variables have no EDID references.");
+        public override string ReferenceEDID => throw new ConversionException("Local variables have no EDID references.");
 
-        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
+        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             throw new ConversionException("Local variables cannot track remote scripts.");
         }

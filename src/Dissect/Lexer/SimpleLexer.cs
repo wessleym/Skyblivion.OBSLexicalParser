@@ -14,73 +14,73 @@ namespace Dissect.Lexer
      */
     public class SimpleLexer : AbstractLexer
     {
-        protected string[] skipTokens = new string[] { };
-        protected Dictionary<string, IRecognizer> recognizers = new Dictionary<string, IRecognizer>();
+        protected string[] SkipTokens = new string[] { };
+        protected readonly Dictionary<string, IRecognizer> Recognizers = new Dictionary<string, IRecognizer>();
         /*
         * Adds a new token definition. If given only one argument,
          * it assumes that the token type and recognized value are
          * identical.
         */
-        public SimpleLexer token(string type, string value = null)
+        public SimpleLexer Token(string type, string value = null)
         {
             if (value == null) { value = type; }
-            this.recognizers.Add(type, new SimpleRecognizer(value));
+            this.Recognizers.Add(type, new SimpleRecognizer(value));
             return this;
         }
 
         /*
         * Adds a new regex token definition.
         */
-        public SimpleLexer regex(string type, Regex regex)
+        public SimpleLexer Regex(string type, Regex regex)
         {
             if (!regex.Options.HasFlag(RegexOptions.Compiled))
             {
                 throw new InvalidOperationException("Regex was not compiled.");
             }
-            this.recognizers.Add(type, new RegexRecognizer(regex));
+            this.Recognizers.Add(type, new RegexRecognizer(regex));
             return this;
         }
-        private SimpleLexer regex(string type, string pattern, RegexOptions options)
+        private SimpleLexer Regex(string type, string pattern, RegexOptions options)
         {
-            regex(type, new Regex(pattern, options));
+            Regex(type, new Regex(pattern, options));
             return this;
         }
-        public SimpleLexer regex(string type, string pattern)
+        public SimpleLexer Regex(string type, string pattern)
         {
-            regex(type, pattern, RegexOptions.Compiled);
+            Regex(type, pattern, RegexOptions.Compiled);
             return this;
         }
-        public SimpleLexer regexIgnoreCase(string type, string pattern)
+        public SimpleLexer RegexIgnoreCase(string type, string pattern)
         {
-            regex(type, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            Regex(type, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             return this;
         }
 
         /*
         * Marks the token types given as arguments to be skipped.
         */
-        public SimpleLexer skip(params string[] tokens)
+        public SimpleLexer Skip(params string[] tokens)
         {
-            this.skipTokens = tokens;
+            this.SkipTokens = tokens;
             return this;
         }
         
-        protected override bool shouldSkipToken(IToken token)
+        protected override bool ShouldSkipToken(IToken token)
         {
-            return skipTokens.Contains(token.getType());
+            return SkipTokens.Contains(token.Type);
         }
         
-        protected override IToken extractToken(string str)
+        protected override IToken ExtractToken(string str)
         {
             string value = null;
             string type = null;
-            foreach (var kvp in recognizers)
+            foreach (var kvp in Recognizers)
             {
                 IRecognizer recognizer = kvp.Value;
                 string v;
-                if (recognizer.match(str, out v))
+                if (recognizer.Match(str, out v))
                 {
-                    if (value == null || Util.Util.stringLength(v) > Util.Util.stringLength(value))
+                    if (value == null || Util.Util.StringLength(v) > Util.Util.StringLength(value))
                     {
                         value = v;
                         type = kvp.Key;
@@ -90,7 +90,7 @@ namespace Dissect.Lexer
 
             if (type != null)
             {
-                return new CommonToken(type, value, this.getCurrentLine());
+                return new CommonToken(type, value, this.Line);
             }
 
             return null;

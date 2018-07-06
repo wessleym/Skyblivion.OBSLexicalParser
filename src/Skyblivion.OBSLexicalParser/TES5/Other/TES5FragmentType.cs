@@ -2,7 +2,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Other
 {
     class TES5FragmentType
     {
-        private string name;
+        private readonly string name;
         private TES5FragmentType(string name)
         {
             this.name = name;

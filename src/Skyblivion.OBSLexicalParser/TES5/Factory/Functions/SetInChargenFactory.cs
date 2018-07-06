@@ -11,22 +11,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class SetInChargenFactory : IFunctionFactory
     {
-        private TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
         public SetInChargenFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES5Referencer newCalledOn = TES5StaticReference.Game;
             const string functionName = "SetInChargen";
             bool argumentBool = ((TES4Integer)function.Arguments[0]).IntValue == 1;
             ITES5Value argumentValue = new TES5Bool(argumentBool);
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            arguments.Add(argumentValue);
-            arguments.Add(argumentValue);
-            arguments.Add(argumentValue);
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { argumentValue, argumentValue, argumentValue };
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, arguments);
             return newFunction;
         }

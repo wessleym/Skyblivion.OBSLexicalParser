@@ -9,5 +9,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             return new TES5CodeScope(variableScope);
         }
+
+        public static TES5CodeScope CreateCodeScopeRoot(TES5FunctionScope functionScope)
+        {
+            return CreateCodeScope(TES5LocalScopeFactory.CreateRootScope(functionScope));
+        }
+
+        public static TES5CodeScope CreateCodeScopeRecursive(TES5LocalScope localScope)
+        {
+            return CreateCodeScope(TES5LocalScopeFactory.CreateRecursiveScope(localScope));
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     static class TES5FragmentFunctionScopeFactory
     {
-        public static TES5FunctionScope createFromFragmentType(string fragmentName, TES5FragmentType fragmentType)
+        public static TES5FunctionScope CreateFromFragmentType(string fragmentName, TES5FragmentType fragmentType)
         {
             TES5FunctionScope localScope = new TES5FunctionScope(fragmentName);
             if (fragmentType == TES5FragmentType.T_TIF)

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
             OPERATOR_OR = new TES4LogicalExpressionOperator("||"),
             OPERATOR_AND = new TES4LogicalExpressionOperator("&&");
 
-        public static readonly TES4LogicalExpressionOperator[] all = new TES4LogicalExpressionOperator[]
+        private static readonly TES4LogicalExpressionOperator[] all = new TES4LogicalExpressionOperator[]
         {
             OPERATOR_OR,
             OPERATOR_AND

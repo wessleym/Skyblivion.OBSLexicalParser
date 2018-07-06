@@ -14,42 +14,42 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
      */
     class TES5MultipleScriptsScope
     {
-        private Dictionary<string, TES5GlobalScope> globalScopes;
-        private TES5GlobalVariables globalVariables;
+        private readonly Dictionary<string, TES5GlobalScope> globalScopes;
+        private readonly TES5GlobalVariables globalVariables;
         public TES5MultipleScriptsScope(IEnumerable<TES5GlobalScope> globalScopes, TES5GlobalVariables globalVariables)
         {
             this.globalScopes = globalScopes.ToDictionary(x => x.ScriptHeader.OriginalScriptName.ToLower(), x => x);
             this.globalVariables = globalVariables;
         }
 
-        public TES5ScriptHeader getScriptHeaderOfScript(string scriptName)
+        public TES5ScriptHeader GetScriptHeaderOfScript(string scriptName)
         {
             TES5GlobalScope globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException(nameof(TES5MultipleScriptsScope)+"."+nameof(getScriptHeaderOfScript) +":  Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
+                throw new ConversionException(nameof(TES5MultipleScriptsScope)+"."+nameof(GetScriptHeaderOfScript) +":  Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
             }
             return globalScope.ScriptHeader;
         }
 
-        public TES5Property getPropertyFromScript(string scriptName, string propertyName)
+        public TES5Property GetPropertyFromScript(string scriptName, string propertyName)
         {
             TES5GlobalScope globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(getPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
+                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
             }
-            TES5Property property = globalScope.getPropertyByName(propertyName);
+            TES5Property property = globalScope.GetPropertyByName(propertyName);
             if (property == null)
             {
-                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(getPropertyFromScript) + ": - Cannot find a property " + propertyName+" in script name "+scriptName);
+                throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a property " + propertyName+" in script name "+scriptName);
             }
             return property;
         }
 
-        public bool hasGlobalVariable(string globalVariableName)
+        public bool ContainsGlobalVariable(string globalVariableName)
         {
-            return this.globalVariables.hasGlobalVariable(globalVariableName);
+            return this.globalVariables.ContainsName(globalVariableName);
         }
     }
 }

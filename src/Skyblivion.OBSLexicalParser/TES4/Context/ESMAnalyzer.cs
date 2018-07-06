@@ -21,9 +21,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
      */
     class ESMAnalyzer
     {
-        private Dictionary<string, ITES5Type> scriptTypes;
-        private TES5GlobalVariables globals;
-        private Dictionary<string, ITES5Type> attachedNameCache = new Dictionary<string, ITES5Type>();
+        private readonly Dictionary<string, ITES5Type> scriptTypes;
+        public TES5GlobalVariables GlobalVariables { get; private set; }
+        private readonly Dictionary<string, ITES5Type> attachedNameCache = new Dictionary<string, ITES5Type>();
         private static TES4Collection esm;
         private static ESMAnalyzer instance;
         public ESMAnalyzer(string dataFile = DataDirectory.TES4GameFileName)
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             if (esm == null)
             {
                 TES4Collection collection = new TES4Collection(DataDirectory.GetESMDirectoryPath());
-                collection.add(dataFile);
+                collection.Add(dataFile);
                 //NOTE - SCRI record load scheme is a copypasta, as in, i didnt check which records do actually might have SCRI
                 //Doesnt really matter for other purposes than cleaniness
                 TES4FileLoadScheme fileScheme = new TES4FileLoadScheme();
@@ -210,14 +210,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 grupScheme = new TES4GrupLoadScheme();
                 grupScheme.Add(TES4RecordType.EFSH, new TES4RecordLoadScheme(new string[] { "EDID", "SCRI" }));
                 fileScheme.add(TES4RecordType.EFSH, grupScheme);
-                collection.load(fileScheme);
+                collection.Load(fileScheme);
                 esm = collection;
             }
 
             if (this.scriptTypes == null)
             {
                 this.scriptTypes = new Dictionary<string, ITES5Type>();
-                List<TES4Grup> scpts = esm.getGrup(TES4RecordType.SCPT);
+                List<TES4Grup> scpts = esm.GetGrup(TES4RecordType.SCPT);
                 foreach (ITES4Record scpt in scpts.SelectMany(s=>s.Select(r=>r)))
                 {
                     string schr = scpt.getSubrecordString("SCHR");
@@ -254,9 +254,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 }
             }
 
-            if (this.globals == null)
+            if (this.GlobalVariables == null)
             {
-                List<TES4Grup> globals = esm.getGrup(TES4RecordType.GLOB);
+                List<TES4Grup> globals = esm.GetGrup(TES4RecordType.GLOB);
                 List<TES5GlobalVariable> globalArray = new List<TES5GlobalVariable>();
                 foreach (ITES4Record global in globals.SelectMany(g => g.Select(r => r)))
                 {
@@ -274,7 +274,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                  * Probably we should extract this from this class and put this into other place
                  */
                 globalArray.Add(new TES5GlobalVariable("Infamy"));
-                this.globals = new TES5GlobalVariables(globalArray);
+                this.GlobalVariables = new TES5GlobalVariables(globalArray);
             }
 
             if (instance == null)
@@ -293,20 +293,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return instance;
         }
 
-        public TES5GlobalVariables getGlobalVariables()
-        {
-            return this.globals;
-        }
-
         public TES4LoadedRecord FindInTES4Collection(string edid, bool throwException)
         {
-            return esm.findByEDID(edid, false);
+            return esm.FindByEDID(edid, false);
         }
 
         /*
              * @throws ConversionException
         */
-        public ITES5Type getFormTypeByEDID(string edid)
+        public ITES5Type GetFormTypeByEDID(string edid)
         {
             TES4LoadedRecord record = FindInTES4Collection(edid, false);
             if (record == null)
@@ -316,13 +311,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 if (edid == "LvlSpell") { return TES5BasicType.T_SPELL; }
                 throw new ConversionException("Cannot find type for EDID " + edid);
             }
-            return TypeMapper.map(record.getType());
+            return TypeMapper.Map(record.getType());
         }
 
         /*
              * @throws ConversionException
         */
-        public ITES5Type getScriptType(string scriptName)
+        public ITES5Type GetScriptType(string scriptName)
         {
             string scriptNameLower = scriptName.ToLower();
             ITES5Type value;
@@ -351,7 +346,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             {
                 //Resolve the reference
                 Nullable<int> baseFormid = attachedNameRecord.getSubrecordAsFormid("NAME");
-                attachedNameRecord = esm.findByFormid(baseFormid.Value);
+                attachedNameRecord = esm.FindByFormid(baseFormid.Value);
             }
 
             Nullable<int> scriptFormid = attachedNameRecord.getSubrecordAsFormid("SCRI");
@@ -360,7 +355,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 throw new ConversionException("Cannot resolve script type for " + attachedName + " - Asked base record has no script bound.");
             }
 
-            TES4LoadedRecord scriptRecord = esm.findByFormid(scriptFormid.Value);
+            TES4LoadedRecord scriptRecord = esm.FindByFormid(scriptFormid.Value);
             ITES5Type customType = TES5TypeFactory.MemberByValue(scriptRecord.getSubrecordTrim("EDID"));
             this.attachedNameCache.Add(attachedNameLower, customType);
             return customType;
@@ -370,7 +365,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         * Makes the adapter unusable by deallocating the esm object.
          * This really ought to be more clean, but until this class is used statically we have no other choice
         */
-        public static void deallocate()
+        public static void Deallocate()
         {
             //Drop the ref
             esm = null;

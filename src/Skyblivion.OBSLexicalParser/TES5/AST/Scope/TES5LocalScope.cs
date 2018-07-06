@@ -36,22 +36,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5LocalVariable GetVariable(string name)
         {
-            return this.GetAllVariables().Where(v => v.PropertyNameWithSuffix == name).FirstOrDefault();
+            return this.GetAllVariables().Where(v => v.Name == name).FirstOrDefault();
         }
 
-        public List<TES5LocalVariable> GetAllVariables()
+        private IEnumerable<TES5LocalVariable> GetAllVariables()
         {
-            List<TES5LocalVariable> variables = new List<TES5LocalVariable>();
             TES5LocalScope scope = this;
             do
             {
-                List<TES5LocalVariable> variablePack = scope.LocalVariables;
-                variables.AddRange(variablePack);
+                foreach (TES5LocalVariable variable in scope.LocalVariables)
+                {
+                    yield return variable;
+                }
                 scope = scope.ParentScope;
             }
             while (scope != null);
-            variables.AddRange(this.FunctionScope.Variables.Values);
-            return variables;
+            foreach (TES5LocalVariable variable in this.FunctionScope.Variables.Values)
+            {
+                yield return variable;
+            }
         }
 
         public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)

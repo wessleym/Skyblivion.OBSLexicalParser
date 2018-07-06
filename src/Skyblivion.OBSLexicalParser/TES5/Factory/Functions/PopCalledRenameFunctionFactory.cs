@@ -12,10 +12,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
      */
     class PopCalledRenameFunctionFactory : IFunctionFactory
     {
-        private string newFunctionName;
-        private TES5ReferenceFactory referenceFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        private readonly string newFunctionName;
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
         public PopCalledRenameFunctionFactory(string newFunctionName, TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
             this.newFunctionName = newFunctionName;
@@ -24,11 +24,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
             return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }

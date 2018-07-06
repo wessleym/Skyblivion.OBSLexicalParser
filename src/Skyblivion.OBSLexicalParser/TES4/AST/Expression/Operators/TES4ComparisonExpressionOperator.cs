@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
             OPERATOR_LESS = new TES4ComparisonExpressionOperator("<", (l, r) => l < r),
             OPERATOR_LESS_OR_EQUAL = new TES4ComparisonExpressionOperator("<=", (l, r) => l <= r);
 
-        public static readonly TES4ComparisonExpressionOperator[] all = new TES4ComparisonExpressionOperator[]
+        private static readonly TES4ComparisonExpressionOperator[] all = new TES4ComparisonExpressionOperator[]
         {
             OPERATOR_EQUAL,
             OPERATOR_NOT_EQUAL,

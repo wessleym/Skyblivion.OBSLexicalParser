@@ -29,7 +29,7 @@ namespace Dissect.Lexer.Recognizer
                 haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public bool match(string haystack, out string result)
+        public bool Match(string haystack, out string result)
         {
             if (NeedleStartsWith(haystack))
             {

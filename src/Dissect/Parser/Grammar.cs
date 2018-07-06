@@ -21,10 +21,19 @@ namespace Dissect.Parser
         * The epsilon symbol signifies an empty production.
         */
         public const string EPSILON = "epsilon";
-        protected List<Rule> rules = new List<Rule> { null };//Leave the first rule open for the eventual call to start(string name).
-        protected Dictionary<string, List<Rule>> groupedRules = new Dictionary<string, List<Rule>>();
+        /*
+        * Returns the set of rules of this grammar.
+        */
+        public List<Rule> Rules { get; protected set; } = new List<Rule> { null };//Leave the first rule open for the eventual call to start(string name).
+        /*
+        * Returns rules grouped by nonterminal name.
+        */
+        public Dictionary<string, List<Rule>> GroupedRules { get; protected set; } = new Dictionary<string, List<Rule>>();
         protected int nextRuleNumber = 1;
-        protected int conflictsMode = 9; // SHIFT | OPERATORS
+        /*
+        * Returns the conflict resolution mode for this grammar.
+        */
+        public int ConflictsMode { get; protected set; } = 9; // SHIFT | OPERATORS
         protected string currentNonterminal;
         protected Rule currentRule;
         protected Dictionary<string, Dictionary<string, int>> operators = new Dictionary<string, Dictionary<string, int>>();
@@ -84,7 +93,7 @@ namespace Dissect.Parser
         /*
         * Defines an alternative for a grammar rule.
         */
-        public Grammar _is(params string[] args)
+        public Grammar Is(params string[] args)
         {
             this.currentOperators = null;
             if (this.currentNonterminal == null)
@@ -94,61 +103,53 @@ namespace Dissect.Parser
 
             int num = this.nextRuleNumber++;
             Rule rule = new Rule(num, this.currentNonterminal, args);
-            this.rules.Add(rule);
+            this.Rules.Add(rule);
             this.currentRule = rule;
-            this.groupedRules.AddNewListIfNotContainsKeyAndAddValueToList(this.currentNonterminal, rule);
+            this.GroupedRules.AddNewListIfNotContainsKeyAndAddValueToList(this.currentNonterminal, rule);
             return this;
         }
 
         /*
-            * Sets the callback for the current rule.
-            */
-        public Grammar call(Func<object[], object> callback)
+        * Sets the callback for the current rule.
+        */
+        public Grammar Call(Func<object[], object> callback)
         {
             if (this.currentRule == null)
             {
                 throw new InvalidOperationException("You must specify a rule first.");
             }
-            this.currentRule.setCallback(callback);
+            this.currentRule.Callback = callback;
             return this;
         }
 
-        public Grammar call<TIn1, TOut>(Func<TIn1, TOut> callback)
+        public Grammar Call<TIn1, TOut>(Func<TIn1, TOut> callback)
         {
-            return call((args) => callback((TIn1)args[0]));
+            return Call((args) => callback((TIn1)args[0]));
         }
 
-        public Grammar call<TIn1, TIn2, TOut>(Func<TIn1, TIn2, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TOut>(Func<TIn1, TIn2, TOut> callback)
         {
-            return call((args) => callback((TIn1)args[0], (TIn2)args[1]));
+            return Call((args) => callback((TIn1)args[0], (TIn2)args[1]));
         }
 
-        public Grammar call<TIn1, TIn2, TIn3, TOut>(Func<TIn1, TIn2, TIn3, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TOut>(Func<TIn1, TIn2, TIn3, TOut> callback)
         {
-            return call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2]));
+            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2]));
         }
 
-        public Grammar call<TIn1, TIn2, TIn3, TIn4, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TOut> callback)
         {
-            return call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3]));
+            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3]));
         }
 
-        public Grammar call<TIn1, TIn2, TIn3, TIn4, TIn5, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TOut> callback)
         {
-            return call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4]));
+            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4]));
         }
 
-        /*
-        * Returns the set of rules of this grammar.
-        */
-        public List<Rule> getRules()
+        public Rule GetRule(int number)
         {
-            return this.rules;
-        }
-
-        public Rule getRule(int number)
-        {
-            return this.rules[number];
+            return this.Rules[number];
         }
 
         //DissectChange:
@@ -161,64 +162,50 @@ namespace Dissect.Parser
         }*/
 
         /*
-        * Returns rules grouped by nonterminal name.
-        */
-        public Dictionary<string, List<Rule>> getGroupedRules()
-        {
-            return this.groupedRules;
-        }
-
-        /*
             * Sets a start rule for this grammar.
             */
-        public void start(string name)
+        public void Start(string name)
         {
-            this.rules[0] = new Rule(0, START_RULE_NAME, new string[] { name });
+            this.Rules[0] = new Rule(0, START_RULE_NAME, new string[] { name });
         }
 
         /*
             * Returns the augmented start rule. For internal use only.
             */
-        public Dissect.Parser.Rule getStartRule()
+        public Rule StartRule
         {
-            Rule firstRule = rules.FirstOrDefault();
-            if (firstRule == null)
+            get
             {
-                throw new InvalidOperationException("No start rule specified.");
+                Rule firstRule = Rules.FirstOrDefault();
+                if (firstRule == null)
+                {
+                    throw new InvalidOperationException("No start rule specified.");
+                }
+                return firstRule;
             }
-
-            return firstRule;
         }
 
         /*
-            * Sets the mode of conflict resolution.
-            */
-        public void resolve(int mode)
+        * Sets the mode of conflict resolution.
+        */
+        public void Resolve(int mode)
         {
-            this.conflictsMode = mode;
+            this.ConflictsMode = mode;
         }
 
         /*
-            * Returns the conflict resolution mode for this grammar.
-            */
-        public int getConflictsMode()
+        * Does a nonterminal name exist in the grammar?
+        */
+        public bool HasNonterminal(string name)
         {
-            return this.conflictsMode;
-        }
-
-        /*
-            * Does a nonterminal name exist in the grammar?
-            */
-        public bool hasNonterminal(string name)
-        {
-            return groupedRules.ContainsKey(name);
+            return GroupedRules.ContainsKey(name);
         }
 
         //DissectChange
         /*
         * Defines a group of operators.
         */
-        public Grammar getOperators(params string[] args)
+        public Grammar GetOperators(params string[] args)
         {
             this.currentRule = null;
             this.currentOperators = args;
@@ -231,33 +218,33 @@ namespace Dissect.Parser
         }
 
         /*
-            * Marks the current group of operators as left-associative.
-            */
-        public Dissect.Parser.Grammar left()
+        * Marks the current group of operators as left-associative.
+        */
+        public Grammar Left()
         {
-            return this.assoc(LEFT);
+            return this.Assoc(LEFT);
         }
 
         /*
-            * Marks the current group of operators as right-associative.
-            */
-        public Dissect.Parser.Grammar right()
+        * Marks the current group of operators as right-associative.
+        */
+        public Grammar Right()
         {
-            return this.assoc(RIGHT);
+            return this.Assoc(RIGHT);
         }
 
         /*
-            * Marks the current group of operators as nonassociative.
-            */
-        public Dissect.Parser.Grammar nonassoc()
+        * Marks the current group of operators as nonassociative.
+        */
+        public Grammar Nonassoc()
         {
-            return this.assoc(NONASSOC);
+            return this.Assoc(NONASSOC);
         }
 
         /*
-            * Explicitly sets the associatity of the current group of operators.
-            */
-        public Grammar assoc(int a)
+        * Explicitly sets the associatity of the current group of operators.
+        */
+        public Grammar Assoc(int a)
         {
             if (this.currentOperators == null)
             {
@@ -277,7 +264,7 @@ namespace Dissect.Parser
              * If no group of operators is being specified, sets the precedence
              * of the currently described rule.
             */
-        public Grammar prec(int i)
+        public Grammar Prec(int i)
         {
             if (this.currentOperators == null)
             {
@@ -287,7 +274,7 @@ namespace Dissect.Parser
                 }
                 else
                 {
-                    this.currentRule.setPrecedence(i);
+                    this.currentRule.Precedence = i;
                 }
             }
             else
@@ -302,14 +289,14 @@ namespace Dissect.Parser
         }
 
         /*
-            * Is the passed token an operator?
-            */
-        public bool hasOperator(string token)
+        * Is the passed token an operator?
+        */
+        public bool HasOperator(string token)
         {
             return operators.ContainsKey(token);
         }
 
-        public Dictionary<string, int> getOperatorInfo(string token)
+        public Dictionary<string, int> GetOperatorInfo(string token)
         {
             return this.operators[token];
         }

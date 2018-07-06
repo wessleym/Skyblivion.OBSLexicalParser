@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
     abstract class TES5BinaryExpression<T> : ITES5Expression where T : TES5ExpressionOperator
     {
         protected ITES5Value LeftValue { get; private set; }
-        private T op;
+        private readonly T op;
         protected ITES5Value RightValue { get; private set; }
         public TES5BinaryExpression(ITES5Value leftValue, T op, ITES5Value rightValue)
         {
@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
             {
                 string leftOutput = this.LeftValue.Output.Single();
                 string rightOutput = this.RightValue.Output.Single();
-                return new string[] { "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")" };
+                yield return "(" + leftOutput + " " + this.op.Name + " " + rightOutput + ")";
             }
         }
 

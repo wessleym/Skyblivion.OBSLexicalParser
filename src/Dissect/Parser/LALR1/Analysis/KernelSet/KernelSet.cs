@@ -11,8 +11,8 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
      */
     class KernelSet
     {
-        protected int nextNumber = 0;
-        protected Node root = null;
+        protected int NextNumber = 0;
+        protected Node Root = null;
         /*
         * Inserts a new node in the BST and returns
         * the number of the new state if no such state
@@ -23,48 +23,48 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
         *
         *  The state number.
         */
-        public int insert(IList<decimal[]> kernelArg)
+        public int Insert(IList<decimal[]> kernelArg)
         {
-            decimal[] kernel = hashKernel(kernelArg);
-            if (this.root == null)
+            decimal[] kernel = HashKernel(kernelArg);
+            if (this.Root == null)
             {
-                int n = this.nextNumber++;
-                this.root = new Node(kernel, n);
+                int n = this.NextNumber++;
+                this.Root = new Node(kernel, n);
                 return n;
             }
 
-            Node node = this.root;
+            Node node = this.Root;
             while (true)
             {
-                if (ArrayLessThan(kernel, node.kernel))
+                if (ArrayLessThan(kernel, node.Kernel))
                 {
-                    if (node.left == null)
+                    if (node.Left == null)
                     {
-                        int n = this.nextNumber++;
-                        node.left = new Node(kernel, n);
+                        int n = this.NextNumber++;
+                        node.Left = new Node(kernel, n);
                         return n;
                     }
                     else
                     {
-                        node = node.left;
+                        node = node.Left;
                     }
                 }
-                else if (ArrayGreaterThan(kernel, node.kernel))
+                else if (ArrayGreaterThan(kernel, node.Kernel))
                 {
-                    if (node.right == null)
+                    if (node.Right == null)
                     {
-                        int n = this.nextNumber++;
-                        node.right = new Node(kernel, n);
+                        int n = this.NextNumber++;
+                        node.Right = new Node(kernel, n);
                         return n;
                     }
                     else
                     {
-                        node = node.right;
+                        node = node.Right;
                     }
                 }
                 else
                 {
-                    return node.number;
+                    return node.Number;
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
          *
          * @return array The hashed kernel.
         */
-        public static decimal[] hashKernel(IList<decimal[]> kernel)
+        public static decimal[] HashKernel(IList<decimal[]> kernel)
         {
             return kernel.Select(k =>
             {

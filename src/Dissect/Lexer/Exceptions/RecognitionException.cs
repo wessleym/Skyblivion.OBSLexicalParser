@@ -9,22 +9,17 @@ namespace Dissect.Lexer.Exceptions
      */
     class RecognitionException : Exception
     {
-        protected int sourceLine;
+        /*
+        * Returns the source line number where the exception occured.
+        */
+        public int SourceLine { get; protected set; }
         /*
         * Constructor.
         */
         public RecognitionException(int line)
             : base("Cannot extract another token at line "+ line+".")
         {
-            this.sourceLine = line;
-        }
-
-        /*
-        * Returns the source line number where the exception occured.
-        */
-        public int getSourceLine()
-        {
-            return this.sourceLine;
+            this.SourceLine = line;
         }
     }
 }

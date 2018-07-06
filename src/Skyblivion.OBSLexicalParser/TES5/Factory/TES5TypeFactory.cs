@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (basicType == null)
             {
                 ESMAnalyzer analyzer = ESMAnalyzer._instance();
-                basicType = analyzer.getScriptType(memberByValue);
+                basicType = analyzer.GetScriptType(memberByValue);
             }
             return new TES5CustomType(memberByValue, TES4Prefix, basicType);
         }

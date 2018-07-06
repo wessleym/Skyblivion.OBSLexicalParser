@@ -12,9 +12,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     static class TES5InheritanceGraphAnalyzer
     {
-        private static Dictionary<ITES5Type, ITES5Type> inheritanceCache = new Dictionary<ITES5Type, ITES5Type>();
+        private static readonly Dictionary<ITES5Type, ITES5Type> inheritanceCache = new Dictionary<ITES5Type, ITES5Type>();
         //WTM:  Note:  This includes some SKSE functions:  http://skse.silverlock.org/vanilla_commands.html
-        private static TES5InheritanceItemCollection inheritance = new TES5InheritanceItemCollection()
+        private static readonly TES5InheritanceItemCollection inheritance = new TES5InheritanceItemCollection()
         {
             { "Alias",
                 new TES5InheritanceItemCollection()
@@ -111,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             { "StringUtil", new TES5InheritanceItemCollection() },
             { "UI", new TES5InheritanceItemCollection() }
         };
-        private static TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
+        private static readonly TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
         //Regular Expression used to build tree from PHP:  ("[^"]+") =>[\r\n\s]+new string\[\] \{\r\n\s+"args" =>[\r\n\s]+(new string\[\] \{[^\}]*\}),[\r\n\s]+"returnType" => ("[^"]+"),?[\r\n\s]*}
         private static Dictionary<string, TES5InheritanceFunctionSignature[]> callReturns = new Dictionary<string, TES5InheritanceFunctionSignature[]>()
@@ -1744,7 +1744,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 "int"
                             }, "void"),
                 new TES5InheritanceFunctionSignature("TempClone", new string[] {
-                            }, "Form")
+                            }, "Form"),
+                new TES5InheritanceFunctionSignature("GetSecondsPassed", new string[] {
+                            }, "float")//WTM:  Change:  Added
             }
         },
         { "FormType",
@@ -4511,6 +4513,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("GetSecondsPassed", new string[] {
                         "Float"
                     }, "Float"),
+                new TES5InheritanceFunctionSignature("GetSecondsPassed2", new string[] {
+                        "Form"
+                    }, "Float"),//WTM:  Change:  Added
                 new TES5InheritanceFunctionSignature("Rotate", new string[] {
                         "ObjectReference",
                         "Float",
@@ -4534,12 +4539,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
 
 
-        private static TES5InheritanceItemCollection findSubtreeFor(string className)
+        private static TES5InheritanceItemCollection FindSubtreeFor(string className)
         {
-            return findInternalSubtreeFor(className, inheritance);
+            return FindInternalSubtreeFor(className, inheritance);
         }
 
-        private static TES5InheritanceItemCollection findInternalSubtreeFor(string className, TES5InheritanceItemCollection inputTree)
+        private static TES5InheritanceItemCollection FindInternalSubtreeFor(string className, TES5InheritanceItemCollection inputTree)
         {
             foreach (var item in inputTree)
             {
@@ -4558,7 +4563,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
                 else
                 {
-                    TES5InheritanceItemCollection data = findInternalSubtreeFor(className, item.Items);
+                    TES5InheritanceItemCollection data = FindInternalSubtreeFor(className, item.Items);
                     if (data != null)
                     {
                         return data;
@@ -4568,28 +4573,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return null;//Not found.
         }
 
-        private static bool treeContains(string className, TES5InheritanceItemCollection inputTree)
+        private static bool TreeContains(string className, TES5InheritanceItemCollection inputTree)
         {
-            return findInternalSubtreeFor(className, inputTree) != null;
+            return FindInternalSubtreeFor(className, inputTree) != null;
         }
 
-        public static bool isExtending(ITES5Type extendingType, ITES5Type baseType)
+        public static bool IsExtending(ITES5Type extendingType, ITES5Type baseType)
         {
             if (!extendingType.IsNativePapyrusType && baseType.IsNativePapyrusType)
             {
                 return IsTypeOrExtendsType(extendingType.NativeType, baseType);
             }
-            TES5InheritanceItemCollection subTree = findSubtreeFor(baseType.Value);
+            TES5InheritanceItemCollection subTree = FindSubtreeFor(baseType.Value);
             if (subTree == null)
             {
                 return false;
             }
-            return treeContains(extendingType.Value, subTree);
+            return TreeContains(extendingType.Value, subTree);
         }
 
         public static bool IsTypeOrExtendsType(ITES5Type extendingType, ITES5Type baseType)
         {
-            return extendingType == baseType || isExtending(extendingType, baseType);
+            return extendingType == baseType || IsExtending(extendingType, baseType);
         }
 
         public static bool IsTypeOrExtendsTypeOrIsNumberType(ITES5Type extendingType, ITES5Type baseType)
@@ -4612,7 +4617,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return type == TES5BasicType.T_INT || type == TES5BasicType.T_FLOAT;
         }
 
-        private static string targetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
+        private static string TargetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
         {
             string targetClassName = type.Value;
             string baseClassForNode = baseClass.Name;
@@ -4633,7 +4638,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
                 foreach (var item in baseClassExtenders)
                 {
-                    string recursiveReturn = targetRootBaseClass(type, item, false);
+                    string recursiveReturn = TargetRootBaseClass(type, item, false);
                     if (recursiveReturn != null)
                     {
                         return recursiveReturn;
@@ -4662,14 +4667,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             return inheritanceCache.GetOrAdd(type, () =>
             {
-                string baseTypeName = targetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: true);
+                string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: true);
                 return TES5TypeFactory.MemberByValue(baseTypeName);
             });
         }
 
         private static ITES5Type GetBaseClassWithoutCache(ITES5Type type)
         {
-            string baseTypeName = targetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: false);
+            string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: false);
             if (baseTypeName == null) { return null; }
             return TES5TypeFactory.MemberByValue(baseTypeName);
         }
@@ -4686,7 +4691,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         }
 
-        public static ITES5Type findTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
+        public static ITES5Type FindTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType) && calledOnType.IsNativePapyrusType)
@@ -4721,10 +4726,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 throw new ConversionException("Method " + methodName + " not found in type " + calledOnType.Value, ex);
             }
-            return findTypeByMethodParameter(calledOnTypeBaseClass, methodName, parameterIndex);
+            return FindTypeByMethodParameter(calledOnTypeBaseClass, methodName, parameterIndex);
         }
 
-        public static ITES5Type findReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
+        public static ITES5Type FindReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType))
@@ -4750,10 +4755,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
             }
 
-            return findReturnTypeForObjectCall(GetBaseClassWithCache(calledOnType), methodName);
+            return FindReturnTypeForObjectCall(GetBaseClassWithCache(calledOnType), methodName);
         }
         
-        public static ITES5Type findTypeByMethod(TES5ObjectCall objectCall)
+        public static ITES5Type FindTypeByMethod(TES5ObjectCall objectCall)
         {
             string methodName = objectCall.FunctionName;
             List<ITES5Type> possibleMatches = new List<ITES5Type>();
@@ -4770,9 +4775,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
             }
 
-            ITES5Variable calledOn = objectCall.AccessedObject.ReferencesTo;
+            ITES5VariableOrProperty calledOn = objectCall.AccessedObject.ReferencesTo;
             List<ITES5Type> extendingMatches = new List<ITES5Type>();
-            ITES5Type actualType = calledOn.PropertyType.NativeType;
+            ITES5Type actualType = calledOn.TES5Type.NativeType;
             foreach (ITES5Type possibleMatch in possibleMatches)
             {
                 if (possibleMatch == actualType)
@@ -4781,7 +4786,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
 
                 //Ok, so are those matches somehow connected at all?
-                if (isExtending(possibleMatch, actualType) || isExtending(actualType, possibleMatch))
+                if (IsExtending(possibleMatch, actualType) || IsExtending(actualType, possibleMatch))
                 {
                     extendingMatches.Add(possibleMatch);
                 }
@@ -4809,7 +4814,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         //We analyze the property name and check inside the ESM analyzer.
                         ESMAnalyzer analyzer = ESMAnalyzer._instance();
-                        ITES5Type formType = analyzer.getFormTypeByEDID(calledOn.ReferenceEDID);
+                        ITES5Type formType = analyzer.GetFormTypeByEDID(calledOn.ReferenceEDID);
                         //WTM:  Change:  I added matching on the type and on its base classes this so that functions like SetFactionOwner will work.
                         //SetFactionOwner gives two extendingMatches:  Cell and ObjectReference (since both classes have the SetFactionOwner function).
                         //But the EDID "WeynonHorsePlayer" results in a type of Actor.  In this case, the base class of Actor (ObjectReference)

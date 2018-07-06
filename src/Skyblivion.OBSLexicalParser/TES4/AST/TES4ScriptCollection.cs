@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST
     class TES4ScriptCollection : IEnumerable<TES4Target>
     {
         private List<TES4Target> collection = new List<TES4Target>();
-        public void add(TES4Script script, string outputPath)
+        public void Add(TES4Script script, string outputPath)
         {
             this.collection.Add(new TES4Target(script, outputPath));
         }

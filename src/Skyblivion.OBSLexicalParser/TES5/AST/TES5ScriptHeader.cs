@@ -17,8 +17,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
          * Used for resolving implicit references.
         */
         public ITES5Type BasicScriptType { get; private set; }
-        private string scriptNamePrefix;
-        private bool isHidden;
+        private readonly string scriptNamePrefix;
+        private readonly bool isHidden;
         public string EDID { get; private set; }
         public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden = false)
         {
@@ -36,9 +36,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         /*
              * @throws ConversionException
         */
-        public void setNativeType(ITES5Type scriptType)
+        public void SetNativeType(ITES5Type scriptType)
         {
-            if (!TES5InheritanceGraphAnalyzer.isExtending(scriptType, this.ScriptType.NativeType))
+            if (!TES5InheritanceGraphAnalyzer.IsExtending(scriptType, this.ScriptType.NativeType))
             {
                 throw new ConversionException("Cannot set script type to non-extending type - current native type " + this.ScriptType.NativeType.Value+ ", new type " + scriptType.Value);
             }

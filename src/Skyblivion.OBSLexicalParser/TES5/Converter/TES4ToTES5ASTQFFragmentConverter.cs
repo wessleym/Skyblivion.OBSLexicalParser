@@ -13,10 +13,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * Oblivion binary data analyzer.
         */
-        private ESMAnalyzer esmAnalyzer;
-        private TES5FragmentFactory fragmentFactory;
-        private TES5ValueFactory valueFactory;
-        private TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer esmAnalyzer;
+        private readonly TES5FragmentFactory fragmentFactory;
+        private readonly TES5ValueFactory valueFactory;
+        private readonly TES5ReferenceFactory referenceFactory;
         public TES4ToTES5ASTQFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory)
         {
             this.esmAnalyzer = esmAnalyzer;
@@ -28,11 +28,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * @throws ConversionException
         */
-        public TES5Target convert(TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Target Convert(TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5FunctionCodeBlock fragment = this.fragmentFactory.createFragment(TES5FragmentType.T_QF, "Fragment_0", globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
-            TES5BlockList blockList = new TES5BlockList();
-            blockList.Add(fragment);
+            TES5FunctionCodeBlock fragment = this.fragmentFactory.CreateFragment(TES5FragmentType.T_QF, "Fragment_0", globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
+            TES5BlockList blockList = new TES5BlockList() { fragment };
             TES5Script script = new TES5Script(globalScope, blockList);
             TES5Target target = new TES5Target(script, fragmentTarget.OutputPath);
             return target;

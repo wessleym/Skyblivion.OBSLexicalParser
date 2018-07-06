@@ -11,35 +11,31 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class ResetHealthFactory : IFunctionFactory
     {
-        private TES5ReferenceFactory referenceFactory;
-        private TES5VariableAssignationFactory assignationFactory;
-        private ESMAnalyzer analyzer;
-        private TES5ObjectPropertyFactory objectPropertyFactory;
-        private TES5TypeInferencer typeInferencer;
-        private MetadataLogService metadataLogService;
-        private TES5ValueFactory valueFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public ResetHealthFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer analyzer;
+        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
+        private readonly TES5TypeInferencer typeInferencer;
+        private readonly MetadataLogService metadataLogService;
+        private readonly TES5ValueFactory valueFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        public ResetHealthFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
             this.analyzer = analyzer;
-            this.assignationFactory = assignationFactory;
             this.objectPropertyFactory = objectPropertyFactory;
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //Healing to full hp?
-            string functionName = "RestoreActorValue";
-            TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            convertedArguments.Add(new TES5String("Health"));
-            convertedArguments.Add(new TES5Integer(9999));
+            const string functionName = "RestoreActorValue";
+            TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String("Health"), new TES5Integer(9999) };
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
         }
     }

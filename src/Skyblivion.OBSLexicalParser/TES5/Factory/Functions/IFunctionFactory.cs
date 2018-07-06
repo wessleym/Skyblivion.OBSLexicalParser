@@ -16,6 +16,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         *  Script scope we"re in
         *  Container of all scripts compiled together
         */
-        ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
+        ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
     }
 }

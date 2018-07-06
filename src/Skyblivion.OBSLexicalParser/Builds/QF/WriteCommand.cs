@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
     class WriteCommand : WriteCommandBase, IWriteCommand
     {
-        private QFFragmentFactory QFFragmentFactory;
+        private readonly QFFragmentFactory QFFragmentFactory;
         public WriteCommand(QFFragmentFactory QFFragmentFactory)
         {
             this.QFFragmentFactory = QFFragmentFactory;
@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
         public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Dictionary<string, TES5Target> scripts = buildTracker.getBuiltScripts(target.GetTargetName());
+            Dictionary<string, TES5Target> scripts = buildTracker.GetBuiltScripts(target.GetTargetName());
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
             /*

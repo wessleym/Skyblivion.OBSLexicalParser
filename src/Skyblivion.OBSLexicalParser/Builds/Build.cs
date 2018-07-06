@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
     class Build
     {
         public static readonly string DEFAULT_BUILD_PATH = DataDirectory.GetBuildPath();
-        private string buildPath;
+        private readonly string buildPath;
         public Build(string buildPath)
         {
             this.buildPath = buildPath;

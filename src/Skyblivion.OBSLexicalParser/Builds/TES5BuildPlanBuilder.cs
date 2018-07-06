@@ -9,13 +9,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class TES5BuildPlanBuilder
     {
-        private TES5ScriptDependencyGraph graph;
+        private readonly TES5ScriptDependencyGraph graph;
         public TES5BuildPlanBuilder(TES5ScriptDependencyGraph graph)
         {
             this.graph = graph;
         }
 
-        public Dictionary<int, List<Dictionary<string, List<string>>>> createBuildPlan(BuildSourceFilesCollection scripts, int threads = BuildTargetCommand.DefaultThreads)
+        public Dictionary<int, List<Dictionary<string, List<string>>>> CreateBuildPlan(BuildSourceFilesCollection scripts, int threads = BuildTargetCommand.DefaultThreads)
         {
             Dictionary<string, string> codeScripts = new Dictionary<string, string>();
             /*

@@ -10,37 +10,27 @@ namespace Dissect.Parser.Exceptions
      */
     public class UnexpectedTokenException : Exception
     {
-        protected IToken token;
-        protected string[] expected;
+        /*
+        * Returns the unexpected token.
+        */
+        public IToken Token { get; protected set; }
+        /*
+        * Returns the expected token types.
+        */
+        public string[] Expected { get; protected set; }
         /*
         * Constructor.
         */
         public UnexpectedTokenException(IToken token, string[] expected)
             : base(GetMessage(token, expected))
         {
-            this.token = token;
-            this.expected = expected;
+            this.Token = token;
+            this.Expected = expected;
         }
 
         private static string GetMessage(IToken token, string[] expected)
         {
-            return "Unexpected " + (token.getValue() != token.getType() ? token.getValue() + " (" + token.getType() + ")" : token.getType()) + @" at line " + token.getLine() + @".  Expected one of " + string.Join(", ", expected) + @".";
-        }
-
-        /*
-        * Returns the unexpected token.
-        */
-        public IToken getToken()
-        {
-            return this.token;
-        }
-
-        /*
-        * Returns the expected token types.
-        */
-        public string[] getExpected()
-        {
-            return this.expected;
+            return "Unexpected " + (token.Value!= token.Type? token.Value+ " (" + token.Type+ ")" : token.Type) + @" at line " + token.Line+ @".  Expected one of " + string.Join(", ", expected) + @".";
         }
     }
 }

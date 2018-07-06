@@ -12,9 +12,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
      */
     class RenamedFunctionFactory : IFunctionFactory
     {
-        private string newFunctionName;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        private readonly string newFunctionName;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
         public RenamedFunctionFactory(string newFunctionName, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
             this.newFunctionName = newFunctionName;
@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             return this.objectCallFactory.CreateObjectCall(calledOn, this.newFunctionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));

@@ -4,8 +4,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
     {
         public FragmentLexer()
         {
-            this.buildObscriptLexer();
-            this.start("BlockScope");
+            this.BuildObscriptLexer();
+            this.Start("BlockScope");
         }
     }
 }

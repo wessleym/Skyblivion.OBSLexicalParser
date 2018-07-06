@@ -5,8 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
 {
     class TES4ObjectProperty : ITES4ObjectAccess, ITES4Reference
     {
-        private TES4ApiToken parentReference;
-        private TES4ApiToken accessField;
+        private readonly TES4ApiToken parentReference;
+        private readonly TES4ApiToken accessField;
         public TES4ObjectProperty(TES4ApiToken parentReference, TES4ApiToken accessField)
         {
             this.parentReference = parentReference;

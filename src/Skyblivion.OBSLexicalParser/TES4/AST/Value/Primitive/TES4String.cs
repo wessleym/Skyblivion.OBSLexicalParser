@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
     class TES4String : ITES4Primitive
     {
-        private string data;
+        private readonly string data;
         public TES4String(string data)
         {
             this.data = data.Trim('"');

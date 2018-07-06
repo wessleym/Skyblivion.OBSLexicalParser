@@ -8,9 +8,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class SetCellPublicFlagFactory : IFunctionFactory
     {
-        private TES5ReferenceFactory referenceFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
         public SetCellPublicFlagFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
@@ -18,11 +18,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
-            ITES5Referencer newCalledOn = this.referenceFactory.createReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(functionArguments.Pop(0).StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "SetPublic";
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }

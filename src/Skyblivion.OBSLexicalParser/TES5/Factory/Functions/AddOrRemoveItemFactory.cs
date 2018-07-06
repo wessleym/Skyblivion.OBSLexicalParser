@@ -12,9 +12,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class AddOrRemoveItemFactory : IFunctionFactory
     {
-        private TES5ValueFactory valueFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        private readonly TES5ValueFactory valueFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
         public AddOrRemoveItemFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
             this.valueFactory = valueFactory;
@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES5Value firstArg = newObjectCallArguments[0];
             if (firstArg.TES5Type == TES5BasicType.T_STRING)
             {
-                newObjectCallArguments[0] = valueFactory.createValue(new TES4ApiToken(((TES5String)firstArg).StringValue.Trim('"')), codeScope, globalScope, multipleScriptsScope);
+                newObjectCallArguments[0] = valueFactory.CreateValue(new TES4ApiToken(((TES5String)firstArg).StringValue.Trim('"')), codeScope, globalScope, multipleScriptsScope);
             }
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newObjectCallArguments);
         }

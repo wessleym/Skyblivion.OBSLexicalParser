@@ -27,14 +27,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                     argumentsCode = this.Arguments.Output.Single();
                 }
                 string calledFirst = this.AccessedObject.Output.Single();
-                return new string[] { calledFirst + "." + this.FunctionName + "(" + argumentsCode + ")" };
+                yield return calledFirst + "." + this.FunctionName + "(" + argumentsCode + ")";
             }
         }
 
-        public ITES5Variable ReferencesTo => null;
+        public ITES5VariableOrProperty ReferencesTo => null;
 
         public string Name => "ObjectCall";
 
-        public ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.findReturnTypeForObjectCall(this.AccessedObject.TES5Type, this.FunctionName);
+        public virtual ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.FindReturnTypeForObjectCall(this.AccessedObject.TES5Type, this.FunctionName);
     }
 }

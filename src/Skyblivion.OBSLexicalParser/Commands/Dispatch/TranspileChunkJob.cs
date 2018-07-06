@@ -15,12 +15,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class TranspileChunkJob
     {
-        private BuildTracker buildTracker;
-        private BuildTargetCollection buildTargets;
-        private List<Dictionary<string, List<string>>> buildPlan;
-        private Build build;
-        private BuildLogServices buildLogServices;
-        private ESMAnalyzer esmAnalyzer;
+        private readonly BuildTracker buildTracker;
+        private readonly BuildTargetCollection buildTargets;
+        private readonly List<Dictionary<string, List<string>>> buildPlan;
+        private readonly Build build;
+        private readonly BuildLogServices buildLogServices;
+        private readonly ESMAnalyzer esmAnalyzer;
         /*
         * No injection is done here because of multithreaded enviroment which messes it up.
         * Maybe at some point we will have a proper DI into the jobs.
@@ -36,12 +36,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
 
-        public void runTask(StreamWriter errorLog, ProgressWriter progressWriter)
+        public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
         {
             foreach (var buildChunk in this.buildPlan)
             {
                 Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
-                TES5GlobalVariables globalVariables = this.esmAnalyzer.getGlobalVariables();
+                TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
                 /*
                  * First, build the scripts global scopes
                  */
@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 {
                     var buildTargetName = kvp.Key;
                     var buildScripts = kvp.Value;
-                    BuildTarget buildTarget = this.getBuildTarget(buildTargetName);
+                    BuildTarget buildTarget = this.GetBuildTarget(buildTargetName);
                     foreach (var buildScript in buildScripts)
                     {
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
@@ -59,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 }
 
                 //Add the static global scopes which are added by complimenting scripts..
-                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.createGlobalScopes();
+                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.CreateGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
@@ -76,7 +76,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     var buildScripts = kvp.Value;
                     foreach (var buildScript in buildScripts)
                     {
-                        BuildTarget buildTarget = this.getBuildTarget(buildTargetName);
+                        BuildTarget buildTarget = this.GetBuildTarget(buildTargetName);
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
@@ -94,7 +94,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                             continue;
                         }
 #endif
-                        this.buildTracker.registerBuiltScript(buildTarget, convertedScript);
+                        this.buildTracker.RegisterBuiltScript(buildTarget, convertedScript);
                         //convertedScripts.Add(buildScript, convertedScript);
                         progressWriter.IncrementAndWrite();
                     }
@@ -108,7 +108,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             }
         }
 
-        private BuildTarget getBuildTarget(string targetName)
+        private BuildTarget GetBuildTarget(string targetName)
         {
             if (this.buildTargets.GetByNameOrNull(targetName) == null)
             {

@@ -13,6 +13,6 @@ namespace Dissect.Lexer.Recognizer
          * the string matches or not and if it does,
          * returns the match in the second variable.
         */
-        bool match(string str, out string result);
+        bool Match(string str, out string result);
     }
 }

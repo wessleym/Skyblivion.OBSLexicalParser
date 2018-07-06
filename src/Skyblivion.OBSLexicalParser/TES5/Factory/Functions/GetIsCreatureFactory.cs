@@ -16,9 +16,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             getIsPlayableRaceFactory = new GetIsPlayableRaceFactory(objectCallFactory);
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return getIsPlayableRaceFactory.convertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+            return getIsPlayableRaceFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
         }
     }
 }

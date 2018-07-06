@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
 {
     static class TypeMapper
     {
-        public static ITES5Type map(TES4RecordType type)
+        public static ITES5Type Map(TES4RecordType type)
         {
             string propertyType;
             switch (type.Name)

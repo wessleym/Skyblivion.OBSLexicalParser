@@ -10,9 +10,9 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class TranspileScriptJob
     {
-        private BuildTargetCollection buildTargets;
-        private string scriptName;
-        private ESMAnalyzer esmAnalyzer;
+        private readonly BuildTargetCollection buildTargets;
+        private readonly string scriptName;
+        private readonly ESMAnalyzer esmAnalyzer;
         /*
         * TranspileScriptJob constructor.
         */
@@ -23,11 +23,11 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
         }
 
-        public void run()
+        public void Run()
         {
             string[] scripts = this.buildTargets.GetScriptsToCompile(this.scriptName);
             BuildSourceFilesCollection partitionedScripts = this.buildTargets.GetSourceFiles(scripts);
-            TES5GlobalVariables globalVariables = this.esmAnalyzer.getGlobalVariables();
+            TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildTarget in this.buildTargets)
             {
                 Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();

@@ -10,13 +10,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class SetLevelFactory : IFunctionFactory
     {
-        private TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
         public SetLevelFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //WTM:  @Inconsistence:
             //SKSE has Game.SetPlayerLevel(int level), but Oblivion calls this function on non-player actors.

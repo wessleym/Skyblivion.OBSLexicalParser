@@ -20,35 +20,35 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
         public TES4OBScriptGrammar()
             : base(false)
         {
-            __invoke("Script")._is("ScriptHeader", "Block+").call((TES4ScriptHeader header, TES4BlockList blockList)=>
+            __invoke("Script").Is("ScriptHeader", "Block+").Call((TES4ScriptHeader header, TES4BlockList blockList)=>
             {
                 return new TES4Script(header, null, blockList);
             } ) .
 
-            _is("ScriptHeader", "VariableDeclaration+").call((TES4ScriptHeader header, TES4VariableDeclarationList variableList)=>
+            Is("ScriptHeader", "VariableDeclaration+").Call((TES4ScriptHeader header, TES4VariableDeclarationList variableList)=>
             {
                 return new TES4Script(header, variableList, null);
             } ) .
 
-            _is("ScriptHeader", "VariableDeclaration+", "Block+").call((TES4ScriptHeader header, TES4VariableDeclarationList variableList, TES4BlockList blockList)=>
+            Is("ScriptHeader", "VariableDeclaration+", "Block+").Call((TES4ScriptHeader header, TES4VariableDeclarationList variableList, TES4BlockList blockList)=>
             {
                 return new TES4Script(header, variableList, blockList);
             } )
 
             ;
-            __invoke("ScriptHeader")._is("ScriptHeaderToken", "ScriptName").call((object headerToken, CommonToken scriptName)=>
+            __invoke("ScriptHeader").Is("ScriptHeaderToken", "ScriptName").Call((System.Func<object, CommonToken, TES4ScriptHeader>)((object headerToken, CommonToken scriptName)=>
             {
-                return new TES4ScriptHeader(scriptName.getValue());
-            } )
+                return new TES4ScriptHeader((string)scriptName.Value);
+            }) )
 
             ;
-            __invoke("VariableDeclaration+")._is("VariableDeclaration+", "VariableDeclaration").call((TES4VariableDeclarationList list, TES4VariableDeclaration variableDeclaration)=>
+            __invoke("VariableDeclaration+").Is("VariableDeclaration+", "VariableDeclaration").Call((TES4VariableDeclarationList list, TES4VariableDeclaration variableDeclaration)=>
             {
                 list.add(variableDeclaration);
                 return list;
             } ) .
 
-            _is("VariableDeclaration").call((TES4VariableDeclaration variableDeclaration)=>
+            Is("VariableDeclaration").Call((TES4VariableDeclaration variableDeclaration)=>
             {
                 TES4VariableDeclarationList list = new TES4VariableDeclarationList();
                 list.add(variableDeclaration);
@@ -56,19 +56,19 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("VariableDeclaration")._is("VariableDeclarationType", "VariableName").call((CommonToken variableDeclarationType, CommonToken variableName)=>
+            __invoke("VariableDeclaration").Is("VariableDeclarationType", "VariableName").Call((System.Func<CommonToken, CommonToken, TES4VariableDeclaration>)((CommonToken variableDeclarationType, CommonToken variableName)=>
             {
-                return new TES4VariableDeclaration(variableName.getValue(), TES4Type.GetFirst(variableDeclarationType.getValue().ToLower()));
-            } )
+                return new TES4VariableDeclaration((string)variableName.Value, TES4Type.GetFirst((string)variableDeclarationType.Value.ToLower()));
+            }) )
 
             ;
-            __invoke("Block+")._is("Block+", "Block").call((TES4BlockList list, TES4CodeBlock blockDeclaration)=>
+            __invoke("Block+").Is("Block+", "Block").Call((TES4BlockList list, TES4CodeBlock blockDeclaration)=>
             {
                 list.Add(blockDeclaration);
                 return list;
             } ) .
 
-            _is("Block").call((TES4CodeBlock blockDeclaration)=>
+            Is("Block").Call((TES4CodeBlock blockDeclaration)=>
             {
                 TES4BlockList list = new TES4BlockList();
                 list.Add(blockDeclaration);
@@ -76,35 +76,35 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("Block")._is("BlockStart", "BlockType", "BlockParameter+", "Code+", "BlockEnd").call((object blockStart, CommonToken blockType, TES4BlockParameterList blockParameters, TES4CodeChunks codeChunks, object blockEnd) =>
+            __invoke("Block").Is("BlockStart", "BlockType", "BlockParameter+", "Code+", "BlockEnd").Call((System.Func<object, CommonToken, TES4BlockParameterList, TES4CodeChunks, object, TES4CodeBlock>)((object blockStart, CommonToken blockType, TES4BlockParameterList blockParameters, TES4CodeChunks codeChunks, object blockEnd) =>
             {
-                return new TES4CodeBlock(blockType.getValue(), blockParameters, codeChunks);
-            } ) .
+                return new TES4CodeBlock((string)blockType.Value, blockParameters, codeChunks);
+            }) ) .
 
-            _is("BlockStart", "BlockType", "BlockParameter+", "BlockEnd").call((object blockStart, CommonToken blockType, TES4BlockParameterList blockParameters, object blockEnd)=>
+            Is("BlockStart", "BlockType", "BlockParameter+", "BlockEnd").Call((System.Func<object, CommonToken, TES4BlockParameterList, object, TES4CodeBlock>)((object blockStart, CommonToken blockType, TES4BlockParameterList blockParameters, object blockEnd)=>
             {
-                return new TES4CodeBlock(blockType.getValue(), blockParameters, null);
-            } ) //rare empty block
+                return new TES4CodeBlock((string)blockType.Value, blockParameters, null);
+            }) ) //rare empty block
             .
 
-            _is("BlockStart", "BlockType", "Code+", "BlockEnd").call((object blockStart, CommonToken blockType, TES4CodeChunks codeChunks, object blockEnd) =>
+            Is("BlockStart", "BlockType", "Code+", "BlockEnd").Call((System.Func<object, CommonToken, TES4CodeChunks, object, TES4CodeBlock>)((object blockStart, CommonToken blockType, TES4CodeChunks codeChunks, object blockEnd) =>
             {
-                return new TES4CodeBlock(blockType.getValue(), null, codeChunks);
-            } ) .
+                return new TES4CodeBlock((string)blockType.Value, null, codeChunks);
+            }) ) .
 
-            _is("BlockStart", "BlockType", "BlockEnd").call((object blockStart, CommonToken blockType, object blockEnd) =>
+            Is("BlockStart", "BlockType", "BlockEnd").Call((System.Func<object, CommonToken, object, TES4CodeBlock>)((object blockStart, CommonToken blockType, object blockEnd) =>
             {
-                return new TES4CodeBlock(blockType.getValue(), null, null);
-            } )
+                return new TES4CodeBlock((string)blockType.Value, null, null);
+            }) )
 
             ; //rare empty block
-            __invoke("BlockParameter+")._is("BlockParameter+", "BlockParameter").call((TES4BlockParameterList list, TES4BlockParameter blockParameter)=>
+            __invoke("BlockParameter+").Is("BlockParameter+", "BlockParameter").Call((TES4BlockParameterList list, TES4BlockParameter blockParameter)=>
             {
                 list.Add(blockParameter);
                 return list;
             } ) .
 
-            _is("BlockParameter").call((TES4BlockParameter blockParameter)=>
+            Is("BlockParameter").Call((TES4BlockParameter blockParameter)=>
             {
                 TES4BlockParameterList block = new TES4BlockParameterList();
                 block.Add(blockParameter);
@@ -112,14 +112,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("BlockParameter")._is("BlockParameterToken").call((CommonToken token)=>
+            __invoke("BlockParameter").Is("BlockParameterToken").Call((System.Func<CommonToken, TES4BlockParameter>)((CommonToken token)=>
             {
-                return new TES4BlockParameter(token.getValue());
-            } )
+                return new TES4BlockParameter((string)token.Value);
+            }) )
 
             ;
             this.createObscriptCodeParsingTree();
-            this.start("Script");
+            this.Start("Script");
         }
     }
 }

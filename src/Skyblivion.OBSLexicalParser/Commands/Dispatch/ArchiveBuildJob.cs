@@ -8,13 +8,13 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class ArchiveBuildJob
     {
-        private string buildTarget;
+        private readonly string buildTarget;
         public ArchiveBuildJob(string buildTarget)
         {
             this.buildTarget = buildTarget;
         }
 
-        public void run()
+        public void Run()
         {
             Build build = null;//WTM:  Change:  BuildTargetFactory.get takes two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
             using (BuildLogServices buildLogServices = new BuildLogServices(build))

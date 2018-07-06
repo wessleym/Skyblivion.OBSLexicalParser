@@ -11,8 +11,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
     {
         public override TES5CodeScope CodeScope { get; set; }
         public override TES5FunctionScope FunctionScope { get; protected set; }
-        private ITES5Type returnType;
-        private bool isStandalone;//Only needed for PHP_COMPAT
+        private readonly ITES5Type returnType;
+        private readonly bool isStandalone;//Only needed for PHP_COMPAT
         public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone = false)
         {
             if (returnType == null) { throw new ArgumentNullException(nameof(returnType)); }
@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public override void AddChunk(ITES5CodeChunk chunk)
         {
-            this.CodeScope.Add(chunk);
+            this.CodeScope.AddChunk(chunk);
         }
     }
 }

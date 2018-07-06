@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {
     class TranspileCommand : TranspileCommandBase<TES4CodeChunks>
     {
-        private TES4ToTES5ASTTIFFragmentConverter converter;
+        private readonly TES4ToTES5ASTTIFFragmentConverter converter;
         public TranspileCommand(FragmentsParsingService fragmentsParsingService, Build build, MetadataLogService metadataLogService)
             : base(fragmentsParsingService)
         {
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
         {
             TES4CodeChunks ast = ParseOrGetFromCache(sourcePath);
             TES4FragmentTarget fragmentTarget = new TES4FragmentTarget(ast, outputPath);
-            TES5Target convertedScript = this.converter.convert(fragmentTarget, globalScope, multipleScriptsScope);
+            TES5Target convertedScript = this.converter.Convert(fragmentTarget, globalScope, multipleScriptsScope);
             return convertedScript;
         }
     }

@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -35,8 +36,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
                 { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT }//set by script instead of original messageBox
             };
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectPropertyFactory objectPropertyFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
         public TES5ReferenceFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectPropertyFactory objectPropertyFactory)
         {
             this.objectCallFactory = objectCallFactory;
@@ -49,7 +50,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5SelfReference(new TES5ScriptAsVariable(globalScope.ScriptHeader));
         }
 
-        public static TES5Reference CreateReferenceToVariable(ITES5Variable variable)
+        public static TES5Reference CreateReferenceToVariable(ITES5VariableOrProperty variable)
         {
             return new TES5Reference(variable);
         }
@@ -67,7 +68,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
          * Activate
          * GetInFaction whatsoever
         */
-        public ITES5Referencer extractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        public ITES5Referencer ExtractImplicitReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             ITES5Type type = globalScope.ScriptHeader.BasicScriptType;
             if (type == TES5BasicType.T_OBJECTREFERENCE || type==TES5BasicType.T_ACTOR)//Change:  WTM:  Added Actor here.
@@ -91,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 /*
                  * TIF Fragments
                  */
-                return this.createReadReference("akSpeakerRef", globalScope, multipleScriptsScope, localScope);
+                return this.CreateReadReference("akSpeakerRef", globalScope, multipleScriptsScope, localScope);
             }
 
             throw new ConversionException("Cannot extract implicit reference - unknown basic script type.");
@@ -101,9 +102,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         * Create the ,,read reference".
          * Read reference is used ( as you might think ) in read contexts.
         */
-        public ITES5Referencer createReadReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        public ITES5Referencer CreateReadReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            ITES5Referencer rawReference = this.createReference(referenceName, globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer rawReference = this.CreateReference(referenceName, globalScope, multipleScriptsScope, localScope);
             if (rawReference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             {
                 //Changed to int implementation.
@@ -117,28 +118,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public ITES5Referencer CreateContainerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            return createReadReference(tContainerName, globalScope, multipleScriptsScope, localScope);
+            return CreateReadReference(tContainerName, globalScope, multipleScriptsScope, localScope);
         }
 
         public ITES5Referencer CreateTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            return createReadReference(tTimerName, globalScope, multipleScriptsScope, localScope);
+            return CreateReadReference(tTimerName, globalScope, multipleScriptsScope, localScope);
         }
 
         public ITES5Referencer CreateGSPLocalTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            return createReadReference(tGSPLocalTimerName, globalScope, multipleScriptsScope, localScope);
+            return CreateReadReference(tGSPLocalTimerName, globalScope, multipleScriptsScope, localScope);
         }
 
         public ITES5Referencer CreateCyrodiilCrimeFactionReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
-            return createReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
+            return CreateReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
         }
 
         /*
         * Create a generic-purpose reference.
         */
-        public ITES5Referencer createReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        public ITES5Referencer CreateReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             if (TES5PlayerReference.EqualsPlayer(referenceName))
             {
@@ -149,15 +150,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             Match match = PropertyNameRegex.Match(referenceName);
             if (match.Success)
             {
-                ITES5Referencer mainReference = this.createReference(match.Groups[1].Value, globalScope, multipleScriptsScope, localScope);
-                TES5ObjectProperty propertyReference = this.objectPropertyFactory.createObjectProperty(multipleScriptsScope, mainReference, match.Groups[2].Value); //Todo rethink the prefix adding
+                ITES5Referencer mainReference = this.CreateReference(match.Groups[1].Value, globalScope, multipleScriptsScope, localScope);
+                TES5ObjectProperty propertyReference = this.objectPropertyFactory.CreateObjectProperty(multipleScriptsScope, mainReference, match.Groups[2].Value); //Todo rethink the prefix adding
                 return propertyReference;
             }
 
-            ITES5Variable property = localScope.GetVariable(referenceName);
+            ITES5VariableOrProperty property = localScope.GetVariable(referenceName);
             if (property == null)
             {
-                property = globalScope.getPropertyByName(referenceName); //todo rethink how to unify the prefix searching
+                property = globalScope.GetPropertyByName(referenceName); //todo rethink how to unify the prefix searching
                 if (property == null)
                 {
                     TES5Property propertyToAddToGlobalScope = null;
@@ -169,7 +170,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                     if (propertyToAddToGlobalScope == null)
                     {
-                        if (!multipleScriptsScope.hasGlobalVariable(referenceName))
+                        if (!multipleScriptsScope.ContainsGlobalVariable(referenceName))
                         {
                             propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_FORM, referenceName);
                         }
@@ -178,7 +179,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_GLOBALVARIABLE, referenceName);
                         }
                     }
-                    globalScope.Add(propertyToAddToGlobalScope);
+                    globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
             }

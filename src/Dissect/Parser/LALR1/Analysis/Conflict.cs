@@ -1,14 +1,12 @@
-﻿using Dissect.Parser;
-
-namespace Dissect.Parser.LALR1.Analysis
+﻿namespace Dissect.Parser.LALR1.Analysis
 {
     class Conflict
     {
-        private int state;
-        private string lookahead;
-        private Rule rule;
-        private Rule[] rules;
-        private int resolution;
+        private readonly int state;
+        private readonly string lookahead;
+        private readonly Rule rule;
+        private readonly Rule[] rules;
+        private readonly int resolution;
         public Conflict(int state, string lookahead, int resolution)
         {
             this.state = state;

@@ -18,6 +18,6 @@ namespace Dissect.Parser
         * Parses a token stream and returns the semantical value
          * of the input.
         */
-        protected abstract object parse(ITokenStream stream);
+        protected abstract object Parse(ITokenStream stream);
     }
 }

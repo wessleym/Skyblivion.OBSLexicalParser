@@ -5,8 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
     class TES5SubBranchList
     {
-        private List<TES5SubBranch> branchList = new List<TES5SubBranch>();
-        public void add(TES5SubBranch declaration)
+        private readonly List<TES5SubBranch> branchList = new List<TES5SubBranch>();
+        public void Add(TES5SubBranch declaration)
         {
             this.branchList.Add(declaration);
         }

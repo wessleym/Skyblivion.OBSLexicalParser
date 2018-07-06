@@ -4,7 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection
 {
     class TES5GlobalVariables
     {
-        private Dictionary<string, TES5GlobalVariable> globalVariables;
+        private readonly Dictionary<string, TES5GlobalVariable> globalVariables;
         /*
         * TES5GlobalVariables constructor.
         */
@@ -13,11 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection
             this.globalVariables = new Dictionary<string, TES5GlobalVariable>();
             foreach (var globalVariable in globalVariables)
             {
-                this.globalVariables.Add(globalVariable.getName().ToLower(), globalVariable);
+                this.globalVariables.Add(globalVariable.Name.ToLower(), globalVariable);
             }
         }
 
-        public bool hasGlobalVariable(string globalVariableName)
+        public bool ContainsName(string globalVariableName)
         {
             return this.globalVariables.ContainsKey(globalVariableName.ToLower());
         }

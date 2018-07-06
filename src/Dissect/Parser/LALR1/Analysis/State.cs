@@ -10,9 +10,17 @@ namespace Dissect.Parser.LALR1.Analysis
      */
     class State
     {
-        protected List<Item> items = new List<Item>();
-        protected Dictionary<int, Dictionary<int, Item>> itemMap = new Dictionary<int, Dictionary<int, Item>>();
-        protected int number;
+        /*
+        * Returns an array of items constituting this state.
+         *
+         *  The items.
+        */
+        public List<Item> Items { get; protected set; } = new List<Item>();
+        protected readonly Dictionary<int, Dictionary<int, Item>> ItemMap = new Dictionary<int, Dictionary<int, Item>>();
+        /*
+        * Returns the number identifying this state.
+        */
+        public int Number { get; protected set; }
         /*
         * Constructor.
          *
@@ -21,10 +29,10 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public State(int number, Item[] items)
         {
-            this.number = number;
+            this.Number = number;
             foreach (var item in items)
             {
-                this.add(item);
+                this.Add(item);
             }
         }
 
@@ -33,12 +41,12 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The new item.
         */
-        public void add(Item item)
+        public void Add(Item item)
         {
-            this.items.Add(item);
-            int ruleNumber = item.getRule().getNumber();
-            Dictionary<int, Item> itemDictionary = this.itemMap.GetOrAdd(ruleNumber, ()=> new Dictionary<int, Item>());
-            itemDictionary.Add(item.getDotIndex(), item);
+            this.Items.Add(item);
+            int ruleNumber = item.Rule.Number;
+            Dictionary<int, Item> itemDictionary = this.ItemMap.GetOrAdd(ruleNumber, ()=> new Dictionary<int, Item>());
+            itemDictionary.Add(item.DotIndex, item);
         }
 
         /*
@@ -49,27 +57,9 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The item.
         */
-        public Item get(int ruleNumber, int dotIndex)
+        public Item Get(int ruleNumber, int dotIndex)
         {
-            return this.itemMap[ruleNumber][dotIndex];
-        }
-
-        /*
-        * Returns the number identifying this state.
-        */
-        public int getNumber()
-        {
-            return this.number;
-        }
-
-        /*
-        * Returns an array of items constituting this state.
-         *
-         *  The items.
-        */
-        public List<Item> getItems()
-        {
-            return this.items;
+            return this.ItemMap[ruleNumber][dotIndex];
         }
     }
 }

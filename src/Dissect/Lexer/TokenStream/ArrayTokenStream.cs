@@ -11,8 +11,8 @@ namespace Dissect.Lexer.TokenStream
      */
     public class ArrayTokenStream : ITokenStream, IEnumerable<IToken>
     {
-        protected IList<IToken> tokens;
-        protected int position = 0;
+        protected readonly IList<IToken> tokens;
+        public int Position { get; protected set; } = 0;
         /*
         * Constructor.
         */
@@ -21,19 +21,11 @@ namespace Dissect.Lexer.TokenStream
             this.tokens = tokens;
         }
 
-        public int getPosition()
-        {
-            return this.position;
-        }
+        public IToken CurrentToken => this.tokens[this.Position];
 
-        public IToken getCurrentToken()
+        public IToken LookAhead(int n)
         {
-            return this.tokens[this.position];
-        }
-
-        public IToken lookAhead(int n)
-        {
-            int newPosition = this.position + n;
+            int newPosition = this.Position + n;
             if (newPosition<tokens.Count)
             {
                 return tokens[newPosition];
@@ -42,7 +34,7 @@ namespace Dissect.Lexer.TokenStream
             throw new ArgumentOutOfRangeException("Invalid look-ahead.");
         }
 
-        public IToken get(int n)
+        public IToken Get(int n)
         {
             try
             {
@@ -54,48 +46,44 @@ namespace Dissect.Lexer.TokenStream
             }
         }
 
-        public void move(int n)
+        public void Move(int n)
         {
             if (n>tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Invalid index to move to.");
             }
 
-            this.position = n;
+            this.Position = n;
         }
 
-        public void seek(int n)
+        public void Seek(int n)
         {
-            int newPosition = this.position + n;
+            int newPosition = this.Position + n;
             if (newPosition>tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Invalid seek.");
             }
 
-            this.position = newPosition;
+            this.Position = newPosition;
         }
 
-        public void next()
+        public void Next()
         {
-            int newPosition = this.position + 1;
+            int newPosition = this.Position + 1;
             if (newPosition > tokens.Count - 1)
             {
                 throw new ArgumentOutOfRangeException("Attempting to move beyond the end of the stream.");
             }
 
-            this.position= newPosition;
+            this.Position= newPosition;
         }
-        
-        public int count()
-        {
-            return tokens.Count;
-        }
+
+        public int Count => tokens.Count;
 
         public IEnumerator<IToken> GetEnumerator()
         {
-            return ((IEnumerable<IToken>)tokens).GetEnumerator();
+            return tokens.GetEnumerator();
         }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

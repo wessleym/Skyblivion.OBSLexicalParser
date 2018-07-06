@@ -9,9 +9,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class PayFineOrPayFineThiefFactory : IFunctionFactory
     {
-        private TES5ReferenceFactory referenceFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private bool payFineThief;
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly bool payFineThief;
         protected PayFineOrPayFineThiefFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, bool payFineThief)
         {
             this.referenceFactory = referenceFactory;
@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.payFineThief = payFineThief;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer faction = this.referenceFactory.CreateCyrodiilCrimeFactionReadReference(globalScope, multipleScriptsScope, localScope);
@@ -31,9 +31,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             argumentList.add(faction);*/
             //WTM:  Change:
             const string functionName = "PlayerPayCrimeGold";
-            TES5ObjectCallArguments argumentList = new TES5ObjectCallArguments();
-            argumentList.Add(new TES5Bool(true));//Remove gold.
-            argumentList.Add(new TES5Bool(payFineThief));//Do or do not send to jail based on payFineThief.
+            TES5ObjectCallArguments argumentList = new TES5ObjectCallArguments()
+            {
+                new TES5Bool(true),//Remove gold.
+                new TES5Bool(payFineThief)//Do or do not send to jail based on payFineThief.
+            };
             return this.objectCallFactory.CreateObjectCall(faction, functionName, multipleScriptsScope, argumentList);
         }
     }

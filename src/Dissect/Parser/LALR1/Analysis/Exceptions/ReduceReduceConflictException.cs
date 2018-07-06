@@ -12,9 +12,24 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
      */
     class ReduceReduceConflictException : ConflictException
     {
-        protected Rule firstRule;
-        protected Rule secondRule;
-        protected string lookahead;
+        /*
+        * Returns the first conflicting rule.
+         *
+         *  The first conflicting rule.
+        */
+        public Rule FirstRule { get; protected set; }
+        /*
+        * Returns the second conflicting rule.
+         *
+         *  The second conflicting rule.
+        */
+        public Rule SecondRule { get; protected set; }
+        /*
+        * Returns the conflicting lookahead.
+         *
+         *  The conflicting lookahead.
+        */
+        public string Lookahead { get; protected set; }
         /*
         * Constructor.
          *
@@ -27,55 +42,25 @@ namespace Dissect.Parser.LALR1.Analysis.Exceptions
         public ReduceReduceConflictException(int state, Rule firstRule, Rule secondRule, string lookahead, Automaton automaton)
             : base(GetMessage(state, firstRule, secondRule, lookahead), state, automaton)
         {
-            this.firstRule = firstRule;
-            this.secondRule = secondRule;
-            this.lookahead = lookahead;
+            this.FirstRule = firstRule;
+            this.SecondRule = secondRule;
+            this.Lookahead = lookahead;
         }
 
         private static string GetMessage(int state, Rule firstRule, Rule secondRule, string lookahead)
         {
-            string[] components1 = firstRule.getComponents();
-            string[] components2 = secondRule.getComponents();
+            string[] components1 = firstRule.Components;
+            string[] components2 = secondRule.Components;
             return
 @"The grammar exhibits a reduce/reduce conflict on rules:
 
-  " + firstRule.getNumber() + @". " + firstRule.getName() + @" -> " + (!components1.Any() ? "/* empty */" : string.Join(" ", components1)) + @"
+  " + firstRule.Number+ @". " + firstRule.Name+ @" -> " + (!components1.Any() ? "/* empty */" : string.Join(" ", components1)) + @"
 
 vs:
 
-  " + secondRule.getNumber() + @". " + secondRule.getName() + @" -> " + (!components2.Any() ? "/* empty */" : string.Join(" ", components2)) + @"
+  " + secondRule.Number+ @". " + secondRule.Name+ @" -> " + (!components2.Any() ? "/* empty */" : string.Join(" ", components2)) + @"
 
 (on lookahead """ + lookahead + @""" in state " + state + @"). Restructure your grammar or choose a conflict resolution mode.";
-        }
-
-        /*
-        * Returns the first conflicting rule.
-         *
-         *  The first conflicting rule.
-        */
-        public Rule getFirstRule()
-        {
-            return this.firstRule;
-        }
-
-        /*
-        * Returns the second conflicting rule.
-         *
-         *  The second conflicting rule.
-        */
-        public Rule getSecondRule()
-        {
-            return this.secondRule;
-        }
-
-        /*
-        * Returns the conflicting lookahead.
-         *
-         *  The conflicting lookahead.
-        */
-        public string getLookahead()
-        {
-            return this.lookahead;
         }
     }
 }

@@ -24,20 +24,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5ValueFactory
     {
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ReferenceFactory referenceFactory;
-        private TES5VariableAssignationFactory assignationFactory;
-        private ESMAnalyzer analyzer;
-        private TES5ObjectPropertyFactory objectPropertyFactory;
-        private TES5TypeInferencer typeInferencer;
-        private MetadataLogService metadataLogService;
-        private Dictionary<string, IFunctionFactory> functionFactories = new Dictionary<string, IFunctionFactory>();
-        public TES5ValueFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer, TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer analyzer;
+        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
+        private readonly TES5TypeInferencer typeInferencer;
+        private readonly MetadataLogService metadataLogService;
+        private readonly Dictionary<string, IFunctionFactory> functionFactories = new Dictionary<string, IFunctionFactory>();
+        public TES5ValueFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer, TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
             this.analyzer = analyzer;
-            this.assignationFactory = assignationFactory;
             this.objectPropertyFactory = objectPropertyFactory;
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
@@ -69,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 {
                     case "getweaponanimtype":
                         {
-                            ITES5Referencer calledOn = this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope);
+                            ITES5Referencer calledOn = this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope);
                             TES5ObjectCall equippedWeaponLeftValue = this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(calledOn, "GetEquippedWeapon", multipleScriptsScope), "GetWeaponType", multipleScriptsScope);
 
                             int[] targetedWeaponTypes;
@@ -125,9 +123,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                     case "getdetected":
                         {
-                            TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments();
-                            inversedArgument.Add(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope));
-                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument);
+                            TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments()
+                            {
+                                this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope)
+                            };
+                            TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument);
                             TES5Integer getDetectedRightValue = new TES5Integer(((int)set.Item2.Data== 0) ? 0 : 1);
                             return TES5ExpressionFactory.CreateComparisonExpression(getDetectedLeftValue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, getDetectedRightValue);
                         }
@@ -142,12 +142,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                             TES5Bool tes5Bool = new TES5Bool(((int)set.Item2.Data) == 3); //true only if the compared value was 3
 
-                            TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments();
-                            inversedArgument.Add(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope));
+                            TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments()
+                            {
+                                this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope)
+                            };
 
                             return TES5ExpressionFactory.CreateComparisonExpression
                                 (
-                                    this.objectCallFactory.CreateObjectCall(this.referenceFactory.createReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument),
+                                    this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", multipleScriptsScope, inversedArgument),
                                     TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                     tes5Bool
                                 );
@@ -167,7 +169,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                     {
                                         //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer", multipleScriptsScope),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                             new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
@@ -178,7 +180,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                                         //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "getSleepState", multipleScriptsScope),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "getSleepState", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                             new TES5Integer(3) //SLEEPSTATE_SLEEP
                                         );
@@ -188,7 +190,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                                         //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat", multipleScriptsScope),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat", multipleScriptsScope),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                             new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
@@ -261,7 +263,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             //ref.getSleepState() == 3
                             return TES5ExpressionFactory.CreateComparisonExpression
                             (
-                                this.objectCallFactory.CreateObjectCall(this.createCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "GetSitState", multipleScriptsScope),
+                                this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "GetSitState", multipleScriptsScope),
                                 TES5ComparisonExpressionOperator.GetFirst(expression.Operator.Name),
                                 new TES5Integer(goTo)
                             );
@@ -272,8 +274,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
             }
 
-            ITES5Value leftValue = this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope);
-            ITES5Value rightValue = this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope);
+            ITES5Value leftValue = this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope);
+            ITES5Value rightValue = this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope);
 
             Tuple<ITES5Value, ITES5Value>[] tes5sets = new Tuple<ITES5Value, ITES5Value>[]
             {
@@ -357,12 +359,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5LogicalExpressionOperator leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (leOp != null)
             {
-                return TES5ExpressionFactory.CreateLogicalExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), leOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
+                return TES5ExpressionFactory.CreateLogicalExpression(this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), leOp, this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
             TES5ArithmeticExpressionOperator aeOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (aeOp != null)
             {
-                return TES5ExpressionFactory.CreateArithmeticExpression(this.createValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), aeOp, this.createValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
+                return TES5ExpressionFactory.CreateArithmeticExpression(this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), aeOp, this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
             throw new ConversionException("Unknown expression op:  " + expression.Operator.Name);
         }
@@ -370,23 +372,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         /*
          * @throws ConversionException
         */
-        public ITES5Value createValue(ITES4Value value, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5Value CreateValue(ITES4Value value, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES4Primitive primitive = value as ITES4Primitive;
             if (primitive != null) { return TES5PrimitiveValueFactory.createValue(primitive); }
             ITES4Reference reference = value as ITES4Reference;
-            if (reference != null) { return this.referenceFactory.createReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope); }
+            if (reference != null) { return this.referenceFactory.CreateReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope); }
             ITES4Callable callable = value as ITES4Callable;
-            if (callable != null) { return this.createCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
+            if (callable != null) { return this.CreateCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
             ITES4BinaryExpression expression = value as ITES4BinaryExpression;
             if (expression != null) { return this.ConvertExpression(expression, codeScope, globalScope, multipleScriptsScope); }
             throw new ConversionException("Unknown ITES4Value: " + value.GetType().FullName);
         }
 
-        public ITES5ValueCodeChunk createCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk CreateCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Function function = chunk.Function;
-            ITES5Referencer calledOnReference = this.createCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
+            ITES5Referencer calledOnReference = this.CreateCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
             string functionName = function.FunctionCall.FunctionName;
             string functionKey = functionName.ToLower();
             IFunctionFactory factory;
@@ -394,31 +396,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
-            ITES5ValueCodeChunk codeChunk = factory.convertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
+            ITES5ValueCodeChunk codeChunk = factory.ConvertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
             return codeChunk;
         }
 
-        public TES5CodeChunkCollection createCodeChunks(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5CodeChunkCollection CreateCodeChunks(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            ITES5CodeChunk codeChunk = createCodeChunk(chunk, codeScope, globalScope, multipleScriptsScope);
-            TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
-            codeChunks.Add(codeChunk);
-            return codeChunks;
+            return new TES5CodeChunkCollection() { CreateCodeChunk(chunk, codeScope, globalScope, multipleScriptsScope) };
         }
 
         /*
         * Returns a called-on reference for the called function.
         */
-        private ITES5Referencer createCalledOnReferenceOfCalledFunction(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private ITES5Referencer CreateCalledOnReferenceOfCalledFunction(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4ApiToken calledOn = chunk.CalledOn;
             if (calledOn != null)
             {
-                return this.referenceFactory.createReference(calledOn.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope);
+                return this.referenceFactory.CreateReference(calledOn.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope);
             }
             else
             {
-                return this.referenceFactory.extractImplicitReference(globalScope, multipleScriptsScope, codeScope.LocalScope);
+                return this.referenceFactory.ExtractImplicitReference(globalScope, multipleScriptsScope, codeScope.LocalScope);
             }
         }
 

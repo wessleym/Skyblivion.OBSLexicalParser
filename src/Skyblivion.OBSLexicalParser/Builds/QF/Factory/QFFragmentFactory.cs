@@ -16,8 +16,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
     class QFFragmentFactory
     {
-        private MappedTargetsLogService mappedTargetsLogService;
-        private ObjectiveHandlingFactory objectiveHandlingFactory;
+        private readonly MappedTargetsLogService mappedTargetsLogService;
+        private readonly ObjectiveHandlingFactory objectiveHandlingFactory;
         public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory)
         {
             this.mappedTargetsLogService = mappedTargetsLogService;
@@ -59,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     aliasesDeclared.Add(trimmedAlias, true);
                 }
                 catch (ArgumentException) { continue; }
-                resultingGlobalScope.Add(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
+                resultingGlobalScope.AddProperty(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
             }
 
             Dictionary<int, bool> implementedStages = new Dictionary<int, bool>();
@@ -75,18 +75,18 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                      * Move over the properties to the new global scope
                      */
                     string propertyName;
-                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.PropertyNameWithSuffix))
+                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.Name))
                     {
                         propertyName = GeneratePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty);
                         subfragmentProperty.Rename(propertyName);
                     }
                     else
                     {
-                        propertyName = subfragmentProperty.PropertyNameWithSuffix;
+                        propertyName = subfragmentProperty.Name;
                     }
 
                     propertiesNamesDeclared.Add(propertyName, true);
-                    resultingGlobalScope.Add(subfragmentProperty);
+                    resultingGlobalScope.AddProperty(subfragmentProperty);
                     //WTM:  Note:  See QF_FGD03Viranus_0102d154.  Since ViranusDontonREF is present in multiple of the original fragments,
                     //ViranusDontonREF gets renamed by the above.  So multiple ViranusDontonREF variables are output.
                     //Below I tried not renaming, assuming instead that variables with matching names and types within a set of fragments were intended to be the same variable.
@@ -138,7 +138,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
-                var objectiveCodeChunks = this.objectiveHandlingFactory.generateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
+                var objectiveCodeChunks = this.objectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
                     subfragmentBlock.AddChunk(newCodeChunk);
@@ -154,7 +154,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
             foreach (int nonDoneStage in nonDoneStages)
             {
-                TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.createEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
+                TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
                 resultingBlockList.Add(fragment);
             }
 

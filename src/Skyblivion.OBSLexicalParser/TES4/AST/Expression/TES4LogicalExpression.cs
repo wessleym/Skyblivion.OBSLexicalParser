@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
     class TES4LogicalExpression : ITES4BinaryExpression
     {
         public ITES4Value LeftValue { get; private set; }
-        private TES4LogicalExpressionOperator op;
+        private readonly TES4LogicalExpressionOperator op;
         public ITES4Value RightValue { get; private set; }
         public TES4LogicalExpression(ITES4Value left, TES4LogicalExpressionOperator op, ITES4Value right)
         {

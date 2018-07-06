@@ -20,26 +20,26 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails.
             //The below check works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
-            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].getType() == EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
+            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].Type== EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
             try
             {
-                return base.parse(stream);
+                return base.Parse(stream);
             }
-            catch (UnexpectedTokenException ex) when (ex.getToken().getValue()=="endif")
+            catch (UnexpectedTokenException ex) when (ex.Token.Value=="endif")
             {
                 bool isFixed = false;
                 int nesting = 0;
                 List<IToken> tokens = new List<IToken>();
                 foreach (var token in stream)
                 {
-                    if (token.getType() == "BranchStartToken")
+                    if (token.Type== "BranchStartToken")
                     {
                         ++nesting;
                         tokens.Add(token);
                     }
                     else
                     {
-                        if (token.getType() == "BranchEndToken")
+                        if (token.Type== "BranchEndToken")
                         {
                             nesting = nesting - 1;
                             if (nesting > -1)
@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 }
 
                 ArrayTokenStream newTokenStream = new ArrayTokenStream(tokens);
-                object newAST = this.parse(newTokenStream);
+                object newAST = this.Parse(newTokenStream);
                 return newAST;
             }
         }

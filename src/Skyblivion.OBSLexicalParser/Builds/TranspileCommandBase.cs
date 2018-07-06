@@ -33,14 +33,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
-            TES5VariableAssignationFactory assignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-            valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
+            valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-            TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
-            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, assignationFactory, typeInferencer);
+            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
+            TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, typeInferencer);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory);
             chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
-            additionalBlockChangesPass = new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory, assignationFactory);
+            additionalBlockChangesPass = new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory);
         }
 
         protected static void GetFactories(MetadataLogService metadataLogService, out ESMAnalyzer analyzer, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5FragmentFactory fragmentFactory)

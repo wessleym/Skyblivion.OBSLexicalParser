@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         public IEnumerable<string> Output => this.LocalScope.Output.Concat(this.CodeChunks.Output);
 
-        public void Add(ITES5CodeChunk chunk)
+        public void AddChunk(ITES5CodeChunk chunk)
         {
             this.CodeChunks.Add(chunk);
         }

@@ -110,7 +110,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_UI = new TES5BasicType("UI"),
             T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName);
 
-        public static readonly TES5BasicType[] all = new TES5BasicType[]
+        private static readonly TES5BasicType[] all = new TES5BasicType[]
         {
             T_ACTIVEMAGICEFFECT,
             T_ALIAS,

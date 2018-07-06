@@ -91,7 +91,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string propertyKeyName = propertyName.ToLower();
                                     bool containedKey;
                                     TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
-                                    ITES5Type inferencingType = inferencer.resolveInferenceTypeByReferenceEdid(preparedProperty);
+                                    ITES5Type inferencingType = inferencer.ResolveInferenceTypeByReferenceEdid(preparedProperty);
                                     if (!containedKey)
                                     {
                                         preparedPropertiesTypes.Add(propertyKeyName, inferencingType);

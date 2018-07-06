@@ -18,29 +18,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class MessageFactory : IFunctionFactory
     {
-        private TES5ReferenceFactory referenceFactory;
-        private TES5VariableAssignationFactory assignationFactory;
-        private ESMAnalyzer analyzer;
-        private TES5ObjectPropertyFactory objectPropertyFactory;
-        private TES5TypeInferencer typeInferencer;
-        private MetadataLogService metadataLogService;
-        private TES5ValueFactory valueFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public MessageFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5VariableAssignationFactory assignationFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        private readonly TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer analyzer;
+        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
+        private readonly TES5TypeInferencer typeInferencer;
+        private readonly MetadataLogService metadataLogService;
+        private readonly TES5ValueFactory valueFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        public MessageFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
             this.analyzer = analyzer;
-            this.assignationFactory = assignationFactory;
             this.objectPropertyFactory = objectPropertyFactory;
             this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             string messageString = functionArguments[0].StringValue;
@@ -58,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 int i = 0;
                 int caret = 0;
                 //Example call: You have %.2f apples and %g boxes in your inventory, applesCount, boxesCount
-                ITES5Value[] variablesArray = functionArguments.Select(a => this.valueFactory.createValue(a, codeScope, globalScope, multipleScriptsScope)).ToArray();
+                ITES5Value[] variablesArray = functionArguments.Select(a => this.valueFactory.CreateValue(a, codeScope, globalScope, multipleScriptsScope)).ToArray();
 
                 List<TES5String> stringsList = new List<TES5String>();//Target: "You have ", " apples and ", " boxes in your inventory"
                 bool startWithVariable = false; //Pretty ugly. Basically, if we start with a vairable, it should be pushed first from the variable stack and then string comes, instead of string , variable , and so on [...]
@@ -113,15 +111,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
 
                 calledOn = TES5StaticReference.Debug;
-                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                arguments.Add(TES5PrimitiveValueFactory.createConcatenatedValue(combinedValues));
+                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
+                {
+                    TES5PrimitiveValueFactory.createConcatenatedValue(combinedValues)
+                };
                 return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
             else
             {
                 calledOn = TES5StaticReference.Debug;
-                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                arguments.Add(this.valueFactory.createValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope));
+                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
+                {
+                    this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope)
+                };
                 return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", multipleScriptsScope, arguments);
             }
         }

@@ -5,8 +5,8 @@ namespace Dissect.Parser.LALR1.Analysis
 {
     public class ActionAndGoTo
     {
-        public Dictionary<int, Dictionary<string, int>> Action = new Dictionary<int, Dictionary<string, int>>();
-        public Dictionary<int, Dictionary<string, int>> GoTo = new Dictionary<int, Dictionary<string, int>>();
+        public readonly Dictionary<int, Dictionary<string, int>> Action = new Dictionary<int, Dictionary<string, int>>();
+        public readonly Dictionary<int, Dictionary<string, int>> GoTo = new Dictionary<int, Dictionary<string, int>>();
         private static void Add(Dictionary<int, Dictionary<string, int>> dict, int num, string trigger, int destination)
         {
             Dictionary<string, int> innerDict = dict.GetOrAdd(num, () => new Dictionary<string, int>());

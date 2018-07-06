@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5ObjectCallArgumentsFactory
     {
-        private TES5ValueFactory valueFactory;
+        private readonly TES5ValueFactory valueFactory;
         public TES5ObjectCallArgumentsFactory(TES5ValueFactory factory)
         {
             this.valueFactory = factory;
@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 return list;
             }
-            list.AddRange(arguments.Select(a => this.valueFactory.createValue(a, codeScope, globalScope, multipleScriptsScope)));
+            list.AddRange(arguments.Select(a => this.valueFactory.CreateValue(a, codeScope, globalScope, multipleScriptsScope)));
             return list;
         }
     }

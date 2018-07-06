@@ -12,8 +12,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         * Original type name
          * Needed only for compilation graph build.. will be scrapped once this is cleaned up properly.
         */
-        private string originalName;
-        private string prefix;
+        private readonly string originalName;
+        private readonly string prefix;
         public TES5CustomType(string originalName, string prefix, ITES5Type nativeType)
         {
             this.escapedName = NameTransformer.Limit(originalName, prefix);
@@ -27,8 +27,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         private static bool Equals(TES5CustomType left, TES5CustomType right)
         {
             if (object.ReferenceEquals(left, right)) { return true; }
-            bool leftIsNull = object.ReferenceEquals(left, null);
-            bool rightIsNull = object.ReferenceEquals(right, null);
+            bool leftIsNull = left is null;
+            bool rightIsNull = right is null;
             if (leftIsNull && rightIsNull) { return true; }
             if (leftIsNull || rightIsNull) { return false; }
             return
@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         public override bool Equals(object obj)
         {
             TES5CustomType customType = obj as TES5CustomType;
-            return !object.ReferenceEquals(customType, null) ? Equals(customType) : false;
+            return !(customType is null) ? Equals(customType) : false;
         }
 
         public override int GetHashCode()
@@ -68,7 +68,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             get
             {
                 bool includePrefix = this.escapedName != TES5BasicType.TES4TimerHelperName && this.escapedName != TES5BasicType.TES4ContainerName;//no time to refactor now, later.
-                return new string[] { (includePrefix ? this.prefix : "") + this.escapedName };
+                yield return (includePrefix ? this.prefix : "") + this.escapedName;
             }
         }
 

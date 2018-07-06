@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
     {
         public void write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Write(buildTracker.getBuiltScripts(target.GetTargetName()).Values, progressWriter);
+            Write(buildTracker.GetBuiltScripts(target.GetTargetName()).Values, progressWriter);
         }
     }
 }

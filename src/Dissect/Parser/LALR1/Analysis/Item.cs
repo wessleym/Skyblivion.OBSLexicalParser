@@ -30,10 +30,25 @@ namespace Dissect.Parser.LALR1.Analysis
      */
     class Item
     {
-        protected Rule rule;
-        protected int dotIndex;
-        protected List<string> lookahead = new List<string>();
-        protected List<Item> connected = new List<Item>();
+        /*
+        * Returns the rule of this item.
+         *
+         *  The rule.
+        */
+        public Rule Rule { get; protected set; }
+        /*
+        * Returns the dot index of this item.
+         *
+         *  The dot index.
+        */
+        public int DotIndex { get; protected set; }
+        /*
+        * Returns the computed lookahead for this item.
+         *
+         *  The lookahead symbols.
+        */
+        public List<string> Lookahead { get; protected set; } = new List<string>();
+        protected List<Item> Connected = new List<Item>();
         /*
         * Constructor.
          *
@@ -42,18 +57,8 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public Item(Rule rule, int dotIndex)
         {
-            this.rule = rule;
-            this.dotIndex = dotIndex;
-        }
-
-        /*
-        * Returns the dot index of this item.
-         *
-         *  The dot index.
-        */
-        public int getDotIndex()
-        {
-            return this.dotIndex;
+            this.Rule = rule;
+            this.DotIndex = dotIndex;
         }
 
         /*
@@ -69,20 +74,7 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The component.
         */
-        public string getActiveComponent()
-        {
-            return this.rule.getComponent(this.dotIndex);
-        }
-
-        /*
-        * Returns the rule of this item.
-         *
-         *  The rule.
-        */
-        public Dissect.Parser.Rule getRule()
-        {
-            return this.rule;
-        }
+        public string ActiveComponent => this.Rule.GetComponent(this.DotIndex);
 
         /*
         * Determines whether this item is a reduce item.
@@ -95,19 +87,16 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  Whether this item is a reduce item.
         */
-        public bool isReduceItem()
-        {
-            return this.dotIndex == this.rule.getComponents().Length;
-        }
+        public bool IsReduceItem => this.DotIndex == this.Rule.Components.Length;
 
         /*
         * Connects two items with a lookahead pumping channel.
          *
          *  The item.
         */
-        public void connect(Item i)
+        public void Connect(Item i)
         {
-            this.connected.Add(i);
+            this.Connected.Add(i);
         }
 
         /*
@@ -116,14 +105,14 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The lookahead token name.
         */
-        public void pump(string lookahead)
+        public void Pump(string lookahead)
         {
-            if (!this.lookahead.Contains(lookahead))
+            if (!this.Lookahead.Contains(lookahead))
             {
-                this.lookahead.Add(lookahead);
-                foreach (var item in this.connected)
+                this.Lookahead.Add(lookahead);
+                foreach (var item in this.Connected)
                 {
-                    item.pump(lookahead);
+                    item.Pump(lookahead);
                 }
             }
         }
@@ -133,22 +122,12 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The lookahead tokens.
         */
-        public void pumpAll(IEnumerable<string> lookahead)
+        public void PumpAll(IEnumerable<string> lookahead)
         {
             foreach (var l in lookahead)
             {
-                this.pump(l);
+                this.Pump(l);
             }
-        }
-
-        /*
-        * Returns the computed lookahead for this item.
-         *
-         *  The lookahead symbols.
-        */
-        public List<string> getLookahead()
-        {
-            return this.lookahead;
         }
 
         /*
@@ -157,9 +136,6 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The unrecognized components.
         */
-        public IEnumerable<string> getUnrecognizedComponents()
-        {
-            return this.rule.getComponents().Skip(this.dotIndex + 1);
-        }
+        public IEnumerable<string> UnrecognizedComponents => this.Rule.Components.Skip(this.DotIndex + 1);
     }
 }

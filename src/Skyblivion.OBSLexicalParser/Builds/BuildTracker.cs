@@ -6,11 +6,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTracker
     {
-        private BuildTargetCollection buildTargetCollection;
+        private readonly BuildTargetCollection buildTargetCollection;
         /*
              * Map build target => built TES5 scripts
         */
-        private Dictionary<string, Dictionary<string, TES5Target>> builtScripts = new Dictionary<string, Dictionary<string, TES5Target>>();
+        private readonly Dictionary<string, Dictionary<string, TES5Target>> builtScripts = new Dictionary<string, Dictionary<string, TES5Target>>();
         /*
         * BuildTracker constructor.
         */
@@ -23,12 +23,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
         }
 
-        public void registerBuiltScript(BuildTarget buildTarget, TES5Target script)
+        public void RegisterBuiltScript(BuildTarget buildTarget, TES5Target script)
         {
             this.builtScripts[buildTarget.GetTargetName()][script.Script.ScriptHeader.OriginalScriptName] = script;
         }
 
-        public Dictionary<string, TES5Target> getBuiltScripts(string targetName)
+        public Dictionary<string, TES5Target> GetBuiltScripts(string targetName)
         {
             return builtScripts.GetWithFallback(targetName, () => new Dictionary<string, TES5Target>());
         }

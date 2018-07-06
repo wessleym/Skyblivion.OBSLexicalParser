@@ -7,8 +7,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class CompileScriptJob
     {
-        private BuildTargetCollection buildTargetCollection;
-        private string standardOutputFilePath, standardErrorFilePath;
+        private readonly BuildTargetCollection buildTargetCollection;
+        private readonly string standardOutputFilePath, standardErrorFilePath;
         public CompileScriptJob(Build build, BuildTargetCollection buildTargetCollection)
         {
             this.standardOutputFilePath = build.GetCompileStandardOutputPath();
@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.buildTargetCollection = buildTargetCollection;
         }
 
-        public void run()
+        public void Run()
         {
             //Delete old output files
             File.Delete(standardOutputFilePath);

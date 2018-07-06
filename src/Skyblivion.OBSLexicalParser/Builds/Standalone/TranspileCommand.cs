@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
     class TranspileCommand : TranspileCommandBase<TES4Script>
     {
-        private TES4ToTES5ASTConverter converter;
+        private readonly TES4ToTES5ASTConverter converter;
         public TranspileCommand(StandaloneParsingService standaloneParsingService, Build build, MetadataLogService metadataLogService)
             : base(standaloneParsingService)
         {
@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         {
             TES4Script script = ParseOrGetFromCache(sourcePath);
             TES4Target tes4Target = new TES4Target(script, outputPath);
-            TES5Target target = this.converter.convert(tes4Target, globalScope, multipleScriptsScope);
+            TES5Target target = this.converter.Convert(tes4Target, globalScope, multipleScriptsScope);
             return target;
         }
     }

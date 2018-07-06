@@ -16,11 +16,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
     class ObjectiveHandlingFactory
     {
-        private TES5ReferenceFactory referenceFactory;
-        private TES5VariableAssignationFactory variableAssignationFactory;
-        public ObjectiveHandlingFactory(TES5VariableAssignationFactory variableAssignationFactory, TES5ReferenceFactory referenceFactory)
+        private readonly TES5ReferenceFactory referenceFactory;
+        public ObjectiveHandlingFactory(TES5ReferenceFactory referenceFactory)
         {
-            this.variableAssignationFactory = variableAssignationFactory;
             this.referenceFactory = referenceFactory;
         }
 
@@ -28,13 +26,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              *  The stage ID
          *  List of integers describing targets being enabled or disabled for given stage
         */
-        public TES5FunctionCodeBlock createEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
+        public TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
         {
             string fragmentName = "Fragment_"+stageId.ToString();
-            TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.createFromFragmentType(fragmentName, TES5FragmentType.T_QF);
-            TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScope(TES5LocalScopeFactory.createRootScope(functionScope));
+            TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
+            TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
             TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, new TES5VoidType());
-            List<ITES5CodeChunk> chunks = this.generateObjectiveHandling(codeBlock, globalScope, stageMap);
+            List<ITES5CodeChunk> chunks = this.GenerateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {
                 codeBlock.AddChunk(chunk);
@@ -42,12 +40,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return codeBlock;
         }
 
-        public List<ITES5CodeChunk> generateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
+        public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
         {
-            List<ITES5CodeChunk> result = new List<ITES5CodeChunk>();
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
             TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);
-            result.Add(variableAssignationFactory.createAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope)));
+            List<ITES5CodeChunk> result = new List<ITES5CodeChunk>()
+            {
+                TES5VariableAssignationFactory.CreateAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope))
+            };
             TES5LocalScope localScope = codeBlock.CodeScope.LocalScope;
             localScope.AddVariable(castedToQuest);
             int i = 0;
@@ -57,30 +57,24 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 if (stageTargetState != 0)
                 {
                     //Should be visible
-                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
-                    displayedArguments.Add(targetIndex);
+                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
                     TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
-                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                    arguments.Add(targetIndex);
-                    arguments.Add(new TES5Integer(1));
+                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
                     TES5ObjectCall showTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
-                    branch.MainBranch.CodeScope.Add(showTheObjective);
+                    branch.MainBranch.CodeScope.AddChunk(showTheObjective);
                     result.Add(branch);
                 }
                 else
                 {
-                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments();
-                    displayedArguments.Add(targetIndex);
+                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
                     TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
                     TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
-                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-                    arguments.Add(targetIndex);
-                    arguments.Add(new TES5Integer(1));
+                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
                     TES5ObjectCall completeTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
-                    branch.MainBranch.CodeScope.Add(completeTheObjective);
+                    branch.MainBranch.CodeScope.AddChunk(completeTheObjective);
                     result.Add(branch);
                 }
 

@@ -19,15 +19,15 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public const string BUILD_TARGET_PF = "PF";
         public const string DEFAULT_TARGETS = BUILD_TARGET_STANDALONE+ "," + BUILD_TARGET_TIF+ "," +BUILD_TARGET_QF;
         public static string StandaloneSourcePath = Path.Combine(DataDirectory.GetBuildTargetsPath(), "Standalone", "Source") + Path.DirectorySeparatorChar;
-        private string targetName;
-        private string filePrefix;
-        private Build build;
-        private MetadataLogService metadataLogService;
-        private ITranspileCommand transpileCommand;
-        private ICompileCommand compileCommand;
-        private IASTCommand astCommand;
-        private IBuildScopeCommand buildScopeCommand;
-        private IWriteCommand writeCommand;
+        private readonly string targetName;
+        private readonly string filePrefix;
+        private readonly Build build;
+        private readonly MetadataLogService metadataLogService;
+        private readonly ITranspileCommand transpileCommand;
+        private readonly ICompileCommand compileCommand;
+        private readonly IASTCommand astCommand;
+        private readonly IBuildScopeCommand buildScopeCommand;
+        private readonly IWriteCommand writeCommand;
         public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand astCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
         {
             this.targetName = targetName;

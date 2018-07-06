@@ -13,13 +13,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class SetForceSneakFactory : IFunctionFactory
     {
-        private TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
         public SetForceSneakFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCall startSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "StartSneaking", multipleScriptsScope);
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 TES5ObjectCall isSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "IsSneaking", multipleScriptsScope);
                 TES5ComparisonExpression playerIsNotSneaking = TES5ExpressionFactory.CreateComparisonExpression(isSneaking, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                 TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(playerIsNotSneaking, codeScope.LocalScope);
-                branch.MainBranch.CodeScope.Add(startSneaking);
+                branch.MainBranch.CodeScope.AddChunk(startSneaking);
                 return branch;
             }
             return startSneaking;

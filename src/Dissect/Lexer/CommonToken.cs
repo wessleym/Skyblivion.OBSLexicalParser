@@ -7,32 +7,17 @@ namespace Dissect.Lexer
      */
     public class CommonToken : IToken
     {
-        protected string type;
-        protected string value;
-        protected int line;
+        public string Type { get; protected set; }
+        public string Value { get; protected set; }
+        public int Line { get; protected set; }
         /*
         * Constructor.
         */
         public CommonToken(string type, string value, int line)
         {
-            this.type = type;
-            this.value = value;
-            this.line = line;
-        }
-
-        public string getType()
-        {
-            return this.type;
-        }
-
-        public string getValue()
-        {
-            return this.value;
-        }
-
-        public int getLine()
-        {
-            return this.line;
+            this.Type = type;
+            this.Value = value;
+            this.Line = line;
         }
     }
 }

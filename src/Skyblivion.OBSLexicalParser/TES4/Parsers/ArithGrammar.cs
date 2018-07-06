@@ -19,17 +19,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 
         public void createSampleParser()
         {
-            __invoke("Digit")._is("0")._is("1");
-            __invoke("Number")._is("Digit")._is("Number", "Digit");
+            __invoke("Digit").Is("0").Is("1");
+            __invoke("Number").Is("Digit").Is("Number", "Digit");
         }
 
         public ArithGrammar()
         {
-            __invoke("Additive")._is("Additive", "+", "Multiplicative")._is("Multiplicative");
-            __invoke("Multiplicative")._is("Multiplicative", "*", "Power")._is("Power");
-            __invoke("Power")._is("Primary", "**", "Power")._is("Primary");
-            __invoke("Primary")._is("INT")._is("(", "Additive", ")");
-            this.start("Additive");
+            __invoke("Additive").Is("Additive", "+", "Multiplicative").Is("Multiplicative");
+            __invoke("Multiplicative").Is("Multiplicative", "*", "Power").Is("Power");
+            __invoke("Power").Is("Primary", "**", "Power").Is("Primary");
+            __invoke("Primary").Is("INT").Is("(", "Additive", ")");
+            this.Start("Additive");
         }
     }
 }

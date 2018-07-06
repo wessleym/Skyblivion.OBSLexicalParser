@@ -13,6 +13,6 @@ namespace Dissect.Lexer
         /*
         * Lexes the given string, returning a token stream.
         */
-        ArrayTokenStream lex(string str);
+        ArrayTokenStream Lex(string str);
     }
 }

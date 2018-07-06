@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
      */
     class FillerFactory : IFunctionFactory
     {
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             return new TES5Filler();
         }

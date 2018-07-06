@@ -16,26 +16,22 @@ namespace Dissect.Lexer
      */
     public abstract class AbstractLexer : ILexer
     {
-        private int line = 1;
         /*
         * Returns the current line.
         */
-        protected int getCurrentLine()
-        {
-            return this.line;
-        }
+        protected int Line { get; private set; } = 1;
 
         /*
         * Attempts to extract another token from the string.
          * Returns the token on success or null on failure.
         */
-        protected abstract IToken extractToken(string str);
+        protected abstract IToken ExtractToken(string str);
         /*
         * Should given token be skipped?
         */
-        protected abstract bool shouldSkipToken(IToken token);
+        protected abstract bool ShouldSkipToken(IToken token);
         protected virtual void ResetStatesForNewString() { }
-        public ArrayTokenStream lex(string str)
+        public ArrayTokenStream Lex(string str)
         {
             ResetStatesForNewString();
             // normalize line endings
@@ -43,37 +39,37 @@ namespace Dissect.Lexer
             List<IToken> tokens = new List<IToken>();
             int position = 0;
             string originalString = str;
-            int originalLength = Util.Util.stringLength(str);
+            int originalLength = Util.Util.StringLength(str);
             while (true)
             {
-                IToken token = this.extractToken(str);
+                IToken token = this.ExtractToken(str);
                 if (token == null)
                 {
                     break;
                 }
 
-                if (!this.shouldSkipToken(token))
+                if (!this.ShouldSkipToken(token))
                 {
                     tokens.Add(token);
                 }
 
-                int shift = Util.Util.stringLength(token.getValue());
+                int shift = Util.Util.StringLength(token.Value);
                 position += shift;
                 // update line + offset
                 if (position > 0)
                 {
-                    this.line = originalString.Substring(0, position).Cast<char>().Count(c => c == '\n') + 1;
+                    this.Line = originalString.Substring(0, position).Cast<char>().Count(c => c == '\n') + 1;
                 }
 
-                str = Util.Util.substring(str, shift);
+                str = Util.Util.Substring(str, shift);
             }
 
             if (position != originalLength)
             {
-                throw new RecognitionException(this.line);
+                throw new RecognitionException(this.Line);
             }
 
-            tokens.Add(new CommonToken(Parser.Parser.EOF_TOKEN_TYPE, "", this.line));
+            tokens.Add(new CommonToken(Parser.Parser.EOF_TOKEN_TYPE, "", this.Line));
             return new ArrayTokenStream(tokens);
         }
     }

@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public override void AddChunk(ITES5CodeChunk chunk)
         {
-            this.CodeScope.Add(chunk);
+            this.CodeScope.AddChunk(chunk);
         }
     }
 }

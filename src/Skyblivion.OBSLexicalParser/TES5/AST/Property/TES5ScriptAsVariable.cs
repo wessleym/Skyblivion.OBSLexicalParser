@@ -4,27 +4,28 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5ScriptAsVariable : ITES5Variable
+    class TES5ScriptAsVariable : TES5VariableOrProperty
     {
-        private TES5ScriptHeader scriptHeader;
+        private readonly TES5ScriptHeader scriptHeader;
         public TES5ScriptAsVariable(TES5ScriptHeader scriptHeader)
+            : base("self")
         {
             this.scriptHeader = scriptHeader;
         }
 
         public string PropertyNameWithSuffix => "self";
 
-        public IEnumerable<string> Output => new string[] { "self" };
+        public override IEnumerable<string> Output => new string[] { PropertyNameWithSuffix };
 
-        public ITES5Type PropertyType
+        public override ITES5Type TES5Type
         {
             get { return this.scriptHeader.ScriptType; }
-            set { this.scriptHeader.setNativeType(value); }
+            set { this.scriptHeader.SetNativeType(value); }
         }
 
-        public string ReferenceEDID => this.scriptHeader.EDID;
+        public override string ReferenceEDID => this.scriptHeader.EDID;
 
-        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
+        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             throw new ConversionException("Cannot track TES5ScriptAsVariable as it tracks already.");
         }

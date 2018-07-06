@@ -6,14 +6,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
     {
         public ArithLexer()
         {
-            this.regex("INT", @"^[1-9][0-9]*");
-            this.token("(");
-            this.token(")");
-            this.token("+");
-            this.token("**");
-            this.token("*");
-            this.regex("WSP", @"^[ \r\n\t]+");
-            this.skip("WSP");
+            this.Regex("INT", @"^[1-9][0-9]*");
+            this.Token("(");
+            this.Token(")");
+            this.Token("+");
+            this.Token("**");
+            this.Token("*");
+            this.Regex("WSP", @"^[ \r\n\t]+");
+            this.Skip("WSP");
         }
     }
 }

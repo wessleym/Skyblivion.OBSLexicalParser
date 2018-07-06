@@ -6,13 +6,13 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     class PrepareWorkspaceJob
     {
         public const int CopyOperationsPerBuildTarget = 2;
-        private BuildTargetCollection buildTargetCollection;
+        private readonly BuildTargetCollection buildTargetCollection;
         public PrepareWorkspaceJob(BuildTargetCollection buildTargetCollection)
         {
             this.buildTargetCollection = buildTargetCollection;
         }
 
-        public void run(ProgressWriter progressWriter)
+        public void Run(ProgressWriter progressWriter)
         {
             foreach (var buildTarget in buildTargetCollection)
             {

@@ -10,14 +10,16 @@ namespace Dissect.Lexer
         /*
         * Returns the token type.
         */
-        string getType();
+        string Type { get; }
+
         /*
         * Returns the token value.
         */
-        string getValue();
+        string Value { get; }
+
         /*
         * Returns the line on which the token was found.
         */
-        int getLine();
+        int Line { get; }
     }
 }

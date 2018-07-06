@@ -55,12 +55,10 @@ namespace Skyblivion.OBSLexicalParser.Builds
                             TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
                             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
                             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
-                            TES5VariableAssignationFactory assignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-                            TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
+                            TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
                             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-                            TES5ValueFactoryFunctionFiller.fillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, assignationFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
-                            TES5VariableAssignationFactory variableAssignationFactory = new TES5VariableAssignationFactory(referenceFactory);
-                            ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(variableAssignationFactory, referenceFactory);
+                            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
+                            ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(referenceFactory);
                             QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
                             writeCommand = new QF.WriteCommand(qfFragmentFactory);
                         }

@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
             OPERATOR_MULTIPLY = new TES4ArithmeticExpressionOperator("*"),
             OPERATOR_DIVIDE = new TES4ArithmeticExpressionOperator("/");
 
-        public static readonly TES4ArithmeticExpressionOperator[] all = new TES4ArithmeticExpressionOperator[]
+        private static readonly TES4ArithmeticExpressionOperator[] all = new TES4ArithmeticExpressionOperator[]
         {
             OPERATOR_ADD,
             OPERATOR_SUBSTRACT,

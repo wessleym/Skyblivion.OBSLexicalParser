@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             if (createCodeParsingTree)
             {
                 this.createObscriptCodeParsingTree();
-                this.start("Code+");
+                this.Start("Code+");
             }
         }
         public TES4ObscriptCodeGrammar()
@@ -29,26 +29,26 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 
         protected void createObscriptCodeParsingTree()
         {
-            __invoke("Code+")._is("Code+", "Code").call((TES4CodeChunks list, ITES4CodeChunk codeDeclaration)=>
+            __invoke("Code+").Is("Code+", "Code").Call((TES4CodeChunks list, ITES4CodeChunk codeDeclaration)=>
             {
                 list.Add(codeDeclaration);
                 return list;
             } ) .
-            _is("Code").call((ITES4CodeChunk codeDeclaration)=>
+            Is("Code").Call((ITES4CodeChunk codeDeclaration)=>
             {
                 TES4CodeChunks list = new TES4CodeChunks();
                 list.Add(codeDeclaration);
                 return list;
             });
-            __invoke("Code")._is("Branch")._is("SetValue", "NWL")._is("Function", "NWL")._is("ObjectCall", "NWL")._is("LocalVariableDeclaration+")._is("Return");
+            __invoke("Code").Is("Branch").Is("SetValue", "NWL").Is("Function", "NWL").Is("ObjectCall", "NWL").Is("LocalVariableDeclaration+").Is("Return");
 //todo-THIS should be fixed on lexer level, right now it ignores NWL after the return
-            __invoke("LocalVariableDeclaration+")._is("LocalVariableDeclaration+", "LocalVariableDeclaration").call((TES4VariableDeclarationList list, TES4VariableDeclaration variableDeclaration)=>
+            __invoke("LocalVariableDeclaration+").Is("LocalVariableDeclaration+", "LocalVariableDeclaration").Call((TES4VariableDeclarationList list, TES4VariableDeclaration variableDeclaration)=>
             {
                 list.add(variableDeclaration);
                 return list;
             } ) .
 
-            _is("LocalVariableDeclaration").call((TES4VariableDeclaration variableDeclaration)=>
+            Is("LocalVariableDeclaration").Call((TES4VariableDeclaration variableDeclaration)=>
             {
                 TES4VariableDeclarationList list = new TES4VariableDeclarationList();
                 list.add(variableDeclaration);
@@ -56,65 +56,65 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("LocalVariableDeclaration")._is("LocalVariableDeclarationType", "VariableName").call((CommonToken variableDeclarationType, CommonToken variableName)=>
+            __invoke("LocalVariableDeclaration").Is("LocalVariableDeclarationType", "VariableName").Call((System.Func<CommonToken, CommonToken, TES4VariableDeclaration>)((CommonToken variableDeclarationType, CommonToken variableName)=>
             {
-                return new TES4VariableDeclaration(variableName.getValue(), TES4Type.GetFirst(variableDeclarationType.getValue().ToLower()));
-            } )
+                return new TES4VariableDeclaration((string)variableName.Value, TES4Type.GetFirst((string)variableDeclarationType.Value.ToLower()));
+            }) )
 
             ;
-            __invoke("Branch")._is("BranchStart", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
-            .call((TES4SubBranch branchStart, object end)=>
+            __invoke("Branch").Is("BranchStart", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
+            .Call((TES4SubBranch branchStart, object end)=>
             {
                 return new TES4Branch(branchStart, null, null);
             } ) .
 
-            _is("BranchStart", "BranchSubBranch+", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
-            .call((TES4SubBranch branchStart, TES4SubBranchList subbranches, object end)=>
+            Is("BranchStart", "BranchSubBranch+", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
+            .Call((TES4SubBranch branchStart, TES4SubBranchList subbranches, object end)=>
             {
                 return new TES4Branch(branchStart, subbranches, null);
             } ) .
 
-            _is("BranchStart", "BranchElse", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
-            .call((TES4SubBranch branchStart, TES4ElseSubBranch branchElse, object end)=>
+            Is("BranchStart", "BranchElse", "BranchEndToken") //If a == 2 { doSomeCode(); endIf
+            .Call((TES4SubBranch branchStart, TES4ElseSubBranch branchElse, object end)=>
             {
                 return new TES4Branch(branchStart, null, branchElse);
             } ) .
 
-            _is("BranchStart", "BranchSubBranch+", "BranchElse", "BranchEndToken").call((TES4SubBranch branchStart, TES4SubBranchList subbranches, TES4ElseSubBranch branchElse, object end)=>
+            Is("BranchStart", "BranchSubBranch+", "BranchElse", "BranchEndToken").Call((TES4SubBranch branchStart, TES4SubBranchList subbranches, TES4ElseSubBranch branchElse, object end)=>
             {
                 return new TES4Branch(branchStart, subbranches, branchElse);
             } )
 
             ;
-            __invoke("BranchElse")._is("BranchElseToken", "Code+").call((object branchElseToken, TES4CodeChunks code)=>
+            __invoke("BranchElse").Is("BranchElseToken", "Code+").Call((object branchElseToken, TES4CodeChunks code)=>
             {
                 return new TES4ElseSubBranch(code);
             } ) .
 
-            _is("BranchElseToken").call((branchElseToken)=>
+            Is("BranchElseToken").Call((branchElseToken)=>
             {
                 return new TES4ElseSubBranch(null);
             } )
 
             ;
-            __invoke("BranchStart")._is("BranchStartToken", "Value", "NWL", "Code+").call((object branchStart, ITES4Value expression, object newLine, TES4CodeChunks code)=>
+            __invoke("BranchStart").Is("BranchStartToken", "Value", "NWL", "Code+").Call((object branchStart, ITES4Value expression, object newLine, TES4CodeChunks code)=>
             {
                 return new TES4SubBranch(expression, code);
             } ) .
 
-            _is("BranchStartToken", "Value", "NWL").call((object branchStart, ITES4Value expression, object newLine) =>
+            Is("BranchStartToken", "Value", "NWL").Call((object branchStart, ITES4Value expression, object newLine) =>
             {
                 return new TES4SubBranch(expression, null);
             } )
 
             ;
-            __invoke("BranchSubBranch+")._is("BranchSubBranch+", "BranchSubBranch").call((TES4SubBranchList list, TES4SubBranch branchSubBranchDeclaration)=>
+            __invoke("BranchSubBranch+").Is("BranchSubBranch+", "BranchSubBranch").Call((TES4SubBranchList list, TES4SubBranch branchSubBranchDeclaration)=>
             {
                 list.Add(branchSubBranchDeclaration);
                 return list;
             } ) .
 
-            _is("BranchSubBranch").call((TES4SubBranch branchSubBranchDeclaration)=>
+            Is("BranchSubBranch").Call((TES4SubBranch branchSubBranchDeclaration)=>
             {
                 TES4SubBranchList list = new TES4SubBranchList();
                 list.Add(branchSubBranchDeclaration);
@@ -122,153 +122,153 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("BranchSubBranch")._is("BranchElseifToken", "Value", "NWL", "Code+").call((object branchElseif, ITES4Value expression, object nwl, TES4CodeChunks codeChunks)=>
+            __invoke("BranchSubBranch").Is("BranchElseifToken", "Value", "NWL", "Code+").Call((object branchElseif, ITES4Value expression, object nwl, TES4CodeChunks codeChunks)=>
             {
                 return new TES4SubBranch(expression, codeChunks);
             } ) .
 
-            _is("BranchElseifToken", "Value", "NWL").call((object branchElseif, ITES4Value expression, object nwl)=>
+            Is("BranchElseifToken", "Value", "NWL").Call((object branchElseif, ITES4Value expression, object nwl)=>
             {
                 return new TES4SubBranch(expression, null);
             } )
 
             ;
-            __invoke("MathOperator")._is("==").call((CommonToken op)=>
+            __invoke("MathOperator").Is("==").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("!=").call((CommonToken op)=>
+            Is("!=").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is(">").call((CommonToken op)=>
+            Is(">").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("<").call((CommonToken op)=>
+            Is("<").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("<=").call((CommonToken op)=>
+            Is("<=").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is(">=").call((CommonToken op)=>
+            Is(">=").Call((System.Func<CommonToken, TES4ComparisonExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ComparisonExpressionOperator.GetFirst(op.getValue());
-            } )
-
-            ;
-            __invoke("LogicalOperator")._is("||").call((CommonToken op)=>
-            {
-                return TES4LogicalExpressionOperator.GetFirst(op.getValue());
-            } ) .
-
-            _is("&&").call((CommonToken op)=>
-            {
-                return TES4LogicalExpressionOperator.GetFirst(op.getValue());
-            } )
+                return TES4ComparisonExpressionOperator.GetFirst((string)op.Value);
+            }) )
 
             ;
-            __invoke("Value")._is("Value", "LogicalOperator", "NotLogicalValue").call((ITES4Value left, TES4LogicalExpressionOperator op, ITES4Value right)=>
+            __invoke("LogicalOperator").Is("||").Call((System.Func<CommonToken, TES4LogicalExpressionOperator>)((CommonToken op)=>
+            {
+                return TES4LogicalExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
+
+            Is("&&").Call((System.Func<CommonToken, TES4LogicalExpressionOperator>)((CommonToken op)=>
+            {
+                return TES4LogicalExpressionOperator.GetFirst((string)op.Value);
+            }) )
+
+            ;
+            __invoke("Value").Is("Value", "LogicalOperator", "NotLogicalValue").Call((ITES4Value left, TES4LogicalExpressionOperator op, ITES4Value right)=>
             {
                 return new TES4LogicalExpression(left, op, right);
             } ) .
 
-            _is("NotLogicalValue");
-            __invoke("NotLogicalValue")._is("NotLogicalValue", "MathOperator", "NotLogicalAndBinaryValue").call((ITES4Value left, TES4ComparisonExpressionOperator op, ITES4Value right)=>
+            Is("NotLogicalValue");
+            __invoke("NotLogicalValue").Is("NotLogicalValue", "MathOperator", "NotLogicalAndBinaryValue").Call((ITES4Value left, TES4ComparisonExpressionOperator op, ITES4Value right)=>
             {
                 return new TES4ComparisonExpression(left, op, right);
             } ) .
 
-            _is("NotLogicalAndBinaryValue");
-            __invoke("NotLogicalAndBinaryValue")._is("NotLogicalAndBinaryValue", "BinaryOperator", "NonExpressionValue").call((ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)=>
+            Is("NotLogicalAndBinaryValue");
+            __invoke("NotLogicalAndBinaryValue").Is("NotLogicalAndBinaryValue", "BinaryOperator", "NonExpressionValue").Call((ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)=>
             {
                 return new TES4ArithmeticExpression(left, op, right);
             } ) .
 
-            _is("NonExpressionValue");
-            __invoke("NonExpressionValue")._is("ObjectAccess")._is("Function")._is("APIToken")._is("Primitive");
-            __invoke("BinaryOperator")._is("+").call((CommonToken op)=>
+            Is("NonExpressionValue");
+            __invoke("NonExpressionValue").Is("ObjectAccess").Is("Function").Is("APIToken").Is("Primitive");
+            __invoke("BinaryOperator").Is("+").Call((System.Func<CommonToken, TES4ArithmeticExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ArithmeticExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("-").call((CommonToken op)=>
+            Is("-").Call((System.Func<CommonToken, TES4ArithmeticExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ArithmeticExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("*").call((CommonToken op)=>
+            Is("*").Call((System.Func<CommonToken, TES4ArithmeticExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
-            } ) .
+                return TES4ArithmeticExpressionOperator.GetFirst((string)op.Value);
+            }) ) .
 
-            _is("/").call((CommonToken op)=>
+            Is("/").Call((System.Func<CommonToken, TES4ArithmeticExpressionOperator>)((CommonToken op)=>
             {
-                return TES4ArithmeticExpressionOperator.GetFirst(op.getValue());
-            } )
+                return TES4ArithmeticExpressionOperator.GetFirst((string)op.Value);
+            }) )
 
             ;
-            __invoke("ObjectAccess")._is("ObjectCall")._is("ObjectProperty");
-            __invoke("ObjectCall")._is("APIToken", "TokenDelimiter", "Function").call((TES4ApiToken apiToken, object delimiter, TES4Function function)=>
+            __invoke("ObjectAccess").Is("ObjectCall").Is("ObjectProperty");
+            __invoke("ObjectCall").Is("APIToken", "TokenDelimiter", "Function").Call((TES4ApiToken apiToken, object delimiter, TES4Function function)=>
             {
                 return new TES4ObjectCall(apiToken, function);
             } )
 
             ;
-            __invoke("ObjectProperty")._is("APIToken", "TokenDelimiter", "APIToken").call((TES4ApiToken apiToken, object delimiter, TES4ApiToken nextApiToken)=>
+            __invoke("ObjectProperty").Is("APIToken", "TokenDelimiter", "APIToken").Call((TES4ApiToken apiToken, object delimiter, TES4ApiToken nextApiToken)=>
             {
                 return new TES4ObjectProperty(apiToken, nextApiToken);
             } )
 
             ;
-            __invoke("SetValue")._is("SetInitialization", "ObjectProperty", "Value").call((object setInitialization, TES4ObjectProperty objectProperty, ITES4Value expression)=>
+            __invoke("SetValue").Is("SetInitialization", "ObjectProperty", "Value").Call((object setInitialization, TES4ObjectProperty objectProperty, ITES4Value expression)=>
             {
                 return new TES4VariableAssignation(objectProperty, expression);
             } ) .
 
-            _is("SetInitialization", "APIToken", "Value").call((object setInitialization, TES4ApiToken apiToken, ITES4Value expression)=>
+            Is("SetInitialization", "APIToken", "Value").Call((object setInitialization, TES4ApiToken apiToken, ITES4Value expression)=>
             {
                 return new TES4VariableAssignation(apiToken, expression);
             } )
 
             ;
-            __invoke("Function")._is("FunctionCall", "FunctionArguments").call((TES4FunctionCall functionCall, TES4FunctionArguments functionArguments)=>
+            __invoke("Function").Is("FunctionCall", "FunctionArguments").Call((TES4FunctionCall functionCall, TES4FunctionArguments functionArguments)=>
             {
                 return new TES4Function(functionCall, functionArguments);
             } ) .
 
-            _is("FunctionCall").call((TES4FunctionCall functionCall) =>
+            Is("FunctionCall").Call((TES4FunctionCall functionCall) =>
             {
                 return new TES4Function(functionCall, new TES4FunctionArguments());
             } )
 
             ;
-            __invoke("FunctionCall")._is("FunctionCallToken").call((CommonToken functionCall)=>
+            __invoke("FunctionCall").Is("FunctionCallToken").Call((System.Func<CommonToken, TES4FunctionCall>)((CommonToken functionCall)=>
             {
-                return new TES4FunctionCall(functionCall.getValue());
-            } )
+                return new TES4FunctionCall((string)functionCall.Value);
+            }) )
 
             ;
-            __invoke("APIToken")._is("ReferenceToken").call((CommonToken token)=>
+            __invoke("APIToken").Is("ReferenceToken").Call((System.Func<CommonToken, TES4ApiToken>)((CommonToken token)=>
             {
-                return new TES4ApiToken(token.getValue());
-            } )
+                return new TES4ApiToken((string)token.Value);
+            }) )
 
             ;
-            __invoke("FunctionArguments")._is("FunctionArguments", "FunctionParameter").call((TES4FunctionArguments list, ITES4StringValue value)=>
+            __invoke("FunctionArguments").Is("FunctionArguments", "FunctionParameter").Call((TES4FunctionArguments list, ITES4StringValue value)=>
             {
                 list.Add(value);
                 return list;
             } ) .
 
-            _is("FunctionParameter").call((ITES4StringValue value)=>
+            Is("FunctionParameter").Call((ITES4StringValue value)=>
             {
                 TES4FunctionArguments list = new TES4FunctionArguments();
                 list.Add(value);
@@ -276,44 +276,44 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             } )
 
             ;
-            __invoke("FunctionParameter")._is("ObjectAccess")._is("Function")._is("APIToken")._is("Primitive");
-            __invoke("Primitive")._is("Float").call((CommonToken fl)=>
+            __invoke("FunctionParameter").Is("ObjectAccess").Is("Function").Is("APIToken").Is("Primitive");
+            __invoke("Primitive").Is("Float").Call((System.Func<CommonToken, TES4Float>)((CommonToken fl)=>
             {
-                string floatValue = fl.getValue();
+                string floatValue = fl.Value;
                 if (floatValue.StartsWith("."))
                 {
                     floatValue = "0" + floatValue;
                 }
 
                 return new TES4Float(float.Parse(floatValue));
-            } ) .
+            }) ) .
 
-            _is("Integer").call((CommonToken token)=>
+            Is("Integer").Call((System.Func<CommonToken, TES4Integer>)((CommonToken token)=>
             {
-                return new TES4Integer(int.Parse(token.getValue()));
-            } ) .
+                return new TES4Integer(int.Parse((string)token.Value));
+            }) ) .
 
-            _is("Boolean").call((CommonToken token)=>
+            Is("Boolean").Call((System.Func<CommonToken, TES4Integer>)((CommonToken token)=>
             {
-                if (token.getValue().ToLower() == "true")
+                if (token.Value.ToLower() == "true")
                 {
                     return new TES4Integer(1);
                 }
                 return new TES4Integer(0);
-            } ) .
+            }) ) .
 
-            _is("String").call((CommonToken str)=>
+            Is("String").Call((System.Func<CommonToken, TES4String>)((CommonToken str)=>
             {
-                return new TES4String(str.getValue());
-            } )
+                return new TES4String((string)str.Value);
+            }) )
 
             ;
-            __invoke("Return")._is("ReturnToken", "NWL").call((object returnToken, object nwl) =>
+            __invoke("Return").Is("ReturnToken", "NWL").Call((object returnToken, object nwl) =>
             {
                 return new TES4Return();
             } ) .
 
-            _is("ReturnToken").call((returnToken)=>
+            Is("ReturnToken").Call((returnToken)=>
             {
                 return new TES4Return();
             } )

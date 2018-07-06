@@ -9,9 +9,22 @@ namespace Dissect.Parser.LALR1.Analysis
      */
     class AnalysisResult
     {
-        protected Automaton automaton;
-        protected ActionAndGoTo parseTable;
-        protected List<Conflict> resolvedConflicts;
+        /*
+        * Returns the handle-finding FSA.
+        */
+        public Automaton Automaton { get; protected set; }
+        /*
+        * Returns the resulting parse table.
+         *
+         *  The parse table.
+        */
+        public ActionAndGoTo ParseTable { get; protected set; }
+        /*
+        * Returns an array of resolved parse table conflicts.
+         *
+         *  The conflicts.
+        */
+        public List<Conflict> ResolvedConflicts { get; protected set; }
         /*
         * Constructor.
          *
@@ -22,37 +35,9 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public AnalysisResult(ActionAndGoTo parseTable, Automaton automaton, List<Conflict> conflicts)
         {
-            this.parseTable = parseTable;
-            this.automaton = automaton;
-            this.resolvedConflicts = conflicts;
-        }
-
-        /*
-        * Returns the handle-finding FSA.
-        */
-        public Automaton getAutomaton()
-        {
-            return this.automaton;
-        }
-
-        /*
-        * Returns the resulting parse table.
-         *
-         *  The parse table.
-        */
-        public ActionAndGoTo getParseTable()
-        {
-            return this.parseTable;
-        }
-
-        /*
-        * Returns an array of resolved parse table conflicts.
-         *
-         *  The conflicts.
-        */
-        public List<Conflict> getResolvedConflicts()
-        {
-            return this.resolvedConflicts;
+            this.ParseTable = parseTable;
+            this.Automaton = automaton;
+            this.ResolvedConflicts = conflicts;
         }
     }
 }

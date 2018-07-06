@@ -11,13 +11,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetContainerFactory : IFunctionFactory
     {
-        private TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
         public GetContainerFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //TODO: This function is nonexistent in Papyrus and most likely should be deleted
             TES5LocalVariable containerVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);

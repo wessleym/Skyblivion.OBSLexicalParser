@@ -16,8 +16,8 @@ namespace Dissect.Parser.LALR1
      */
     public class Parser : Dissect.Parser.Parser
     {
-        protected Grammar grammar;
-        protected ActionAndGoTo parseTable;
+        protected readonly Grammar Grammar;
+        protected readonly ActionAndGoTo ParseTable;
         /*
         * Constructor.
          *
@@ -26,19 +26,19 @@ namespace Dissect.Parser.LALR1
         */
         public Parser(Grammar grammar, ActionAndGoTo parseTable = null)
         {
-            this.grammar = grammar;
+            this.Grammar = grammar;
             if (parseTable != null)
             {
-                this.parseTable = parseTable;
+                this.ParseTable = parseTable;
             }
             else
             {
                 Analyzer analyzer = new Analyzer();
-                this.parseTable = analyzer.analyze(grammar).getParseTable();
+                this.ParseTable = analyzer.Analyze(grammar).ParseTable;
             }
         }
 
-        protected override object parse(ITokenStream stream)
+        protected override object Parse(ITokenStream stream)
         {
             int currentState = 0;
             Stack<int> stateStack = new Stack<int>();
@@ -48,12 +48,12 @@ namespace Dissect.Parser.LALR1
             {
                 while (true)
                 {
-                    string type = token.getType();
-                    Dictionary<string, int> typeToAction = this.parseTable.Action[currentState];
+                    string type = token.Type;
+                    Dictionary<string, int> typeToAction = this.ParseTable.Action[currentState];
                     int action;
                     if(!typeToAction.TryGetValue(type, out action))
                     {// unexpected token
-                        throw new UnexpectedTokenException(token, this.parseTable.Action[currentState].Select(kvp => kvp.Key).ToArray());
+                        throw new UnexpectedTokenException(token, this.ParseTable.Action[currentState].Select(kvp => kvp.Key).ToArray());
                     }
                     if (action > 0)
                     {
@@ -66,11 +66,11 @@ namespace Dissect.Parser.LALR1
                     else if(action < 0)
                     {
                         // reduce
-                        Rule rule = this.grammar.getRule(-action);
-                        int popCount = rule.getComponents().Length;
+                        Rule rule = this.Grammar.GetRule(-action);
+                        int popCount = rule.Components.Length;
                         stateStack.Pop(popCount).ToArray();
                         object[] newArgs = args.Pop(popCount).Reverse().ToArray();
-                        var callback = rule.getCallback();
+                        var callback = rule.Callback;
                         if (callback != null)
                         {
                             object newToken = callback.Invoke(newArgs);
@@ -82,7 +82,7 @@ namespace Dissect.Parser.LALR1
                         }
 
                         int state = stateStack.Peek();
-                        currentState = this.parseTable.GoTo[state][rule.getName()];
+                        currentState = this.ParseTable.GoTo[state][rule.Name];
                         stateStack.Push(currentState);
                     }
                     else 

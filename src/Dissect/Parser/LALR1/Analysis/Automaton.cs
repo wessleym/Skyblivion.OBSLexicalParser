@@ -11,16 +11,26 @@ namespace Dissect.Parser.LALR1.Analysis
      */
     class Automaton
     {
-        protected Dictionary<int, State> states = new Dictionary<int, State>();
-        protected Dictionary<int, Dictionary<string, int>> transitionTable = new Dictionary<int, Dictionary<string, int>>();
+        /*
+        * Returns all states in this FSA.
+         *
+         *  The states of this FSA.
+        */
+        public Dictionary<int, State> States { get; protected set; } = new Dictionary<int, State>();
+        /*
+        * Returns the transition table for this automaton.
+         *
+         *  The transition table.
+        */
+        public Dictionary<int, Dictionary<string, int>> TransitionTable { get; protected set; } = new Dictionary<int, Dictionary<string, int>>();
         /*
         * Adds a new automaton state.
          *
          *  The new state.
         */
-        public void addState(State state)
+        public void AddState(State state)
         {
-            this.states.Add(state.getNumber(), state);
+            this.States.Add(state.Number, state);
         }
 
         /*
@@ -30,9 +40,9 @@ namespace Dissect.Parser.LALR1.Analysis
          *  The symbol that triggers this transition.
          *  The destination state number.
         */
-        public void addTransition(int origin, string label, int dest)
+        public void AddTransition(int origin, string label, int dest)
         {
-            Dictionary<string, int> transition = transitionTable.GetOrAdd(origin, () => new Dictionary<string, int>());
+            Dictionary<string, int> transition = TransitionTable.GetOrAdd(origin, () => new Dictionary<string, int>());
             transition.Add(label, dest);
         }
 
@@ -43,37 +53,17 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The requested state.
         */
-        public State getState(int number)
+        public State GetState(int number)
         {
-            return this.states[number];
+            return this.States[number];
         }
 
         /*
         * Does this automaton have a state identified by number?
         */
-        public bool hasState(int number)
+        public bool HasState(int number)
         {
-            return this.states.ContainsKey(number);
-        }
-
-        /*
-        * Returns all states in this FSA.
-         *
-         *  The states of this FSA.
-        */
-        public Dictionary<int, State> getStates()
-        {
-            return this.states;
-        }
-
-        /*
-        * Returns the transition table for this automaton.
-         *
-         *  The transition table.
-        */
-        public Dictionary<int, Dictionary<string, int>> getTransitionTable()
-        {
-            return this.transitionTable;
+            return this.States.ContainsKey(number);
         }
     }
 }

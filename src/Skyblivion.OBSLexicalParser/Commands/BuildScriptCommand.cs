@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 try
                 {
 #endif
-                    transpileJob.run();
+                    transpileJob.Run();
 #if !DEBUG
                 }
                 catch (ConversionException ex)
@@ -65,14 +65,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
-            prepareCommand.run(preparingBuildWorkspaceProgressWriter);
+            prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
         private static void Compile(Build build, BuildTargetCollection buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
-            task.run();
+            task.Run();
         }
     }
 }

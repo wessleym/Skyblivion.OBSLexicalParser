@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
     class TES4TrueBooleanExpression : ITES4BinaryExpression
     {
-        private ITES4Value value;
+        private readonly ITES4Value value;
         public TES4TrueBooleanExpression(ITES4Value value)
         {
             this.value = value;

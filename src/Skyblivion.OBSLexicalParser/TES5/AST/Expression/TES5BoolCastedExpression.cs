@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 {
     class TES5BoolCastedExpression : ITES5Expression
     {
-        private ITES5Value value;
+        private readonly ITES5Value value;
         public TES5BoolCastedExpression(ITES5Value value)
         {
             this.value = value;

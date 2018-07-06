@@ -13,8 +13,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTargetCollection : IEnumerable<BuildTarget>
     {
-        private Lazy<TES5ScriptDependencyGraph> dependencyGraph;
-        private Dictionary<string, BuildTarget> buildTargets;
+        private readonly Lazy<TES5ScriptDependencyGraph> dependencyGraph;
+        private readonly Dictionary<string, BuildTarget> buildTargets;
         public BuildTargetCollection()
         {
             buildTargets = new Dictionary<string, BuildTarget>();
@@ -89,11 +89,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
         /*
         * Plan the build against N workers
         */
-        public Dictionary<int, List<Dictionary<string, List<string>>>> getBuildPlan(int workers)
+        public Dictionary<int, List<Dictionary<string, List<string>>>> GetBuildPlan(int workers)
         {
             BuildSourceFilesCollection sourceFiles = this.GetSourceFiles();
             TES5BuildPlanBuilder buildPlanBuilder = new TES5BuildPlanBuilder(this.GetDependencyGraph());
-            Dictionary<int, List<Dictionary<string, List<string>>>> buildPlan = buildPlanBuilder.createBuildPlan(sourceFiles, workers);
+            Dictionary<int, List<Dictionary<string, List<string>>>> buildPlan = buildPlanBuilder.CreateBuildPlan(sourceFiles, workers);
             return buildPlan;
         }
 

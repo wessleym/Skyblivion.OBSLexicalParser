@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class IsActorFactory : IFunctionFactory
     {
-        public ITES5ValueCodeChunk convertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //@INCONSISTENCE - evaluated in random compile time, cannot assure all inference has happened already.
             TES5Bool boolean = new TES5Bool(TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(calledOn.TES5Type, TES5BasicType.T_ACTOR));

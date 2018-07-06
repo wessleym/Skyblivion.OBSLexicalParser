@@ -4,8 +4,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
     {
         public ScriptLexer()
         {
-            this.buildObscriptLexer();
-            this.start("globalScope");
+            this.BuildObscriptLexer();
+            this.Start("globalScope");
         }
     }
 }

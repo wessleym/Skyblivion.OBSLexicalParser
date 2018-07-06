@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             TES4VariableDeclarationList variableList = FragmentsReferencesBuilder.buildVariableDeclarationList(referencesPath);
             if (variableList != null)
             {
-                TES5PropertiesFactory.createProperties(variableList, globalScope, globalVariables);
+                TES5PropertiesFactory.CreateProperties(variableList, globalScope, globalVariables);
             }
             return globalScope;
         }

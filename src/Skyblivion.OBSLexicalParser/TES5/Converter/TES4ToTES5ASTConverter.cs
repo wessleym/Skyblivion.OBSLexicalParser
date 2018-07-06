@@ -19,10 +19,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * Oblivion binary data analyzer.
         */
-        private ESMAnalyzer esmAnalyzer;
-        private TES5BlockFactory blockFactory;
-        private TES5ObjectCallFactory objectCallFactory;
-        private TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer esmAnalyzer;
+        private readonly TES5BlockFactory blockFactory;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ReferenceFactory referenceFactory;
         public TES4ToTES5ASTConverter(ESMAnalyzer ESMAnalyzer, TES5BlockFactory blockFactory, TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory)
         {
             this.esmAnalyzer = ESMAnalyzer;
@@ -38,9 +38,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         * 
         * @throws ConversionException
         */
-        public TES5Target convert(TES4Target target, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Target Convert(TES4Target target, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4Script script = target.getScript();
+            TES4Script script = target.Script;
             TES5BlockList blockList = new TES5BlockList();
             TES4BlockList parsedBlockList = script.BlockList;
             Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             {
                 foreach (TES4CodeBlock block in parsedBlockList.Blocks)
                 {
-                    TES5BlockList newBlockList = this.blockFactory.createBlock(block, globalScope, multipleScriptsScope);
+                    TES5BlockList newBlockList = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope);
                     foreach (ITES5CodeBlock newBlock in newBlockList.Blocks)
                     {
                         createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
@@ -57,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             }
 
             //todo encapsulate it to a different class.
-            bool isStandalone = target.getOutputPath().Contains(Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar);
+            bool isStandalone = target.OutputPath.Contains(Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar);
             foreach (var createdBlock in createdBlocks)
             {
                 var blockType = createdBlock.Key;
@@ -114,7 +114,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 }
             }
 
-            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList), target.getOutputPath());
+            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList), target.OutputPath);
             return result;
         }
     }
