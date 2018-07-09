@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             //Made in post-analysis
-            TES5ObjectCall race = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "GetRace", multipleScriptsScope);
+            TES5ObjectCall race = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "GetRace", multipleScriptsScope);
             ITES5Referencer checkAgainst = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(race, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, checkAgainst);
             return expression;

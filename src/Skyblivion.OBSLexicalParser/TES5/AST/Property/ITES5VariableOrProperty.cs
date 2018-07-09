@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
@@ -7,12 +6,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      * Interface TES5Variable
      * Implementers declare they are a variable to be put in a scope.
      */
-    interface ITES5VariableOrProperty : ITES5Value
+    interface ITES5VariableOrProperty
     {
         string Name { get; }
-        new ITES5Type TES5Type { get; set; }
+
+        /**
+         * Inferrable type
+         * This is the type that we infer as we go through the scripts
+         */
+        ITES5Type TES5Type { get; set; }
+
+        /**
+         * Declaring type
+         * This is the type that we intend to declare
+         * For most cases, this will be exactly the same as inferring type
+         * as we have all the liberty in declaring whatever we want
+         * A notable exception is native function/event handlers' parameters,
+         * where the types are set in stone by the engine and hence we need
+         * to declare them in a particular way and downward cast
+         */
+        ITES5Type TES5DeclaredType { get; }
+
         /*
-        * Get the reference EDID
+        * Reference EDID
         */
         string ReferenceEDID { get; }
         /*

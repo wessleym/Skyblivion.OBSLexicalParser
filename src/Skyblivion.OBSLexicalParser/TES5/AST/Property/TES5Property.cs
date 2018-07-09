@@ -6,21 +6,37 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5Property : TES5VariableOrProperty
+    class TES5Property : ITES5VariableOrProperty
     {
         private const string PROPERTY_SUFFIX = "_p";
-        private ITES5Type propertyType;
+        public string OriginalName { get; private set; }
+        public bool AllowNameTransformation { get; private set; }
+        public string Name { get; private set; }
+        private ITES5Type propertyType; //If we"re tracking a script, this won"t be used anymore
+        public string ReferenceEDID { get; private set; }
+        public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader trackedScript;
-        private readonly string referenceEDID;
-        public TES5Property(string propertyName, ITES5Type propertyType, string referenceEDID)
-            : base(AddPropertyNameSuffix(propertyName))
+
+        public TES5Property(string name, ITES5Type propertyType, string referenceEDID, bool isPlayerRef = false)
         {
-            this.propertyType = propertyType; //If we"re tracking a script, this won"t be used anymore
-            this.referenceEDID = referenceEDID;
+            this.OriginalName = name;
+            this.AllowNameTransformation = !isPlayerRef;
+            this.Name = AllowNameTransformation ? AddPropertyNameSuffix(name) : name;
+            this.propertyType = propertyType;
+            this.ReferenceEDID = referenceEDID;
+            this.IsPlayerRef = isPlayerRef;
             this.trackedScript = null;
         }
 
-        public override IEnumerable<string> Output
+        public ITES5Type TES5DeclaredType
+        {
+            get
+            {
+                return TES5Type;
+            }
+        }
+
+        public IEnumerable<string> Output
         {
             get
             {
@@ -28,13 +44,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
                 yield return propertyTypeName + " Property " + this.Name + " Auto Conditional";
             }
-        }
-
-        public override string ReferenceEDID => referenceEDID;
-
-        public string GetPropertyNameWithoutSuffix()
-        {
-            return RemovePropertyNameSuffix(this.Name);
         }
 
         public void Rename(string newNameWithoutSuffix)
@@ -51,12 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             return propertyName + PROPERTY_SUFFIX;//we"re adding _p prefix because papyrus compiler complains about property names named after other scripts, _p makes sure we won"t conflict.
         }
 
-        private static string RemovePropertyNameSuffix(string propertyName)
-        {
-            return propertyName.Substring(0, propertyName.Length - PROPERTY_SUFFIX.Length);
-        }
-
-        public override ITES5Type TES5Type
+        public ITES5Type TES5Type
         {
             get
             {
@@ -75,7 +79,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
         }
 
-        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
+        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             this.trackedScript = scriptHeader;
             ITES5Type ourNativeType = this.propertyType.NativeType;

@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES5Referencer tes5Cell = this.referenceFactory.CreateReference(tes4Cell.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
             {
-                objectCallFactory.CreateGetActorBaseOfPlayer(multipleScriptsScope)
+                objectCallFactory.CreateGetActorBaseOfPlayer(globalScope, multipleScriptsScope)
             };
             return this.objectCallFactory.CreateObjectCall(tes5Cell, functionName, multipleScriptsScope, arguments);
         }

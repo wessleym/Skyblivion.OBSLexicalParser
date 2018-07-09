@@ -37,9 +37,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateObjectCall(calledOn, "GetActorBase", multipleScriptsScope);
         }
 
-        public TES5ObjectCall CreateGetActorBaseOfPlayer(TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5ObjectCall CreateGetActorBaseOfPlayer(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return CreateGetActorBase(TES5ReferenceFactory.CreateReferenceToPlayer(), multipleScriptsScope);
+            return CreateGetActorBase(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), multipleScriptsScope);
         }
 
         public TES5ObjectCall CreateRegisterForSingleUpdate(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -47,7 +47,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
             {
-                TES5Property questDelayTimeProperty = globalScope.Properties.Where(p => p.GetPropertyNameWithoutSuffix().Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                TES5Property questDelayTimeProperty = globalScope.Properties.Where(p => p.OriginalName.Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                 if (questDelayTimeProperty != null)
                 {
                     arguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(questDelayTimeProperty));

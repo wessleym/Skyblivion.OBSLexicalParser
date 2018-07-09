@@ -42,14 +42,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments == null || !functionArguments.Any())
             {
                 TES5ObjectCallArguments constantArgumentForNoFunctionArguments = new TES5ObjectCallArguments();
-                TES5LocalVariable meaningVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+                ITES5VariableOrProperty meaningVariable = codeScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                 if (meaningVariable != null)
                 {
                     constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(meaningVariable));
                 }
                 else
                 {
-                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToPlayer());
+                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope));
                 }
 
                 constantArgumentForNoFunctionArguments.Add(new TES5Bool(true)); //Since default in oblivion is ,,skip the OnActivateBlock", this defaults to ,,abDefaultProcessingOnly = true" in Skyrim

@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     {
                         TES4BlockParameterList parameterList = block.BlockParameterList;
                         TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
-                        TES5LocalVariable activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+                        ITES5VariableOrProperty activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
                         TES5Reference referenceToCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(castedToActor);
                         TES5Reference referenceToNonCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(activator);

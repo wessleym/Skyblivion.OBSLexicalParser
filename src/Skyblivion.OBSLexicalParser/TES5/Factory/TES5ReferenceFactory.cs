@@ -55,9 +55,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5Reference(variable);
         }
 
-        public static ITES5Referencer CreateReferenceToPlayer()
+        public static ITES5Referencer CreateReferenceToPlayer(TES5GlobalScope globalScope)
         {
-            return new TES5PlayerReference();
+            return globalScope.PlayerRef;
         }
 
         /*
@@ -94,7 +94,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                  */
                 return this.CreateReadReference("akSpeakerRef", globalScope, multipleScriptsScope, localScope);
             }
-
             throw new ConversionException("Cannot extract implicit reference - unknown basic script type.");
         }
 
@@ -143,7 +142,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             if (TES5PlayerReference.EqualsPlayer(referenceName))
             {
-                return CreateReferenceToPlayer();
+                return CreateReferenceToPlayer(globalScope);
             }
 
             referenceName = PapyrusCompiler.FixReferenceName(referenceName);

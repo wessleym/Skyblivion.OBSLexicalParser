@@ -18,11 +18,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         *  This might be the Event"s name, or Function"s name.
         */
         public string BlockName { get; private set; }
-        public Dictionary<string, TES5LocalVariable> Variables { get; private set; } = new Dictionary<string, TES5LocalVariable>();
+        public Dictionary<string, TES5SignatureParameter> Variables { get; private set; } = new Dictionary<string, TES5SignatureParameter>();
         /*
         * A hashmap to speedup the search
         */
-        private readonly Dictionary<TES5LocalVariableParameterMeaning, TES5LocalVariable> variablesByMeanings = new Dictionary<TES5LocalVariableParameterMeaning, TES5LocalVariable>();
+        private readonly Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter> variablesByMeanings = new Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter>();
         /*
         * TES5FunctionScope constructor.
         */
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.BlockName = blockName;
         }
 
-        public void AddVariable(TES5LocalVariable localVariable)
+        public void AddVariable(TES5SignatureParameter localVariable)
         {
             this.Variables.Add(localVariable.Name, localVariable);
             foreach (TES5LocalVariableParameterMeaning meaning in localVariable.Meanings)
@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.BlockName = newName;
         }
 
-        public TES5LocalVariable GetVariable(string name)
+        public TES5SignatureParameter GetVariable(string name)
         {
             return this.Variables.GetWithFallback(name, () => null);
         }
@@ -62,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             return this.Variables.Values.Select(v => v.TES5Type.Output.Single() + " " + v.Name);
         }
 
-        public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
             return this.variablesByMeanings.GetWithFallback(meaning, () => null);
         }

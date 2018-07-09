@@ -47,7 +47,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 /*
                  * MODPCSkill means we will need to call upon the player object
                  */
-                calledOn = TES5ReferenceFactory.CreateReferenceToPlayer();
+                calledOn = TES5ReferenceFactory.CreateReferenceToPlayer(globalScope);
             }
 
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();

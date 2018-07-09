@@ -1,17 +1,24 @@
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5LocalVariable : TES5VariableOrProperty
+    class TES5LocalVariable : ITES5VariableOrProperty
     {
-        public TES5LocalVariableParameterMeaning[] Meanings { get; private set; }
-        public TES5LocalVariable(string nameWithSuffix, TES5BasicType type, TES5LocalVariableParameterMeaning[] meanings = null)
-            : base(nameWithSuffix, type)
+        public string Name { get; private set; }
+        public ITES5Type TES5Type { get; set; }
+        public TES5LocalVariable(string nameWithSuffix, TES5BasicType type)
         {
-            if (meanings == null) { meanings = new TES5LocalVariableParameterMeaning[] { }; }
-            this.Meanings = meanings;
+            Name = nameWithSuffix;
+            TES5Type = type;
+        }
+
+        public ITES5Type TES5DeclaredType {
+            get {
+                return TES5Type;
+            }
         }
 
         /*
@@ -20,11 +27,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
          * inference information if any available
          * @throws ConversionException
         */
-        public override string ReferenceEDID => throw new ConversionException("Local variables have no EDID references.");
+        public string ReferenceEDID => throw new ConversionException("Local variables have no EDID references.");
 
-        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
+        public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
             throw new ConversionException("Local variables cannot track remote scripts.");
         }
+
+        public IEnumerable<string> Output => new string[] { this.TES5Type.Value + " " + this.Name };
     }
 }

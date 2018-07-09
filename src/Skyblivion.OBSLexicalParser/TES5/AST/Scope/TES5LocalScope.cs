@@ -34,12 +34,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.LocalVariables.Add(localVariable);
         }
 
-        public TES5LocalVariable GetVariable(string name)
+        public ITES5VariableOrProperty GetVariable(string name)
         {
             return this.GetAllVariables().Where(v => v.Name == name).FirstOrDefault();
         }
 
-        private IEnumerable<TES5LocalVariable> GetAllVariables()
+        /**
+         * TODO - Maybe we ought to create a new interface marking locally
+         * scoped variables and have TES5LocalVariable and TES5SignatureParameter
+         * implement it?
+         */
+        private IEnumerable<ITES5VariableOrProperty> GetAllVariables()
         {
             TES5LocalScope scope = this;
             do
@@ -51,13 +56,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 scope = scope.ParentScope;
             }
             while (scope != null);
-            foreach (TES5LocalVariable variable in this.FunctionScope.Variables.Values)
+            foreach (TES5SignatureParameter variable in this.FunctionScope.Variables.Values)
             {
                 yield return variable;
             }
         }
 
-        public TES5LocalVariable GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
             return this.FunctionScope.GetVariableWithMeaning(meaning);
         }

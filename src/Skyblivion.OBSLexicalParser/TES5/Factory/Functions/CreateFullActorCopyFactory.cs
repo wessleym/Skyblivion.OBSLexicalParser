@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             //We move the called upon to function arg ( cloned object ) and we replace placed upon to player
             TES4ApiToken newToken = new TES4ApiToken(calledOn.Name);
-            ITES5Referencer newCalledOn = TES5ReferenceFactory.CreateReferenceToPlayer();
+            ITES5Referencer newCalledOn = TES5ReferenceFactory.CreateReferenceToPlayer(globalScope);
             const string functionName = "PlaceAtMe";
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
             {

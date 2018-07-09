@@ -33,11 +33,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            ITES5Referencer loc = this.referenceFactory.CreateReadReference("SEWorldLocation", globalScope, multipleScriptsScope, localScope);
-            arguments.Add(loc);
-            TES5ObjectCall exp = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "IsInLocation", multipleScriptsScope, arguments);
-            return exp;
+            ITES5Referencer seWorldLocation = this.referenceFactory.CreateReadReference("SEWorldLocation", globalScope, multipleScriptsScope, localScope);
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { seWorldLocation };
+            TES5ObjectCall isInLocation = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "IsInLocation", multipleScriptsScope, arguments);
+            return isInLocation;
         }
     }
 }

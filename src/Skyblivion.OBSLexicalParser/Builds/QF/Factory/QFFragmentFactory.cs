@@ -85,38 +85,47 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                         propertyName = subfragmentProperty.Name;
                     }
 
-                    propertiesNamesDeclared.Add(propertyName, true);
-                    resultingGlobalScope.AddProperty(subfragmentProperty);
-                    //WTM:  Note:  See QF_FGD03Viranus_0102d154.  Since ViranusDontonREF is present in multiple of the original fragments,
-                    //ViranusDontonREF gets renamed by the above.  So multiple ViranusDontonREF variables are output.
-                    //Below I tried not renaming, assuming instead that variables with matching names and types within a set of fragments were intended to be the same variable.
-                    //It had OK results, but I'm leaving it commented for now.
-                    /*string propertyNameWithSuffix = subfragmentProperty.PropertyNameWithSuffix;
-                    TES5Property existingProperty = resultingGlobalScope.Properties.Where(p => p.PropertyNameWithSuffix == propertyNameWithSuffix).FirstOrDefault();
-                    if (existingProperty != null && TES5InheritanceGraphAnalyzer.isExtending(subfragmentProperty.PropertyType, existingProperty.PropertyType))
+                    bool newProperty = false;//WTM:  Note:  At this time, the only non-new property is PlayerRef.
+                    try
                     {
-                        existingProperty.PropertyType = subfragmentProperty.PropertyType;
+                        propertiesNamesDeclared.Add(propertyName, true);
+                        newProperty = true;
                     }
-                    else
+                    catch (ArgumentException) when (subfragmentProperty.IsPlayerRef) { }
+                    if (newProperty)
                     {
-                        bool add = true;
-                        if (existingProperty != null)
+                        resultingGlobalScope.AddProperty(subfragmentProperty);
+                        //WTM:  Note:  See QF_FGD03Viranus_0102d154.  Since ViranusDontonREF is present in multiple of the original fragments,
+                        //ViranusDontonREF gets renamed by the above.  So multiple ViranusDontonREF variables are output.
+                        //Below I tried not renaming, assuming instead that variables with matching names and types within a set of fragments were intended to be the same variable.
+                        //It had OK results, but I'm leaving it commented for now.
+                        /*string propertyNameWithSuffix = subfragmentProperty.PropertyNameWithSuffix;
+                        TES5Property existingProperty = resultingGlobalScope.Properties.Where(p => p.PropertyNameWithSuffix == propertyNameWithSuffix).FirstOrDefault();
+                        if (existingProperty != null && TES5InheritanceGraphAnalyzer.isExtending(subfragmentProperty.PropertyType, existingProperty.PropertyType))
                         {
-                            if (TES5InheritanceGraphAnalyzer.isExtending(existingProperty.PropertyType, subfragmentProperty.PropertyType))
-                            {
-                                add = false;
-                            }
-                            else
-                            {
-                                string generatedPropertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
-                                subfragmentProperty.Rename(generatedPropertyName);
-                            }
+                            existingProperty.PropertyType = subfragmentProperty.PropertyType;
                         }
-                        if (add)
+                        else
                         {
-                            resultingGlobalScope.Add(subfragmentProperty);
-                        }
-                    }*/
+                            bool add = true;
+                            if (existingProperty != null)
+                            {
+                                if (TES5InheritanceGraphAnalyzer.isExtending(existingProperty.PropertyType, subfragmentProperty.PropertyType))
+                                {
+                                    add = false;
+                                }
+                                else
+                                {
+                                    string generatedPropertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
+                                    subfragmentProperty.Rename(generatedPropertyName);
+                                }
+                            }
+                            if (add)
+                            {
+                                resultingGlobalScope.Add(subfragmentProperty);
+                            }
+                        }*/
+                    }
                 }
 
                 List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.Blocks;
@@ -126,13 +135,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 ITES5CodeBlock subfragmentBlock = subfragmentBlocks[0];
-                if (subfragmentBlock.FunctionScope.BlockName!= "Fragment_0")
+                if (subfragmentBlock.FunctionScope.BlockName != "Fragment_0")
                 {
-                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName+ "..");
+                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName + "..");
                 }
 
                 string newFragmentFunctionName = "Fragment_" + subfragment.Stage.ToString();
-                if (subfragment.LogIndex!= 0)
+                if (subfragment.LogIndex != 0)
                 {
                     newFragmentFunctionName += "_" + subfragment.LogIndex;
                 }
@@ -173,12 +182,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
         private static string GeneratePropertyName(TES5ScriptHeader header, TES5Property property)
         {
-            return "col_" + property.GetPropertyNameWithoutSuffix() + "_" +
-                PHPFunction.MD5(header.EscapedScriptName).Substring(0, 4)
-                //WTM:  Note:  Instead of using an MD5 hash, I tried the below (where index was the property index within the script's TES5GlobalScope.
+            if (property.AllowNameTransformation)
+            {
+                return "col_" + property.OriginalName + "_" + PHPFunction.MD5(header.EscapedScriptName).Substring(0, 4);
+                //WTM:  Note:  Instead of using an MD5 hash, I tried the below (where index was the property index within the script's TES5GlobalScope).
+                //"col_" + property.OriginalName + "_" + header.EscapedScriptName + "_" + index
                 //It worked, but I don't think the names matched up well with what GECK generates, so I've commented it for now.
-                //header.EscapedScriptName + "_" + index
-                ;
+            }
+            return property.OriginalName;
         }
 
         public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)

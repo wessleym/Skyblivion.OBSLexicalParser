@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "play";
-            TES5ObjectCallArguments args = new TES5ObjectCallArguments() { TES5ReferenceFactory.CreateReferenceToPlayer() };
+            TES5ObjectCallArguments args = new TES5ObjectCallArguments() { TES5ReferenceFactory.CreateReferenceToPlayer(globalScope) };
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, args);
         }
     }

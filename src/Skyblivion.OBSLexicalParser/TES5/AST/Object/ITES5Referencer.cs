@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
     /*
      * Interface ITES5Referencer
      *
-     * Implementers declare that you can reference it.
+     * Implementers declare that are referencing something.
      */
     interface ITES5Referencer : ITES5ValueCodeChunk
     {

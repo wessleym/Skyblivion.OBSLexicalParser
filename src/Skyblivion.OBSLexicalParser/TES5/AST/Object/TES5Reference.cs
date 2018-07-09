@@ -12,7 +12,36 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.ReferencesTo = referencesTo;
         }
 
-        public IEnumerable<string> Output => new string[] { this.ReferencesTo.Name+ ManualCastToOutput };
+        public IEnumerable<string> Output
+        {
+            get
+            {
+
+                //First let's check if we do the hacky int-float cast magic
+                //If yes, then use that one
+                if (ManualCastTo != null)
+                {
+                    return new string[] { ReferencesTo.Name + ManualCastToOutput };
+                }
+                else
+                {
+                    //Then, let's check if declaring type of our referenced variable
+                    //is same as the inferenced type
+                    //They're sometimes not the same ( for instance, when we have 
+                    //a set-in-stone native function signature variable and we cannot infer
+                    //the type at will and change the function's signature
+                    if(!ReferencesTo.TES5DeclaredType.Equals(ReferencesTo.TES5Type))
+                    {
+                        return new string[] { "(" + ReferencesTo.Name + " as " + ReferencesTo.TES5Type.Value + ")" };                           
+                    }
+                    else
+                    {
+                        return new string[] { ReferencesTo.Name };
+                    }
+                    
+                }
+            }
+        }
 
         public string Name => this.ReferencesTo.Name;
 

@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             else
             {
                 functionName = "SetActorOwner";
-                args = new TES5ObjectCallArguments() { this.objectCallFactory.CreateGetActorBaseOfPlayer(multipleScriptsScope) };
+                args = new TES5ObjectCallArguments() { this.objectCallFactory.CreateGetActorBaseOfPlayer(globalScope, multipleScriptsScope) };
             }
 
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, args);

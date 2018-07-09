@@ -37,7 +37,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateGetActorBaseOfPlayer(multipleScriptsScope), "GetSex", multipleScriptsScope);
+            TES5ObjectCall actorBaseOfPlayer = this.objectCallFactory.CreateGetActorBaseOfPlayer(globalScope, multipleScriptsScope);
+            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(actorBaseOfPlayer, "GetSex", multipleScriptsScope);
             int operand;
             switch ((functionArguments[0].StringValue).ToLower())
             {

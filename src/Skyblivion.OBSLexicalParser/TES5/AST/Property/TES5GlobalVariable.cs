@@ -1,18 +1,20 @@
 using System;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5GlobalVariable : TES5VariableOrProperty
+    /**
+     * TODO - move this class out of there
+     * They are meant to be a mere representing of global variables and
+     * do not use scoping system at all, hence should not be here
+     */
+    class TES5GlobalVariable
     {
+        public string Name { get; private set; }
+
         public TES5GlobalVariable(string name)
-            : base(name, null)
-        { }
-
-        public override string ReferenceEDID => throw new NotImplementedException();
-
-        public override void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
-            throw new NotImplementedException();
+            Name = name;
         }
     }
 }
