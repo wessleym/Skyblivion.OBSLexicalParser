@@ -44,13 +44,13 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices);
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false);
                 //if (!buildTargets.CanBuildAndWarnIfNot()) { return; }//WTM:  Change:  This doesn't matter for building graphs.
                 Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
                 Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
                 BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
                 ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
-                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(), BuildTarget.StandaloneSourcePath);
+                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(false), BuildTarget.StandaloneSourcePath);
                 using (StreamWriter errorLog = new StreamWriter(TES5ScriptDependencyGraph.ErrorLogPath, false))
                 {
                     using (StreamWriter debugLog = new StreamWriter(TES5ScriptDependencyGraph.DebugLogPath, false))

@@ -4809,7 +4809,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 default:
                     {
                         //We analyze the property name and check inside the ESM analyzer.
-                        ESMAnalyzer analyzer = ESMAnalyzer._instance();
+                        ESMAnalyzer analyzer = ESMAnalyzer.GetInstance();
                         ITES5Type formType = analyzer.GetFormTypeByEDID(calledOn.ReferenceEDID);
                         //WTM:  Change:  I added matching on the type and on its base classes this so that functions like SetFactionOwner will work.
                         //SetFactionOwner gives two extendingMatches:  Cell and ObjectReference (since both classes have the SetFactionOwner function).

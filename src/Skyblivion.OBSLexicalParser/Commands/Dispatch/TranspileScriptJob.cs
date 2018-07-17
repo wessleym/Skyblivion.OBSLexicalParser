@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
-            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = new ESMAnalyzer(false, DataDirectory.TES4GameFileName);
         }
 
         public void Run()

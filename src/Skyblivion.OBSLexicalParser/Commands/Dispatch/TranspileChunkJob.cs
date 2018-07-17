@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.build = build;
             this.buildLogServices = buildLogServices;
             this.buildTargets = new BuildTargetCollection();
-            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = new ESMAnalyzer(false, DataDirectory.TES4GameFileName);
         }
 
         public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
@@ -112,7 +112,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             if (this.buildTargets.GetByNameOrNull(targetName) == null)
             {
-                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices));
+                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, false));
             }
 
             BuildTarget result = this.buildTargets.GetByName(targetName);

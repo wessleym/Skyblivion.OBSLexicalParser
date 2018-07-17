@@ -26,9 +26,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public abstract TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
 
-        private static void GetFactories(MetadataLogService metadataLogService, out ESMAnalyzer analyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5ChainedCodeChunkFactory chainedCodeChunkFactory, out TES5AdditionalBlockChangesPass additionalBlockChangesPass)
+        private static void GetFactories(MetadataLogService metadataLogService, bool loadESMAnalyzerLazily, out ESMAnalyzer analyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5ChainedCodeChunkFactory chainedCodeChunkFactory, out TES5AdditionalBlockChangesPass additionalBlockChangesPass)
         {
-            analyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
+            analyzer = new ESMAnalyzer(loadESMAnalyzerLazily, DataDirectory.TES4GameFileName);
             TES5TypeInferencer typeInferencer = new TES5TypeInferencer(analyzer, BuildTarget.StandaloneSourcePath);
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
@@ -42,20 +42,20 @@ namespace Skyblivion.OBSLexicalParser.Builds
             additionalBlockChangesPass = new TES5AdditionalBlockChangesPass(objectCallFactory, referenceFactory);
         }
 
-        protected static void GetFactories(MetadataLogService metadataLogService, out ESMAnalyzer analyzer, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5FragmentFactory fragmentFactory)
+        protected static void GetFactories(MetadataLogService metadataLogService, bool loadESMAnalyzerLazily, out ESMAnalyzer analyzer, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5FragmentFactory fragmentFactory)
         {
             TES5ObjectCallFactory objectCallFactory;
             TES5ChainedCodeChunkFactory chainedCodeChunkFactory;
             TES5AdditionalBlockChangesPass additionalBlockChangesPass;
-            GetFactories(metadataLogService, out analyzer, out objectCallFactory, out referenceFactory, out valueFactory, out chainedCodeChunkFactory, out additionalBlockChangesPass);
+            GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out objectCallFactory, out referenceFactory, out valueFactory, out chainedCodeChunkFactory, out additionalBlockChangesPass);
             fragmentFactory = new TES5FragmentFactory(chainedCodeChunkFactory, additionalBlockChangesPass);
         }
 
-        protected static void GetFactories(MetadataLogService metadataLogService, out ESMAnalyzer analyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ReferenceFactory referenceFactory, out TES5BlockFactory blockFactory)
+        protected static void GetFactories(MetadataLogService metadataLogService, bool loadESMAnalyzerLazily, out ESMAnalyzer analyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ReferenceFactory referenceFactory, out TES5BlockFactory blockFactory)
         {
             TES5ChainedCodeChunkFactory chainedCodeChunkFactory;
             TES5AdditionalBlockChangesPass additionalBlockChangesPass;
-            GetFactories(metadataLogService, out analyzer, out objectCallFactory, out referenceFactory, out _, out chainedCodeChunkFactory, out additionalBlockChangesPass);
+            GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out objectCallFactory, out referenceFactory, out _, out chainedCodeChunkFactory, out additionalBlockChangesPass);
             TES5InitialBlockCodeFactory initialBlockCodeFactory = new TES5InitialBlockCodeFactory(referenceFactory, objectCallFactory);
             blockFactory = new TES5BlockFactory(chainedCodeChunkFactory, additionalBlockChangesPass, initialBlockCodeFactory, objectCallFactory);
         }

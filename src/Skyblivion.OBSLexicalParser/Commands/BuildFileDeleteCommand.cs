@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false);
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, true);
                 buildTargets.DeleteBuildFiles();
             }
             Console.WriteLine("Deletion Complete");

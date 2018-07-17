@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             Build build = null;//WTM:  Change:  BuildTargetFactory.get takes two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices);
+                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, true);
                 int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
                     .Select(path => Path.GetFileName(path))
                     .Select(name =>

@@ -14,10 +14,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
     {
         private readonly ESMAnalyzer esmAnalyzer;
         private readonly StandaloneParsingService standaloneParsingService;
-        public BuildScopeCommand(StandaloneParsingService standaloneParsing)
+        public BuildScopeCommand(StandaloneParsingService standaloneParsing, bool loadESMAnalyzerLazily)
         {
             this.standaloneParsingService = standaloneParsing;
-            this.esmAnalyzer = new ESMAnalyzer(DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = new ESMAnalyzer(loadESMAnalyzerLazily, DataDirectory.TES4GameFileName);
         }
         
         private TES5ScriptHeader CreateHeader(TES4Script script)

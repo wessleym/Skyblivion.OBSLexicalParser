@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             //Ugly - todo: REFACTOR THIS TO NON-STATIC CLASS AND MOVE THIS TO DI
             if (basicType == null)
             {
-                ESMAnalyzer analyzer = ESMAnalyzer._instance();
+                ESMAnalyzer analyzer = ESMAnalyzer.GetInstance();
                 basicType = analyzer.GetScriptType(memberByValue);
             }
             return new TES5CustomType(memberByValue, TES4Prefix, basicType);
