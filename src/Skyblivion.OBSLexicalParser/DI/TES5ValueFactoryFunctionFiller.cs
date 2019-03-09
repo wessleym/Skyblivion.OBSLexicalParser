@@ -249,7 +249,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("showracemenu", new FillerFactory());
             valueFactory.AddFunctionFactory("showspellmaking", new FillerFactory());
             valueFactory.AddFunctionFactory("startcombat", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("startconversation", new RenamedFunctionFactory("OBStartConversation", objectCallFactory, objectCallArgumentsFactory)/*new StartConversationFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService)*/);//WTM:  Change
             valueFactory.AddFunctionFactory("startquest", new PopCalledRenameFunctionFactory("Start", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombatalarmonactor", new RenamedFunctionFactory("StopCombatAlarm", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombat", new StopCombatFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));

@@ -6,10 +6,12 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
+    [Obsolete("Unused.  Aerisarn added an OBStartConversation native function.")]
     class StartConversationFactory : IFunctionFactory
     {
         private readonly TES5ReferenceFactory referenceFactory;
