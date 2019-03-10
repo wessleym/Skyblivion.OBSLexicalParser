@@ -93,29 +93,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         private void InferenceTypeOfCalledObject(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.NativeType;
             /*
              * Check if we have something to inference inside the code, not some static class or method call return
              */
-            if (objectCall.AccessedObject.ReferencesTo != null)
+            if (objectCall.AccessedObject.ReferencesTo == null)
             {
-                //this is not "exactly" nice solution, but its enough. For now.
-                ITES5Type inferenceType = TES5InheritanceGraphAnalyzer.FindTypeByMethod(objectCall);
-                if (inferencableType == null)
-                {
-                    throw new ConversionException("Cannot inference a null type");
-                }
-
-                if (inferencableType == inferenceType)
-                {
-                    return; //We already have the good type.
-                }
-
-                if (this.InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType, multipleScriptsScope))
-                {
-                    return;
-                }
+                return;
             }
+            ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.NativeType;
+            if (inferencableType == null)
+            {
+                throw new ConversionException("Cannot inference a null type");
+            }
+            //this is not "exactly" nice solution, but its enough. For now.
+            ITES5Type inferenceType = TES5InheritanceGraphAnalyzer.FindTypeByMethod(objectCall);
+            if (inferencableType == inferenceType)
+            {
+                return; //We already have the good type.
+            }
+            this.InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType, multipleScriptsScope);
         }
 
         private void InferenceWithCustomType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)

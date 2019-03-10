@@ -866,7 +866,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("ForceFlee", new string[] {
                                 "Cell",
                                 "ObjectReference"
-                            }, "void")//WTM:  Note:  SKSE
+                            }, "void"),//WTM:  Note:  SKSE
+                new TES5InheritanceFunctionSignature("OBStartConversation", new string[] {
+                                "Actor",
+                                "Topic"
+                            }, "void")
             }
         },
         { "ActorBase",
@@ -4772,8 +4776,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
 
             ITES5VariableOrProperty calledOn = objectCall.AccessedObject.ReferencesTo;
-            List<ITES5Type> extendingMatches = new List<ITES5Type>();
             ITES5Type actualType = calledOn.TES5Type.NativeType;
+            List<ITES5Type> extendingMatches = new List<ITES5Type>();
             foreach (ITES5Type possibleMatch in possibleMatches)
             {
                 if (possibleMatch == actualType)
