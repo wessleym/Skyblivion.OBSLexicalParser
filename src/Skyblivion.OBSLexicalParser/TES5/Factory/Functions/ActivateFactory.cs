@@ -60,8 +60,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES4StringValue blockOnActivate = functionArguments.GetOrNull(1);
             if (blockOnActivate != null)
             {
-                bool blockOnActivateVal = (int)blockOnActivate.Data== 1;
+                bool blockOnActivateVal = (int)blockOnActivate.Data==1;
                 constantArgument.Add(new TES5Bool(!blockOnActivateVal));
+            } else
+            {
+                constantArgument.Add(new TES5Bool(true));
             }
 
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, constantArgument);

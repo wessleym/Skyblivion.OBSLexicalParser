@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public const string PlayerRefName = "PlayerRef";
 
-        public IEnumerable<string> Output => new string[] { PlayerRefName }; //"Game.GetPlayer()"
+        public IEnumerable<string> Output => new string[] { "Game.GetPlayer()" }; //"Game.GetPlayer()"
 
         public string Name => playerName;
 

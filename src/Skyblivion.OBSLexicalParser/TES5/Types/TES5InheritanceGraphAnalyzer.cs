@@ -2850,7 +2850,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, "void"),//WTM:  Change:  Added
                 new TES5InheritanceFunctionSignature("GotoState", new string[] {
                                 "string"
-                            }, "void")//WTM:  Change:  Added
+                            }, "void"),//WTM:  Change:  Added
+                new TES5InheritanceFunctionSignature("LegacySay", new string[] {
+                        "Topic",
+                        "Bool"
+                    }, "Float"),
+                new TES5InheritanceFunctionSignature("LegacySayTo", new string[] {
+                        "Actor",
+                        "Topic",
+                        "Bool"
+                    }, "Float")
             }
         },
         { "Outfit",
@@ -4521,13 +4530,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         "Float",
                         "Float",
                         "Float"
-                    }, "void"),
-                new TES5InheritanceFunctionSignature("LegacySay", new string[] {
-                        "ObjectReference",
-                        "Topic",
-                        "Actor",
-                        "Bool"
-                    }, "Float")
+                    }, "void")
             }
         },
         { TES5BasicType.TES4ContainerName,

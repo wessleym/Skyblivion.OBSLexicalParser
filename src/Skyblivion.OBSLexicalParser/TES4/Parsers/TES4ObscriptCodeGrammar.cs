@@ -10,6 +10,7 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Types;
+using System.Globalization;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
@@ -285,7 +286,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                     floatValue = "0" + floatValue;
                 }
 
-                return new TES4Float(float.Parse(floatValue));
+                return new TES4Float(float.Parse(floatValue, CultureInfo.InvariantCulture));
             }) ) .
 
             Is("Integer").Call((System.Func<CommonToken, TES4Integer>)((CommonToken token)=>

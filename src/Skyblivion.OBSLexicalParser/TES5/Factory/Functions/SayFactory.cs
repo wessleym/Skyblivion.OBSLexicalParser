@@ -39,7 +39,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { calledOn };
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
+            //if (calledOn.TES5Type != TES5BasicType.T_OBJECTREFERENCE)
+            //{
+            //    TES5Castable calledOnCastable = calledOn as TES5Reference;
+            //    if (calledOn != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_ACTOR, calledOn.TES5Type))
+            //    {
+            //        calledOnCastable.ManualCastTo = TES5BasicType.T_OBJECTREFERENCE;
+            //    }
+            //}
+            //arguments.Add(calledOn);
             ITES5Value argument1 = this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope);
             if (argument1.TES5Type != TES5BasicType.T_TOPIC)
             {
@@ -50,26 +59,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
             }
             arguments.Add(argument1);
-            ITES4StringValue optionalFlag = functionArguments.GetOrNull(2);
-            if (optionalFlag != null)
-            {
-                string optionalFlagDataString = optionalFlag.StringValue;
-                if (this.analyzer.GetFormTypeByEDID(optionalFlagDataString).Value!= TES4RecordType.REFR.Name)
-                {
-                    this.metadataLogService.WriteLine("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
-                    optionalFlag = new TES4ApiToken(optionalFlag.Data+"Ref");
-                }
+            //ITES4StringValue optionalFlag = functionArguments.GetOrNull(2);
+            //if (optionalFlag != null)
+            //{
+            //    string optionalFlagDataString = optionalFlag.StringValue;
+            //    if (this.analyzer.GetFormTypeByEDID(optionalFlagDataString).Value!= TES4RecordType.REFR.Name)
+            //    {
+            //        this.metadataLogService.WriteLine("ADD_SPEAK_AS_ACTOR", new string[] { optionalFlagDataString });
+            //        optionalFlag = new TES4ApiToken(optionalFlag.Data+"Ref");
+            //    }
 
-                arguments.Add(this.valueFactory.CreateValue(optionalFlag, codeScope, globalScope, multipleScriptsScope));
-            }
-            else
-            {
-                arguments.Add(new TES5None());
-            }
+            //    arguments.Add(this.valueFactory.CreateValue(optionalFlag, codeScope, globalScope, multipleScriptsScope));
+            //}
+            //else
+            //{
+            //    arguments.Add(new TES5None());
+            //}
 
             arguments.Add(new TES5Bool(true));
-            ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.CreateObjectCall(timerReference, "LegacySay", multipleScriptsScope, arguments);
+           // ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacySay", multipleScriptsScope, arguments);
         }
     }
 }
