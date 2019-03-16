@@ -5,23 +5,24 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
-    class TES5State : TES5CodeBlock
+    class TES5StateCodeBlock : TES5CodeBlock
     {
-        private readonly string name;
-        private readonly bool auto;
-        private readonly TES5BlockList codeBlocks;
-        public TES5State(string name, bool auto, TES5FunctionScope functionScope, TES5CodeScope codeScope)
+        public string Name { get; private set; }
+        public bool Auto { get; private set; }
+        public TES5BlockList CodeBlocks { get; private set; }
+        public TES5StateCodeBlock(string name, bool auto, TES5FunctionScope functionScope, TES5CodeScope codeScope)
         {
-            this.name = name;
-            this.auto = auto;
+            this.Name = name;
+            this.Auto = auto;
             this.FunctionScope = functionScope;
             this.CodeScope = codeScope;
-            codeBlocks = new TES5BlockList();
+            CodeBlocks = new TES5BlockList();
         }
 
         public override IEnumerable<string> Output =>
-            (new string[] { (auto ? "Auto " : "") + "State " + name })
-            .Concat(codeBlocks.Output)
+            (new string[] { (Auto ? "Auto " : "") + "State " + Name })
+            .Concat(CodeBlocks.Output)
+            .Concat(CodeScope.Output)
             .Concat(new string[] { "EndState" });
 
         public override TES5CodeScope CodeScope { get; set; }
@@ -30,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public void AddBlock(ITES5CodeBlock block)
         {
-            codeBlocks.Add(block);
+            CodeBlocks.Add(block);
         }
 
         public override void AddChunk(ITES5CodeChunk chunk)

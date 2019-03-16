@@ -22,6 +22,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             }
         }
 
+        public void Clear()//WTM:  Added for TES5BlockFactory.CreateBlock
+        {
+            values.Clear();
+        }
+
         public IEnumerator<ITES5CodeChunk> GetEnumerator()
         {
             return values.GetEnumerator();

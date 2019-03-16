@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
@@ -45,8 +46,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
                     continue;
                 }
 
-                string baseName = parts[0]+"_"+parts[1]+"_"+parts[2];
-                jointScripts.AddNewListIfNotContainsKeyAndAddValueToList(baseName, new QuestStageScript(script, int.Parse(parts[3]), int.Parse(parts[4])));
+                string baseName = parts[0] + "_" + parts[1] + "_" + parts[2];
+                jointScripts.AddNewListIfNotContainsKeyAndAddValueToList(baseName, new QuestStageScript(script, int.Parse(parts[3], CultureInfo.InvariantCulture), int.Parse(parts[4], CultureInfo.InvariantCulture)));
             }
 
             foreach (var kvp in jointScripts)

@@ -149,7 +149,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("kill", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("lock", new LockFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("look", new RenamedFunctionFactory("SetLookAt", objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("menumode", new MenumodeFactory(/*valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService*/));//WTM:  Change:  MenumodeFactory's constructor has no parameters.
+            valueFactory.AddFunctionFactory("menumode", new MenuModeFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("messagebox", new MessageBoxFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("message", new MessageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("modactorvalue", new ModActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));

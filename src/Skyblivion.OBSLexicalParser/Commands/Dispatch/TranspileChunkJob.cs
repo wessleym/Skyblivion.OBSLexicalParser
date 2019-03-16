@@ -90,7 +90,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 #if !DEBUG || LOG_EXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {
-                            errorLog.Write(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.GetType().FullName + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
+                            errorLog.Write(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
                             continue;
                         }
 #endif

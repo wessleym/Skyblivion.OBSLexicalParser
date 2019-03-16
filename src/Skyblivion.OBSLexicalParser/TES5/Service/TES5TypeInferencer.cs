@@ -77,14 +77,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                                 argumentCastable.ManualCastTo = argumentTargetType;
                             }
                         }
-                        //else if (
-                        //    !TES5InheritanceGraphAnalyzer.IsExtending(argument.TES5Type, argumentTargetType) &&
-                        //    !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
-                        //    !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
-                        //{
-                        //    bool expected = objectCall.AccessedObject.TES5Type.OriginalName == "TES4TimerHelper" && objectCall.FunctionName == "LegacySay";
-                        //    throw new ConversionException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: expected);
-                        //}
+                        else if (
+                            !TES5InheritanceGraphAnalyzer.IsExtending(argument.TES5Type, argumentTargetType) &&
+                            !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
+                            !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
+                        {
+                            bool expected = /*objectCall.AccessedObject.TES5Type.OriginalName == "TES4TimerHelper" && */objectCall.FunctionName == "LegacySay";
+                            throw new ConversionException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: expected);
+                        }
                     }
                 }
                 argumentIndex++;

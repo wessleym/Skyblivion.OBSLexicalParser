@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
         {
             if (createCodeParsingTree)
             {
-                this.createObscriptCodeParsingTree();
+                this.CreateObscriptCodeParsingTree();
                 this.Start("Code+");
             }
         }
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             : this(true)
         { }
 
-        protected void createObscriptCodeParsingTree()
+        protected void CreateObscriptCodeParsingTree()
         {
             __invoke("Code+").Is("Code+", "Code").Call((TES4CodeChunks list, ITES4CodeChunk codeDeclaration)=>
             {
@@ -280,18 +280,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             __invoke("FunctionParameter").Is("ObjectAccess").Is("Function").Is("APIToken").Is("Primitive");
             __invoke("Primitive").Is("Float").Call((System.Func<CommonToken, TES4Float>)((CommonToken fl)=>
             {
-                string floatValue = fl.Value;
-                if (floatValue.StartsWith("."))
-                {
-                    floatValue = "0" + floatValue;
-                }
-
-                return new TES4Float(float.Parse(floatValue, CultureInfo.InvariantCulture));
+                return new TES4Float(float.Parse(fl.Value, CultureInfo.InvariantCulture));
             }) ) .
 
             Is("Integer").Call((System.Func<CommonToken, TES4Integer>)((CommonToken token)=>
             {
-                return new TES4Integer(int.Parse((string)token.Value));
+                return new TES4Integer(int.Parse((string)token.Value, CultureInfo.InvariantCulture));
             }) ) .
 
             Is("Boolean").Call((System.Func<CommonToken, TES4Integer>)((CommonToken token)=>

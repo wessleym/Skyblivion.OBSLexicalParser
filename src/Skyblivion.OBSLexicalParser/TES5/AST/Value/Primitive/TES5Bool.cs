@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5Bool : ITES5Primitive
     {
-        private bool b;
+        private readonly bool b;
         public TES5Bool(bool b)
         {
             this.b = b;

@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5Float : TES5IntegerOrFloat
     {
-        private float f;
+        private readonly float f;
         public TES5Float(float f)
         {
             this.f = f;

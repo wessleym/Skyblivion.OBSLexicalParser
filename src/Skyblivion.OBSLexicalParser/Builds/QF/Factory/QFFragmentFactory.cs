@@ -9,6 +9,7 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -203,7 +204,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             foreach (var stageMapLine in stageMapFileLines)
             {
                 string[] numberAndItemsSplit = stageMapLine.Split('-');
-                int stageId = int.Parse(numberAndItemsSplit[0].Trim());
+                int stageId = int.Parse(numberAndItemsSplit[0].Trim(), CultureInfo.InvariantCulture);
                 /*
                  * Clear the rows
                  */
@@ -214,7 +215,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     string itemTrimmed = item.Trim();
                     if (itemTrimmed != "")
                     {
-                        stageRows.Add(int.Parse(itemTrimmed));
+                        stageRows.Add(int.Parse(itemTrimmed, CultureInfo.InvariantCulture));
                     }
                 }
 

@@ -54,7 +54,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else
                 {
-                    arguments.Add(new TES5Float(5f));
+                    arguments.Add(new TES5Float(5));
                 }
             }
             else

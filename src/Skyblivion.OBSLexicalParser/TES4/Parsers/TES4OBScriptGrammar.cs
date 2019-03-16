@@ -118,7 +118,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             }) )
 
             ;
-            this.createObscriptCodeParsingTree();
+            this.CreateObscriptCodeParsingTree();
             this.Start("Script");
         }
     }

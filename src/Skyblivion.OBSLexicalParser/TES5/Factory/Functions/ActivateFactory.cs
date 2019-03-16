@@ -58,14 +58,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments() { this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope) };
             ITES4StringValue blockOnActivate = functionArguments.GetOrNull(1);
+            bool argument1Bool;
             if (blockOnActivate != null)
             {
-                bool blockOnActivateVal = (int)blockOnActivate.Data==1;
-                constantArgument.Add(new TES5Bool(!blockOnActivateVal));
-            } else
-            {
-                constantArgument.Add(new TES5Bool(true));
+                bool blockOnActivateVal = (int)blockOnActivate.Data == 1;
+                argument1Bool = !blockOnActivateVal;
             }
+            else
+            {
+                argument1Bool = true;
+            }
+            constantArgument.Add(new TES5Bool(argument1Bool));
 
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, constantArgument);
         }

@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -23,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public void Execute(List<LPCommandArgument> input)
         {
             string targets = input.Where(i => i.Name == "targets").First().Value;
-            int threadsNumber = int.Parse(input.Where(i => i.Name == "threadsNumber").First().Value);
+            int threadsNumber = int.Parse(input.Where(i => i.Name == "threadsNumber").First().Value, CultureInfo.InvariantCulture);
             string buildPath = input.Where(i => i.Name == "buildPath").First().Value;
             Execute(targets, threadsNumber, buildPath);
         }
