@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public override void Execute()
         {
-            if (!PreExecutionChecks(false, false, false, false)) { return; }
+            if (!PreExecutionChecks(false, true, false, false)) { return; }
             Build build = new Build(Build.DEFAULT_BUILD_PATH);
             Dictionary<int, List<int>> originalStageMap;
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
