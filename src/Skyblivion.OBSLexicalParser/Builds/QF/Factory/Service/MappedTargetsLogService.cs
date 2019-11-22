@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
             WriteLine(scriptName);
         }
 
-        public void WriteLine(int originalTargetIndex, IEnumerable<int> mappedTargetIndexes = null)
+        public void WriteLine(int originalTargetIndex, IEnumerable<int>? mappedTargetIndexes = null)
         {
             if (mappedTargetIndexes == null) { mappedTargetIndexes = new int[] { }; }
             WriteLine(originalTargetIndex.ToString() + " " + string.Join("\t", mappedTargetIndexes));

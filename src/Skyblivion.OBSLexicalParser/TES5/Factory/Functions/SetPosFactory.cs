@@ -36,11 +36,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments callArguments = new TES5ObjectCallArguments();
-            TES5ObjectCall dummyX = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionX", multipleScriptsScope);
-            TES5ObjectCall dummyY = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionY", multipleScriptsScope);
-            TES5ObjectCall dummyZ = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionZ", multipleScriptsScope);
+            TES5ObjectCall dummyX = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionX");
+            TES5ObjectCall dummyY = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionY");
+            TES5ObjectCall dummyZ = this.objectCallFactory.CreateObjectCall(calledOn, "GetPositionZ");
             ITES5Value[] argList;
-            switch ((functionArguments[0].StringValue).ToLower())
+            switch (functionArguments[0].StringValue.ToLower())
             {
                 case "x":
                     {
@@ -86,7 +86,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 callArguments.Add(argListC);
             }
 
-            return this.objectCallFactory.CreateObjectCall(calledOn, "SetPosition", multipleScriptsScope, callArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetPosition", callArguments);
         }
     }
 }

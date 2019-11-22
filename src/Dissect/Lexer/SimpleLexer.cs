@@ -21,7 +21,7 @@ namespace Dissect.Lexer
          * it assumes that the token type and recognized value are
          * identical.
         */
-        public SimpleLexer Token(string type, string value = null)
+        public SimpleLexer Token(string type, string? value = null)
         {
             if (value == null) { value = type; }
             this.Recognizers.Add(type, new SimpleRecognizer(value));
@@ -70,14 +70,14 @@ namespace Dissect.Lexer
             return SkipTokens.Contains(token.Type);
         }
         
-        protected override IToken ExtractToken(string str)
+        protected override IToken? ExtractToken(string str)
         {
-            string value = null;
-            string type = null;
+            string? value = null;
+            string? type = null;
             foreach (var kvp in Recognizers)
             {
                 IRecognizer recognizer = kvp.Value;
-                string v;
+                string? v;
                 if (recognizer.Match(str, out v))
                 {
                     if (value == null || Util.Util.StringLength(v) > Util.Util.StringLength(value))
@@ -90,7 +90,7 @@ namespace Dissect.Lexer
 
             if (type != null)
             {
-                return new CommonToken(type, value, this.Line);
+                return new CommonToken(type, value!, this.Line);
             }
 
             return null;

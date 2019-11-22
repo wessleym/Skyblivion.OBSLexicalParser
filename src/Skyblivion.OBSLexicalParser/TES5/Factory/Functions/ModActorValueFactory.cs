@@ -80,7 +80,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         ITES4StringValue secondArg = functionArguments[1];
                         ITES5Value addedValue = this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope);
                         convertedArguments.Add(TES5ExpressionFactory.CreateArithmeticExpression(addedValue, TES5ArithmeticExpressionOperator.OPERATOR_ADD, this.referenceFactory.CreateReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
-                        return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, convertedArguments);
                     }
 
                 case "fatigue":
@@ -104,7 +104,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         convertedArguments.Add(new TES5String(actorValueMap[firstArgStringLower]));
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
 
                 case "aggression":
@@ -145,7 +145,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(new TES5Float(newValue));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
 
                 case "confidence":
@@ -198,7 +198,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(new TES5Float(newValue));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
 
                 default:
@@ -207,7 +207,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         convertedArguments.Add(new TES5String(firstArgString));
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
             }
         }

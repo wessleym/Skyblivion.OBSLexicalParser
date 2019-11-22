@@ -4,8 +4,8 @@
     {
         private readonly int state;
         private readonly string lookahead;
-        private readonly Rule rule;
-        private readonly Rule[] rules;
+        private readonly Rule? rule;
+        private readonly Rule[]? rules;
         private readonly int resolution;
         public Conflict(int state, string lookahead, int resolution)
         {

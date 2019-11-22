@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5CustomType : ITES5Type, IEquatable<TES5CustomType>
     {
-        private string escapedName;
+        private readonly string escapedName;
         public ITES5Type NativeType { get; set; }
         /*
         * Original type name
@@ -27,10 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         private static bool Equals(TES5CustomType left, TES5CustomType right)
         {
             if (object.ReferenceEquals(left, right)) { return true; }
-            bool leftIsNull = left is null;
-            bool rightIsNull = right is null;
-            if (leftIsNull && rightIsNull) { return true; }
-            if (leftIsNull || rightIsNull) { return false; }
+            if (left is null || right is null) { return (left is null) == (right is null); }
             return
                 left.escapedName == right.escapedName &&
                 left.NativeType == right.NativeType &&
@@ -42,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         }
         public override bool Equals(object obj)
         {
-            TES5CustomType customType = obj as TES5CustomType;
+            TES5CustomType? customType = obj as TES5CustomType;
             return !(customType is null) ? Equals(customType) : false;
         }
 

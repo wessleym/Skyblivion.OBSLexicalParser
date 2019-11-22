@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 convertedArguments.add(new TES5Integer(1));
             }*/
             convertedArguments.Add(new TES5Bool(true));
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Bool(true),
                 new TES5Bool(true)
             };
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, functionName, multipleScriptsScope, newArgs);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, functionName, newArgs);
         }
     }
 }

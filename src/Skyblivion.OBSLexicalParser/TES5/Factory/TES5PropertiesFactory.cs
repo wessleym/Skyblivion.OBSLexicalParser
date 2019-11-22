@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static void CreateProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
         {
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
-            foreach (TES4VariableDeclaration variable in variableList.getVariableList())
+            foreach (TES4VariableDeclaration variable in variableList.VariableList)
             {
                 string variableName = variable.VariableName;
                 string variableNameLower = variableName.ToLower();

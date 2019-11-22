@@ -21,18 +21,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
             this.UsageGraph = usageGraph;
         }
 
-        public string[] getScriptsToCompile(string scriptName)
+        public string[] GetScriptsToCompile(string scriptName)
         {
             string scriptNameLower = scriptName.ToLower();
             List<string> dependenciesFound = new List<string>() { scriptNameLower };
-            return (new string[] { scriptNameLower }).Concat(this.getDependenciesFor(scriptName, dependenciesFound)).ToArray();
+            return (new string[] { scriptNameLower }).Concat(this.GetDependenciesFor(scriptName, dependenciesFound)).ToArray();
         }
 
         /*
         * Finds dependencies to this script.
         * Will resolve both the scripts this script depends on and the scripts that depend on this script
         */
-        private List<string> getDependenciesFor(string scriptName, List<string> foundDependencies)
+        private List<string> GetDependenciesFor(string scriptName, List<string> foundDependencies)
         {
             string scriptNameLower = scriptName.ToLower();
             List<string> dependencies = new List<string>();
@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
                     }
                     dependencies.Add(dependencyScript);
                     foundDependencies.Add(dependencyScriptLower);
-                    dependencies.AddRange(this.getDependenciesFor(dependencyScript, foundDependencies));
+                    dependencies.AddRange(this.GetDependenciesFor(dependencyScript, foundDependencies));
                 }
             }
 
@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
                     }
                     dependencies.Add(usingScript);
                     foundDependencies.Add(usingScriptLower);
-                    dependencies.AddRange(this.getDependenciesFor(usingScript, foundDependencies));
+                    dependencies.AddRange(this.GetDependenciesFor(usingScript, foundDependencies));
                 }
             }
 

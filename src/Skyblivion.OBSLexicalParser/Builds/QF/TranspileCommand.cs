@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             TES5ValueFactory valueFactory;
             TES5FragmentFactory fragmentFactory;
             GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out referenceFactory, out valueFactory, out fragmentFactory);
-            converter = new TES4ToTES5ASTQFFragmentConverter(analyzer, fragmentFactory, valueFactory, referenceFactory);
+            converter = new TES4ToTES5ASTQFFragmentConverter(fragmentFactory);
         }
 
         public override TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

@@ -13,11 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public bool AllowNameTransformation { get; private set; }
         public string Name { get; private set; }
         private ITES5Type propertyType; //If we"re tracking a script, this won"t be used anymore
-        public string ReferenceEDID { get; private set; }
+        public string? ReferenceEDID { get; private set; }
         public bool IsPlayerRef { get; private set; }
-        private TES5ScriptHeader trackedScript;
+        private TES5ScriptHeader? trackedScript;
 
-        public TES5Property(string name, ITES5Type propertyType, string referenceEDID, bool isPlayerRef = false)
+        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, bool isPlayerRef = false)
         {
             this.OriginalName = name;
             this.AllowNameTransformation = !isPlayerRef;

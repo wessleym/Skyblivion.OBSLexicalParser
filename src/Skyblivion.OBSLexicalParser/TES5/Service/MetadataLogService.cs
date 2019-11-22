@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             : base(GetPath(build), false)
         { }
 
-        public void WriteLine(string command, IEnumerable<string> arguments = null)
+        public void WriteLine(string command, IEnumerable<string>? arguments = null)
         {
             if (arguments == null) { arguments = new string[] { }; }
             base.WriteLine(command + " " + string.Join("\t", arguments));

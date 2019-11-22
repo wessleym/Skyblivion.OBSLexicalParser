@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         {
             TES4Script parsedScript = this.standaloneParsingService.ParseOrGetFromCache(scriptPath);
             TES5ScriptHeader scriptHeader = this.CreateHeader(parsedScript);
-            TES4VariableDeclarationList variableList = parsedScript.VariableDeclarationList;
+            TES4VariableDeclarationList? variableList = parsedScript.VariableDeclarationList;
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
             if (variableList != null)
             {

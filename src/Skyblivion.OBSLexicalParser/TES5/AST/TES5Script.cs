@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         public TES5ScriptHeader ScriptHeader { get; private set; }
         public TES5GlobalScope GlobalScope { get; private set; }
         public TES5BlockList BlockList { get; private set; }
-        public TES5Script(TES5GlobalScope globalScope, TES5BlockList blockList = null)
+        public TES5Script(TES5GlobalScope globalScope, TES5BlockList blockList)
         {
             this.ScriptHeader = globalScope.ScriptHeader;
             this.GlobalScope = globalScope;

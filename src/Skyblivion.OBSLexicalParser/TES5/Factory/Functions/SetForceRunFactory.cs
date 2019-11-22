@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "ForceMovementSpeed";
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5Float(2) };
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
         }
     }
 }

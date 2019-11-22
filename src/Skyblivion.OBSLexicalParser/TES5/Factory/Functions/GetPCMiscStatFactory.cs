@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string newArgValue = statMap[oldArgValue];
             TES4FunctionArguments tes4Arguments = new TES4FunctionArguments() { new TES4String(newArgValue) };
             TES5ObjectCallArguments tes5Arguments = objectCallArgumentsFactory.CreateArgumentList(tes4Arguments, codeScope, globalScope, multipleScriptsScope);
-            return objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, tes5Arguments);
+            return objectCallFactory.CreateObjectCall(newCalledOn, functionName, tes5Arguments);
         }
     }
 }

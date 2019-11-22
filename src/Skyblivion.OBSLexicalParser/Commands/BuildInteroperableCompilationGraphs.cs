@@ -77,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
                                 AST.Filter((data) =>
                                 {
-                                    TES4ObjectProperty property = data as TES4ObjectProperty;
+                                    TES4ObjectProperty? property = data as TES4ObjectProperty;
                                     if (property == null) { return false; }
                                     propertiesAccesses.Add(property);
                                     return true;

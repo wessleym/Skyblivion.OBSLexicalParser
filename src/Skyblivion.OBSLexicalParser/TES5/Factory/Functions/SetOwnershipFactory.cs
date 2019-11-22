@@ -12,14 +12,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class SetOwnershipFactory : IFunctionFactory
     {
-        private readonly TES5ReferenceFactory referenceFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
         private readonly ESMAnalyzer analyzer;
-        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer analyzer)
+        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, ESMAnalyzer analyzer)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
             this.analyzer = analyzer;
         }
@@ -49,10 +47,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             else
             {
                 functionName = "SetActorOwner";
-                args = new TES5ObjectCallArguments() { this.objectCallFactory.CreateGetActorBaseOfPlayer(globalScope, multipleScriptsScope) };
+                args = new TES5ObjectCallArguments() { this.objectCallFactory.CreateGetActorBaseOfPlayer(globalScope) };
             }
 
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, args);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, args);
         }
     }
 }

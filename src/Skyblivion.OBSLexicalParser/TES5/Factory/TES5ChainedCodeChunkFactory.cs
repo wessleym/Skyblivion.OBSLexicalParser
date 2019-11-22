@@ -1,8 +1,6 @@
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -21,18 +19,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.variableAssignationConversionFactory = variableAssignationConversionFactory;
         }
 
-        public TES5CodeChunkCollection createCodeChunk(ITES4CodeChunk chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5CodeChunkCollection CreateCodeChunk(ITES4CodeChunk chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4Branch branch = chunk as TES4Branch;
+            TES4Branch? branch = chunk as TES4Branch;
             if (branch != null) { return TES5BranchFactory.CreateCodeChunk(branch, codeScope, globalScope, multipleScriptsScope, this, valueFactory); }
-            TES4Return returnChunk = chunk as TES4Return;
-            if (returnChunk != null) { return this.returnFactory.CreateCodeChunkCollection(codeScope.LocalScope.FunctionScope, globalScope, multipleScriptsScope); }
-            ITES4Callable callable = chunk as ITES4Callable;
+            TES4Return? returnChunk = chunk as TES4Return;
+            if (returnChunk != null) { return this.returnFactory.CreateCodeChunkCollection(codeScope.LocalScope.FunctionScope, globalScope); }
+            ITES4Callable? callable = chunk as ITES4Callable;
             if (callable != null) { return this.valueFactory.CreateCodeChunks(callable, codeScope, globalScope, multipleScriptsScope); }
-            TES4VariableAssignation assignation = chunk as TES4VariableAssignation;
+            TES4VariableAssignation? assignation = chunk as TES4VariableAssignation;
             if (assignation != null) { return this.variableAssignationConversionFactory.CreateCodeChunk(assignation, codeScope, globalScope, multipleScriptsScope); }
-            TES4VariableDeclarationList declarationList = chunk as TES4VariableDeclarationList;
-            if (declarationList != null) { TES5LocalVariableListFactory.createCodeChunk(declarationList, codeScope); return null; }
+            //The below code doesn't seem to be reached.  It also returns null, and I don't want this method to return a nullable reference type if not necessary.
+            //TES4VariableDeclarationList? declarationList = chunk as TES4VariableDeclarationList;
+            //if (declarationList != null) { TES5LocalVariableListFactory.CreateCodeChunk(declarationList, codeScope); return null; }
             throw new ConversionException("Cannot convert a chunk: " + chunk.GetType().FullName);
         }
     }

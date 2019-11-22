@@ -9,9 +9,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     static class TES5LocalVariableListFactory
     {
-        public static void createCodeChunk(TES4VariableDeclarationList chunk, TES5CodeScope codeScope)
+        public static void CreateCodeChunk(TES4VariableDeclarationList chunk, TES5CodeScope codeScope)
         {
-            foreach (TES4VariableDeclaration variable in chunk.getVariableList())
+            foreach (TES4VariableDeclaration variable in chunk.VariableList)
             {
                 TES4Type variableType = variable.VariableType;
                 TES5LocalVariable property;

@@ -22,17 +22,15 @@ namespace Skyblivion.OBSLexicalParser.Builds
         private readonly string targetName;
         private readonly string filePrefix;
         private readonly Build build;
-        private readonly MetadataLogService metadataLogService;
         private readonly ITranspileCommand transpileCommand;
         private readonly ICompileCommand compileCommand;
         private readonly IASTCommand astCommand;
         private readonly IBuildScopeCommand buildScopeCommand;
         private readonly IWriteCommand writeCommand;
-        public BuildTarget(string targetName, string filePrefix, Build build, MetadataLogService metadataLogService, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand astCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
+        public BuildTarget(string targetName, string filePrefix, Build build, ITranspileCommand transpileCommand, ICompileCommand compileCommand, IASTCommand astCommand, IBuildScopeCommand buildScopeCommand, IWriteCommand writeCommand)
         {
             this.targetName = targetName;
             this.build = build;
-            this.metadataLogService = metadataLogService;
             this.filePrefix = filePrefix;
             this.transpileCommand = transpileCommand;
             this.compileCommand = compileCommand;
@@ -142,7 +140,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public string[] GetSourceFileList(string[] intersectedSourceFiles = null)
+        public string[] GetSourceFileList(string[]? intersectedSourceFiles = null)
         {
             /*
              * Only files without extension or .txt are considered sources

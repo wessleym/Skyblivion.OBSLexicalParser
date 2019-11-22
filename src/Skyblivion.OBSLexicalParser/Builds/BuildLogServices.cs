@@ -6,8 +6,8 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildLogServices : IDisposable
     {
-        private Lazy<MetadataLogService> metadataLogService;
-        private Lazy<MappedTargetsLogService> mappedTargetsLogService;
+        private readonly Lazy<MetadataLogService> metadataLogService;
+        private readonly Lazy<MappedTargetsLogService> mappedTargetsLogService;
         public MetadataLogService MetadataLogService => metadataLogService.Value;
         public MappedTargetsLogService MappedTargetsLogService => mappedTargetsLogService.Value;
         public BuildLogServices(Build build)

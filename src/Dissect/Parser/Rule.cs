@@ -24,7 +24,7 @@ namespace Dissect.Parser
         /*
         * Gets or sets the callback (the semantic value) of the rule.
         */
-        public Func<object[], object> Callback = null;
+        public Func<object[], object>? Callback = null;
         public Nullable<int> Precedence = null;
         /*
         * Constructor.
@@ -40,7 +40,7 @@ namespace Dissect.Parser
         * Returns a component at index index or null
          * if index is out of range.
         */
-        public string GetComponent(int index)
+        public string? GetComponent(int index)
         {
             if (index > Components.Length - 1)
             {

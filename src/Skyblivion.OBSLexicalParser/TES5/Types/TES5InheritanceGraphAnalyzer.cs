@@ -114,7 +114,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         private static readonly TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
         //Regular Expression used to build tree from PHP:  ("[^"]+") =>[\r\n\s]+new string\[\] \{\r\n\s+"args" =>[\r\n\s]+(new string\[\] \{[^\}]*\}),[\r\n\s]+"returnType" => ("[^"]+"),?[\r\n\s]*}
-        private static Dictionary<string, TES5InheritanceFunctionSignature[]> callReturns = new Dictionary<string, TES5InheritanceFunctionSignature[]>()
+        private static readonly Dictionary<string, TES5InheritanceFunctionSignature[]> callReturns = new Dictionary<string, TES5InheritanceFunctionSignature[]>()
         {
             { "ActiveMagicEffect",
             new TES5InheritanceFunctionSignature[] {
@@ -4542,12 +4542,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
 
 
-        private static TES5InheritanceItemCollection FindSubtreeFor(string className)
+        private static TES5InheritanceItemCollection? FindSubtreeFor(string className)
         {
             return FindInternalSubtreeFor(className, inheritance);
         }
 
-        private static TES5InheritanceItemCollection FindInternalSubtreeFor(string className, TES5InheritanceItemCollection inputTree)
+        private static TES5InheritanceItemCollection? FindInternalSubtreeFor(string className, TES5InheritanceItemCollection inputTree)
         {
             foreach (var item in inputTree)
             {
@@ -4566,7 +4566,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
                 else
                 {
-                    TES5InheritanceItemCollection data = FindInternalSubtreeFor(className, item.Items);
+                    TES5InheritanceItemCollection? data = FindInternalSubtreeFor(className, item.Items);
                     if (data != null)
                     {
                         return data;
@@ -4587,7 +4587,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 return IsTypeOrExtendsType(extendingType.NativeType, baseType);
             }
-            TES5InheritanceItemCollection subTree = FindSubtreeFor(baseType.Value);
+            TES5InheritanceItemCollection? subTree = FindSubtreeFor(baseType.Value);
             if (subTree == null)
             {
                 return false;
@@ -4620,10 +4620,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return type == TES5BasicType.T_INT || type == TES5BasicType.T_FLOAT;
         }
 
-        private static string TargetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
+        private static string? TargetRootBaseClassNullable(ITES5Type type, TES5InheritanceItem baseClass, bool throwIfNotFound)
         {
             string targetClassName = type.Value;
-            string baseClassForNode = baseClass.Name;
+            string? baseClassForNode = baseClass.Name;
             TES5InheritanceItemCollection baseClassExtenders = baseClass.Items;
             if (baseClassExtenders.Any())
             {
@@ -4641,7 +4641,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
                 foreach (var item in baseClassExtenders)
                 {
-                    string recursiveReturn = TargetRootBaseClass(type, item, false);
+                    string? recursiveReturn = TargetRootBaseClassNullable(type, item);
                     if (recursiveReturn != null)
                     {
                         return recursiveReturn;
@@ -4665,19 +4665,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
             return null;
         }
+        private static string? TargetRootBaseClassNullable(ITES5Type type, TES5InheritanceItem baseClass)
+        {
+            return TargetRootBaseClassNullable(type, baseClass, false);
+        }
+        private static string TargetRootBaseClass(ITES5Type type, TES5InheritanceItem baseClass)
+        {
+            return TargetRootBaseClassNullable(type, baseClass, true)!;
+        }
 
         public static ITES5Type GetBaseClassWithCache(ITES5Type type)
         {
             return inheritanceCache.GetOrAdd(type, () =>
             {
-                string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: true);
+                string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem);
                 return TES5TypeFactory.MemberByValue(baseTypeName);
             });
         }
 
-        private static ITES5Type GetBaseClassWithoutCache(ITES5Type type)
+        private static ITES5Type? GetBaseClassWithoutCache(ITES5Type type)
         {
-            string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem, throwIfNotFound: false);
+            string? baseTypeName = TargetRootBaseClassNullable(type, inheritanceAsItem);
             if (baseTypeName == null) { return null; }
             return TES5TypeFactory.MemberByValue(baseTypeName);
         }
@@ -4685,7 +4693,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         public static IEnumerable<ITES5Type> GetSelfAndBaseClasses(ITES5Type type)
         {
             yield return type;
-            ITES5Type baseType = type;
+            ITES5Type? baseType = type;
             while (true)
             {
                 baseType = GetBaseClassWithoutCache(baseType);
@@ -4778,7 +4786,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 }
             }
 
-            ITES5VariableOrProperty calledOn = objectCall.AccessedObject.ReferencesTo;
+            ITES5VariableOrProperty? calledOn = objectCall.AccessedObject.ReferencesTo;
+            if (calledOn == null) { throw new InvalidOperationException(nameof(calledOn) + " was null."); }
             ITES5Type actualType = calledOn.TES5Type.NativeType;
             List<ITES5Type> extendingMatches = new List<ITES5Type>();
             foreach (ITES5Type possibleMatch in possibleMatches)
@@ -4815,6 +4824,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
                 default:
                     {
+                        if (calledOn.ReferenceEDID == null) { throw new InvalidOperationException(nameof(calledOn.ReferenceEDID) + " was null."); }
                         //We analyze the property name and check inside the ESM analyzer.
                         ESMAnalyzer analyzer = ESMAnalyzer.GetInstance();
                         ITES5Type formType = analyzer.GetFormTypeByEDID(calledOn.ReferenceEDID);

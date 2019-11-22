@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(0),
                 new TES5Integer(99)
             };
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, functionName, multipleScriptsScope, methodArguments);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, functionName, methodArguments);
         }
     }
 }

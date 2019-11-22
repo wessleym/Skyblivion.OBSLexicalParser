@@ -9,8 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
     {
         public ITES5Referencer AccessedObject { get; private set; }
         public string FunctionName { get; private set; }
-        public TES5ObjectCallArguments Arguments { get; private set; }
-        public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments arguments = null)
+        public TES5ObjectCallArguments? Arguments { get; private set; }
+        public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments? arguments = null)
         {
             this.AccessedObject = called;
             this.FunctionName = functionName;
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             }
         }
 
-        public ITES5VariableOrProperty ReferencesTo => null;
+        public ITES5VariableOrProperty? ReferencesTo => null;
 
         public string Name => "ObjectCall";
 

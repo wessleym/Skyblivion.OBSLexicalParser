@@ -1,10 +1,8 @@
 using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Block;
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
-using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -21,16 +19,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * Oblivion binary data analyzer.
         */
-        private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5BlockFactory blockFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ReferenceFactory referenceFactory;
-        public TES4ToTES5ASTConverter(ESMAnalyzer ESMAnalyzer, TES5BlockFactory blockFactory, TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory)
+        public TES4ToTES5ASTConverter(TES5BlockFactory blockFactory, TES5ObjectCallFactory objectCallFactory)
         {
-            this.esmAnalyzer = ESMAnalyzer;
             this.blockFactory = blockFactory;
             this.objectCallFactory = objectCallFactory;
-            this.referenceFactory = referenceFactory;
         }
 
         /*
@@ -43,11 +37,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         public TES5Target Convert(TES4Target target, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Script script = target.Script;
-            TES4BlockList parsedBlockList = script.BlockList;
+            TES4BlockList? parsedBlockList = script.BlockList;
             Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
             if (parsedBlockList != null)
             {
-                TES5EventCodeBlock onUpdateOfNonQuestBlock = null;
+                TES5EventCodeBlock? onUpdateOfNonQuestBlock = null;
                 foreach (TES4CodeBlock block in parsedBlockList.Blocks)
                 {
                     TES5BlockList newBlockList = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateOfNonQuestBlock);
@@ -67,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 var blocks = createdBlock.Value;
                 if (blocks.Count > 1)
                 {
-                    foreach (TES5CodeBlock block in CombineRepeatedEventCodeBlockNames(blocks, blockType, isStandalone, globalScope, multipleScriptsScope))
+                    foreach (TES5CodeBlock block in CombineRepeatedEventCodeBlockNames(blocks, blockType, isStandalone, globalScope))
                     {
                         blockList.Add(block);
                     }
@@ -83,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             return result;
         }
 
-        private IEnumerable<TES5CodeBlock> CombineRepeatedEventCodeBlockNames(List<ITES5CodeBlock> blocks, string blockType, bool isStandalone, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private IEnumerable<TES5CodeBlock> CombineRepeatedEventCodeBlockNames(List<ITES5CodeBlock> blocks, string blockType, bool isStandalone, TES5GlobalScope globalScope)
         {
             ITES5CodeBlock[] nonEvents = blocks.Where(b => !(b is TES5EventCodeBlock)).ToArray();
             if(nonEvents.Any())
@@ -92,7 +86,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             }
             TES5EventCodeBlock[] eventBlocks = blocks.Cast<TES5EventCodeBlock>().ToArray();
             List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
-            TES5ObjectCallArguments localScopeArguments = null;
+            TES5ObjectCallArguments? localScopeArguments = null;
             for (int i = 0; i < eventBlocks.Length; i++)
             {
                 ITES5CodeBlock block = eventBlocks[i];
@@ -125,8 +119,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 foreach (var function in functions)
                 {
                     yield return function;
-                    TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.BlockName, multipleScriptsScope, localScopeArguments,
-                            false// hacky.
+                    TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.BlockName, localScopeArguments, false// hacky.
                         );
                     proxyBlock.AddChunk(functionCall);
                 }

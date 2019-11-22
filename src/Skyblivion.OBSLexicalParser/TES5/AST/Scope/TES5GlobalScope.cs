@@ -12,8 +12,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     {
         public TES5ScriptHeader ScriptHeader { get; private set; }
         public List<TES5Property> Properties { get; private set; } = new List<TES5Property>();
-        private List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
-        private Lazy<TES5PlayerReference> playerRefLazy;
+        private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
+        private readonly Lazy<TES5PlayerReference> playerRefLazy;
         public TES5PlayerReference PlayerRef => playerRefLazy.Value;
         /*
         * TES5GlobalScope constructor.
@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public IEnumerable<string> Output => Properties.SelectMany(p => p.Output).Concat(functions.SelectMany(o => o.Output));
 
-        public TES5Property GetPropertyByName(string propertyName)
+        public TES5Property? GetPropertyByName(string propertyName)
         {
             if (this.Properties.Any())
             {

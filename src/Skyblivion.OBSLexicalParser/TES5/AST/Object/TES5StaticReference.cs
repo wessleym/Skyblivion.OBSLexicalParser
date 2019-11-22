@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public ITES5Type TES5Type => TES5TypeFactory.MemberByValue(this.Name);
 
-        public ITES5VariableOrProperty ReferencesTo => null;
+        public ITES5VariableOrProperty? ReferencesTo => null;
 
         public static TES5StaticReference Debug => new TES5StaticReference("Debug");
         public static TES5StaticReference Game => new TES5StaticReference("Game");

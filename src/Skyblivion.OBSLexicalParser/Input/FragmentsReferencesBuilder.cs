@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.Input
                     continue;
                 }
 
-                list.add(new TES4VariableDeclaration(trimmedReference, TES4Type.T_REF));
+                list.Add(new TES4VariableDeclaration(trimmedReference, TES4Type.T_REF));
             }
 
             return list;

@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string functionName = function.FunctionCall.FunctionName;
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, new TES5ObjectCallArguments());
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, new TES5ObjectCallArguments());
         }
     }
 }

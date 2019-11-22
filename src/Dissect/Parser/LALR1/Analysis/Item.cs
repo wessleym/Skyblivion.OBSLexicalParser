@@ -1,4 +1,5 @@
 using Dissect.Parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -74,7 +75,15 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The component.
         */
-        public string ActiveComponent => this.Rule.GetComponent(this.DotIndex);
+        public string ActiveComponent
+        {
+            get
+            {
+                string? component = this.Rule.GetComponent(this.DotIndex);
+                if (component == null) { throw new InvalidOperationException(nameof(component) + " was null when " + nameof(DotIndex) + " was " + DotIndex + "."); }
+                return component;
+            }
+        }
 
         /*
         * Determines whether this item is a reduce item.

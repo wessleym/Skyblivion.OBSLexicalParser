@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "SetActorOwner";
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments() { new TES5None() };
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, methodArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, methodArguments);
         }
     }
 }

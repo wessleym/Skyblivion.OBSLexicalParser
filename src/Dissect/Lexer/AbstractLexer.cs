@@ -25,7 +25,7 @@ namespace Dissect.Lexer
         * Attempts to extract another token from the string.
          * Returns the token on success or null on failure.
         */
-        protected abstract IToken ExtractToken(string str);
+        protected abstract IToken? ExtractToken(string str);
         /*
         * Should given token be skipped?
         */
@@ -42,7 +42,7 @@ namespace Dissect.Lexer
             int originalLength = Util.Util.StringLength(str);
             while (true)
             {
-                IToken token = this.ExtractToken(str);
+                IToken? token = this.ExtractToken(str);
                 if (token == null)
                 {
                     break;

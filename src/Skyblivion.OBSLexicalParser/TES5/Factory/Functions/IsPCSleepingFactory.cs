@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5ObjectCall getSleepState = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "getSleepState", multipleScriptsScope);
+            TES5ObjectCall getSleepState = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "getSleepState");
             return TES5ExpressionFactory.CreateComparisonExpression(getSleepState, TES5ComparisonExpressionOperator.OPERATOR_GREATER, new TES5Integer(2));
         }
     }

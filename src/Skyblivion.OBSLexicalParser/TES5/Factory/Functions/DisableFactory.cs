@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             const string functionName = "Disable";
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments();
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newArguments);
         }
     }
 }

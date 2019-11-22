@@ -45,11 +45,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
              */
             if (questName == "FGInterimConversation" || questName == "ArenaIC" || questName == "ArenaICGrandChampion" || questName == "ArenaAggression" || questName == "ArenaAnnouncer" || questName == "ArenaDisqualification" || questName == "Arena")
             {
-                return this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", multipleScriptsScope, new TES5ObjectCallArguments());
+                return this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", new TES5ObjectCallArguments());
             }
             else
             {
-                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", multipleScriptsScope, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
         }
     }

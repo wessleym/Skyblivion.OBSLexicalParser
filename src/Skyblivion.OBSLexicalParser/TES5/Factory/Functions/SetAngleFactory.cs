@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 this.valueFactory.CreateValue(xyz == "y" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope),
                 this.valueFactory.CreateValue(xyz == "z" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope)
             };
-            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAngle", multipleScriptsScope, newArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAngle", newArguments);
         }
     }
 }

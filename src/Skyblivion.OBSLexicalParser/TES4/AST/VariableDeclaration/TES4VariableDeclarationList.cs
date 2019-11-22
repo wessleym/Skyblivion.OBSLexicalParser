@@ -8,19 +8,20 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
     //WTM:  Change:  In PHP, this implemented ITES4CodeChunk.  I moved it to TES4VariableDeclaration.  I later added ITES4CodeFilterable here.
     class TES4VariableDeclarationList : ITES4CodeFilterable
     {
-        private List<TES4VariableDeclaration> variableList = new List<TES4VariableDeclaration>();
-        public void add(TES4VariableDeclaration declaration)
+        public List<TES4VariableDeclaration> VariableList { get; private set; }
+        public TES4VariableDeclarationList()
         {
-            this.variableList.Add(declaration);
+            VariableList = new List<TES4VariableDeclaration>();
         }
 
-        public List<TES4VariableDeclaration> getVariableList()
+        public void Add(TES4VariableDeclaration declaration)
         {
-            return this.variableList;
+            VariableList.Add(declaration);
         }
+
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
         {
-            return variableList.SelectMany(vl => vl.Filter(predicate)).ToArray();
+            return VariableList.SelectMany(vl => vl.Filter(predicate)).ToArray();
         }
     }
 }

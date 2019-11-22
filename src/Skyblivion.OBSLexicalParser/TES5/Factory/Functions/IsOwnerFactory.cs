@@ -6,31 +6,20 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class IsOwnerFactory : IFunctionFactory
     {
+        private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ReferenceFactory referenceFactory;
         private readonly ESMAnalyzer analyzer;
-        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
-        private readonly TES5TypeInferencer typeInferencer;
-        private readonly MetadataLogService metadataLogService;
-        private readonly TES5ValueFactory valueFactory;
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public IsOwnerFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        public IsOwnerFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer analyzer)
         {
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.valueFactory = valueFactory;
+            this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
             this.analyzer = analyzer;
-            this.objectPropertyFactory = objectPropertyFactory;
-            this.typeInferencer = typeInferencer;
-            this.metadataLogService = metadataLogService;
-            this.objectCallFactory = objectCallFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -44,13 +33,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES5Referencer baseReference;
             if (dataType == TES5BasicType.T_FACTION)
             {
-                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetFactionOwner", multipleScriptsScope);
+                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetFactionOwner");
                 baseReference = targetReference;
             }
             else
             {
-                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetActorOwner", multipleScriptsScope);
-                baseReference = this.objectCallFactory.CreateGetActorBase(targetReference, multipleScriptsScope);
+                owner = this.objectCallFactory.CreateObjectCall(calledOn, "GetActorOwner");
+                baseReference = this.objectCallFactory.CreateGetActorBase(targetReference);
             }
 
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(owner, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, baseReference);

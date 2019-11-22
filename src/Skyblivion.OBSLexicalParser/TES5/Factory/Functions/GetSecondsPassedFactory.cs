@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 getSecondsPassedLocalFunction.AddChunk(branch);
                 return getSecondsPassedLocalFunction;
             });*/
-            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName);
         }
     }
 }

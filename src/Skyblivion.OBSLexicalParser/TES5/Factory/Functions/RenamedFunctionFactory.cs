@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments oldArguments = function.Arguments;
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(oldArguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(calledOn, this.newFunctionName, multipleScriptsScope, newArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, this.newFunctionName, newArguments);
         }
     }
 }

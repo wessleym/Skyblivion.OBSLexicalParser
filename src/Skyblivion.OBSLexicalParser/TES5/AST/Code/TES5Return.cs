@@ -6,8 +6,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
     class TES5Return : ITES5CodeChunk
     {
-        private ITES5Value returnValue;
-        public TES5Return(ITES5Value returnValue = null)
+        private readonly ITES5Value? returnValue;
+        public TES5Return(ITES5Value? returnValue = null)
         {
             this.returnValue = returnValue;
         }

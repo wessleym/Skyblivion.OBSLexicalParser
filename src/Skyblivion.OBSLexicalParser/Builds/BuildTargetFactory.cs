@@ -30,18 +30,18 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 case BuildTarget.BUILD_TARGET_STANDALONE:
                     {
                         StandaloneParsingService standaloneParsingService = new StandaloneParsingService(new SyntaxErrorCleanParser(new TES4OBScriptGrammar()));
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_STANDALONE, TES5TypeFactory.TES4Prefix, build, buildLogServices.MetadataLogService, new Standalone.TranspileCommand(standaloneParsingService, build, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new Standalone.CompileCommand(), new Standalone.ASTCommand(), new Standalone.BuildScopeCommand(standaloneParsingService, loadESMAnalyzerLazily), new Standalone.WriteCommand());
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_STANDALONE, TES5TypeFactory.TES4Prefix, build, new Standalone.TranspileCommand(standaloneParsingService, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new Standalone.CompileCommand(), new Standalone.ASTCommand(), new Standalone.BuildScopeCommand(standaloneParsingService, loadESMAnalyzerLazily), new Standalone.WriteCommand());
                     }
 
                 case BuildTarget.BUILD_TARGET_TIF:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_TIF, "", build, buildLogServices.MetadataLogService, new TIF.TranspileCommand(fragmentsParsingService, build, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new TIF.CompileCommand(), new TIF.ASTCommand(), new TIF.BuildScopeCommand(), new TIF.WriteCommand());
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_TIF, "", build, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new TIF.CompileCommand(), new TIF.ASTCommand(), new TIF.BuildScopeCommand(), new TIF.WriteCommand());
                     }
 
                 case BuildTarget.BUILD_TARGET_PF:
                     {
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_PF, "", build, buildLogServices.MetadataLogService, new PF.TranspileCommand(), new PF.CompileCommand(), new PF.ASTCommand(), new PF.BuildScopeCommand(), new PF.WriteCommand());
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_PF, "", build, new PF.TranspileCommand(), new PF.CompileCommand(), new PF.ASTCommand(), new PF.BuildScopeCommand(), new PF.WriteCommand());
                     }
 
                 case BuildTarget.BUILD_TARGET_QF:
@@ -52,13 +52,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
                         TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
                         TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
-                        TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
+                        TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory);
                         TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
                         TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, buildLogServices.MetadataLogService);
-                        ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(referenceFactory);
-                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
+                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService);
                         QF.WriteCommand writeCommand = new QF.WriteCommand(qfFragmentFactory);
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, buildLogServices.MetadataLogService, new QF.TranspileCommand(fragmentsParsingService, build, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), writeCommand);
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, new QF.TranspileCommand(fragmentsParsingService, build, buildLogServices.MetadataLogService, loadESMAnalyzerLazily), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(), writeCommand);
                     }
 
                 default:

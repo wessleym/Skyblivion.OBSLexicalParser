@@ -22,12 +22,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCall startSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "StartSneaking", multipleScriptsScope);
+            TES5ObjectCall startSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "StartSneaking");
             if (((TES4Integer)functionArguments[0]).IntValue == 0)
             {
                 //WTM:  Change:  Since StartSneaking toggles sneaking, we check if the TES4 code wants the user to stop sneaking.
                 //If so, if the user is sneaking, call StartSneaking, which actually stops sneaking if already sneaking.
-                TES5ObjectCall isSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "IsSneaking", multipleScriptsScope);
+                TES5ObjectCall isSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "IsSneaking");
                 TES5ComparisonExpression playerIsNotSneaking = TES5ExpressionFactory.CreateComparisonExpression(isSneaking, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                 TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(playerIsNotSneaking, codeScope.LocalScope);
                 branch.MainBranch.CodeScope.AddChunk(startSneaking);

@@ -59,9 +59,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
         }
 
-        public BuildTarget GetByNameOrNull(string name)
+        public BuildTarget? GetByNameOrNull(string name)
         {
-            return this.buildTargets.GetWithFallback(name, () => null);
+            return this.buildTargets.GetWithFallbackNullable(name, () => null);
         }
 
         /*
@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public BuildSourceFilesCollection GetSourceFiles(string[] intersectedSourceFiles = null)
+        public BuildSourceFilesCollection GetSourceFiles(string[]? intersectedSourceFiles = null)
         {
             BuildSourceFilesCollection collection = new BuildSourceFilesCollection();
             foreach (var buildTarget in this.buildTargets.Values)
@@ -101,15 +101,16 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             return buildTargets.Select(bt=>bt.Value).GetEnumerator();
         }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        public int Count => buildTargets.Count;
+
         public string[] GetScriptsToCompile(string scriptName)
         {
-            return this.GetDependencyGraph().getScriptsToCompile(scriptName);
+            return this.GetDependencyGraph().GetScriptsToCompile(scriptName);
         }
 
         private string GetUniqueBuildFingerprint()

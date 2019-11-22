@@ -14,25 +14,19 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
-    class ObjectiveHandlingFactory
+    static class ObjectiveHandlingFactory
     {
-        private readonly TES5ReferenceFactory referenceFactory;
-        public ObjectiveHandlingFactory(TES5ReferenceFactory referenceFactory)
-        {
-            this.referenceFactory = referenceFactory;
-        }
-
         /*
              *  The stage ID
          *  List of integers describing targets being enabled or disabled for given stage
         */
-        public TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
+        public static TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
         {
             string fragmentName = "Fragment_"+stageId.ToString();
             TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
             TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
             TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, new TES5VoidType());
-            List<ITES5CodeChunk> chunks = this.GenerateObjectiveHandling(codeBlock, globalScope, stageMap);
+            List<ITES5CodeChunk> chunks = GenerateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {
                 codeBlock.AddChunk(chunk);
@@ -40,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return codeBlock;
         }
 
-        public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
+        public static List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
         {
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
             TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);

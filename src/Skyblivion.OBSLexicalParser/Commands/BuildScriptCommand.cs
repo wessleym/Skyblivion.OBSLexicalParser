@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             throw new NotImplementedException();
         }
 
-        public void Execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string buildPath = null)
+        public void Execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string? buildPath = null)
         {
             if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
@@ -63,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private static void PrepareWorkspace(BuildTargetCollection buildTargets)
         {
-            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
+            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
             prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();

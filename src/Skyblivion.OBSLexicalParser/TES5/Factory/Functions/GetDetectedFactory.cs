@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             };
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "IsDetectedBy";
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, newArguments);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, newArguments);
         }
     }
 }

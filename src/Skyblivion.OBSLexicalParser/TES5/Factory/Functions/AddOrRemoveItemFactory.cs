@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 newObjectCallArguments[0] = valueFactory.CreateValue(new TES4ApiToken(((TES5String)firstArg).StringValue.Trim('"')), codeScope, globalScope, multipleScriptsScope);
             }
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, newObjectCallArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newObjectCallArguments);
         }
     }
 }

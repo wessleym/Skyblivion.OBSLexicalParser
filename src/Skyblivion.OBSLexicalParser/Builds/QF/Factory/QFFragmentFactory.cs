@@ -18,11 +18,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
     class QFFragmentFactory
     {
         private readonly MappedTargetsLogService mappedTargetsLogService;
-        private readonly ObjectiveHandlingFactory objectiveHandlingFactory;
-        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory)
+        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService)
         {
             this.mappedTargetsLogService = mappedTargetsLogService;
-            this.objectiveHandlingFactory = objectiveHandlingFactory;
         }
 
         /*
@@ -148,7 +146,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
-                var objectiveCodeChunks = this.objectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
+                var objectiveCodeChunks = ObjectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
                     subfragmentBlock.AddChunk(newCodeChunk);
@@ -164,7 +162,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
             foreach (int nonDoneStage in nonDoneStages)
             {
-                TES5FunctionCodeBlock fragment = this.objectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
+                TES5FunctionCodeBlock fragment = ObjectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
                 resultingBlockList.Add(fragment);
             }
 

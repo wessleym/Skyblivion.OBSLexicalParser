@@ -42,9 +42,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //It"s similar but groups all nonviolent wrongdoings
             ITES5Referencer factionReference = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { factionReference };
-            TES5ObjectCall isInFaction = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "IsInFaction", multipleScriptsScope, arguments);
+            TES5ObjectCall isInFaction = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "IsInFaction", arguments);
             TES5TrueBooleanExpression leftExpression = TES5ExpressionFactory.CreateTrueBooleanExpression(isInFaction);
-            TES5ObjectCall crimeGoldNonViolent = this.objectCallFactory.CreateObjectCall(factionReference, "GetCrimeGoldNonViolent", multipleScriptsScope);
+            TES5ObjectCall crimeGoldNonViolent = this.objectCallFactory.CreateObjectCall(factionReference, "GetCrimeGoldNonViolent");
             TES5ComparisonExpression rightExpression = TES5ExpressionFactory.CreateComparisonExpression(crimeGoldNonViolent, TES5ComparisonExpressionOperator.OPERATOR_GREATER, new TES5Integer(0));
             TES5LogicalExpression logicalExpression = TES5ExpressionFactory.CreateLogicalExpression(leftExpression, TES5LogicalExpressionOperator.OPERATOR_AND, rightExpression);
             return logicalExpression;

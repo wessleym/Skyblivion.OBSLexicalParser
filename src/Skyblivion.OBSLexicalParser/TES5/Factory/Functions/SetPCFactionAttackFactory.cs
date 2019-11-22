@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments() { new TES5Integer(arg) };
             ITES5Referencer faction = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(faction, "SetCrimeGoldViolent", multipleScriptsScope, constantArgument);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(faction, "SetCrimeGoldViolent", constantArgument);
             return newFunction;
         }
     }

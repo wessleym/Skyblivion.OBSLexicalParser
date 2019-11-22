@@ -8,8 +8,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
     class TES4SubBranch : ITES4CodeFilterable
     {
         public ITES4Value Expression { get; private set; }
-        public TES4CodeChunks CodeChunks { get; private set; }
-        public TES4SubBranch(ITES4Value expression, TES4CodeChunks codeChunks = null)
+        public TES4CodeChunks? CodeChunks { get; private set; }
+        public TES4SubBranch(ITES4Value expression, TES4CodeChunks? codeChunks = null)
         {
             this.Expression = expression;
             this.CodeChunks = codeChunks;

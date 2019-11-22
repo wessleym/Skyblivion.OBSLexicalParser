@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -31,17 +32,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         * Inference the type by analyzing the object call.
          * Please note: It is not able to analyze calls to another scripts, but those weren"t used in oblivion anyways
         */
-        public void InferenceObjectByMethodCall(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
+        public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
         {
-            this.InferenceTypeOfCalledObject(objectCall, multipleScriptsScope);
+            this.InferenceTypeOfCalledObject(objectCall);
             if (objectCall.Arguments!= null)
             {
-                this.InferenceTypeOfMethodArguments(objectCall, multipleScriptsScope);
+                this.InferenceTypeOfMethodArguments(objectCall);
             }
         }
 
-        private void InferenceTypeOfMethodArguments(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
+        private void InferenceTypeOfMethodArguments(TES5ObjectCall objectCall)
         {
+            if (objectCall.Arguments == null) { throw new NullableException(nameof(objectCall.Arguments)); }
             /*
              * Inference the arguments
              */
@@ -58,10 +60,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                     /*
                      * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
                      */
-                    ITES5Referencer referencerArgument = argument as ITES5Referencer;
+                    ITES5Referencer? referencerArgument = argument as ITES5Referencer;
                     if (referencerArgument != null && TES5InheritanceGraphAnalyzer.IsExtending(argumentTargetType, argument.TES5Type.NativeType))
                     { //HACKY!
-                        this.InferenceType(referencerArgument.ReferencesTo, argumentTargetType, multipleScriptsScope);
+                        if (referencerArgument.ReferencesTo == null) { throw new NullableException(nameof(referencerArgument.ReferencesTo)); }
+                        this.InferenceType(referencerArgument.ReferencesTo, argumentTargetType);
                     }
                     else
                     {
@@ -71,7 +74,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                         //float assigment somewhere in the code )
                         if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
                         {
-                            TES5Castable argumentCastable = argument as TES5Castable;
+                            TES5Castable? argumentCastable = argument as TES5Castable;
                             if (argumentCastable != null)
                             { //HACKY! When we"ll clean up this interface, it will dissapear :)
                                 argumentCastable.ManualCastTo = argumentTargetType;
@@ -91,7 +94,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             }
         }
 
-        private void InferenceTypeOfCalledObject(TES5ObjectCall objectCall, TES5MultipleScriptsScope multipleScriptsScope)
+        private void InferenceTypeOfCalledObject(TES5ObjectCall objectCall)
         {
             /*
              * Check if we have something to inference inside the code, not some static class or method call return
@@ -111,7 +114,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             {
                 return; //We already have the good type.
             }
-            this.InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType, multipleScriptsScope);
+            this.InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType);
         }
 
         private void InferenceWithCustomType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)
@@ -131,7 +134,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
          *  - Will return true if inferencing succeeded, false otherwise.
          * @throws ConversionException
         */
-        private bool InferenceType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)
+        private bool InferenceType(ITES5VariableOrProperty variable, ITES5Type type)
         {
             if (!TES5InheritanceGraphAnalyzer.IsExtending(type, variable.TES5Type.NativeType))
             {
@@ -147,7 +150,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         */
         public ITES5Type ResolveInferenceTypeByReferenceEdid(ITES5VariableOrProperty variable)
         {
-            string edid = variable.ReferenceEDID;
+            string? edid = variable.ReferenceEDID;
+            if (edid == null) { throw new NullableException(nameof(edid)); }
             //WTM:  Change:  Without this if statement, SEBrithaurRef finds a reference
             //from qf_se35_01044c44_40_0 to SEBrithaurScript instead of
             //from qf_se35_01044c44_40_0 to SE35BrithaurScript
@@ -168,7 +172,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             }
 
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type
-            return this.esmAnalyzer.ResolveScriptTypeByItsAttachedName(variable.ReferenceEDID);
+            return this.esmAnalyzer.ResolveScriptTypeByItsAttachedName(edid);
         }
 
         /*
@@ -187,11 +191,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             this.InferenceWithCustomType(variable, this.ResolveInferenceTypeByReferenceEdid(variable), multipleScriptsScope);
         }
 
-        public void InferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value, TES5MultipleScriptsScope multipleScriptsScope)
+        public void InferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value)
         {
             if (reference.ReferencesTo != null && !reference.TES5Type.IsPrimitive)
             {
-                this.InferenceType(reference.ReferencesTo, value.TES5Type.NativeType, multipleScriptsScope);
+                this.InferenceType(reference.ReferencesTo, value.TES5Type.NativeType);
             }
         }
     }

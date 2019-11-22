@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
@@ -37,15 +38,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             { //if the reference is in reality a global variable, we will need to convert it by creating a Reference.SetValue(value); call
                 //Object call creation
                 TES5ObjectCallArguments objectCallArguments = new TES5ObjectCallArguments() { value };
-                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", multipleScriptsScope, objectCallArguments);
+                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", objectCallArguments);
                 codeChunkCollection.Add(objectCall);
             }
             else
             {
+                if (reference.ReferencesTo == null) { throw new NullableException(nameof(reference.ReferencesTo)); }
                 if (!reference.ReferencesTo.TES5Type.IsPrimitive && value.TES5Type.IsPrimitive)
                 {
                     //Hacky!
-                    TES5IntegerOrFloat valueNumber = value as TES5IntegerOrFloat;
+                    TES5IntegerOrFloat? valueNumber = value as TES5IntegerOrFloat;
                     if (valueNumber != null && valueNumber.ConvertedIntValue == 0)
                     {
                         value = new TES5None();
@@ -53,11 +55,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
 
                 TES5VariableAssignation assignation = TES5VariableAssignationFactory.CreateAssignation(reference, value);
-                this.typeInferencer.InferenceObjectByAssignation(reference, value, multipleScriptsScope);
+                this.typeInferencer.InferenceObjectByAssignation(reference, value);
                 codeChunkCollection.Add(assignation);
                 //post analysis.
                 //Todo - rethink the prefix here
-                ITES5Referencer referencerValue = value as ITES5Referencer;
+                ITES5Referencer? referencerValue = value as ITES5Referencer;
                 if (referencerValue!=null && referencerValue.Name == TES5Property.AddPropertyNameSuffix(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST))
                 {
                     /*

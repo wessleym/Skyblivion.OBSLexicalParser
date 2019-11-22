@@ -52,9 +52,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.BlockName = newName;
         }
 
-        public TES5SignatureParameter GetVariable(string name)
+        public TES5SignatureParameter? GetVariable(string name)
         {
-            return this.Variables.GetWithFallback(name, () => null);
+            return this.Variables.GetWithFallbackNullable(name, () => null);
         }
 
         public IEnumerable<string> GetVariablesOutput()
@@ -63,9 +63,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             return this.Variables.Values.Select(v => v.TES5DeclaredType.Output.Single() + " " + v.Name);
         }
 
+        public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        {
+            return this.variablesByMeanings.GetWithFallbackNullable(meaning, () => null);
+        }
         public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.variablesByMeanings.GetWithFallback(meaning, () => null);
+            return this.variablesByMeanings[meaning];
         }
     }
 }

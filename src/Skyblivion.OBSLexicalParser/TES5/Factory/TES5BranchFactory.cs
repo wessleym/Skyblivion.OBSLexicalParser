@@ -13,8 +13,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static TES5CodeChunkCollection CreateCodeChunk(TES4Branch chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory, TES5ValueFactory valueFactory)
         {
             TES5SubBranch mainBranch = ConvertSubBranch(chunk.MainBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory, valueFactory);
-            TES4SubBranchList branchList = chunk.ElseifBranches;
-            TES5SubBranchList convertedElseIfBranches = null;
+            TES4SubBranchList? branchList = chunk.ElseifBranches;
+            TES5SubBranchList? convertedElseIfBranches = null;
             if (branchList != null)
             {
                 convertedElseIfBranches = new TES5SubBranchList();
@@ -24,8 +24,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
             }
 
-            TES4ElseSubBranch elseBranch = chunk.ElseBranch;
-            TES5ElseSubBranch convertedElseBranch = null;
+            TES4ElseSubBranch? elseBranch = chunk.ElseBranch;
+            TES5ElseSubBranch? convertedElseBranch = null;
             if (elseBranch != null)
             {
                 convertedElseBranch = ConvertElseBranch(elseBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory);
@@ -47,18 +47,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private static TES5ElseSubBranch ConvertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory)
         {
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(outerCodeScope.LocalScope);
-            TES4CodeChunks branchChunks = branch.CodeChunks;
+            TES4CodeChunks? branchChunks = branch.CodeChunks;
             if (branchChunks != null)
             {
                 foreach (ITES4CodeChunk codeChunk in branchChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
-                    if (codeChunks != null)
+                    TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                    foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                     {
-                        foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                        {
-                            newCodeScope.AddChunk(newCodeChunk);
-                        }
+                        newCodeScope.AddChunk(newCodeChunk);
                     }
                 }
             }
@@ -70,18 +67,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             ITES5Value expression = valueFactory.CreateValue(branch.Expression, outerCodeScope, globalScope, multipleScriptsScope);
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(outerCodeScope.LocalScope);
-            TES4CodeChunks branchChunks = branch.CodeChunks;
+            TES4CodeChunks? branchChunks = branch.CodeChunks;
             if (branchChunks != null)
             {
                 foreach (ITES4CodeChunk codeChunk in branchChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = codeChunkFactory.createCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
-                    if (codeChunks != null)
+                    TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                    foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                     {
-                        foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                        {
-                            newCodeScope.AddChunk(newCodeChunk);
-                        }
+                        newCodeScope.AddChunk(newCodeChunk);
                     }
                 }
             }

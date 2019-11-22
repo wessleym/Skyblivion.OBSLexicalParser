@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -21,11 +22,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
-        public void Execute(List<LPCommandArgument> input)
+        public void Execute(IList<LPCommandArgument> input)
         {
-            string targets = input.Where(i => i.Name == "targets").First().Value;
-            int threadsNumber = int.Parse(input.Where(i => i.Name == "threadsNumber").First().Value, CultureInfo.InvariantCulture);
-            string buildPath = input.Where(i => i.Name == "buildPath").First().Value;
+            string targets = LPCommandArgumentOrOption.GetValue(input, "targets");
+            int threadsNumber = int.Parse(LPCommandArgumentOrOption.GetValue(input, "threadsNumber"), CultureInfo.InvariantCulture);
+            string buildPath = LPCommandArgumentOrOption.GetValue(input, "buildPath");
             Execute(targets, threadsNumber, buildPath);
         }
 
@@ -34,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Execute(BuildTarget.DEFAULT_TARGETS);
         }
 
-        public void Execute(string targets, int threadsNumber = DefaultThreads, string buildPath = null)
+        public void Execute(string targets, int threadsNumber = DefaultThreads, string? buildPath = null)
         {
             if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
@@ -71,17 +72,18 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
         {
-            ProgressWriter writingTranspiledScriptsProgressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => bt.GetSourceFileList().Count()));
+            ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.GetTargetName()).Count));
+            //WTM:  Note:  QF's progress will be underestimated since buildTracker.GetBuiltScripts(bt.GetTargetName()).Count is greater than the actual number of output scripts.
             foreach (var buildTarget in buildTargets)
             {
-                buildTarget.Write(buildTracker, writingTranspiledScriptsProgressWriter);
+                buildTarget.Write(buildTracker, progressWriter);
             }
-            writingTranspiledScriptsProgressWriter.WriteLast();
+            progressWriter.WriteLast();
         }
 
         private static void PrepareWorkspace(BuildTargetCollection buildTargets)
         {
-            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count() * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
+            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
             prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();

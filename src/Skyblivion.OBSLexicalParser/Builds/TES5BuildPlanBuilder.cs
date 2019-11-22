@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             while (codeScripts.Any())
             {
                 var currentScript = codeScripts.First().Key;
-                string[] preparedChunk = this.graph.getScriptsToCompile(currentScript);
+                string[] preparedChunk = this.graph.GetScriptsToCompile(currentScript);
                 if (preparedChunk.Length > 1)
                 {
                     /*

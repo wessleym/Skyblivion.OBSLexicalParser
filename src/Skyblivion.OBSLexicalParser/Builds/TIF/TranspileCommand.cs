@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
     class TranspileCommand : TranspileCommandBase<TES4CodeChunks>
     {
         private readonly TES4ToTES5ASTTIFFragmentConverter converter;
-        public TranspileCommand(FragmentsParsingService fragmentsParsingService, Build build, MetadataLogService metadataLogService, bool loadESMAnalyzerLazily)
+        public TranspileCommand(FragmentsParsingService fragmentsParsingService, MetadataLogService metadataLogService, bool loadESMAnalyzerLazily)
             : base(fragmentsParsingService)
         {
             ESMAnalyzer analyzer;
@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
             TES5ValueFactory valueFactory;
             TES5FragmentFactory fragmentFactory;
             GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out referenceFactory, out valueFactory, out fragmentFactory);
-            converter = new TES4ToTES5ASTTIFFragmentConverter(analyzer, fragmentFactory, valueFactory, referenceFactory);
+            converter = new TES4ToTES5ASTTIFFragmentConverter(fragmentFactory);
         }
 
         public override TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

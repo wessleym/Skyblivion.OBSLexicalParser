@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 this.referenceFactory.CreateReference("EffectSEFF", globalScope, multipleScriptsScope, localScope)
             };
-            return this.objectCallFactory.CreateObjectCall(calledOn, "HasMagicEffect", multipleScriptsScope, newArgs);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "HasMagicEffect", newArgs);
         }
     }
 }

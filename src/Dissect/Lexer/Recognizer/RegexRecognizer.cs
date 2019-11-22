@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Dissect.Lexer.Recognizer
@@ -19,7 +20,7 @@ namespace Dissect.Lexer.Recognizer
             this.regex = regex;
         }
 
-        public bool Match(string str, out string result)
+        public bool Match(string str, [NotNullWhen(true)] out string? result)
         {
             Match match = regex.Match(str);
             if (match.Success && match.Index == 0)

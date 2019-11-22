@@ -11,11 +11,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5InitialBlockCodeFactory
     {
-        private readonly TES5ReferenceFactory referenceFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        public TES5InitialBlockCodeFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
+        public TES5InitialBlockCodeFactory(TES5ObjectCallFactory objectCallFactory)
         {
-            this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
         }
 
@@ -28,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
          * 
          *  Scope in which we want for conversion to happen
         */
-        public TES5CodeScope AddInitialCode(TES5MultipleScriptsScope multipleScriptsScope, TES5GlobalScope globalScope, TES5EventCodeBlock eventCodeBlock)
+        public TES5CodeScope AddInitialCode(TES5GlobalScope globalScope, TES5EventCodeBlock eventCodeBlock)
         {
             switch (eventCodeBlock.BlockName)
             {
@@ -36,9 +34,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     {
                         if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
                         {
-                            TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
+                            TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
                             //Even though we"d like this script to not do anything at this time, it seems like sometimes condition races, so we"re putting it into a loop anyways but with early return bailout
-                            branch.MainBranch.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope, multipleScriptsScope));
+                            branch.MainBranch.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope));
                             branch.MainBranch.CodeScope.AddChunk(new TES5Return());
                             eventCodeBlock.AddChunk(branch);
                             return eventCodeBlock.CodeScope;

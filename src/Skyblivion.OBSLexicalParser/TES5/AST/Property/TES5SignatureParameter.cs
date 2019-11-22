@@ -18,20 +18,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public ITES5Type TES5Type { get; set; }
         public TES5LocalVariableParameterMeaning[] Meanings { get; private set; }
 
-        private bool HasFixedDeclaration;
-        private ITES5Type DeclarationType;
+        private readonly bool hasFixedDeclaration;
+        private readonly ITES5Type declarationType;
 
         public TES5SignatureParameter(string nameWithSuffix, 
                                  TES5BasicType type, 
                                  bool hasFixedDeclaration,
-                                 TES5LocalVariableParameterMeaning[] meanings = null
+                                 TES5LocalVariableParameterMeaning[]? meanings = null
                                 )
         {
 
             Name = nameWithSuffix;
             TES5Type = type;
-            DeclarationType = type;
-            HasFixedDeclaration = hasFixedDeclaration;
+            declarationType = type;
+            this.hasFixedDeclaration = hasFixedDeclaration;
             if (meanings == null) { meanings = new TES5LocalVariableParameterMeaning[] { }; }
             this.Meanings = meanings;
         }
@@ -40,9 +40,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             get
             {
-                if(HasFixedDeclaration)
+                if(hasFixedDeclaration)
                 {
-                    return DeclarationType;
+                    return declarationType;
                 }
                 else
                 {

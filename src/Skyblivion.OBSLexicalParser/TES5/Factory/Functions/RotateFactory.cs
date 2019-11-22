@@ -63,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(y),
                 new TES5Integer(z)
             };
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope), "Rotate", multipleScriptsScope, rotateArguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope), "Rotate", rotateArguments);
             return newFunction;
         }
     }

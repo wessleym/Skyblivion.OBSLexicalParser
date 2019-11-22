@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         * @param memberByValue string Type to be created.
         * @param basicType TES5BasicType You might override the basic type for this custom type created.
         */
-        public static ITES5Type MemberByValue(string memberByValue, ITES5Type basicType = null)
+        public static ITES5Type MemberByValue(string memberByValue, ITES5Type? basicType = null)
         {
             if (memberByValue == null) { throw new ArgumentNullException(nameof(memberByValue)); }
             if (memberByValue == "void") { return new TES5VoidType(); }

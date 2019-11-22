@@ -24,7 +24,7 @@ namespace Dissect.Parser.LALR1
          *  The grammar.
          *  If given, the parser doesn"t have to analyze the grammar.
         */
-        public Parser(Grammar grammar, ActionAndGoTo parseTable = null)
+        public Parser(Grammar grammar, ActionAndGoTo? parseTable = null)
         {
             this.Grammar = grammar;
             if (parseTable != null)

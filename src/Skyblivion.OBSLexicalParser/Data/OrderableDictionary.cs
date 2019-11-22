@@ -7,11 +7,12 @@ namespace Skyblivion.OBSLexicalParser.Data
 {
     class OrderableDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {
-        private Dictionary<TKey, TValue> dictionary;
+        private readonly Dictionary<TKey, TValue> dictionary;
         private List<TKey> orderedKeys;
         public OrderableDictionary()
         {
             dictionary = new Dictionary<TKey, TValue>();
+            orderedKeys = new List<TKey>();
         }
         public OrderableDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
             : this()

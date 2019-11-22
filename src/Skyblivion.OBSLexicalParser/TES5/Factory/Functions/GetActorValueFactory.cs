@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                             if (calledOn.TES5Type.NativeType == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
                             {
                                 TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
-                                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                             }
                             //We can"t convert those.. and shouldn"t be any, too.
                             throw new ConversionException(nameof(GetActorValueFactory)+":  Cannot get attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);
@@ -94,13 +94,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistshock":
                     {
                         TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(actorValueMap[firstArgStringLower]) };
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
 
                 default:
                     {
                         TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, multipleScriptsScope, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
             }
         }

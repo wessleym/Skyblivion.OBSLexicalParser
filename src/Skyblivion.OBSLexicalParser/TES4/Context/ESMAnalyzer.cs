@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -21,15 +22,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
      */
     class ESMAnalyzer
     {
-        private static Lazy<TES4Collection> esmLazy = null;
-        private static TES4Collection ESM => esmLazy.Value;
+        private static Lazy<TES4Collection>? esmLazy = null;
+        private static TES4Collection ESM { get { if (esmLazy == null) { throw new NullableException(nameof(esmLazy)); } return esmLazy.Value; } }
         private Lazy<Dictionary<string, ITES5Type>> scriptTypesLazy;
         private Dictionary<string, ITES5Type> ScriptTypes => scriptTypesLazy.Value;
         private Lazy<TES5GlobalVariables> globalVariablesLazy;
         public TES5GlobalVariables GlobalVariables => globalVariablesLazy.Value;
-        private static ESMAnalyzer instance;
+        private static ESMAnalyzer? instance;
         private readonly Dictionary<string, ITES5Type> attachedNameCache = new Dictionary<string, ITES5Type>();
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public ESMAnalyzer(bool loadLazily, string dataFile = DataDirectory.TES4GameFileName)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
             if (esmLazy == null)
             {
@@ -239,8 +242,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                   foreach (ITES4Record scpt in scpts.SelectMany(s => s.Select(r => r)))
                   {
                       string schr = scpt.GetSubrecordString("SCHR");
-                      string edid = scpt.GetSubrecordTrimLower("EDID");
-                      if (string.IsNullOrWhiteSpace(schr) || string.IsNullOrWhiteSpace(edid))
+                      string? edid = scpt.GetSubrecordTrimLower("EDID");
+                      if (string.IsNullOrWhiteSpace(schr) || string.IsNullOrWhiteSpace(edid) || edid == null/*Needed for nullable reference types, but string.IsNullOrWhiteSpace should have sufficed.*/)
                       {
                           continue;
                       }
@@ -281,8 +284,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                   List<TES4Grup> globals = ESM.GetGrup(TES4RecordType.GLOB);
                   foreach (ITES4Record global in globals.SelectMany(g => g.Select(r => r)))
                   {
-                      string edid = global.GetSubrecordTrim("EDID");
-                      if (string.IsNullOrWhiteSpace(edid))
+                      string? edid = global.GetSubrecordTrim("EDID");
+                      if (string.IsNullOrWhiteSpace(edid) || edid == null/*Needed for nullable reference types, but string.IsNullOrWhiteSpace should have sufficed.*/)
                       {
                           continue;
                       }
@@ -306,8 +309,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         private void LoadLazyObjects()
         {
-            var scriptTypes = ScriptTypes;
-            var globalVariables = GlobalVariables;
+            _ = ScriptTypes;
+            _ = GlobalVariables;
         }
 
         public static ESMAnalyzer GetInstance()
@@ -319,9 +322,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return instance;
         }
 
-        public TES4LoadedRecord FindInTES4Collection(string edid, bool throwException)
+        public TES4LoadedRecord? TryFindInTES4Collection(string edid)
         {
-            return ESM.FindByEDID(edid, false);
+            return ESM.TryFindByEDID(edid);
+        }
+        public TES4LoadedRecord FindInTES4Collection(string edid)
+        {
+            return ESM.FindByEDID(edid);
         }
 
         /*
@@ -329,7 +336,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type GetFormTypeByEDID(string edid)
         {
-            TES4LoadedRecord record = FindInTES4Collection(edid, false);
+            TES4LoadedRecord? record = TryFindInTES4Collection(edid);
             if (record == null)
             {
                 //WTM:  Change:  These EDIDs can't be found, so I've written them into the code.
@@ -362,7 +369,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             string attachedNameLower = attachedName.ToLower();
             ITES5Type value;
             if (this.attachedNameCache.TryGetValue(attachedNameLower, out value)) { return value; }
-            TES4LoadedRecord attachedNameRecord = FindInTES4Collection(attachedName, false);
+            TES4LoadedRecord? attachedNameRecord = TryFindInTES4Collection(attachedName);
             if (attachedNameRecord == null)
             {
                 throw new ConversionException("Cannot resolve script type by searching its base form edid - no record found, " + attachedName);
@@ -371,18 +378,20 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             if (attachedNameRecordType == TES4RecordType.REFR || attachedNameRecordType == TES4RecordType.ACRE || attachedNameRecordType == TES4RecordType.ACHR)
             {
                 //Resolve the reference
-                Nullable<int> baseFormid = attachedNameRecord.GetSubrecordAsFormid("NAME");
-                attachedNameRecord = ESM.FindByFormid(baseFormid.Value);
+                int baseFormid = attachedNameRecord.GetSubrecordAsFormid("NAME");
+                attachedNameRecord = ESM.FindByFormid(baseFormid);
             }
 
-            Nullable<int> scriptFormid = attachedNameRecord.GetSubrecordAsFormid("SCRI");
+            Nullable<int> scriptFormid = attachedNameRecord.GetSubrecordAsFormidNullable("SCRI");
             if (scriptFormid == null)
             {
                 throw new ConversionException("Cannot resolve script type for " + attachedName + " - Asked base record has no script bound.");
             }
 
             TES4LoadedRecord scriptRecord = ESM.FindByFormid(scriptFormid.Value);
-            ITES5Type customType = TES5TypeFactory.MemberByValue(scriptRecord.GetSubrecordTrim("EDID"));
+            string? subrecord = scriptRecord.GetSubrecordTrim("EDID");
+            if (subrecord == null) { throw new InvalidOperationException(nameof(subrecord) + " was null for EDID."); }
+            ITES5Type customType = TES5TypeFactory.MemberByValue(subrecord);
             this.attachedNameCache.Add(attachedNameLower, customType);
             return customType;
         }

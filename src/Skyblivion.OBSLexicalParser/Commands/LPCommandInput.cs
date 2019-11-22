@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -18,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         }
         private string GetArgumentOrOptionValue(IEnumerable<LPCommandArgumentOrOption> collection, string name)
         {
-            return collection.Where(i => i.Name == name).First().Value;
+            return LPCommandArgumentOrOption.GetValue(collection, name);
         }
         public string GetArgumentValue(string name)
         {

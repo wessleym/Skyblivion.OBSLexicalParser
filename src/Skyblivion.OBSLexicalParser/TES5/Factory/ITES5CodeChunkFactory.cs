@@ -6,6 +6,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     interface ITES5CodeChunkFactory
     {
-        TES5CodeChunkCollection createCodeChunk(ITES4CodeChunk chunk, TES5CodeScope codeScope,  TES5GlobalScope globalScope,  TES5MultipleScriptsScope multipleScriptsScope);
+        TES5CodeChunkCollection CreateCodeChunk(ITES4CodeChunk chunk, TES5CodeScope codeScope,  TES5GlobalScope globalScope,  TES5MultipleScriptsScope multipleScriptsScope);
     }
 }

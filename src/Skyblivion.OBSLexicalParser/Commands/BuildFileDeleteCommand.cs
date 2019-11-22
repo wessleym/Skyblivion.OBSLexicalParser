@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Execute(BuildTarget.DEFAULT_TARGETS);
         }
 
-        public void Execute(string targets, string buildPath = null)
+        public void Execute(string targets, string? buildPath = null)
         {
             if (!PreExecutionChecks(false, true, false, false)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }

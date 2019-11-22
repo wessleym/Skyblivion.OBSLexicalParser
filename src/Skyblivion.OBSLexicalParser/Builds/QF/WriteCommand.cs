@@ -50,12 +50,19 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
                 jointScripts.AddNewListIfNotContainsKeyAndAddValueToList(baseName, new QuestStageScript(script, int.Parse(parts[3], CultureInfo.InvariantCulture), int.Parse(parts[4], CultureInfo.InvariantCulture)));
             }
 
+            const string joiningQFFragments = "Joining QF Fragments...";
+            progressWriter.Write(joiningQFFragments);
             foreach (var kvp in jointScripts)
             {
                 var resultingFragmentName = kvp.Key;
                 var subfragmentsTrees = kvp.Value;
-                connectedQuestFragments.Add(this.QFFragmentFactory.JoinQFFragments(target, resultingFragmentName, subfragmentsTrees));
+                TES5Target joinedQF = this.QFFragmentFactory.JoinQFFragments(target, resultingFragmentName, subfragmentsTrees);
+                connectedQuestFragments.Add(joinedQF);
             }
+            progressWriter.ClearByPreviousProgress(joiningQFFragments);
+            //WTM:  Note:  Subtract total scripts and add back connected quest fragments.
+            int totalAddend = -scripts.Values.Count + connectedQuestFragments.Count;
+            progressWriter.ModifyTotalAndWrite(totalAddend);
 
             Write(connectedQuestFragments, progressWriter);
         }

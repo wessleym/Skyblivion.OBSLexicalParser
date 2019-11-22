@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "gamemode":
                 case "scripteffectupdate":
                     {
-                        TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope, multipleScriptsScope);
+                        TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope);
                         newBlock.AddChunk(function);
                         if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
                         {
@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onactivate":
                     {
                         TES5EventCodeBlock onInitBlock = TES5BlockFactory.CreateOnInit();
-                        TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation", multipleScriptsScope);
+                        TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation");
                         onInitBlock.AddChunk(function);
                         blockList.Add(onInitBlock);
                         break;
@@ -62,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                 case "ontriggeractor":
                     {
-                        TES4BlockParameterList parameterList = block.BlockParameterList;
+                        TES4BlockParameterList? parameterList = block.BlockParameterList;
                         TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
                         ITES5VariableOrProperty activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
@@ -126,7 +126,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onalarm":
                     {
                         //@INCONSISTENCE - We don"t account for alarm type.
-                        TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed", multipleScriptsScope), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
+                        TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                         SetUpBranch(blockFunctionScope, newBlock, expression);
                         break;
                     }
@@ -189,7 +189,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         }
         private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, ITES5VariableOrProperty variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4BlockParameterList parameterList = block.BlockParameterList;
+            TES4BlockParameterList? parameterList = block.BlockParameterList;
             if (parameterList == null)
             {
                 return;

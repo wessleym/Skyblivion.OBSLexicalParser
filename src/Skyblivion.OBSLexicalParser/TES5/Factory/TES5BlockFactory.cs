@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Block;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
@@ -211,7 +212,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return newBlockType;
         }
 
-        public static TES5EventCodeBlock CreateEventCodeBlock(string blockType, TES5FunctionScope functionScope = null)
+        public static TES5EventCodeBlock CreateEventCodeBlock(string blockType, TES5FunctionScope? functionScope = null)
         {
             if (functionScope == null)
             {
@@ -230,27 +231,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return state;
         }
 
-        public TES5BlockList CreateBlock(TES4CodeBlock block, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, ref TES5EventCodeBlock onUpdateOfNonQuestBlock)
+        public TES5BlockList CreateBlock(TES4CodeBlock block, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, ref TES5EventCodeBlock? onUpdateOfNonQuestBlock)
         {
             TES5BlockList blockList = new TES5BlockList();
             string blockType = block.BlockType;
             string newBlockType = MapBlockType(blockType);
-            TES4CodeChunks chunks = block.Chunks;
+            TES4CodeChunks? chunks = block.Chunks;
             if (chunks != null && chunks.Any())
             {
                 TES5EventCodeBlock newBlock;
                 bool onUpdateOfNonQuest = newBlockType == "OnUpdate" && globalScope.ScriptHeader.BasicScriptType != TES5BasicType.T_QUEST;
                 bool onUpdateOfNonQuestBlockAlreadyPresent = onUpdateOfNonQuestBlock != null;
-                TES5BlockList onUpdateOfNonQuestAdditionalBlocks = null;
+                TES5BlockList? onUpdateOfNonQuestAdditionalBlocks = null;
                 if (onUpdateOfNonQuest)
                 {
                     if (!onUpdateOfNonQuestBlockAlreadyPresent)
                     {
-                        CreateActivationStates(globalScope, multipleScriptsScope, out onUpdateOfNonQuestAdditionalBlocks, out newBlock);
+                        CreateActivationStates(globalScope, out onUpdateOfNonQuestAdditionalBlocks, out newBlock);
                         onUpdateOfNonQuestBlock = newBlock;
                     }
                     else
                     {
+                        if (onUpdateOfNonQuestBlock == null) { throw new NullableException(nameof(onUpdateOfNonQuestBlock)); }
                         newBlock = onUpdateOfNonQuestBlock;
                     }
                 }
@@ -262,7 +264,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 this.ConvertTES4CodeChunksToTES5EventCodeBlock(chunks, newBlock, globalScope, multipleScriptsScope);
                 if (blockType.Equals("MenuMode", StringComparison.OrdinalIgnoreCase))
                 {
-                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, "IsInMenuMode", multipleScriptsScope), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true)), newBlock.CodeScope.LocalScope);
+                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true)), newBlock.CodeScope.LocalScope);
                     foreach (var chunk in newBlock.CodeScope.CodeChunks)
                     {
                         menuModeBranch.MainBranch.CodeScope.CodeChunks.Add(chunk);
@@ -274,7 +276,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 blockList.Add(newBlock);
                 if (onUpdateOfNonQuest)
                 {
-                    return !onUpdateOfNonQuestBlockAlreadyPresent ? onUpdateOfNonQuestAdditionalBlocks : new TES5BlockList();
+                    if (!onUpdateOfNonQuestBlockAlreadyPresent)
+                    {
+                        if (onUpdateOfNonQuestAdditionalBlocks == null) { throw new NullableException(nameof(onUpdateOfNonQuestAdditionalBlocks)); }
+                        return onUpdateOfNonQuestAdditionalBlocks;
+                    }
+                    return new TES5BlockList();
                 }
             }
             return blockList;
@@ -282,16 +289,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private void ConvertTES4CodeChunksToTES5EventCodeBlock(TES4CodeChunks chunks, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5CodeScope conversionScope = this.initialBlockCodeFactory.AddInitialCode(multipleScriptsScope, globalScope, newBlock);
+            TES5CodeScope conversionScope = this.initialBlockCodeFactory.AddInitialCode(globalScope, newBlock);
             foreach (ITES4CodeChunk codeChunk in chunks)
             {
-                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.createCodeChunk(codeChunk, newBlock.CodeScope, globalScope, multipleScriptsScope);
-                if (codeChunks != null)
+                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.CreateCodeChunk(codeChunk, newBlock.CodeScope, globalScope, multipleScriptsScope);
+                foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                 {
-                    foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                    {
-                        conversionScope.AddChunk(newCodeChunk);
-                    }
+                    conversionScope.AddChunk(newCodeChunk);
                 }
             }
         }
@@ -303,11 +307,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return newInitBlock;
         }
 
-        private void CreateActiveStateBlock(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out TES5StateCodeBlock state, out TES5EventCodeBlock onUpdate)
+        private void CreateActiveStateBlock(TES5GlobalScope globalScope, out TES5StateCodeBlock state, out TES5EventCodeBlock onUpdate)
         {
             state = CreateState("ActiveState", false);
             TES5EventCodeBlock onBeginState = CreateEventCodeBlock("OnBeginState");
-            onBeginState.AddChunk(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "OnUpdate", multipleScriptsScope));
+            onBeginState.AddChunk(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "OnUpdate"));
             state.AddBlock(onBeginState);
             onUpdate = CreateEventCodeBlock("OnUpdate");
             state.AddBlock(onUpdate);
@@ -319,15 +323,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return state;
         }
 
-        private void CreateActivationStates(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out TES5BlockList blocks, out TES5EventCodeBlock onUpdate)
+        private void CreateActivationStates(TES5GlobalScope globalScope, out TES5BlockList blocks, out TES5EventCodeBlock onUpdate)
         {
             TES5StateCodeBlock activeState;
-            CreateActiveStateBlock(globalScope, multipleScriptsScope, out activeState, out onUpdate);
+            CreateActiveStateBlock(globalScope, out activeState, out onUpdate);
             TES5StateCodeBlock inactiveState=CreateInactiveStateBlock();
             TES5EventCodeBlock onCellAttach = CreateEventCodeBlock("OnCellAttach");
-            onCellAttach.CodeScope.AddChunk(objectCallFactory.CreateGotoState("ActiveState", globalScope, multipleScriptsScope));
+            onCellAttach.CodeScope.AddChunk(objectCallFactory.CreateGotoState("ActiveState", globalScope));
             TES5EventCodeBlock onCellDetach = CreateEventCodeBlock("OnCellDetach");
-            onCellDetach.CodeScope.AddChunk(objectCallFactory.CreateGotoState("InactiveState", globalScope, multipleScriptsScope));
+            onCellDetach.CodeScope.AddChunk(objectCallFactory.CreateGotoState("InactiveState", globalScope));
             blocks = new TES5BlockList() { activeState, inactiveState, onCellAttach, onCellDetach };
         }
     }

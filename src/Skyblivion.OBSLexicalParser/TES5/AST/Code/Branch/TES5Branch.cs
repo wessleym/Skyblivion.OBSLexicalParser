@@ -8,9 +8,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
     class TES5Branch : ITES5ValueCodeChunk//WTM:  Note:  This class needs ITES5ValueCodeChunk instead of just ITES5CodeChunk for SetForceSteakFactory.
     {
         public TES5SubBranch MainBranch { get; private set; }
-        public TES5SubBranchList ElseIfBranches { get; private set; }
-        public TES5ElseSubBranch ElseBranch { get; private set; }
-        public TES5Branch(TES5SubBranch mainBranch, TES5SubBranchList elseifBranches = null, TES5ElseSubBranch elseBranch = null)
+        public TES5SubBranchList? ElseIfBranches { get; private set; }
+        public TES5ElseSubBranch? ElseBranch { get; private set; }
+        public TES5Branch(TES5SubBranch mainBranch, TES5SubBranchList? elseifBranches = null, TES5ElseSubBranch? elseBranch = null)
         {
             this.MainBranch = mainBranch;
             this.ElseIfBranches = elseifBranches;

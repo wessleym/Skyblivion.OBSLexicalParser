@@ -193,7 +193,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
         {
             //WTM:  Change:  In tif__0101efc0 and other TGExpelledScripts, PayFine gets misunderstood as a function call instead of a variable.
             str = str.Replace("TGExpelled.PayFine", "TGExpelled.PayFineTemp");
-            //WTM:  Change:  In tgcastout, the below replacement must be made to accomidate for the above change.
+            //WTM:  Change:  In tgcastout, the below replacement must be made to accomodate for the above change.
             if (str.StartsWith("ScriptName TGCastOut"))
             {
                 str = str.Replace("Float PayFine", "Float PayFineTemp");

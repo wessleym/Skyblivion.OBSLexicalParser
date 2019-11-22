@@ -12,7 +12,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
     class KernelSet
     {
         protected int NextNumber = 0;
-        protected Node Root = null;
+        protected Node? Root = null;
         /*
         * Inserts a new node in the BST and returns
         * the number of the new state if no such state

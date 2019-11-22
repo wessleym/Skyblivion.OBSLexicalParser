@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
     class TES4FunctionArguments : IEnumerable<ITES4StringValue>
     {
-        private List<ITES4StringValue> values = new List<ITES4StringValue>();
+        private readonly List<ITES4StringValue> values = new List<ITES4StringValue>();
 
         public IEnumerator<ITES4StringValue> GetEnumerator()
         {
@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             return toReturn;
         }
 
-        public ITES4StringValue GetOrNull(int i)
+        public ITES4StringValue? GetOrNull(int i)
         {
             try
             {

@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 calledOn//this.referenceFactory.createReferenceToSelf(globalScope)//WTM:  Change
             };
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, multipleScriptsScope, args);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, args);
         }
     }
 }

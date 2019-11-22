@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     abstract class TranspileCommandBase<T> : ITranspileCommand where T : ITES4CodeFilterable
     {
-        private ParsingServiceWithCache<T> parserService;
+        private readonly ParsingServiceWithCache<T> parserService;
         public TranspileCommandBase(ParsingServiceWithCache<T> parserService)
         {
             this.parserService = parserService;
@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory);
-            valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
+            valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
             TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService);
             TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, typeInferencer);
@@ -44,10 +44,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         protected static void GetFactories(MetadataLogService metadataLogService, bool loadESMAnalyzerLazily, out ESMAnalyzer analyzer, out TES5ReferenceFactory referenceFactory, out TES5ValueFactory valueFactory, out TES5FragmentFactory fragmentFactory)
         {
-            TES5ObjectCallFactory objectCallFactory;
             TES5ChainedCodeChunkFactory chainedCodeChunkFactory;
             TES5AdditionalBlockChangesPass additionalBlockChangesPass;
-            GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out objectCallFactory, out referenceFactory, out valueFactory, out chainedCodeChunkFactory, out additionalBlockChangesPass);
+            GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out _, out referenceFactory, out valueFactory, out chainedCodeChunkFactory, out additionalBlockChangesPass);
             fragmentFactory = new TES5FragmentFactory(chainedCodeChunkFactory, additionalBlockChangesPass);
         }
 
@@ -56,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             TES5ChainedCodeChunkFactory chainedCodeChunkFactory;
             TES5AdditionalBlockChangesPass additionalBlockChangesPass;
             GetFactories(metadataLogService, loadESMAnalyzerLazily, out analyzer, out objectCallFactory, out referenceFactory, out _, out chainedCodeChunkFactory, out additionalBlockChangesPass);
-            TES5InitialBlockCodeFactory initialBlockCodeFactory = new TES5InitialBlockCodeFactory(referenceFactory, objectCallFactory);
+            TES5InitialBlockCodeFactory initialBlockCodeFactory = new TES5InitialBlockCodeFactory(objectCallFactory);
             blockFactory = new TES5BlockFactory(chainedCodeChunkFactory, additionalBlockChangesPass, initialBlockCodeFactory, objectCallFactory);
         }
     }

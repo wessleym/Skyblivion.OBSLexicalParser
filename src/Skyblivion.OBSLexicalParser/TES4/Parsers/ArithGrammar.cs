@@ -6,18 +6,18 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
     class ArithGrammar : Grammar
     {
         [Obsolete("For Testing")]
-        public void token(string val)
+        public void Token(string val)
         {
         }
 
         [Obsolete("For Testing")]
-        public void createSampleLexer()
+        public void CreateSampleLexer()
         {
-            this.token("0");
-            this.token("1");
+            this.Token("0");
+            this.Token("1");
         }
 
-        public void createSampleParser()
+        public void CreateSampleParser()
         {
             __invoke("Digit").Is("0").Is("1");
             __invoke("Number").Is("Digit").Is("Number", "Digit");

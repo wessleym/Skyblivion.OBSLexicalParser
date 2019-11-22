@@ -16,8 +16,8 @@ namespace Dissect.Lexer
     {
         protected readonly Dictionary<string, LexerState> States = new Dictionary<string, LexerState>();
         protected readonly Stack<string> StateStack = new Stack<string>();
-        protected string StateBeingBuilt = null;
-        protected string TypeBeingBuilt = null;
+        protected string? StateBeingBuilt = null;
+        protected string? TypeBeingBuilt = null;
         /*
         * Signifies that no action should be taken on encountering a token.
         */
@@ -39,7 +39,7 @@ namespace Dissect.Lexer
         private void AddRecognizer(string type, IRecognizer recognizer)
         {
             CheckLexerState();
-            LexerState state = this.States[this.StateBeingBuilt];
+            LexerState state = this.States[this.StateBeingBuilt!];
             state.Recognizers.Add(type, recognizer);
             state.Actions.Add(type, NO_ACTION);
             this.TypeBeingBuilt = type;
@@ -50,7 +50,7 @@ namespace Dissect.Lexer
         * it assumes that the token type and recognized value are
         * identical.
         */
-        public StatefulLexer Token(string type, string value = null, bool ignoreCase = false)
+        public StatefulLexer Token(string type, string? value = null, bool ignoreCase = false)
         {
             if (value == null) { value = type; }
             AddRecognizer(type, new SimpleRecognizer(value, ignoreCase));
@@ -91,7 +91,7 @@ namespace Dissect.Lexer
         public StatefulLexer Skip(params string[] args)
         {
             CheckLexerState();
-            LexerState state = this.States[this.StateBeingBuilt];
+            LexerState state = this.States[this.StateBeingBuilt!];
             state.SkipTokens = args;
             return this;
         }
@@ -145,21 +145,21 @@ namespace Dissect.Lexer
             return state.SkipTokens.Contains(token.Type);
         }
 
-        protected override IToken ExtractToken(string str)
+        protected override IToken? ExtractToken(string str)
         {
             if (!this.StateStack.Any())
             {
                 throw new InvalidOperationException("You must set a starting state before lexing.");
             }
 
-            string value = null;
-            string type = null;
-            object action = null;
+            string? value = null;
+            string? type = null;
+            object? action = null;
             var state = this.States[this.StateStack.Peek()];
             foreach (var kvp in state.Recognizers)
             {
                 IRecognizer recognizer = kvp.Value;
-                string v;
+                string? v;
                 if (recognizer.Match(str, out v))
                 {
                     if (value == null || Util.Util.StringLength(v) > Util.Util.StringLength(value))
@@ -173,17 +173,20 @@ namespace Dissect.Lexer
 
             if (type != null)
             {
-                string actionString = action as string;
-                if (actionString!=null)
-                { // enter new state
-                    this.StateStack.Push(actionString);
-                }
-                else if((int)action == POP_STATE)
+                if (action != null)
                 {
-                    this.StateStack.Pop();
+                    string? actionString = action as string;
+                    if (actionString != null)
+                    { // enter new state
+                        this.StateStack.Push(actionString);
+                    }
+                    else if ((int)action == POP_STATE)
+                    {
+                        this.StateStack.Pop();
+                    }
                 }
 
-                return new CommonToken(type, value, this.Line);
+                return new CommonToken(type, value!, this.Line);
             }
 
             return null;

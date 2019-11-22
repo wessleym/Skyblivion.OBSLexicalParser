@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public string Name => playerName;
 
-        public ITES5VariableOrProperty ReferencesTo => null;
+        public ITES5VariableOrProperty? ReferencesTo => null;
 
         public ITES5Type TES5Type => TES5BasicType.T_ACTOR;
 

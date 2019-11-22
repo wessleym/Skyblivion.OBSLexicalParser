@@ -1,4 +1,5 @@
 using Dissect.Extensions.IDictionaryExtensions;
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
@@ -15,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
      */
     class StageMap
     {
-        private OrderableDictionary<int, List<int>> stageMap =  new OrderableDictionary<int, List<int>>();
+        private readonly OrderableDictionary<int, List<int>> stageMap =  new OrderableDictionary<int, List<int>>();
         public Dictionary<int, List<int>> MappedTargetsIndex { get; private set; } = new Dictionary<int, List<int>>();
         public StageMap(IDictionary<int, List<int>> stageMapUnordered)
         {
@@ -46,6 +47,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                     }
                 }
 
+                if (length == null) { throw new NullableException(nameof(length)); }
                 int nextFreeIndex = length.Value; //Next free index equals length, as per all 0-N arrays
                 resultStageMap = new OrderableDictionary<int, List<int>>(stageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary
                 resultStageMap.OrderBy(s => s.Key);

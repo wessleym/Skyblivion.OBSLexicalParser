@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Dissect.Lexer.Recognizer
 {
@@ -29,7 +30,7 @@ namespace Dissect.Lexer.Recognizer
                 haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public bool Match(string haystack, out string result)
+        public bool Match(string haystack, [NotNullWhen(true)] out string? result)
         {
             if (NeedleStartsWith(haystack))
             {

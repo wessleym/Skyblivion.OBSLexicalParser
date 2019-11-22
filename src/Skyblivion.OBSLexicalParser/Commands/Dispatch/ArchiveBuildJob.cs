@@ -16,6 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 
         public void Run()
         {
+#nullable disable
             Build build = null;//WTM:  Change:  BuildTargetFactory.get takes two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {

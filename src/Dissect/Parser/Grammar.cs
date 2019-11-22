@@ -24,7 +24,7 @@ namespace Dissect.Parser
         /*
         * Returns the set of rules of this grammar.
         */
-        public List<Rule> Rules { get; protected set; } = new List<Rule> { null };//Leave the first rule open for the eventual call to start(string name).
+        public List<Rule?> Rules { get; protected set; } = new List<Rule?> { null };//Leave the first rule open for the eventual call to start(string name).
         /*
         * Returns rules grouped by nonterminal name.
         */
@@ -34,10 +34,10 @@ namespace Dissect.Parser
         * Returns the conflict resolution mode for this grammar.
         */
         public int ConflictsMode { get; protected set; } = 9; // SHIFT | OPERATORS
-        protected string currentNonterminal;
-        protected Rule currentRule;
+        protected string? currentNonterminal;
+        protected Rule? currentRule;
         protected Dictionary<string, Dictionary<string, int>> operators = new Dictionary<string, Dictionary<string, int>>();
-        protected string[] currentOperators;
+        protected string[]? currentOperators;
         /*
         * Signifies that the parser should not resolve any
          * grammar conflicts.
@@ -122,34 +122,40 @@ namespace Dissect.Parser
             return this;
         }
 
-        public Grammar Call<TIn1, TOut>(Func<TIn1, TOut> callback)
+        public Grammar Call<TIn1, TOut>(Func<TIn1, TOut> callback) where TOut : notnull
         {
             return Call((args) => callback((TIn1)args[0]));
         }
 
-        public Grammar Call<TIn1, TIn2, TOut>(Func<TIn1, TIn2, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TOut>(Func<TIn1, TIn2, TOut> callback) where TOut : notnull
         {
             return Call((args) => callback((TIn1)args[0], (TIn2)args[1]));
         }
 
-        public Grammar Call<TIn1, TIn2, TIn3, TOut>(Func<TIn1, TIn2, TIn3, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TOut>(Func<TIn1, TIn2, TIn3, TOut> callback) where TOut : notnull
         {
             return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2]));
         }
 
-        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TOut> callback) where TOut : notnull
         {
             return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3]));
         }
 
-        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TOut> callback)
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TOut> callback) where TOut : notnull
         {
             return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4]));
         }
 
-        public Rule GetRule(int number)
+        public Rule? GetRuleNullable(int number)
         {
             return this.Rules[number];
+        }
+        public Rule GetRule(int number)
+        {
+            Rule? rule = GetRuleNullable(number);
+            if (rule == null) { throw new InvalidOperationException("Rule at " + nameof(number) + " " + number + " was null."); }
+            return rule;
         }
 
         //DissectChange:
@@ -176,7 +182,7 @@ namespace Dissect.Parser
         {
             get
             {
-                Rule firstRule = Rules.FirstOrDefault();
+                Rule? firstRule = Rules.FirstOrDefault();
                 if (firstRule == null)
                 {
                     throw new InvalidOperationException("No start rule specified.");

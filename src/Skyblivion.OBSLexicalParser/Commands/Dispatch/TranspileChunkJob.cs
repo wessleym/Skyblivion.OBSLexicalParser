@@ -81,21 +81,23 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
                         string outputPath = buildTarget.GetTranspileToPath(scriptName);
-                        TES5Target convertedScript;
+                        TES5Target? convertedScript = null;
                         try
                         {
                             convertedScript = buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
                         }
-                        catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
+                        catch (EOFOnlyException) { }//Ignore files that are only whitespace or comments.
 #if !DEBUG || LOG_EXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {
                             errorLog.Write(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);
-                            continue;
                         }
 #endif
-                        this.buildTracker.RegisterBuiltScript(buildTarget, convertedScript);
-                        //convertedScripts.Add(buildScript, convertedScript);
+                        if (convertedScript != null)
+                        {
+                            this.buildTracker.RegisterBuiltScript(buildTarget, convertedScript);
+                            //convertedScripts.Add(buildScript, convertedScript);
+                        }
                         progressWriter.IncrementAndWrite();
                     }
                 }

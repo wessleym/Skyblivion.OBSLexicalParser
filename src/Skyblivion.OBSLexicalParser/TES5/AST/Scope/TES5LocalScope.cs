@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.Context;
 using System.Collections.Generic;
 using System.Linq;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
@@ -16,27 +17,33 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     class TES5LocalScope : ITES5Outputtable
     {
         public TES5FunctionScope FunctionScope { get; private set; }
-        public TES5LocalScope ParentScope { get; set; }
-        private List<TES5LocalVariable> LocalVariables = new List<TES5LocalVariable>();
+        public TES5LocalScope? ParentScope { get; set; }
+        private readonly List<TES5LocalVariable> localVariables = new List<TES5LocalVariable>();
         /*
         * TES5LocalScope constructor.
         */
-        public TES5LocalScope(TES5FunctionScope functionScope, TES5LocalScope parentScope = null)
+        public TES5LocalScope(TES5FunctionScope functionScope, TES5LocalScope? parentScope = null)
         {
             this.FunctionScope = functionScope;
             this.ParentScope = parentScope;
         }
 
-        public IEnumerable<string> Output => LocalVariables.SelectMany(v => v.Output);
+        public IEnumerable<string> Output => localVariables.SelectMany(v => v.Output);
 
         public void AddVariable(TES5LocalVariable localVariable)
         {
-            this.LocalVariables.Add(localVariable);
+            this.localVariables.Add(localVariable);
         }
 
-        public ITES5VariableOrProperty GetVariable(string name)
+        public ITES5VariableOrProperty? TryGetVariable(string name)
         {
             return this.GetAllVariables().Where(v => v.Name == name).FirstOrDefault();
+        }
+        public ITES5VariableOrProperty GetVariable(string name)
+        {
+            ITES5VariableOrProperty? variable = TryGetVariable(name);
+            if (variable != null) { return variable; }
+            throw new InvalidOperationException(nameof(variable) + " was null when " + nameof(name) + " was " + name + ".");
         }
 
         /**
@@ -46,10 +53,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
          */
         private IEnumerable<ITES5VariableOrProperty> GetAllVariables()
         {
-            TES5LocalScope scope = this;
+            TES5LocalScope? scope = this;
             do
             {
-                foreach (TES5LocalVariable variable in scope.LocalVariables)
+                foreach (TES5LocalVariable variable in scope.localVariables)
                 {
                     yield return variable;
                 }
@@ -62,6 +69,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             }
         }
 
+        public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        {
+            return this.FunctionScope.TryGetVariableWithMeaning(meaning);
+        }
         public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
             return this.FunctionScope.GetVariableWithMeaning(meaning);

@@ -78,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             else if (type == TES5BasicType.T_ACTIVEMAGICEFFECT)
             {
                 TES5SelfReference self = CreateReferenceToSelf(globalScope);
-                return this.objectCallFactory.CreateObjectCall(self, "GetTargetActor", multipleScriptsScope);
+                return this.objectCallFactory.CreateObjectCall(self, "GetTargetActor");
             }
             else if (type == TES5BasicType.T_QUEST)
             {
@@ -107,7 +107,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (rawReference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             {
                 //Changed to int implementation.
-                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt", multipleScriptsScope);
+                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt");
             }
             else
             {
@@ -154,13 +154,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 return propertyReference;
             }
 
-            ITES5VariableOrProperty property = localScope.GetVariable(referenceName);
+            ITES5VariableOrProperty? property = localScope.TryGetVariable(referenceName);
             if (property == null)
             {
                 property = globalScope.GetPropertyByName(referenceName); //todo rethink how to unify the prefix searching
                 if (property == null)
                 {
-                    TES5Property propertyToAddToGlobalScope = null;
+                    TES5Property? propertyToAddToGlobalScope = null;
                     ITES5Type specialConversion;
                     if (specialConversions.TryGetValue(referenceName, out specialConversion))
                     {

@@ -7,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
     class TES4Branch : ITES4CodeChunk
     {
         public TES4SubBranch MainBranch { get; private set; }
-        public TES4SubBranchList ElseifBranches { get; private set; }
-        public TES4ElseSubBranch ElseBranch { get; private set; }
-        public TES4Branch(TES4SubBranch mainBranch, TES4SubBranchList elseifBranches = null, TES4ElseSubBranch elseBranch = null)
+        public TES4SubBranchList? ElseifBranches { get; private set; }
+        public TES4ElseSubBranch? ElseBranch { get; private set; }
+        public TES4Branch(TES4SubBranch mainBranch, TES4SubBranchList? elseifBranches = null, TES4ElseSubBranch? elseBranch = null)
         {
             this.MainBranch = mainBranch;
             this.ElseifBranches = elseifBranches;

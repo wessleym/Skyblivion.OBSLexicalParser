@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             this.Arguments = arguments;
         }
 
-        public TES4ApiToken CalledOn => null;
+        public TES4ApiToken? CalledOn => null;
 
         public object Data => throw new NotImplementedException();
 

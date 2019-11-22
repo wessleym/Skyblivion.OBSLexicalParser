@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 newArgument= this.valueFactory.CreateValue(argument0, codeScope, globalScope, multipleScriptsScope);
             }
             fameArguments.Add(newArgument);
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", multipleScriptsScope, fameArguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", fameArguments);
             return newFunction;
         }
     }

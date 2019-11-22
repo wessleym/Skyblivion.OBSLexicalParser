@@ -12,14 +12,14 @@ namespace Skyblivion.OBSLexicalParser.DI
         */
         public static void FillFunctions(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer, TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
         {
-            valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("addachievement", new FillerFactory());
             valueFactory.AddFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("addscriptpackage", new AddScriptPackageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("addspell", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("addtopic", new PopCalledRenameFunctionFactory("Add", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("autosave", new AutosaveFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("cast", new CastFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("cast", new CastFactory(objectCallFactory, referenceFactory));
             valueFactory.AddFunctionFactory("clearownership", new ClearOwnershipFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("closecurrentobliviongate", new FillerFactory());
             valueFactory.AddFunctionFactory("closeobliviongate", new FillerFactory());
@@ -44,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("forcecloseobliviongate", new FillerFactory());
             valueFactory.AddFunctionFactory("forceflee", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("forceweather", new ForceWeatherFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("getactionref", new GetActionRefFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("getactionref", new GetActionRefFactory());
             valueFactory.AddFunctionFactory("getactorvalue", new GetActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getamountsoldstolen", new GetAmountSoldStolenFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getangle", new GetAngleFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -54,7 +54,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getbuttonpressed", new GetButtonPressedFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getclothingvalue", new GetClothingValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getcombattarget", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("getcontainer", new GetContainerFactory(objectCallFactory));
+            valueFactory.AddFunctionFactory("getcontainer", new GetContainerFactory());
             valueFactory.AddFunctionFactory("getcrimegold", new GetCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getcrimeknown", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("getcrime", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
@@ -75,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getgamesetting", new GetGameSettingFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getgold", new RenamedFunctionFactory("GetGoldAmount", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getheadingangle", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("getincell", new GetInCellFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("getincell", new GetInCellFactory(objectCallFactory, analyzer));
             valueFactory.AddFunctionFactory("getinfaction", new RenamedFunctionFactory("IsInFaction", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getinsamecell", new GetInSameCellFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getinworldspace", new GetInWorldspaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -87,7 +87,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getisplayerbirthsign", new NotSupportedFactory());
             valueFactory.AddFunctionFactory("getisrace", new GetIsRaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getisreference", new GetIsReferenceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("getissex", new GetIsSexFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("getissex", new GetIsSexFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getitemcount", new GetItemCountFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getknockedstate", new ReturnTrueFactory());
             valueFactory.AddFunctionFactory("getlevel", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
@@ -102,7 +102,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getpcfame", new GetPCFameFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getpcinfamy", new GetPCInfamyFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("getpcisrace", new GetPCIsRaceFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("getpcissex", new GetPCIsSexFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("getpcissex", new GetPCIsSexFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getpcmiscstat", new GetPCMiscStatFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getplayercontrolsdisabled", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("getplayerinseworld", new GetPlayerInSEWorldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -123,7 +123,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("gotojail", new GoToJailFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("hasmagiceffect", new HasMagicEffectFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("hasvampirefed", new ReturnFalseFactory());
-            valueFactory.AddFunctionFactory("isactionref", new IsActionRefFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("isactionref", new IsActionRefFactory(referenceFactory));
             valueFactory.AddFunctionFactory("isactorusingatorch", new RenamedFunctionFactory("IsTorchOut", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("isactor", new IsActorFactory());
             valueFactory.AddFunctionFactory("isanimplaying", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
@@ -133,7 +133,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("isincombat", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("isindangerouswater", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("isininterior", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("isowner", new IsOwnerFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("isowner", new IsOwnerFactory(objectCallFactory, referenceFactory, analyzer));
             valueFactory.AddFunctionFactory("ispcamurderer", new IsPCAMurdererFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("ispcsleeping", new IsPCSleepingFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("isplayerinjail", new IsPlayerInJailFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -147,11 +147,11 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("isweaponout", new RenamedFunctionFactory("IsWeaponDrawn", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("isxbox", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("kill", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("lock", new LockFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("lock", new LockFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("look", new RenamedFunctionFactory("SetLookAt", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("menumode", new MenuModeFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("messagebox", new MessageBoxFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("message", new MessageFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("message", new MessageFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("modactorvalue", new ModActorValueFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("modamountsoldstolen", new ModAmountSoldStolenFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("modcrimegold", new ModCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -187,8 +187,8 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("resetinterior", new PopCalledRenameFunctionFactory("Reset", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("resurrect", new ResurrectFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("rotate", new RotateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("sayto", new SayToFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("say", new SayFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("sayto", new SayToFactory(valueFactory, objectCallFactory));
+            valueFactory.AddFunctionFactory("say", new SayFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("sendtrespassalarm", new FillerFactory());
             valueFactory.AddFunctionFactory("setactoralpha", new SetActorAlphaFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("setactorfullname", new FillerFactory());
@@ -201,7 +201,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("setangle", new SetAngleFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
             valueFactory.AddFunctionFactory("setcellfullname", new SetCellFullNameFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
-            valueFactory.AddFunctionFactory("setcellownership", new SetCellOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));//WTM:  Change:  Added
+            valueFactory.AddFunctionFactory("setcellownership", new SetCellOwnershipFactory(objectCallFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("setclass", new FillerFactory());
             valueFactory.AddFunctionFactory("setcombatstyle", new FillerFactory());
             valueFactory.AddFunctionFactory("setcrimegold", new SetCrimeGoldFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -221,7 +221,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("setnoavoidance", new FillerFactory());
             valueFactory.AddFunctionFactory("setnorumors", new FillerFactory());
             valueFactory.AddFunctionFactory("setopenstate", new SetOpenStateFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
-            valueFactory.AddFunctionFactory("setownership", new SetOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory, analyzer));
+            valueFactory.AddFunctionFactory("setownership", new SetOwnershipFactory(objectCallFactory, objectCallArgumentsFactory, analyzer));
             valueFactory.AddFunctionFactory("setpackduration", new FillerFactory());
             valueFactory.AddFunctionFactory("setpcexpelled", new PopCalledRenameFunctionFactory("SetPlayerExpelled", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("setpcfactionattack", new SetPCFactionAttackFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
@@ -261,7 +261,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("trapupdate", new FillerFactory());
             valueFactory.AddFunctionFactory("triggerhitshader", new FillerFactory());
             valueFactory.AddFunctionFactory("unequipitem", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("unlock", new UnlockFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, analyzer, typeInferencer, metadataLogService));
+            valueFactory.AddFunctionFactory("unlock", new UnlockFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("wait", new FillerFactory());
             valueFactory.AddFunctionFactory("wakeuppc", new NotSupportedFactory());
             valueFactory.AddFunctionFactory("yield", new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory));

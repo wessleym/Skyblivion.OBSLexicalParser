@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES4.AST;
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -13,16 +12,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * Oblivion binary data analyzer.
         */
-        private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5FragmentFactory fragmentFactory;
-        private readonly TES5ValueFactory valueFactory;
-        private readonly TES5ReferenceFactory referenceFactory;
-        public TES4ToTES5ASTQFFragmentConverter(ESMAnalyzer esmAnalyzer, TES5FragmentFactory fragmentFactory, TES5ValueFactory valueFactory, TES5ReferenceFactory referenceFactory)
+        public TES4ToTES5ASTQFFragmentConverter(TES5FragmentFactory fragmentFactory)
         {
-            this.esmAnalyzer = esmAnalyzer;
             this.fragmentFactory = fragmentFactory;
-            this.valueFactory = valueFactory;
-            this.referenceFactory = referenceFactory;
         }
 
         /*

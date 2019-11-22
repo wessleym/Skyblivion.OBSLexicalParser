@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
     class ProgressWriter
     {
         private readonly string label;
-        private readonly int total;
+        private int total;
         private int current;
         private int percent;
         private readonly Stopwatch stopwatch;
@@ -20,20 +21,36 @@ namespace Skyblivion.OBSLexicalParser.Commands
             stopwatch = Stopwatch.StartNew();
         }
 
-        public void Write(string progress)
+        public void Write(string? progress)
         {
             Console.Write("\r" + label + (progress != null ? ":  " + progress : "..."));
         }
 
-        public void IncrementAndWrite()
+        public void ClearByPreviousProgress(string progress)
         {
-            current++;
+            Write(string.Join("", progress.Select(s => " ")));
+        }
+
+        private void WritePercent()
+        {
             int newPercent = (int)Math.Floor(((float)current / total) * 100);
             if (newPercent != percent)
             {
                 percent = newPercent;
                 Write(newPercent.ToString() + "%");
             }
+        }
+
+        public void IncrementAndWrite()
+        {
+            current++;
+            WritePercent();
+        }
+
+        public void ModifyTotalAndWrite(int totalAddend)
+        {
+            total += totalAddend;
+            WritePercent();
         }
 
         public void WriteLast()

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
         /*
         * Returns the thing this references to LOCALLY. REMOTE references are considered null.
         */
-        ITES5VariableOrProperty ReferencesTo { get; }
+        ITES5VariableOrProperty? ReferencesTo { get; }
         string Name { get; }
     }
 }

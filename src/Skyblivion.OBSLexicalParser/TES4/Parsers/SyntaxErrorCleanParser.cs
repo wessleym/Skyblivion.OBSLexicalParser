@@ -11,19 +11,19 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
     class SyntaxErrorCleanParser : Dissect.Parser.LALR1.Parser
     {
-        public SyntaxErrorCleanParser(Grammar grammar, ActionAndGoTo parseTable = null)
+        public SyntaxErrorCleanParser(Grammar grammar, ActionAndGoTo? parseTable = null)
             : base(grammar, parseTable)
         { }
 
         public object ParseWithFixLogic(ITokenStream stream)
         {
             //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails.
-            //The below check works around that.
+            //The below two lines works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
             if (firstTwoTokens.Length == 1 && firstTwoTokens[0].Type== EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
             try
             {
-                return base.Parse(stream);
+                return Parse(stream);
             }
             catch (UnexpectedTokenException ex) when (ex.Token.Value=="endif")
             {
@@ -34,14 +34,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 {
                     if (token.Type== "BranchStartToken")
                     {
-                        ++nesting;
+                        nesting++;
                         tokens.Add(token);
                     }
                     else
                     {
                         if (token.Type== "BranchEndToken")
                         {
-                            nesting = nesting - 1;
+                            nesting--;
                             if (nesting > -1)
                             {
                                 tokens.Add(token);
@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 }
 
                 ArrayTokenStream newTokenStream = new ArrayTokenStream(tokens);
-                object newAST = this.Parse(newTokenStream);
+                object newAST = Parse(newTokenStream);
                 return newAST;
             }
         }

@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         /*
         * Reference EDID
         */
-        string ReferenceEDID { get; }
+        string? ReferenceEDID { get; }
         /*
         * Marks this variable to track a remote script - to be able to exchange inferencing information between multiple
         * scripts
