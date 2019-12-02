@@ -8,10 +8,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetIsCreatureFactory : IFunctionFactory
     {
-        GetIsPlayableRaceFactory getIsPlayableRaceFactory;
+        private readonly GetIsPlayableRaceFactory getIsPlayableRaceFactory;
         public GetIsCreatureFactory(TES5ObjectCallFactory objectCallFactory)
         {
-            //WTM:  Note:  GetIsCreature is no supported in Skyrim:  https://www.creationkit.com/index.php?title=GetIsCreature
+            //WTM:  Note:  GetIsCreature is not supported in Skyrim:  https://www.creationkit.com/index.php?title=GetIsCreature
             //I'm going to use GetIsPlayableRace.
             getIsPlayableRaceFactory = new GetIsPlayableRaceFactory(objectCallFactory);
         }

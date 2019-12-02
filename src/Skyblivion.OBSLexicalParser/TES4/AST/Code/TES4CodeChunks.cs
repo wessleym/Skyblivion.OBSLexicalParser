@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
     class TES4CodeChunks : ITES4CodeFilterable, IEnumerable<ITES4CodeChunk>
     {
-        private List<ITES4CodeChunk> codeChunks = new List<ITES4CodeChunk>();
+        private readonly List<ITES4CodeChunk> codeChunks = new List<ITES4CodeChunk>();
         public void Add(ITES4CodeChunk chunk)
         {
             this.codeChunks.Add(chunk);

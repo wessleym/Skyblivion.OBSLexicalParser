@@ -1,6 +1,7 @@
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service;
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -18,9 +19,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
     class QFFragmentFactory
     {
         private readonly MappedTargetsLogService mappedTargetsLogService;
-        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService)
+        private readonly ObjectiveHandlingFactory objectiveHandlingFactory;
+        private readonly ESMAnalyzer esmAnalyzer;
+        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory, ESMAnalyzer esmAnalyzer)
         {
             this.mappedTargetsLogService = mappedTargetsLogService;
+            this.objectiveHandlingFactory = objectiveHandlingFactory;
+            this.esmAnalyzer = esmAnalyzer;
         }
 
         /*
@@ -36,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * This will give us an array of stages which don"t have script fragment, but will need it anyways
              * for objective handling.
              */
-            TES5ScriptHeader resultingScriptHeader = new TES5ScriptHeader(resultingFragmentName, TES5BasicType.T_QUEST, "", true);
+            TES5ScriptHeader resultingScriptHeader = new TES5ScriptHeader(resultingFragmentName, TES5BasicType.T_QUEST, "", true, esmAnalyzer);
             TES5BlockList resultingBlockList = new TES5BlockList();
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
             /*
@@ -146,7 +151,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
-                var objectiveCodeChunks = ObjectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
+                var objectiveCodeChunks = objectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
                 foreach (var newCodeChunk in objectiveCodeChunks)
                 {
                     subfragmentBlock.AddChunk(newCodeChunk);
@@ -162,7 +167,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
             foreach (int nonDoneStage in nonDoneStages)
             {
-                TES5FunctionCodeBlock fragment = ObjectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
+                TES5FunctionCodeBlock fragment = objectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
                 resultingBlockList.Add(fragment);
             }
 

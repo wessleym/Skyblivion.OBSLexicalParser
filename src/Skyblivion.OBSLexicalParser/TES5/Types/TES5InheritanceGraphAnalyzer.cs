@@ -10,8 +10,14 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
-    static class TES5InheritanceGraphAnalyzer
+    class TES5InheritanceGraphAnalyzer
     {
+        private readonly ESMAnalyzer esmAnalyzer;
+        public TES5InheritanceGraphAnalyzer(ESMAnalyzer esmAnalyzer)
+        {
+            this.esmAnalyzer = esmAnalyzer;
+        }
+
         private static readonly Dictionary<ITES5Type, ITES5Type> inheritanceCache = new Dictionary<ITES5Type, ITES5Type>();
         //WTM:  Note:  This includes some SKSE functions:  http://skse.silverlock.org/vanilla_commands.html
         private static readonly TES5InheritanceItemCollection inheritance = new TES5InheritanceItemCollection()
@@ -4674,23 +4680,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return TargetRootBaseClassNullable(type, baseClass, true)!;
         }
 
-        public static ITES5Type GetBaseClassWithCache(ITES5Type type)
+        public ITES5Type GetBaseClassWithCache(ITES5Type type)
         {
             return inheritanceCache.GetOrAdd(type, () =>
             {
                 string baseTypeName = TargetRootBaseClass(type, inheritanceAsItem);
-                return TES5TypeFactory.MemberByValue(baseTypeName);
+                return TES5TypeFactory.MemberByValue(baseTypeName, null, esmAnalyzer);
             });
         }
 
-        private static ITES5Type? GetBaseClassWithoutCache(ITES5Type type)
+        private ITES5Type? GetBaseClassWithoutCache(ITES5Type type)
         {
             string? baseTypeName = TargetRootBaseClassNullable(type, inheritanceAsItem);
             if (baseTypeName == null) { return null; }
-            return TES5TypeFactory.MemberByValue(baseTypeName);
+            return TES5TypeFactory.MemberByValue(baseTypeName, null, esmAnalyzer);
         }
 
-        public static IEnumerable<ITES5Type> GetSelfAndBaseClasses(ITES5Type type)
+        public IEnumerable<ITES5Type> GetSelfAndBaseClasses(ITES5Type type)
         {
             yield return type;
             ITES5Type? baseType = type;
@@ -4702,7 +4708,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         }
 
-        public static ITES5Type FindTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
+        public ITES5Type FindTypeByMethodParameter(ITES5Type calledOnType, string methodName, int parameterIndex)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType) && calledOnType.IsNativePapyrusType)
@@ -4724,7 +4730,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         throw new ConversionException("Cannot find argument index " + parameterIndex + " in method " + methodName + " in type " + calledOnType.Value, ex);
                     }
-                    return TES5TypeFactory.MemberByValue(argument);
+                    return TES5TypeFactory.MemberByValue(argument, null, esmAnalyzer);
                 }
             }
 
@@ -4740,7 +4746,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return FindTypeByMethodParameter(calledOnTypeBaseClass, methodName, parameterIndex);
         }
 
-        public static ITES5Type FindReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
+        public ITES5Type FindReturnTypeForObjectCall(ITES5Type calledOnType, string methodName)
         {
             TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType.Value, out callReturnsOfCalledOnType))
@@ -4762,14 +4768,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 if (method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                 {
-                    return TES5TypeFactory.MemberByValue(method.ReturnType);
+                    return TES5TypeFactory.MemberByValue(method.ReturnType, null, esmAnalyzer);
                 }
             }
 
             return FindReturnTypeForObjectCall(GetBaseClassWithCache(calledOnType), methodName);
         }
         
-        public static ITES5Type FindTypeByMethod(TES5ObjectCall objectCall)
+        public ITES5Type FindTypeByMethod(TES5ObjectCall objectCall)
         {
             string methodName = objectCall.FunctionName;
             List<ITES5Type> possibleMatches = new List<ITES5Type>();
@@ -4781,7 +4787,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 {
                     if (method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
                     {
-                        possibleMatches.Add(TES5TypeFactory.MemberByValue(type));
+                        possibleMatches.Add(TES5TypeFactory.MemberByValue(type, null, esmAnalyzer));
                     }
                 }
             }
@@ -4826,8 +4832,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     {
                         if (calledOn.ReferenceEDID == null) { throw new InvalidOperationException(nameof(calledOn.ReferenceEDID) + " was null."); }
                         //We analyze the property name and check inside the ESM analyzer.
-                        ESMAnalyzer analyzer = ESMAnalyzer.GetInstance();
-                        ITES5Type formType = analyzer.GetFormTypeByEDID(calledOn.ReferenceEDID);
+                        ITES5Type formType = esmAnalyzer.GetFormTypeByEDID(calledOn.ReferenceEDID);
                         //WTM:  Change:  I added matching on the type and on its base classes this so that functions like SetFactionOwner will work.
                         //SetFactionOwner gives two extendingMatches:  Cell and ObjectReference (since both classes have the SetFactionOwner function).
                         //But the EDID "WeynonHorsePlayer" results in a type of Actor.  In this case, the base class of Actor (ObjectReference)

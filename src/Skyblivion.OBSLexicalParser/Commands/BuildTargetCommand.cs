@@ -1,7 +1,9 @@
-using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,19 +44,23 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false);
+                ESMAnalyzer esmAnalyzer;
+                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
+                TES5TypeInferencer typeInferencer;
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out inheritanceGraphAnalyzer, out typeInferencer);
                 if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
-                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber);
+                TES5StaticGlobalScopesFactory staticGlobalScopesFactory = new TES5StaticGlobalScopesFactory(esmAnalyzer);
+                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber, esmAnalyzer, staticGlobalScopesFactory, inheritanceGraphAnalyzer, typeInferencer);
                 WriteTranspiled(buildTargets, buildTracker);
-                ESMAnalyzer.Deallocate();//Hack - force ESM analyzer deallocation.
+                esmAnalyzer.Deallocate();//Hack - force ESM analyzer deallocation.
                 PrepareWorkspace(buildTargets);
                 Compile(build, buildTargets);
             }
             Console.WriteLine("Build Complete");
         }
 
-        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber)
+        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5StaticGlobalScopesFactory staticGlobalScopesFactory, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)
         {
             var buildPlan = buildTargets.GetBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
@@ -63,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {
-                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value);
+                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value, esmAnalyzer, staticGlobalScopesFactory, inheritanceGraphAnalyzer, typeInferencer);
                     task.RunTask(errorLog, progressWriter);
                 }
             }

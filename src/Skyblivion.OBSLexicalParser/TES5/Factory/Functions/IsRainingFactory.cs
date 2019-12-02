@@ -1,40 +1,26 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class IsRainingFactory : IFunctionFactory
     {
-        private readonly TES5ReferenceFactory referenceFactory;
-        private readonly ESMAnalyzer analyzer;
-        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
-        private readonly TES5TypeInferencer typeInferencer;
-        private readonly MetadataLogService metadataLogService;
-        private readonly TES5ValueFactory valueFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public IsRainingFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public IsRainingFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
         {
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.valueFactory = valueFactory;
-            this.referenceFactory = referenceFactory;
-            this.analyzer = analyzer;
-            this.objectPropertyFactory = objectPropertyFactory;
-            this.typeInferencer = typeInferencer;
-            this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(TES5StaticReference.Weather, "GetCurrentWeather"), "GetClassification"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(2));
+            return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Weather, "GetCurrentWeather"), "GetClassification"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(2));
         }
     }
 }

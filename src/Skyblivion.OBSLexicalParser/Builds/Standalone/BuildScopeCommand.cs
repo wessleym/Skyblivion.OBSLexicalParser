@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
@@ -14,16 +15,16 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
     {
         private readonly ESMAnalyzer esmAnalyzer;
         private readonly StandaloneParsingService standaloneParsingService;
-        public BuildScopeCommand(StandaloneParsingService standaloneParsing, bool loadESMAnalyzerLazily)
+        public BuildScopeCommand(StandaloneParsingService standaloneParsing, ESMAnalyzer esmAnalyzer)
         {
             this.standaloneParsingService = standaloneParsing;
-            this.esmAnalyzer = new ESMAnalyzer(loadESMAnalyzerLazily, DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = esmAnalyzer;
         }
         
         private TES5ScriptHeader CreateHeader(TES4Script script)
         {
             string edid = script.ScriptHeader.ScriptName;
-            return new TES5ScriptHeader(edid, this.esmAnalyzer.GetScriptType(edid), TES5TypeFactory.TES4Prefix);
+            return new TES5ScriptHeader(edid, this.esmAnalyzer.GetScriptType(edid), TES5TypeFactory.TES4Prefix, false, esmAnalyzer);
         }
 
         public TES5GlobalScope Build(string scriptPath, TES5GlobalVariables globalVariables)

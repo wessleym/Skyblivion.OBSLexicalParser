@@ -22,12 +22,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private readonly TES5AdditionalBlockChangesPass changesPass;
         private readonly TES5InitialBlockCodeFactory initialBlockCodeFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        public TES5BlockFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory, TES5AdditionalBlockChangesPass changesPass, TES5InitialBlockCodeFactory initialBlockCodeFactory, TES5ObjectCallFactory objectCallFactory)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public TES5BlockFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory, TES5AdditionalBlockChangesPass changesPass, TES5InitialBlockCodeFactory initialBlockCodeFactory, TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
         {
             this.codeChunkFactory = chainedCodeChunkFactory;
             this.changesPass = changesPass;
             this.initialBlockCodeFactory = initialBlockCodeFactory;
             this.objectCallFactory = objectCallFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         private static string MapBlockType(string blockType)
@@ -264,7 +266,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 this.ConvertTES4CodeChunksToTES5EventCodeBlock(chunks, newBlock, globalScope, multipleScriptsScope);
                 if (blockType.Equals("MenuMode", StringComparison.OrdinalIgnoreCase))
                 {
-                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReference.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true)), newBlock.CodeScope.LocalScope);
+                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true)), newBlock.CodeScope.LocalScope);
                     foreach (var chunk in newBlock.CodeScope.CodeChunks)
                     {
                         menuModeBranch.MainBranch.CodeScope.CodeChunks.Add(chunk);

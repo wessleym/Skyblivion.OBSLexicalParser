@@ -2,7 +2,6 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
@@ -11,11 +10,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5FragmentFactory
     {
         private readonly TES5ChainedCodeChunkFactory codeChunkFactory;
-        private readonly TES5AdditionalBlockChangesPass changesPass;
-        public TES5FragmentFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory, TES5AdditionalBlockChangesPass changesPass)
+        public TES5FragmentFactory(TES5ChainedCodeChunkFactory chainedCodeChunkFactory)
         {
             this.codeChunkFactory = chainedCodeChunkFactory;
-            this.changesPass = changesPass;
         }
 
         public TES5FunctionCodeBlock CreateFragment(TES5FragmentType fragmentType, string fragmentName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES4CodeChunks chunks)

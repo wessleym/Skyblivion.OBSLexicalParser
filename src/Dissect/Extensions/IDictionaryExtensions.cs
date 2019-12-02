@@ -17,8 +17,7 @@ namespace Dissect.Extensions.IDictionaryExtensions
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> addValueFactory)
         {
-            bool containedKeyUnused;
-            return dictionary.GetOrAdd(key, addValueFactory, out containedKeyUnused);
+            return dictionary.GetOrAdd(key, addValueFactory, out _);
         }
 
         public static TValue GetWithFallback<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> fallbackValue)

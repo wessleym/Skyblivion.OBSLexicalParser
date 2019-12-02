@@ -14,12 +14,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ReferenceFactory referenceFactory;
-        private readonly ESMAnalyzer analyzer;
-        public IsOwnerFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer analyzer)
+        private readonly ESMAnalyzer esmAnalyzer;
+        public IsOwnerFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer esmAnalyzer)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
-            this.analyzer = analyzer;
+            this.esmAnalyzer = esmAnalyzer;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             string dataString = functionArguments[0].StringValue;
             ITES5Referencer targetReference = this.referenceFactory.CreateReadReference(dataString, globalScope, multipleScriptsScope, localScope);
-            ITES5Type dataType = this.analyzer.GetFormTypeByEDID(dataString);
+            ITES5Type dataType = this.esmAnalyzer.GetFormTypeByEDID(dataString);
             TES5ObjectCall owner;
             ITES5Referencer baseReference;
             if (dataType == TES5BasicType.T_FACTION)

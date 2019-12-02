@@ -18,12 +18,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 {
     class TES5TypeInferencer
     {
+        private readonly ESMAnalyzer esmAnalyzer;
+        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
         private readonly string otherScriptsFolder;
         private readonly string[] otherScriptsLower;
-        private readonly ESMAnalyzer esmAnalyzer;
-        public TES5TypeInferencer(ESMAnalyzer esmAnalyzer, string otherScriptsFolder)
+        public TES5TypeInferencer(ESMAnalyzer esmAnalyzer, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, string otherScriptsFolder)
         {
             this.esmAnalyzer = esmAnalyzer;
+            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
             this.otherScriptsFolder = otherScriptsFolder;
             otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
         }
@@ -35,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
         {
             this.InferenceTypeOfCalledObject(objectCall);
-            if (objectCall.Arguments!= null)
+            if (objectCall.Arguments != null)
             {
                 this.InferenceTypeOfMethodArguments(objectCall);
             }
@@ -54,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 /*
                  * Get the argument type according to TES5Inheritance graph.
                  */
-                ITES5Type argumentTargetType = TES5InheritanceGraphAnalyzer.FindTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentIndex);
+                ITES5Type argumentTargetType = inheritanceGraphAnalyzer.FindTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentIndex);
                 if (argument.TES5Type != argumentTargetType)
                 {
                     /*
@@ -109,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 throw new ConversionException("Cannot inference a null type");
             }
             //this is not "exactly" nice solution, but its enough. For now.
-            ITES5Type inferenceType = TES5InheritanceGraphAnalyzer.FindTypeByMethod(objectCall);
+            ITES5Type inferenceType = inheritanceGraphAnalyzer.FindTypeByMethod(objectCall);
             if (inferencableType == inferenceType)
             {
                 return; //We already have the good type.
@@ -168,7 +170,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 }
                 namesToTry = namesToTry.Distinct().ToList();
                 string firstNameMatch = namesToTry.Where(n => this.otherScriptsLower.Contains(n.ToLower())).FirstOrDefault();
-                if (firstNameMatch != null) { return TES5TypeFactory.MemberByValue(firstNameMatch); }
+                if (firstNameMatch != null) { return TES5TypeFactory.MemberByValue(firstNameMatch, null, esmAnalyzer); }
             }
 
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type

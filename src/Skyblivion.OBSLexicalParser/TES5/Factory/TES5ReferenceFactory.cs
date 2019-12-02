@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -20,7 +21,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         public const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
         //Those are used to hook in the internal Skyblivion systems.
-        private static readonly Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
+        private readonly Dictionary<string, ITES5Type> specialConversions;
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
+        public TES5ReferenceFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer esmAnalyzer)
+        {
+            this.objectCallFactory = objectCallFactory;
+            this.objectPropertyFactory = objectPropertyFactory;
+            specialConversions = new Dictionary<string, ITES5Type>()
             {
                 { TES4Attr + "Strength",  TES5BasicType.T_GLOBALVARIABLE },
                 { TES4Attr + "Intelligence", TES5BasicType.T_GLOBALVARIABLE },
@@ -30,18 +38,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
                 { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
                 { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
-                { tContainerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST) },//Data container
-                { tTimerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST) },//Timer functions
+                { tContainerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST, esmAnalyzer) },//Data container
+                { tTimerName, TES5TypeFactory.MemberByValue(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST, esmAnalyzer) },//Timer functions
                 { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
                 { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
                 { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT }//set by script instead of original messageBox
             };
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
-        public TES5ReferenceFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectPropertyFactory objectPropertyFactory)
-        {
-            this.objectCallFactory = objectCallFactory;
-            this.objectPropertyFactory = objectPropertyFactory;
         }
 
         public static TES5SelfReference CreateReferenceToSelf(TES5GlobalScope globalScope)

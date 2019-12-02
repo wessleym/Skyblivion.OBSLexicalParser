@@ -305,7 +305,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         }
                     }
                 }
-                else if (tes5set.Item1.TES5Type.OriginalName == TES5TypeFactory.Void().OriginalName)
+                else if (tes5set.Item1.TES5Type.OriginalName == TES5VoidType.OriginalNameConst)
                 {
 #if PHP_COMPAT
                     TES5IntegerOrFloat tes5SetItem2Number = tes5set.Item2 as TES5IntegerOrFloat;
@@ -365,7 +365,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Value CreateValue(ITES4Value value, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES4Primitive? primitive = value as ITES4Primitive;
-            if (primitive != null) { return TES5PrimitiveValueFactory.createValue(primitive); }
+            if (primitive != null) { return TES5PrimitiveValueFactory.CreateValue(primitive); }
             ITES4Reference? reference = value as ITES4Reference;
             if (reference != null) { return this.referenceFactory.CreateReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope); }
             ITES4Callable? callable = value as ITES4Callable;

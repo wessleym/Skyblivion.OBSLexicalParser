@@ -17,7 +17,7 @@ using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
-    public class BuildInteroperableCompilationGraphs : LPCommand
+    class BuildInteroperableCompilationGraphs : LPCommand
     {
         public const string FriendlyNameConst = "Build Interoperable Compilation Graphs";
         public BuildInteroperableCompilationGraphs()
@@ -44,13 +44,13 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false);
+                TES5TypeInferencer typeInferencer;
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out _, out _, out typeInferencer);
                 //if (!buildTargets.CanBuildAndWarnIfNot()) { return; }//WTM:  Change:  This doesn't matter for building graphs.
                 Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
                 Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
                 BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
                 ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
-                TES5TypeInferencer inferencer = new TES5TypeInferencer(new ESMAnalyzer(false), BuildTarget.StandaloneSourcePath);
                 using (StreamWriter errorLog = new StreamWriter(TES5ScriptDependencyGraph.ErrorLogPath, false))
                 {
                     using (StreamWriter debugLog = new StreamWriter(TES5ScriptDependencyGraph.DebugLogPath, false))
@@ -91,7 +91,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string propertyKeyName = propertyName.ToLower();
                                     bool containedKey;
                                     TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
-                                    ITES5Type inferencingType = inferencer.ResolveInferenceTypeByReferenceEdid(preparedProperty);
+                                    ITES5Type inferencingType = typeInferencer.ResolveInferenceTypeByReferenceEdid(preparedProperty);
                                     if (!containedKey)
                                     {
                                         preparedPropertiesTypes.Add(propertyKeyName, inferencingType);

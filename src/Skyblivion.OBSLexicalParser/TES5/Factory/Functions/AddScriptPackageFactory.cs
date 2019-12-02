@@ -13,21 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class AddScriptPackageFactory : IFunctionFactory
     {
         private readonly TES5ReferenceFactory referenceFactory;
-        private readonly ESMAnalyzer analyzer;
-        private readonly TES5ObjectPropertyFactory objectPropertyFactory;
-        private readonly TES5TypeInferencer typeInferencer;
         private readonly MetadataLogService metadataLogService;
-        private readonly TES5ValueFactory valueFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public AddScriptPackageFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer analyzer,TES5TypeInferencer typeInferencer, MetadataLogService metadataLogService)
+        public AddScriptPackageFactory(TES5ReferenceFactory referenceFactory, MetadataLogService metadataLogService, TES5ObjectCallFactory objectCallFactory)
         {
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.valueFactory = valueFactory;
             this.referenceFactory = referenceFactory;
-            this.analyzer = analyzer;
-            this.objectPropertyFactory = objectPropertyFactory;
-            this.typeInferencer = typeInferencer;
             this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
         }

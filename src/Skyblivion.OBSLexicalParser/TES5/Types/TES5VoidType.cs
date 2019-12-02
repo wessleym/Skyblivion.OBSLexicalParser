@@ -15,6 +15,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public bool IsNativePapyrusType => false;
 
-        public string OriginalName => "void";
+        public string OriginalName => OriginalNameConst;
+
+        public const string OriginalNameConst = "void";//WTM:  Added
     }
 }

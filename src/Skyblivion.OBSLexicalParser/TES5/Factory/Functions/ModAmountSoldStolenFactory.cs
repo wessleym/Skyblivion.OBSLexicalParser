@@ -10,16 +10,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public ModAmountSoldStolenFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public ModAmountSoldStolenFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5StaticReferenceFactory staticReferenceFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5ObjectCallArguments arguments = objectCallArgumentsFactory.CreateArgumentList(function.Arguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, "ModAmountSoldStolen", arguments);
+            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, "ModAmountSoldStolen", arguments);
         }
     }
 }

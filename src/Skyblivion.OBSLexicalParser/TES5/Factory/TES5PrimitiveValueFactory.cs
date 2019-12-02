@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     static class TES5PrimitiveValueFactory
     {
-        public static ITES5Primitive createValue(ITES4Primitive value)
+        public static ITES5Primitive CreateValue(ITES4Primitive value)
         {
             TES4Type valueType = value.Type;
             object valueData = value.Data;
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             throw new ConversionException("Unknown value type to be factored from " + value.GetType().FullName);
         }
 
-        public static TES5ConcatenatedValue createConcatenatedValue(IList<ITES5Value> concatenateValues)
+        public static TES5ConcatenatedValue CreateConcatenatedValue(IList<ITES5Value> concatenateValues)
         {
             return new TES5ConcatenatedValue(concatenateValues);
         }

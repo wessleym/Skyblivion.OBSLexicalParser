@@ -7,6 +7,8 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,19 +23,25 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         private readonly Build build;
         private readonly BuildLogServices buildLogServices;
         private readonly ESMAnalyzer esmAnalyzer;
+        private readonly TES5StaticGlobalScopesFactory staticGlobalScopesFactory;
+        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
+        private readonly TES5TypeInferencer typeInferencer;
         /*
         * No injection is done here because of multithreaded enviroment which messes it up.
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan)
+        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5StaticGlobalScopesFactory staticGlobalScopesFactory, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
             this.build = build;
             this.buildLogServices = buildLogServices;
+            this.esmAnalyzer = esmAnalyzer;
+            this.staticGlobalScopesFactory = staticGlobalScopesFactory;
+            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
+            this.typeInferencer = typeInferencer;
             this.buildTargets = new BuildTargetCollection();
-            this.esmAnalyzer = new ESMAnalyzer(false, DataDirectory.TES4GameFileName);
         }
 
         public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
@@ -59,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 }
 
                 //Add the static global scopes which are added by complimenting scripts..
-                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.CreateGlobalScopes();
+                List<TES5GlobalScope> staticGlobalScopes = staticGlobalScopesFactory.CreateGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
@@ -114,7 +122,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             if (this.buildTargets.GetByNameOrNull(targetName) == null)
             {
-                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, false));
+                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer));
             }
 
             BuildTarget result = this.buildTargets.GetByName(targetName);

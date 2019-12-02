@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
 using System.IO;
@@ -37,9 +38,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Build build = new Build(buildPath);
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false);
+                ESMAnalyzer esmAnalyzer;
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out _, out _);
                 if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
-                TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName);
+                TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName, esmAnalyzer);
 #if !DEBUG
                 try
                 {

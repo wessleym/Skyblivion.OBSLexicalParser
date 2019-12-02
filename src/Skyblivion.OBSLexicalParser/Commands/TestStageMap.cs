@@ -1,6 +1,9 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
+using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +24,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Dictionary<int, List<int>> originalStageMap;
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices, true);
+                ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
+                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer = new TES5InheritanceGraphAnalyzer(esmAnalyzer);
+                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer, inheritanceGraphAnalyzer, BuildTarget.StandaloneSourcePath);
+                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer);
                 originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
             }
             StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary

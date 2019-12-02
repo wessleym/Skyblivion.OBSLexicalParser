@@ -9,14 +9,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class GetAmountSoldStolenFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        public GetAmountSoldStolenFactory(TES5ObjectCallFactory objectCallFactory)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public GetAmountSoldStolenFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
         {
             this.objectCallFactory = objectCallFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReference.Game, "GetAmountSoldStolen");
+            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, "GetAmountSoldStolen");
         }
     }
 }

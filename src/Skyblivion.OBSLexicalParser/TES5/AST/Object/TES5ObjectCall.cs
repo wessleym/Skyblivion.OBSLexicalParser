@@ -10,11 +10,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
         public ITES5Referencer AccessedObject { get; private set; }
         public string FunctionName { get; private set; }
         public TES5ObjectCallArguments? Arguments { get; private set; }
-        public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments? arguments = null)
+        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
+        public TES5ObjectCall(ITES5Referencer called, string functionName, TES5ObjectCallArguments? arguments, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer)
         {
             this.AccessedObject = called;
             this.FunctionName = functionName;
             this.Arguments = arguments;
+            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
         }
 
         public IEnumerable<string> Output
@@ -35,6 +37,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public string Name => "ObjectCall";
 
-        public virtual ITES5Type TES5Type => TES5InheritanceGraphAnalyzer.FindReturnTypeForObjectCall(this.AccessedObject.TES5Type, this.FunctionName);
+        public virtual ITES5Type TES5Type => inheritanceGraphAnalyzer.FindReturnTypeForObjectCall(this.AccessedObject.TES5Type, this.FunctionName);
     }
 }

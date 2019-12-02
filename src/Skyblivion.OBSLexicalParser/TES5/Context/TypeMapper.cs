@@ -1,4 +1,5 @@
 using Skyblivion.ESReader.TES4;
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -7,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
 {
     static class TypeMapper
     {
-        public static ITES5Type Map(TES4RecordType type)
+        public static ITES5Type Map(TES4RecordType type, ESMAnalyzer esmAnalyzer)
         {
             string propertyType;
             switch (type.Name)
@@ -417,7 +418,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
                 }
             }
 
-            return TES5TypeFactory.MemberByValue(propertyType);
+            return TES5TypeFactory.MemberByValue(propertyType, null, esmAnalyzer);
         }
     }
 }

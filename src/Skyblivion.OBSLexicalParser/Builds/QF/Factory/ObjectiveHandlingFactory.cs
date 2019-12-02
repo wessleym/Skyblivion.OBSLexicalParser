@@ -14,13 +14,19 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
-    static class ObjectiveHandlingFactory
+    class ObjectiveHandlingFactory
     {
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        public ObjectiveHandlingFactory(TES5ObjectCallFactory objectCallFactory)
+        {
+            this.objectCallFactory = objectCallFactory;
+        }
+
         /*
              *  The stage ID
          *  List of integers describing targets being enabled or disabled for given stage
         */
-        public static TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
+        public TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
         {
             string fragmentName = "Fragment_"+stageId.ToString();
             TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
@@ -34,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return codeBlock;
         }
 
-        public static List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
+        public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
         {
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
             TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);
@@ -52,10 +58,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 {
                     //Should be visible
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
-                    TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
+                    TES5ObjectCall isObjectiveDisplayed = objectCallFactory.CreateObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments, inference: false);
                     TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
-                    TES5ObjectCall showTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments);
+                    TES5ObjectCall showTheObjective = objectCallFactory.CreateObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments, inference: false);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
                     branch.MainBranch.CodeScope.AddChunk(showTheObjective);
                     result.Add(branch);
@@ -63,10 +69,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 else
                 {
                     TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
-                    TES5ObjectCall isObjectiveDisplayed = new TES5ObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments);
+                    TES5ObjectCall isObjectiveDisplayed = objectCallFactory.CreateObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments, inference: false);
                     TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
                     TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
-                    TES5ObjectCall completeTheObjective = new TES5ObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments);
+                    TES5ObjectCall completeTheObjective = objectCallFactory.CreateObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments, inference: false);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
                     branch.MainBranch.CodeScope.AddChunk(completeTheObjective);
                     result.Add(branch);

@@ -12,12 +12,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
     class TranspileCommand : TranspileCommandBase<TES4Script>
     {
         private readonly TES4ToTES5ASTConverter converter;
-        public TranspileCommand(StandaloneParsingService standaloneParsingService, MetadataLogService metadataLogService, bool loadESMAnalyzerLazily)
+        public TranspileCommand(StandaloneParsingService standaloneParsingService, MetadataLogService metadataLogService, ESMAnalyzer esmAnalyzer)
             : base(standaloneParsingService)
         {
             TES5BlockFactory blockFactory;
             TES5ObjectCallFactory objectCallFactory;
-            GetFactories(metadataLogService, loadESMAnalyzerLazily, out _, out objectCallFactory, out _, out blockFactory);
+            GetFactories(metadataLogService, esmAnalyzer, out objectCallFactory, out blockFactory);
             converter = new TES4ToTES5ASTConverter(blockFactory, objectCallFactory);
         }
 

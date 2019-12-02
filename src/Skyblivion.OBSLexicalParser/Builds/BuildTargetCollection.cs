@@ -74,7 +74,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             BuildSourceFilesCollection collection = new BuildSourceFilesCollection();
             foreach (var buildTarget in this.buildTargets.Values)
             {
-                collection.add(buildTarget, buildTarget.GetSourceFileList(intersectedSourceFiles));
+                collection.Add(buildTarget, buildTarget.GetSourceFileList(intersectedSourceFiles));
             }
 
             return collection;

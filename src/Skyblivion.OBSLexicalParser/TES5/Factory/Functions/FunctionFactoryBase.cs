@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        protected TES5ObjectCall CreateObjectCall(ITES5Referencer calledOn, string functionName, TES5MultipleScriptsScope multipleScriptsScope, TES5ObjectCallArguments arguments)
+        protected TES5ObjectCall CreateObjectCall(ITES5Referencer calledOn, string functionName, TES5ObjectCallArguments arguments)
         {
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, arguments);
         }

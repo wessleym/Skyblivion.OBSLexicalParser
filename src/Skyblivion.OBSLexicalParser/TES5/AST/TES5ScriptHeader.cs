@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -20,13 +21,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         private readonly string scriptNamePrefix;
         private readonly bool isHidden;
         public string EDID { get; private set; }
-        public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden = false)
+        public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden, ESMAnalyzer esmAnalyzer)
         {
             this.OriginalScriptName = scriptName;
             this.EscapedScriptName = NameTransformer.Limit(scriptName, scriptNamePrefix);
             this.EDID = scriptName;
             this.scriptNamePrefix = scriptNamePrefix;
-            this.ScriptType = TES5TypeFactory.MemberByValue(scriptName, scriptType);
+            this.ScriptType = TES5TypeFactory.MemberByValue(scriptName, scriptType, esmAnalyzer);
             this.BasicScriptType = scriptType;
             this.isHidden = isHidden;
         }

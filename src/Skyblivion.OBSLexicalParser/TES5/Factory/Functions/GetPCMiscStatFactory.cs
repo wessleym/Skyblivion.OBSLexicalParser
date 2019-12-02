@@ -14,10 +14,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         //WTM:  Note:  GetPCMiscStat only seems to be used as "GetPCMiscStat 7 >= 30" in Standalone\Source\rusiabradusscript.txt.
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public GetPCMiscStatFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public GetPCMiscStatFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5StaticReferenceFactory staticReferenceFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         private static readonly Dictionary<int, string> statMap = new Dictionary<int, string>()
@@ -27,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             const string functionName = "QueryStat";
-            ITES5Referencer newCalledOn = TES5StaticReference.Game;
+            ITES5Referencer newCalledOn = staticReferenceFactory.Game;
             TES4FunctionArguments functionArguments = function.Arguments;
             int oldArgValue = (int)functionArguments.Single().Data;
             string newArgValue = statMap[oldArgValue];

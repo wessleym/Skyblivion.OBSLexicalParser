@@ -16,17 +16,17 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         /*
         * TranspileScriptJob constructor.
         */
-        public TranspileScriptJob(BuildTargetCollection buildTargets, string scriptName)
+        public TranspileScriptJob(BuildTargetCollection buildTargets, string scriptName, ESMAnalyzer esmAnalyzer)
         {
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
-            this.esmAnalyzer = new ESMAnalyzer(false, DataDirectory.TES4GameFileName);
+            this.esmAnalyzer = esmAnalyzer;
         }
 
         public void Run()
         {
             string[] scripts = this.buildTargets.GetScriptsToCompile(this.scriptName);
-            BuildSourceFilesCollection partitionedScripts = this.buildTargets.GetSourceFiles(scripts);
+            //BuildSourceFilesCollection partitionedScripts = this.buildTargets.GetSourceFiles(scripts);
             TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildTarget in this.buildTargets)
             {

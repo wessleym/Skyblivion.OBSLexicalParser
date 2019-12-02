@@ -1,4 +1,7 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System.Diagnostics;
 using System.IO;
@@ -17,10 +20,13 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         public void Run()
         {
 #nullable disable
-            Build build = null;//WTM:  Change:  BuildTargetFactory.get takes two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
+            Build build = null;//WTM:  Change:  BuildTargetFactory.get originally took two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
-                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, true);
+                ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
+                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer = new TES5InheritanceGraphAnalyzer(esmAnalyzer);
+                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer, inheritanceGraphAnalyzer, BuildTarget.StandaloneSourcePath);
+                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer);
                 int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
                     .Select(path => Path.GetFileName(path))
                     .Select(name =>

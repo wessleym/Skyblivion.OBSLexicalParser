@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5InheritanceItemCollection : IEnumerable<TES5InheritanceItem>
     {
-        private List<TES5InheritanceItem> list;
+        private readonly List<TES5InheritanceItem> list;
         public TES5InheritanceItemCollection(IEnumerable<TES5InheritanceItem> items)
         {
             list = new List<TES5InheritanceItem>(items);

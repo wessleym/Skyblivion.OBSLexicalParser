@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Input
 {
     static class FragmentsReferencesBuilder
     {
-        public static TES4VariableDeclarationList buildVariableDeclarationList(string path)
+        public static TES4VariableDeclarationList BuildVariableDeclarationList(string path)
         {
             TES4VariableDeclarationList list = new TES4VariableDeclarationList();
             if (!File.Exists(path))

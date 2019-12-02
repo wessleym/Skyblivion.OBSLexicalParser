@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5ObjectCallArguments : ITES5Outputtable, IEnumerable<ITES5Value>
     {
-        private List<ITES5Value> arguments = new List<ITES5Value>();
+        private readonly List<ITES5Value> arguments = new List<ITES5Value>();
         public IEnumerable<string> Output => new string[] { string.Join(", ", this.arguments.Select(a => a.Output.Single())) };
 
         public void Add(ITES5Value value)

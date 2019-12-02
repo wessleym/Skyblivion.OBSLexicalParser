@@ -13,12 +13,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetInCellFactory : IFunctionFactory
     {
-        private readonly ESMAnalyzer analyzer;
+        private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        public GetInCellFactory(TES5ObjectCallFactory objectCallFactory, ESMAnalyzer analyzer)
+        private readonly TES5StaticReferenceFactory staticReferenceFactory;
+        public GetInCellFactory(TES5ObjectCallFactory objectCallFactory, ESMAnalyzer esmAnalyzer, TES5StaticReferenceFactory staticReferenceFactory)
         {
-            this.analyzer = analyzer;
+            this.esmAnalyzer = esmAnalyzer;
             this.objectCallFactory = objectCallFactory;
+            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -37,8 +39,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(0),
                 new TES5Integer(length)
             };
-            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReference.StringUtil, "Substring", substringArguments);
-            TES4LoadedRecord cellRecord = this.analyzer.FindInTES4Collection(cellName);
+            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(staticReferenceFactory.StringUtil, "Substring", substringArguments);
+            TES4LoadedRecord cellRecord = this.esmAnalyzer.FindInTES4Collection(cellName);
             string? cellNameWithSpaces = cellRecord.GetSubrecordTrim("FULL");
             if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
             TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);

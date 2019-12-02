@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTracker
     {
-        private readonly BuildTargetCollection buildTargetCollection;
+        //WTM:  Change:  Unused:  private readonly BuildTargetCollection buildTargetCollection;
         /*
              * Map build target => built TES5 scripts
         */
@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         */
         public BuildTracker(BuildTargetCollection buildTargetCollection)
         {
-            this.buildTargetCollection = buildTargetCollection;
+            //this.buildTargetCollection = buildTargetCollection;
             foreach (var buildTarget in buildTargetCollection)
             {
                 this.builtScripts.Add(buildTarget.GetTargetName(), new Dictionary<string, TES5Target>());

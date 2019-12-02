@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildLogService : IDisposable
     {
-        private Lazy<StreamWriter> fileStream;
+        private readonly Lazy<StreamWriter> fileStream;
         protected BuildLogService(string path, bool append)
         {
             fileStream = new Lazy<StreamWriter>(() => new StreamWriter(path, append));
