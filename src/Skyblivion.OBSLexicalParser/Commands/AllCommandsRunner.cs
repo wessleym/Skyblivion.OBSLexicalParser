@@ -13,6 +13,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             new BuildInteroperableCompilationGraphs(),
             new BuildTargetCommand(),
             new TestStageMap(),
+            new FindFillerCommand(),
             new BuildFileDeleteCommand()
         };
 

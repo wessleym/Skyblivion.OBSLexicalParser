@@ -29,15 +29,18 @@ namespace Skyblivion.OBSLexicalParser.Commands
             string targets = LPCommandArgumentOrOption.GetValue(input, "targets");
             int threadsNumber = int.Parse(LPCommandArgumentOrOption.GetValue(input, "threadsNumber"), CultureInfo.InvariantCulture);
             string buildPath = LPCommandArgumentOrOption.GetValue(input, "buildPath");
-            Execute(targets, threadsNumber, buildPath);
+            Execute(targets, true, threadsNumber, buildPath);
         }
-
+        public void Execute(bool writeTranspiledFilesAndCompile)
+        {
+            Execute(BuildTarget.DEFAULT_TARGETS, writeTranspiledFilesAndCompile);
+        }
         public override void Execute()
         {
-            Execute(BuildTarget.DEFAULT_TARGETS);
+            Execute(true);
         }
 
-        public void Execute(string targets, int threadsNumber = DefaultThreads, string? buildPath = null)
+        public void Execute(string targets, bool writeTranspiledFilesAndCompile, int threadsNumber = DefaultThreads, string? buildPath = null)
         {
             if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
@@ -48,16 +51,25 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
                 TES5TypeInferencer typeInferencer;
                 BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out inheritanceGraphAnalyzer, out typeInferencer);
-                if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
+                if (writeTranspiledFilesAndCompile && !buildTargets.CanBuildAndWarnIfNot()) { return; }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 TES5StaticGlobalScopesFactory staticGlobalScopesFactory = new TES5StaticGlobalScopesFactory(esmAnalyzer);
                 Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber, esmAnalyzer, staticGlobalScopesFactory, inheritanceGraphAnalyzer, typeInferencer);
-                WriteTranspiled(buildTargets, buildTracker);
+                if (writeTranspiledFilesAndCompile)
+                {
+                    WriteTranspiled(buildTargets, buildTracker);
+                }
                 esmAnalyzer.Deallocate();//Hack - force ESM analyzer deallocation.
-                PrepareWorkspace(buildTargets);
-                Compile(build, buildTargets);
+                if (writeTranspiledFilesAndCompile)
+                {
+                    PrepareWorkspace(buildTargets);
+                    Compile(build, buildTargets);
+                }
             }
-            Console.WriteLine("Build Complete");
+            if (writeTranspiledFilesAndCompile)
+            {
+                Console.WriteLine("Build Complete");
+            }
         }
 
         private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5StaticGlobalScopesFactory staticGlobalScopesFactory, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)

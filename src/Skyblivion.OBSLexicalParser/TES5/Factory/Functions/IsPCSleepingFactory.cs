@@ -8,6 +8,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
+    //WTM:  Note:  Couldn't IsPCSleeping be called directly?
     class IsPCSleepingFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;

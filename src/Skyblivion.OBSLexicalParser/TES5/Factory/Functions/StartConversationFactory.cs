@@ -7,7 +7,7 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
-    [Obsolete("Unused.  Aerisarn added an OBStartConversation native function.")]
+    //[Obsolete("Unused.  Aerisarn added an OBStartConversation native function.")]//I'm rolling back this change until Aerisarn includes his changes in skyblivion-skse.
     class StartConversationFactory : IFunctionFactory
     {
         public StartConversationFactory()

@@ -13,6 +13,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
+using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -386,6 +387,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
+            TES5FunctionFactoryUseTracker.Add(functionKey, factory, globalScope.ScriptHeader.OriginalScriptName);
             ITES5ValueCodeChunk codeChunk = factory.ConvertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
             return codeChunk;
         }
