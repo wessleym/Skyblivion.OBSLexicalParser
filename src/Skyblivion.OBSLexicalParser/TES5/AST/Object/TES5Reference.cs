@@ -30,15 +30,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                     //They're sometimes not the same ( for instance, when we have 
                     //a set-in-stone native function signature variable and we cannot infer
                     //the type at will and change the function's signature
-                    if(!ReferencesTo.TES5DeclaredType.Equals(ReferencesTo.TES5Type))
+                    if (!ReferencesTo.TES5DeclaredType.Equals(ReferencesTo.TES5Type))
                     {
-                        return new string[] { "(" + ReferencesTo.Name + " as " + ReferencesTo.TES5Type.Value + ")" };                           
+                        return new string[] { "(" + ReferencesTo.Name + " as " + ReferencesTo.TES5Type.Value + ")" };
                     }
                     else
                     {
                         return new string[] { ReferencesTo.Name };
                     }
-                    
+
                 }
             }
         }

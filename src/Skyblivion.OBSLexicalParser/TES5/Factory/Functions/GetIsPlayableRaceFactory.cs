@@ -23,21 +23,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //WTM:  Note:  I'd prefer a single method call obviously, but this is the best solution I can imagine.
             TES5ObjectCall calledOnRaceName = objectCallFactory.CreateObjectCall(objectCallFactory.CreateObjectCall(calledOn, "GetRace"), "GetName");
             string[] playableRaces = new string[] { "Altmer", "Argonian", "Bosmer", "Breton", "Dunmer", "Imperial", "Khajiit", "Nord", "Orc", "Redguard" };
-            ITES5Expression? completeStatement = null;
+            ITES5Expression? accumulatedStatement = null;
             foreach (string race in playableRaces)
             {
                 TES5ComparisonExpression newExpression = TES5ExpressionFactory.CreateComparisonExpression(calledOnRaceName, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5String(race));
-                if (completeStatement == null)
+                if (accumulatedStatement == null)
                 {
-                    completeStatement = newExpression;
+                    accumulatedStatement = newExpression;
                 }
                 else
                 {
-                    completeStatement = TES5ExpressionFactory.CreateLogicalExpression(completeStatement, TES5LogicalExpressionOperator.OPERATOR_OR, newExpression);
+                    accumulatedStatement = TES5ExpressionFactory.CreateLogicalExpression(accumulatedStatement, TES5LogicalExpressionOperator.OPERATOR_OR, newExpression);
                 }
             }
-            if (completeStatement == null) { throw new NullableException(nameof(completeStatement)); }
-            return completeStatement;
+            if (accumulatedStatement == null) { throw new NullableException(nameof(accumulatedStatement)); }
+            return accumulatedStatement;
         }
     }
 }

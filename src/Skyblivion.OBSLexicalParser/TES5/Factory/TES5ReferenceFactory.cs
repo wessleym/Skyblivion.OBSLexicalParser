@@ -52,12 +52,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5SelfReference(new TES5ScriptAsVariable(globalScope.ScriptHeader));
         }
 
-        public static TES5Reference CreateReferenceToVariable(ITES5VariableOrProperty variable)
+        public static TES5Reference CreateReferenceToVariableOrProperty(ITES5VariableOrProperty variable)
         {
             return new TES5Reference(variable);
         }
 
-        public static ITES5Referencer CreateReferenceToPlayer(TES5GlobalScope globalScope)
+        public static TES5PlayerReference CreateReferenceToPlayer(TES5GlobalScope globalScope)
         {
             return globalScope.PlayerRef;
         }
@@ -162,30 +162,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 property = globalScope.GetPropertyByName(referenceName); //todo rethink how to unify the prefix searching
                 if (property == null)
                 {
-                    TES5Property? propertyToAddToGlobalScope = null;
+                    TES5Property propertyToAddToGlobalScope;
                     ITES5Type specialConversion;
                     if (specialConversions.TryGetValue(referenceName, out specialConversion))
                     {
                         propertyToAddToGlobalScope = new TES5Property(referenceName, specialConversion, referenceName);
                     }
-
-                    if (propertyToAddToGlobalScope == null)
+                    else if (multipleScriptsScope.ContainsGlobalVariable(referenceName))
                     {
-                        if (!multipleScriptsScope.ContainsGlobalVariable(referenceName))
-                        {
-                            propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_FORM, referenceName);
-                        }
-                        else
-                        {
-                            propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_GLOBALVARIABLE, referenceName);
-                        }
+                        propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_GLOBALVARIABLE, referenceName);
+                    }
+                    else
+                    {
+                        propertyToAddToGlobalScope = new TES5Property(referenceName, TES5BasicType.T_FORM, referenceName);
                     }
                     globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
             }
 
-            return new TES5Reference(property);
+            return CreateReferenceToVariableOrProperty(property);
         }
     }
 }

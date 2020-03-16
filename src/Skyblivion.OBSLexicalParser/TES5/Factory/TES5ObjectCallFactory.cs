@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 TES5Property questDelayTimeProperty = globalScope.Properties.Where(p => p.OriginalName.Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                 if (questDelayTimeProperty != null)
                 {
-                    arguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(questDelayTimeProperty));
+                    arguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty));
                 }
                 else
                 {

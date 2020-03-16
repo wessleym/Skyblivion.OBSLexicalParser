@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             this.isHidden = isHidden;
         }
 
-        public IEnumerable<string> Output => new List<string>() { "ScriptName " + this.scriptNamePrefix + this.EscapedScriptName + " extends " + this.ScriptType.NativeType.Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
+        public IEnumerable<string> Output => new string[] { "ScriptName " + this.scriptNamePrefix + this.EscapedScriptName + " extends " + this.ScriptType.NativeType.Output.Single() + " " + (this.isHidden ? "Hidden" : "Conditional") };
 
         /*
              * @throws ConversionException

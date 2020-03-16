@@ -61,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public void Write(BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            this.writeCommand.write(this, buildTracker, progressWriter);
+            this.writeCommand.Write(this, buildTracker, progressWriter);
         }
 
         public string GetTargetName()

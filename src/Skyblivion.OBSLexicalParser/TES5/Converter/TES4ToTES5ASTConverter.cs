@@ -103,7 +103,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     localScopeArguments = new TES5ObjectCallArguments();
                     foreach (var variable in block.FunctionScope.Variables.Values)
                     {
-                        localScopeArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(variable));
+                        localScopeArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable));
                     }
                 }
             }

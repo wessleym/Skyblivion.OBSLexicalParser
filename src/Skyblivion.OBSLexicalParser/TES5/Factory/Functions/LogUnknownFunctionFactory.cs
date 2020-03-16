@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -19,7 +20,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string message = "OBScript called " + function.FunctionCall.FunctionName + "(" + string.Join(", ", function.Arguments) + "), but script converter didn't know a conversion.";
+            return CreateLogCall(function);
+        }
+
+        public ITES5ValueCodeChunk CreateLogCall(TES4Function function)
+        {
+            string message = "OBScript called " + function.FunctionCall.FunctionName + "(" + string.Join(", ", function.Arguments.Select(a => a.StringValue)) + "), but script converter didn't know a conversion.";
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5String(message) };
             codeChunks.Add(objectCallFactory.CreateObjectCall(staticReferenceFactory.Debug, "Trace", arguments));

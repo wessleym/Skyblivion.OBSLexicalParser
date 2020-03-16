@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
         {
             TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
-            TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariable(castedToQuest);
+            TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(castedToQuest);
             List<ITES5CodeChunk> result = new List<ITES5CodeChunk>()
             {
                 TES5VariableAssignationFactory.CreateAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope))

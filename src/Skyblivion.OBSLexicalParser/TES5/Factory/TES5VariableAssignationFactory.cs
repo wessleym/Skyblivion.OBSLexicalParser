@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
-using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory

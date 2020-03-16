@@ -91,7 +91,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
         {
             ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.GetTargetName()).Count));
-            //WTM:  Note:  QF's progress will be underestimated since buildTracker.GetBuiltScripts(bt.GetTargetName()).Count is greater than the actual number of output scripts.
             foreach (var buildTarget in buildTargets)
             {
                 buildTarget.Write(buildTracker, progressWriter);

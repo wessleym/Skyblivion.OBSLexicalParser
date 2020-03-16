@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 throw new ConversionException("getActionRef in non-activator scope found. Cannot convert that one.", expected: true);
             }
-            return TES5ReferenceFactory.CreateReferenceToVariable(activatorVariable);
+            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activatorVariable);
         }
     }
 }

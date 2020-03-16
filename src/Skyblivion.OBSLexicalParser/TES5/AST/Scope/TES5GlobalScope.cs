@@ -34,11 +34,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.Properties.Add(property);
         }
 
+        public void AddFunction(TES5FunctionCodeBlock functionCodeBlock)
+        {
+            functions.Add(functionCodeBlock);
+        }
+
         public void AddFunctionIfNotExists(string name, Func<TES5FunctionCodeBlock> functionCodeBlockFactory)
         {
             if (!functions.Where(f => f.BlockName == name).Any())
             {
-                functions.Add(functionCodeBlockFactory());
+                AddFunction(functionCodeBlockFactory());
             }
         }
 

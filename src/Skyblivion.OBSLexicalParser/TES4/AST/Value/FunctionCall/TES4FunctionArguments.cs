@@ -43,14 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public ITES4StringValue? GetOrNull(int i)
         {
-            try
-            {
-                return values[i];
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return null;
-            }
+            return i < values.Count ? values[i] : null;
         }
 
         public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)

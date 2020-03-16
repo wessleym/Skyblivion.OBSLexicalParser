@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 throw new ConversionException("GetContainer:  Cannot convert to Skyrim in other contexts than onEquip/onUnequip", expected: true);
             }
-            return TES5ReferenceFactory.CreateReferenceToVariable(containerVariable);
+            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(containerVariable);
         }
     }
 }

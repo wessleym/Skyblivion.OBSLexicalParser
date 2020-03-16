@@ -227,6 +227,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             {
                 str = str.Replace("Short Salutation", "Short SalutationInt").Replace("set salutation to ", "set SalutationInt to ").Replace("Salutation == 1", "SalutationInt == 1");
             }
+            //WTM:  Change:  In HackdirtMoslinsInnBedScript, an integer (1) is stored in a variable that previously stored an actor.
+            //Since 1 is meant only to prevent the code from running again, I'm instead going to store a reference to HackdirtBrethren01.
+            if (str.StartsWith("scn HackdirtMoslinsInnBedScript"))
+            {
+                str = str.Replace("set attackRef to 1", "set attackRef to HackdirtBrethren01");
+            }
             return str;
         }
 

@@ -66,8 +66,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
                         ITES5VariableOrProperty activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
-                        TES5Reference referenceToCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(castedToActor);
-                        TES5Reference referenceToNonCastedVariable = TES5ReferenceFactory.CreateReferenceToVariable(activator);
+                        TES5Reference referenceToCastedVariable = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(castedToActor);
+                        TES5Reference referenceToNonCastedVariable = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activator);
                         TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(referenceToCastedVariable, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, new TES5None());
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
                         newCodeScope.LocalScope.AddVariable(castedToActor);
@@ -78,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             //NOT TESTED
                             List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
                             ITES5Referencer targetActor = this.referenceFactory.CreateReadReference(parameterListVariableList[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
-                            TES5ComparisonExpression interExpression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariable(activator), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, targetActor);
+                            TES5ComparisonExpression interExpression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activator), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, targetActor);
                             //TES5CodeScope interBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.CodeScope));//WTM:  Change:  Why serialize and then deserialize?
                             TES5CodeScope interBranchCode = newBlock.CodeScope;
                             outerBranchCode = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
@@ -198,7 +198,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
             TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
             ITES5Referencer newContainer = this.referenceFactory.CreateReadReference(tesEquippedTarget.BlockParameter, globalScope, multipleScriptsScope, localScope);
-            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariable(variable), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, newContainer);
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, newContainer);
             SetUpBranch(blockFunctionScope, newBlock, expression);
         }
         private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, string variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

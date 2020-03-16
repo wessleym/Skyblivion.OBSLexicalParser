@@ -869,14 +869,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, "bool"),
                 new TES5InheritanceFunctionSignature("SheatheWeapon", new string[] {
                             }, "void"),
-                new TES5InheritanceFunctionSignature("ForceFlee", new string[] {
+                /*new TES5InheritanceFunctionSignature("ForceFlee", new string[] {
                                 "Cell",
                                 "ObjectReference"
-                            }, "void"),//WTM:  Note:  SKSE
+                            }, "void"),//WTM:  Note:  I think Aerisarn was going to add this, possibly utilizing SKSE's code.  But since it isn't ready, I'm commenting this for now.
                 new TES5InheritanceFunctionSignature("OBStartConversation", new string[] {
                                 "Actor",
                                 "Topic"
-                            }, "void")
+                            }, "void")//WTM:  Note:  I think Aerisarn was going to add this.  But since it isn't ready, I'm commenting this for now.*/
             }
         },
         { "ActorBase",
@@ -2185,7 +2185,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 "bool",
                                 "bool",
                                 "bool"
-                            }, "bool")
+                            }, "bool"),
+                new TES5InheritanceFunctionSignature("EssentialDeathReload", new string[] {//WTM:  Added:  Skyblivion.dll
+                                "string"
+                            }, "void")
             }
         },
         { "HeadPart",
@@ -2521,12 +2524,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("GetNthLinkedRef", new string[] {
                                 "int"
                             }, "ObjectReference"),
-                new TES5InheritanceFunctionSignature("GetStartingAngle", new string[] {
+                /*new TES5InheritanceFunctionSignature("GetStartingAngle", new string[] {
                                 "string"
-                            }, "float"),//WTM:  Note:  SKSE
+                            }, "float"),//WTM:  Note:  I think Aerisarn was going to add this, possibly utilizing SKSE's code.  But since it isn't ready, I'm commenting this for now.
                 new TES5InheritanceFunctionSignature("GetStartingPos", new string[] {
                                 "string"
-                            }, "float"),//WTM:  Note:  SKSE
+                            }, "float"),//WTM:  Note:  I think Aerisarn was going to add this, possibly utilizing SKSE's code.  But since it isn't ready, I'm commenting this for now.*/
                 new TES5InheritanceFunctionSignature("EnableLinkChain", new string[] {
                                 "Keyword"
                             }, "void"),
@@ -2857,6 +2860,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("GotoState", new string[] {
                                 "string"
                             }, "void"),//WTM:  Change:  Added
+                new TES5InheritanceFunctionSignature("SetDisplayName", new string[]
+                            {
+                                "string"
+                            }, "void"),//WTM:  Change:  Added.  SKSE.
                 new TES5InheritanceFunctionSignature("LegacySay", new string[] {
                         "Topic",
                         "Bool"
@@ -4814,13 +4821,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 case 0:
                     {
-                        List<string> concatTypes = new List<string>();
-                        foreach (var possibleMatch in possibleMatches)
-                        {
-                            concatTypes.Add(possibleMatch.Value);
-                        }
-
-                        throw new ConversionException("Cannot find any possible type for method " + methodName + ", trying to extend " + actualType.Value+ " with following types: " + string.Join(", ", concatTypes));
+                        throw new ConversionException("Cannot find any possible type for method " + methodName + ", trying to extend " + actualType.Value + " with following types: " + string.Join(", ", possibleMatches.Select(m => m.Value)));
                     }
 
                 case 1:

@@ -329,7 +329,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES5StateCodeBlock activeState;
             CreateActiveStateBlock(globalScope, out activeState, out onUpdate);
-            TES5StateCodeBlock inactiveState=CreateInactiveStateBlock();
+            TES5StateCodeBlock inactiveState = CreateInactiveStateBlock();
             TES5EventCodeBlock onCellAttach = CreateEventCodeBlock("OnCellAttach");
             onCellAttach.CodeScope.AddChunk(objectCallFactory.CreateGotoState("ActiveState", globalScope));
             TES5EventCodeBlock onCellDetach = CreateEventCodeBlock("OnCellDetach");

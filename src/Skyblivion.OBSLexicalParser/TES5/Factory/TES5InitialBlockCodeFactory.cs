@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             eventCodeBlock.AddChunk(branch);
                             return eventCodeBlock.CodeScope;
                         }
-                        /*else if (globalScope.ScriptHeader.BasicScriptType== TES5BasicType.T_OBJECTREFERENCE)
+                        /*else if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_OBJECTREFERENCE)
                         {
                             TES5LocalScope localScope = eventCodeBlock.CodeScope.LocalScope;
                             TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(), "GetParentCell", multipleScriptsScope, new TES5ObjectCallArguments())), localScope);

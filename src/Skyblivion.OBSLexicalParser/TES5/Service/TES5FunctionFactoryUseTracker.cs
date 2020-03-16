@@ -18,10 +18,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         {
             Type fillerFactoryType = typeof(FillerFactory);
             Type logUnknownFunctionFactoryType = typeof(LogUnknownFunctionFactory);
+            Type returnFalseFactory = typeof(ReturnFalseFactory);
+            Type returnTrueFactory = typeof(ReturnTrueFactory);
+            Type[] soughtTypes = new Type[] { fillerFactoryType, logUnknownFunctionFactoryType, returnFalseFactory, returnTrueFactory };
             int column1 = dictionary.Select(kvp => kvp.Key.Item1.Length).Max();
             int column2 = ("Invocation Count").Length;
             Console.WriteLine(("Function Name").PadRight(column1) + ("Invocation Count").PadLeft(column2));
-            var fillerFactoryCalls = dictionary.Where(kvp => kvp.Key.Item2 == fillerFactoryType || kvp.Key.Item2 == logUnknownFunctionFactoryType).ToArray();
+            var fillerFactoryCalls = dictionary.Where(kvp => soughtTypes.Contains(kvp.Key.Item2) && !kvp.Key.Item1.Equals("istimepassing", StringComparison.OrdinalIgnoreCase) && !kvp.Key.Item1.Equals("isxbox", StringComparison.OrdinalIgnoreCase)).ToArray();
             foreach (var kvp in fillerFactoryCalls.OrderByDescending(kvp => kvp.Value.Count).ThenBy(kvp => kvp.Key.Item1))
             {
                 Console.WriteLine(kvp.Key.Item1.PadRight(column1) + kvp.Value.Count.ToString().PadLeft(column2));

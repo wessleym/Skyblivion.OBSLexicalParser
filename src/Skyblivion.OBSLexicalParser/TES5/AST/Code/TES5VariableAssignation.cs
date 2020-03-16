@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
         {
             this.Reference = reference;
             this.value = value;
+            //If value is going to be casted but actually can't be casted, throw an exception.
+            if (ReferenceAndValueDifferentTypesAndValueIsNonNone() && !ReferenceIsIntAndValueExtendsForm() &&
+                //Oblivion stores boolean-like values in short ints.  Exclude such cases.
+                !(reference.TES5Type == TES5BasicType.T_INT && value.TES5Type==TES5BasicType.T_BOOL) &&
+                !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(value.TES5Type, reference.TES5Type))
+            {
+                throw new ConversionException("A " + value.TES5Type.OriginalName + " cannot be converted to " + reference.TES5Type.OriginalName + ".", expected: true);
+            }
+        }
+
+        private bool ReferenceAndValueDifferentTypesAndValueIsNonNone()
+        {
+            return this.Reference.TES5Type != this.value.TES5Type && !(this.value is TES5None);
+        }
+
+        private bool ReferenceIsIntAndValueExtendsForm()
+        {
+            return this.Reference.TES5Type == TES5BasicType.T_INT && TES5InheritanceGraphAnalyzer.IsExtending(this.value.TES5Type, TES5BasicType.T_FORM);
         }
 
         public IEnumerable<string> Output
@@ -23,19 +42,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             {
                 string referenceOutput = this.Reference.Output.Single();
                 string valueOutput = this.value.Output.Single();
-                string code = referenceOutput + " = " + valueOutput;
-                if (this.Reference.TES5Type != this.value.TES5Type && !(this.value is TES5None))
+                if (ReferenceAndValueDifferentTypesAndValueIsNonNone())
                 {
-                    if (this.Reference.TES5Type == TES5BasicType.T_INT && TES5InheritanceGraphAnalyzer.IsExtending(this.value.TES5Type, TES5BasicType.T_FORM))
+                    if (ReferenceIsIntAndValueExtendsForm())
                     {//WTM:  Change:  Added
-                        code += ".GetFormID()";
+                        valueOutput += ".GetFormID()";
                     }
                     else
                     {
-                        code += " as " + this.Reference.TES5Type.Output.Single();
+                        valueOutput += " as " + this.Reference.TES5Type.Output.Single();
                     }
                 }
-                yield return code;
+                yield return referenceOutput + " = " + valueOutput;
             }
         }
 

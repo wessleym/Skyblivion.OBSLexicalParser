@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 ITES5VariableOrProperty? meaningVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                 if (meaningVariable != null)
                 {
-                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariable(meaningVariable));
+                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(meaningVariable));
                 }
                 else
                 {

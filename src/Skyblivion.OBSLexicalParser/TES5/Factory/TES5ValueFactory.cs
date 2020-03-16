@@ -158,11 +158,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             {
                                 case 4:
                                     {
-                                        //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer"),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator == TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
@@ -178,8 +177,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                     }
                                 case 13:
                                     {
-
-                                        //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
                                             this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat"),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
