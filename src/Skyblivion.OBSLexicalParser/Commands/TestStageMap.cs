@@ -25,9 +25,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
-                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer = new TES5InheritanceGraphAnalyzer(esmAnalyzer);
-                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer, inheritanceGraphAnalyzer, BuildTarget.StandaloneSourcePath);
-                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer);
+                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
+                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices, esmAnalyzer, typeInferencer);
                 originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
             }
             StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary

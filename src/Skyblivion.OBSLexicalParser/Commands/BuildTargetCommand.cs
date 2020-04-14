@@ -48,13 +48,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 ESMAnalyzer esmAnalyzer;
-                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
                 TES5TypeInferencer typeInferencer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out inheritanceGraphAnalyzer, out typeInferencer);
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out typeInferencer);
                 if (writeTranspiledFilesAndCompile && !buildTargets.CanBuildAndWarnIfNot()) { return; }
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
-                TES5StaticGlobalScopesFactory staticGlobalScopesFactory = new TES5StaticGlobalScopesFactory(esmAnalyzer);
-                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber, esmAnalyzer, staticGlobalScopesFactory, inheritanceGraphAnalyzer, typeInferencer);
+                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber, esmAnalyzer, typeInferencer);
                 if (writeTranspiledFilesAndCompile)
                 {
                     WriteTranspiled(buildTargets, buildTracker);
@@ -72,7 +70,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
         }
 
-        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5StaticGlobalScopesFactory staticGlobalScopesFactory, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)
+        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             var buildPlan = buildTargets.GetBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
@@ -81,7 +79,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {
-                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value, esmAnalyzer, staticGlobalScopesFactory, inheritanceGraphAnalyzer, typeInferencer);
+                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value, esmAnalyzer, typeInferencer);
                     task.RunTask(errorLog, progressWriter);
                 }
             }
@@ -91,7 +89,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
         {
             ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.GetTargetName()).Count));
-            foreach (var buildTarget in buildTargets)
+            //WTM:  Change:  Transpile QF first since some transpilation will be done while writing.
+            //Types will be inferenced like TES4PublicanBloatedFloatOrmil, and if Standalone gets written first, those files will be incorrect.
+            //The below OrderBy statement puts QF first.
+            foreach (var buildTarget in buildTargets.OrderBy(bt => bt.GetTargetName() != BuildTarget.BUILD_TARGET_QF))
             {
                 buildTarget.Write(buildTracker, progressWriter);
             }

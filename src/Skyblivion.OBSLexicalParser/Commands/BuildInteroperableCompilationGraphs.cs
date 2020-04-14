@@ -45,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 TES5TypeInferencer typeInferencer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out _, out _, out typeInferencer);
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out _, out typeInferencer);
                 //if (!buildTargets.CanBuildAndWarnIfNot()) { return; }//WTM:  Change:  This doesn't matter for building graphs.
                 Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
                 Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
@@ -70,7 +70,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                 }
                                 catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
                                 /*catch (UnexpectedTokenException ex)
-                                {//Exceptions no longer occur, so this code should not be invoked.
+                                {//UnexpectedTokenExceptions no longer occur, so this code should not be invoked.
                                     errorLog.WriteLine(sourceFile + ":  " + ex.Message + Environment.NewLine);
                                     continue;
                                 }*/
@@ -91,7 +91,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string propertyKeyName = propertyName.ToLower();
                                     bool containedKey;
                                     TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
-                                    ITES5Type inferencingType = typeInferencer.ResolveInferenceTypeByReferenceEdid(preparedProperty);
+                                    ITES5Type inferencingType = typeInferencer.GetScriptTypeByReferenceEdid(preparedProperty);
                                     if (!containedKey)
                                     {
                                         preparedPropertiesTypes.Add(propertyKeyName, inferencingType);

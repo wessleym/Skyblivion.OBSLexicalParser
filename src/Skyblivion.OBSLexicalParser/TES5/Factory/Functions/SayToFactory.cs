@@ -35,14 +35,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //arguments.Add(calledOn);
             arguments.Add(this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope));
             ITES5Value argument1 = this.valueFactory.CreateValue(functionArguments[1], codeScope, globalScope, multipleScriptsScope);
-            if (argument1.TES5Type != TES5BasicType.T_TOPIC)
+            //WTM:  Change:  Why is the below necessary?
+            /*if (argument1.TES5Type != TES5BasicType.T_TOPIC)
             {
-                TES5Castable? argument1Castable = argument1 as TES5Reference;
-                if (argument1Castable != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_TOPIC, argument1.TES5Type))
+                TES5Reference? argument1Reference = argument1 as TES5Reference;
+                if (argument1Reference != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_TOPIC, argument1.TES5Type))
                 {
-                    argument1Castable.ManualCastTo = TES5BasicType.T_TOPIC;
+                    argument1Reference.ManualCastTo = TES5BasicType.T_TOPIC;
                 }
-            }
+            }*/
             arguments.Add(argument1);
             arguments.Add(new TES5Bool(true));
 

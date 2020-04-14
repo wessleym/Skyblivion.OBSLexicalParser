@@ -10,11 +10,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class IsActorFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public IsActorFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public IsActorFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -25,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             return boolean;
             */
             //WTM:  Change:  Added:
-            TES5ObjectCall actorTypeNPCObjectCall = objectCallFactory.CreateObjectCall(staticReferenceFactory.Keyword, "GetKeyword", new TES5ObjectCallArguments() { new TES5String("ActorTypeNPC") });//GetKeyword is an SKSE function
+            TES5ObjectCall actorTypeNPCObjectCall = objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Keyword, "GetKeyword", new TES5ObjectCallArguments() { new TES5String("ActorTypeNPC") });//GetKeyword is an SKSE function
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { actorTypeNPCObjectCall };
             return objectCallFactory.CreateObjectCall(calledOn, "HasKeyword", arguments);
         }

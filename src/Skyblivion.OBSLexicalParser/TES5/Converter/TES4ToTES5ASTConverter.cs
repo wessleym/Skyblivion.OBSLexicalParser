@@ -34,17 +34,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         * 
         * @throws ConversionException
         */
-        public TES5Target Convert(TES4Target target, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Target Convert(TES4Target target, bool isStandalone, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Script script = target.Script;
             TES4BlockList? parsedBlockList = script.BlockList;
             Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
             if (parsedBlockList != null)
             {
-                TES5EventCodeBlock? onUpdateOfNonQuestBlock = null;
+                TES5EventCodeBlock? onUpdateBlockOfNonQuestOrAME = null;
                 foreach (TES4CodeBlock block in parsedBlockList.Blocks)
                 {
-                    TES5BlockList newBlockList = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateOfNonQuestBlock);
+                    TES5BlockList newBlockList = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateBlockOfNonQuestOrAME);
                     foreach (ITES5CodeBlock newBlock in newBlockList.Blocks)
                     {
                         createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
@@ -52,8 +52,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 }
             }
 
-            //todo encapsulate it to a different class.
-            bool isStandalone = target.OutputPath.Contains(Path.DirectorySeparatorChar + "Standalone" + Path.DirectorySeparatorChar);
             TES5BlockList blockList = new TES5BlockList();
             foreach (var createdBlock in createdBlocks)
             {
@@ -96,7 +94,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     newFunctionScope.AddVariable(variable);
                 }
 
-                TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, new TES5VoidType(), isStandalone);
+                TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, TES5VoidType.Instance, isStandalone);
                 functions.Add(function);
                 if (localScopeArguments == null)
                 {
@@ -112,10 +110,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             {
                 //Create the proxy block.
                 ITES5CodeBlock lastBlock = blocks.Last();
-                TES5EventCodeBlock proxyBlock = TES5BlockFactory.CreateEventCodeBlock(blockType,
+                TES5EventCodeBlock proxyBlock = TES5BlockFactory.CreateEventCodeBlock(
                     //WTM:  Change:  block was used below, but block is out of scope.  The PHP must have been using the last defined block from above.
                     //WTM:  Change:  PHP called "clone" below, but I'm not sure if this is necessary or would even operate the same in C#.
-                    lastBlock.FunctionScope);
+                    lastBlock.FunctionScope, globalScope);
                 foreach (var function in functions)
                 {
                     yield return function;

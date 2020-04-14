@@ -11,17 +11,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     class TES5ObjectCallFactory
     {
-        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
         private readonly TES5TypeInferencer typeInferencer;
-        public TES5ObjectCallFactory(TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)
+        public TES5ObjectCallFactory(TES5TypeInferencer typeInferencer)
         {
-            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
             this.typeInferencer = typeInferencer;
         }
 
         public TES5ObjectCall CreateObjectCall(ITES5Referencer callable, string functionName, TES5ObjectCallArguments? arguments = null, bool inference = true)
         {
-            TES5ObjectCall objectCall = new TES5ObjectCall(callable, functionName, arguments, inheritanceGraphAnalyzer);
+            TES5ObjectCall objectCall = new TES5ObjectCall(callable, functionName, arguments);
             if (inference)
             {
                 this.typeInferencer.InferenceObjectByMethodCall(objectCall);
@@ -31,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5ObjectCallCustom CreateObjectCallCustom(ITES5Referencer callable, string functionName, ITES5Type returnType, TES5ObjectCallArguments? arguments = null)
         {
-            return new TES5ObjectCallCustom(callable, functionName, returnType, arguments, inheritanceGraphAnalyzer);
+            return new TES5ObjectCallCustom(callable, functionName, returnType, arguments);
         }
 
         public TES5ObjectCall CreateGetActorBase(ITES5Referencer calledOn)
@@ -47,9 +45,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public TES5ObjectCall CreateRegisterForSingleUpdate(TES5GlobalScope globalScope)
         {
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
+            if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
             {
-                TES5Property questDelayTimeProperty = globalScope.Properties.Where(p => p.OriginalName.Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                TES5Property? questDelayTimeProperty = globalScope.Properties.Where(p => p.OriginalName.Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                 if (questDelayTimeProperty != null)
                 {
                     arguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty));

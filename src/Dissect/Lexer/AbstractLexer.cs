@@ -58,7 +58,7 @@ namespace Dissect.Lexer
                 // update line + offset
                 if (position > 0)
                 {
-                    this.Line = originalString.Substring(0, position).Cast<char>().Count(c => c == '\n') + 1;
+                    this.Line = originalString.Substring(0, position).Count(c => c == '\n') + 1;
                 }
 
                 str = Util.Util.Substring(str, shift);

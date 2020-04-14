@@ -9,16 +9,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class IsPCAMurdererFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public IsPCAMurdererFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public IsPCAMurdererFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, "IsPCAMurderer");
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "IsPCAMurderer");
         }
     }
 }

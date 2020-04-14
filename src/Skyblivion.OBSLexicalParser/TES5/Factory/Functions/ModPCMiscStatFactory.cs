@@ -10,12 +10,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class ModPCMiscStatFactory : IFunctionFactory//WTM:  Change:  Added
     {
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
-        public ModPCMiscStatFactory(TES5StaticReferenceFactory staticReferenceFactory, TES5ObjectCallFactory objectCallFactory, LogUnknownFunctionFactory logUnknownFunctionFactory)
+        public ModPCMiscStatFactory(TES5ObjectCallFactory objectCallFactory, LogUnknownFunctionFactory logUnknownFunctionFactory)
         {
-            this.staticReferenceFactory = staticReferenceFactory;
             this.objectCallFactory = objectCallFactory;
             this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
@@ -41,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 int modAmount = ((TES4Integer)tes4Arguments[1]).IntValue;
                 arguments.Add(new TES5Integer(modAmount));
             }
-            return objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, "IncrementStat", arguments);
+            return objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "IncrementStat", arguments);
         }
     }
 }

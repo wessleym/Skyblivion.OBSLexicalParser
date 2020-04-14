@@ -24,9 +24,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
-                TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer = new TES5InheritanceGraphAnalyzer(esmAnalyzer);
-                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer, inheritanceGraphAnalyzer, BuildTarget.StandaloneSourcePath);
-                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer);
+                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
+                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, esmAnalyzer, typeInferencer);
                 int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
                     .Select(path => Path.GetFileName(path))
                     .Select(name =>

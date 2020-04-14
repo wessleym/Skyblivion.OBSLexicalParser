@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
@@ -26,10 +27,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            string dataString = functionArguments[0].StringValue;
-            string referenceName = NameTransformer.GetEscapedName(calledOn.Name + dataString, TES5TypeFactory.TES4Prefix+"SCENE_", true);
-            this.metadataLogService.WriteLine("ADD_SCRIPT_SCENE", new string[] { dataString, referenceName });
-            ITES5Referencer reference = this.referenceFactory.CreateReference(referenceName, globalScope, multipleScriptsScope, localScope);
+            string firstArgument = functionArguments[0].StringValue;
+            string referenceName = NameTransformer.GetEscapedName(calledOn.Name + firstArgument, TES5TypeFactory.TES4Prefix+"SCENE_", true);
+            this.metadataLogService.WriteLine("ADD_SCRIPT_SCENE", new string[] { firstArgument, referenceName });
+            ITES5Referencer reference = this.referenceFactory.CreateReference(referenceName, TES5BasicType.T_SCENE, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();
             /*
              * Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this

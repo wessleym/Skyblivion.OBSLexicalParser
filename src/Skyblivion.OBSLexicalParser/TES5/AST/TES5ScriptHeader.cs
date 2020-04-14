@@ -1,6 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
@@ -13,22 +11,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         public string OriginalScriptName { get; private set; }
         public string EscapedScriptName { get; private set; }
         public ITES5Type ScriptType { get; private set; }
-        /*
-        * The basic script type this script header was constructed
-         * Used for resolving implicit references.
-        */
-        public ITES5Type BasicScriptType { get; private set; }
         private readonly string scriptNamePrefix;
         private readonly bool isHidden;
         public string EDID { get; private set; }
-        public TES5ScriptHeader(string scriptName, ITES5Type scriptType, string scriptNamePrefix, bool isHidden, ESMAnalyzer esmAnalyzer)
+        public TES5ScriptHeader(string scriptName, ITES5Type type, string scriptNamePrefix, bool isHidden)
         {
             this.OriginalScriptName = scriptName;
             this.EscapedScriptName = NameTransformer.Limit(scriptName, scriptNamePrefix);
             this.EDID = scriptName;
             this.scriptNamePrefix = scriptNamePrefix;
-            this.ScriptType = TES5TypeFactory.MemberByValue(scriptName, scriptType, esmAnalyzer);
-            this.BasicScriptType = scriptType;
+            this.ScriptType = type;
             this.isHidden = isHidden;
         }
 
@@ -37,13 +29,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         /*
              * @throws ConversionException
         */
-        public void SetNativeType(ITES5Type scriptType)
+        public void SetNativeType(ITES5Type scriptType, bool ensureNewTypeExtendsCurrentType = true)
         {
-            if (!TES5InheritanceGraphAnalyzer.IsExtending(scriptType, this.ScriptType.NativeType))
+            if (ensureNewTypeExtendsCurrentType && !TES5InheritanceGraphAnalyzer.IsExtending(scriptType, this.ScriptType.NativeType))
             {
                 throw new ConversionException("Cannot set script type to non-extending type - current native type " + this.ScriptType.NativeType.Value+ ", new type " + scriptType.Value);
             }
-
             this.ScriptType.NativeType = scriptType.NativeType;
         }
     }

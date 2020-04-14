@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             string fragmentName = "Fragment_"+stageId.ToString();
             TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
             TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
-            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, new TES5VoidType());
+            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance);
             List<ITES5CodeChunk> chunks = GenerateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {

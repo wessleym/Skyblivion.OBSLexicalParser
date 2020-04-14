@@ -15,11 +15,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class GetPlayerControlsDisabledFactory : IFunctionFactory//WTM:  Change:  Added
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public GetPlayerControlsDisabledFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public GetPlayerControlsDisabledFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -28,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //https://cs.elderscrolls.com/index.php?title=DisablePlayerControls
             //Player cannot move, wait, activate anything, or access his journal interface. 
             string[] functionNames = new string[] { "IsMovementControlsEnabled", "IsMenuControlsEnabled"/*closest to "IsWaitControlsEnabled" I could find*/, "IsActivateControlsEnabled", "IsJournalControlsEnabled" };
-            TES5ObjectCall[] objectCalls = functionNames.Select(f => objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, f)).ToArray();
+            TES5ObjectCall[] objectCalls = functionNames.Select(f => objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, f)).ToArray();
             ITES5ValueCodeChunk? accumulatedStatement = null;
             foreach (TES5ObjectCall objectCall in objectCalls)
             {

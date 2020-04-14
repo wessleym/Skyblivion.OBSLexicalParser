@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public const string BUILD_TARGET_QF = "QF";
         public const string BUILD_TARGET_PF = "PF";
         public const string DEFAULT_TARGETS = BUILD_TARGET_STANDALONE+ "," + BUILD_TARGET_TIF+ "," +BUILD_TARGET_QF;
-        public static string StandaloneSourcePath = Path.Combine(DataDirectory.GetBuildTargetsPath(), "Standalone", "Source") + Path.DirectorySeparatorChar;
+        //public static string StandaloneSourcePath = Path.Combine(DataDirectory.GetBuildTargetsPath(), "Standalone", "Source") + Path.DirectorySeparatorChar;
         private readonly string targetName;
         private readonly string filePrefix;
         private readonly Build build;

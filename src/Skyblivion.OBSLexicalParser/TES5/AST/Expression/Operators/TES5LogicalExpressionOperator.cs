@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
             OPERATOR_AND
         };
 
-        public static TES5LogicalExpressionOperator GetFirstOrNull(string name)
+        public static TES5LogicalExpressionOperator? GetFirstOrNull(string name)
         {
             return all.Where(o => o.Name == name).FirstOrDefault();
         }

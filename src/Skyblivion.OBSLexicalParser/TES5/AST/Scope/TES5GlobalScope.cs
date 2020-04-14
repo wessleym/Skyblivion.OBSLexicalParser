@@ -13,20 +13,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public TES5ScriptHeader ScriptHeader { get; private set; }
         public List<TES5Property> Properties { get; private set; } = new List<TES5Property>();
         private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
-        private readonly Lazy<TES5PlayerReference> playerRefLazy;
-        public TES5PlayerReference PlayerRef => playerRefLazy.Value;
+        private bool playerRefPropertyAdded = false;
         /*
         * TES5GlobalScope constructor.
         */
         public TES5GlobalScope(TES5ScriptHeader scriptHeader)
         {
             this.ScriptHeader = scriptHeader;
-            this.playerRefLazy = new Lazy<TES5PlayerReference>(() =>
-            {
-                const string name = TES5PlayerReference.PlayerRefName;
-                AddProperty(new TES5Property(name, TES5BasicType.T_ACTOR, name, isPlayerRef: true));
-                return new TES5PlayerReference();
-            });
         }
 
         public void AddProperty(TES5Property property)
@@ -49,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public IEnumerable<string> Output => Properties.SelectMany(p => p.Output).Concat(functions.SelectMany(o => o.Output));
 
-        public TES5Property? GetPropertyByName(string propertyName)
+        private TES5Property? TryGetPropertyByName(string propertyName, bool throwException)
         {
             if (this.Properties.Any())
             {
@@ -58,14 +51,35 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 foreach (var property in this.Properties)
                 {
                     string currentPropertyNameLower = property.Name.ToLower();
-                    if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix==currentPropertyNameLower)
+                    if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix == currentPropertyNameLower)
                     {
                         //Token found.
                         return property;
                     }
                 }
             }
+            if (throwException) { throw new InvalidOperationException(nameof(propertyName) + " " + propertyName + " not found."); }
             return null;
+        }
+        public TES5Property? TryGetPropertyByName(string propertyName)
+        {
+            return TryGetPropertyByName(propertyName, false);
+        }
+        public TES5Property GetPropertyByName(string propertyName)
+        {
+            return TryGetPropertyByName(propertyName, true)!;
+        }
+
+        public void AddPlayerRefPropertyIfNotExists()
+        {
+            if (!playerRefPropertyAdded)
+            {
+                const string name = TES5PlayerReference.PlayerRefName;
+                TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
+                TES5Property property = new TES5Property(name, playerType, name);
+                AddProperty(property);
+                playerRefPropertyAdded = true;
+            }
         }
     }
 }

@@ -10,11 +10,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class GetRandomPercentFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public GetRandomPercentFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public GetRandomPercentFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -25,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(0),
                 new TES5Integer(99)
             };
-            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Utility, functionName, methodArguments);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, functionName, methodArguments);
         }
     }
 }

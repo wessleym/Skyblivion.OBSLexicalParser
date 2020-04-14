@@ -1,16 +1,20 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
@@ -25,11 +29,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ReferenceFactory referenceFactory;
+        private readonly ESMAnalyzer esmAnalyzer;
         private readonly Dictionary<string, IFunctionFactory> functionFactories = new Dictionary<string, IFunctionFactory>();
-        public TES5ValueFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory)
+        public TES5ValueFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer esmAnalyzer)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
+            this.esmAnalyzer = esmAnalyzer;
         }
         public void AddFunctionFactory(string functionName, IFunctionFactory factory)
         {
@@ -38,7 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         }
         private ITES5Value ConvertComparisonExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            Tuple<ITES4Value, ITES4Value>[] sets = new Tuple<ITES4Value, ITES4Value>[]
+            Tuple<ITES4Value, ITES4Value>[] tes4ValueTuples = new Tuple<ITES4Value, ITES4Value>[]
             {
                 new Tuple<ITES4Value, ITES4Value>(expression.LeftValue, expression.RightValue),
                 new Tuple<ITES4Value, ITES4Value>(expression.RightValue, expression.LeftValue)
@@ -47,22 +53,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             /*
              * Scenario 1 - Special functions converted on expression level
              */
-            foreach (Tuple<ITES4Value, ITES4Value> set in sets)
+            foreach (Tuple<ITES4Value, ITES4Value> tes4ValueTuple in tes4ValueTuples)
             {
-                ITES4Callable? setItem1Callable = set.Item1 as ITES4Callable;
-                if (setItem1Callable == null) { continue; }
+                ITES4Callable? valueTupleItem1 = tes4ValueTuple.Item1 as ITES4Callable;
+                if (valueTupleItem1 == null) { continue; }
 
-                TES4Function function = setItem1Callable.Function;
+                TES4Function function = valueTupleItem1.Function;
 
                 switch (function.FunctionCall.FunctionName.ToLower())
                 {
                     case "getweaponanimtype":
                         {
-                            ITES5Referencer calledOn = this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope);
+                            ITES5Referencer calledOn = this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope);
                             TES5ObjectCall equippedWeaponLeftValue = this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(calledOn, "GetEquippedWeapon"), "GetWeaponType");
 
                             int[] targetedWeaponTypes;
-                            switch ((int)set.Item2.Data)
+                            switch ((int)tes4ValueTuple.Item2.Data)
                             {
 
                                 case 0:
@@ -116,26 +122,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         {
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments()
                             {
-                                this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope)
+                                this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope)
                             };
                             TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", inversedArgument);
-                            TES5Integer getDetectedRightValue = new TES5Integer(((int)set.Item2.Data== 0) ? 0 : 1);
+                            TES5Integer getDetectedRightValue = new TES5Integer(((int)tes4ValueTuple.Item2.Data == 0) ? 0 : 1);
                             return TES5ExpressionFactory.CreateComparisonExpression(getDetectedLeftValue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, getDetectedRightValue);
                         }
 
                     case "getdetectionlevel":
                         {
 
-                            if (!set.Item2.HasFixedValue)
+                            if (!tes4ValueTuple.Item2.HasFixedValue)
                             {
                                 throw new ConversionException("Cannot convert getDetectionLevel calls with dynamic comparision");
                             }
 
-                            TES5Bool tes5Bool = new TES5Bool(((int)set.Item2.Data) == 3); //true only if the compared value was 3
+                            TES5Bool tes5Bool = new TES5Bool(((int)tes4ValueTuple.Item2.Data) == 3); //true only if the compared value was 3
 
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments()
                             {
-                                this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope)
+                                this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope)
                             };
 
                             return TES5ExpressionFactory.CreateComparisonExpression
@@ -149,17 +155,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     case "getcurrentaiprocedure":
                         {
 
-                            if (!set.Item2.HasFixedValue)
+                            if (!tes4ValueTuple.Item2.HasFixedValue)
                             {
                                 throw new ConversionException("Cannot convert getCurrentAIProcedure() calls with dynamic comparision");
                             }
 
-                            switch ((int)set.Item2.Data)
+                            switch ((int)tes4ValueTuple.Item2.Data)
                             {
                                 case 4:
                                     {
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer"),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope), "IsInDialogueWithPlayer"),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                             new TES5Bool(expression.Operator == TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
@@ -170,7 +176,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                                         //ref.getSleepState() == 3
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "getSleepState"),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope), "getSleepState"),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
                                             new TES5Integer(3) //SLEEPSTATE_SLEEP
                                         );
@@ -178,9 +184,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                 case 13:
                                     {
                                         return TES5ExpressionFactory.CreateComparisonExpression(
-                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "IsInCombat"),
+                                            this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope), "IsInCombat"),
                                             TES5ComparisonExpressionOperator.OPERATOR_EQUAL,
-                                            new TES5Bool(expression.Operator== TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
+                                            new TES5Bool(expression.Operator == TES4ComparisonExpressionOperator.OPERATOR_EQUAL) //cast to true if the original op was ==, false otherwise.
                                         );
                                     }
 
@@ -194,7 +200,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                     }
                                 default:
                                     {
-                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)set.Item2.Data).ToString());
+                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)tes4ValueTuple.Item2.Data).ToString());
                                     }
                             }
                         }
@@ -211,7 +217,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             //WARNING: Needs to implement Horse sittings, too.
                             //SEE: http://www.gameskyrim.com/papyrus-isridinghorse-function-t255012.html
                             int goTo;
-                            switch ((int)set.Item2.Data)
+                            switch ((int)tes4ValueTuple.Item2.Data)
                             {
                                 case 0:
                                     {
@@ -251,7 +257,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             //ref.getSleepState() == 3
                             return TES5ExpressionFactory.CreateComparisonExpression
                             (
-                                this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(setItem1Callable, codeScope, globalScope, multipleScriptsScope), "GetSitState"),
+                                this.objectCallFactory.CreateObjectCall(this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope), "GetSitState"),
                                 TES5ComparisonExpressionOperator.GetFirst(expression.Operator.Name),
                                 new TES5Integer(goTo)
                             );
@@ -265,45 +271,45 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES5Value leftValue = this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope);
             ITES5Value rightValue = this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope);
 
-            Tuple<ITES5Value, ITES5Value>[] tes5sets = new Tuple<ITES5Value, ITES5Value>[]
+            Tuple<ITES5Value, ITES5Value>[] tes5ValueTuples = new Tuple<ITES5Value, ITES5Value>[]
             {
                 new Tuple<ITES5Value, ITES5Value>(leftValue, rightValue),
                 new Tuple<ITES5Value, ITES5Value>(rightValue, leftValue)
             };
 
             TES5BasicType objectReferenceType = TES5BasicType.T_FORM; //used just to make sure.
-            TES5ComparisonExpressionOperator op = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            TES5ComparisonExpressionOperator op = TES5ComparisonExpressionOperator.GetFirst(expression.Operator.Name);
 
             /*
              * Scenario 2: Comparision of ObjectReferences to integers ( quick formid check )
              */
             bool flipOperator = false;
-            foreach (var tes5set in tes5sets)
+            foreach (var valueTuple in tes5ValueTuples)
             {
                 TES5ComparisonExpressionOperator newOp = !flipOperator ? op : op.Flip();
-                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type, objectReferenceType) || TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(tes5set.Item1.TES5Type.NativeType, objectReferenceType))
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(valueTuple.Item1.TES5Type, objectReferenceType) || TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(valueTuple.Item1.TES5Type.NativeType, objectReferenceType))
                 {
-                    if (tes5set.Item2.TES5Type == TES5BasicType.T_INT)
+                    if (valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {
                         //Perhaps we should allow to try to cast upwards for primitives, .asPrimitive() or similar
                         //In case we do know at compile time that we"re comparing against zero, then we can assume
                         //we can compare against None, which allows us not call GetFormID() on most probably None object
-                        TES5Integer tes5SetItem2Integer = (TES5Integer)tes5set.Item2;
+                        TES5Integer tes5SetItem2Integer = (TES5Integer)valueTuple.Item2;
                         if (tes5SetItem2Integer.IntValue == 0)
                         {
                             newOp = op == TES5ComparisonExpressionOperator.OPERATOR_EQUAL ? op : TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL;
-                            return TES5ExpressionFactory.CreateComparisonExpression(tes5set.Item1, newOp, new TES5None());
+                            return TES5ExpressionFactory.CreateComparisonExpression(valueTuple.Item1, newOp, new TES5None());
 
                         }
                         else
                         {
-                            ITES5Referencer callable = (ITES5Referencer)tes5set.Item1;
+                            ITES5Referencer callable = (ITES5Referencer)valueTuple.Item1;
                             TES5ObjectCall tes5setNewItem1 = this.objectCallFactory.CreateObjectCall(callable, "GetFormID");
-                            return TES5ExpressionFactory.CreateComparisonExpression(tes5setNewItem1, newOp, tes5set.Item2);
+                            return TES5ExpressionFactory.CreateComparisonExpression(tes5setNewItem1, newOp, valueTuple.Item2);
                         }
                     }
                 }
-                else if (tes5set.Item1.TES5Type.OriginalName == TES5VoidType.OriginalNameConst)
+                else if (valueTuple.Item1.TES5Type.OriginalName == TES5VoidType.OriginalNameConst)
                 {
 #if PHP_COMPAT
                     TES5IntegerOrFloat tes5SetItem2Number = tes5set.Item2 as TES5IntegerOrFloat;
@@ -315,41 +321,116 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     throw new ConversionException("Type was void.");//This shouldn't happen anymore.
 #endif
                 }
-                if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(tes5set.Item1.TES5Type, tes5set.Item2.TES5Type))
-                {//WTM:  Change:  Added entire if branch
-                    if (tes5set.Item1.TES5Type.NativeType== TES5BasicType.T_QUEST && tes5set.Item2.TES5Type == TES5BasicType.T_INT)
+                if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(valueTuple.Item1.TES5Type, valueTuple.Item2.TES5Type, true))//WTM:  Change:  Added entire if branch
+                {
+                    if (valueTuple.Item1.TES5Type.NativeType == TES5BasicType.T_QUEST && valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {
-                        TES5ObjectCall getStage = this.objectCallFactory.CreateObjectCall((ITES5Referencer)tes5set.Item1, "GetStage");
-                        return TES5ExpressionFactory.CreateComparisonExpression(getStage, newOp, tes5set.Item2);
+                        TES5ObjectCall getStage = this.objectCallFactory.CreateObjectCall((ITES5Referencer)valueTuple.Item1, "GetStage");
+                        return TES5ExpressionFactory.CreateComparisonExpression(getStage, newOp, valueTuple.Item2);
                     }
-                    if (tes5set.Item1.TES5Type == TES5BasicType.T_BOOL && tes5set.Item2.TES5Type == TES5BasicType.T_INT)
+                    if (valueTuple.Item1.TES5Type == TES5BasicType.T_BOOL && valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {
-                        int item2Value = ((TES5Integer)tes5set.Item2).IntValue;
+                        int item2Value = ((TES5Integer)valueTuple.Item2).IntValue;
                         if (item2Value != 0 && item2Value != 1) { throw new ConversionException("Unexpected Value:  " + item2Value.ToString()); }
                         ITES5Value newItem2 = new TES5Bool(item2Value == 1);
                         newOp = op == TES5ComparisonExpressionOperator.OPERATOR_EQUAL ? op : TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL;
-                        return TES5ExpressionFactory.CreateComparisonExpression(tes5set.Item1, newOp, newItem2);
+                        return TES5ExpressionFactory.CreateComparisonExpression(valueTuple.Item1, newOp, newItem2);
+                    }
+                    if (valueTuple.Item1.TES5Type == TES5BasicType.T_ACTOR && valueTuple.Item2.TES5Type == TES5BasicType.T_ACTORBASE)
+                    {
+                        return TES5ExpressionFactory.CreateComparisonExpression(objectCallFactory.CreateGetActorBase((TES5ObjectCall)valueTuple.Item1), newOp, valueTuple.Item2);
+                    }
+                    //WTM:  Change:  Added for se08barriertriggerscript
+                    if (newOp == TES5ComparisonExpressionOperator.OPERATOR_EQUAL && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(valueTuple.Item1.TES5Type, TES5BasicType.T_FORM) && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(valueTuple.Item2.TES5Type, TES5BasicType.T_FORM))
+                    {
+                        TES5Reference reference1 = (TES5Reference)valueTuple.Item1;
+                        TES5Reference reference2 = (TES5Reference)valueTuple.Item2;
+                        reference1.ManualCastTo = TES5BasicType.T_FORM;
+                        reference2.ManualCastTo = TES5BasicType.T_FORM;
+                        return TES5ExpressionFactory.CreateComparisonExpression(reference1, newOp, reference2);
                     }
                     throw new ConversionException("Type could not be converted.");
                 }
+                TES5ComparisonExpression? containsCall = ConvertGetItemCountCallToContainsItemCall(valueTuple.Item1, op, valueTuple.Item2);//WTM:  Added
+                if (containsCall != null) { return containsCall; }
                 flipOperator = true;
             }
             return TES5ExpressionFactory.CreateComparisonExpression(leftValue, op, rightValue);
         }
 
-        public ITES5Value ConvertExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        //WTM:  Added:  I think GetItemCount returns 0 for all Containers that get transpiled as ObjectReferences (like TES4Dark11ChorrolDropScript).
+        //Once the player opens the Container once, then GetItemCount starts returning the correct count.
+        private TES5ComparisonExpression? ConvertGetItemCountCallToContainsItemCall(ITES5Value leftValue, TES5ComparisonExpressionOperator op, ITES5Value rightValue)
         {
-            TES5ComparisonExpressionOperator ceOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            if (rightValue.TES5Type == TES5BasicType.T_INT)
+            {
+                TES5ObjectCall? value1ObjectCall = leftValue as TES5ObjectCall;
+                if (value1ObjectCall != null && value1ObjectCall.FunctionName.Equals("GetItemCount", StringComparison.OrdinalIgnoreCase))
+                {
+                    ITES5Referencer accessedObject = value1ObjectCall.AccessedObject;
+                    if (accessedObject is TES5PlayerReference) { return null; }//WTM:  Note:  GetItemCount works for the player, so the call doesn't need to be converted to ContainsItem.
+                    ITES5VariableOrProperty? calledOn = accessedObject.ReferencesTo;
+                    if (calledOn == null)
+                    {
+                        TES5ObjectCall? innerObjectCall = accessedObject as TES5ObjectCall;
+                        if (innerObjectCall == null) { throw new InvalidOperationException("Called on object could not be found."); }
+                        calledOn = innerObjectCall.AccessedObject.ReferencesTo;
+                        if (calledOn == null) { throw new InvalidOperationException("Called on object could not be found."); }
+                    }
+                    if (calledOn.ReferenceEDID == null) { throw new NullableException(nameof(calledOn.ReferenceEDID)); }
+                    ITES5Type? referenceType = esmAnalyzer.GetTypeByEDIDWithFollow(calledOn.ReferenceEDID, TypeMapperMode.Strict, useScriptTypeCache: false);
+                    if (referenceType == null) { referenceType = calledOn.TES5Type; }//WTM:  Note:  Revert to type determined by previous inferences.
+                    if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(referenceType, TES5BasicType.T_OBJECTREFERENCE))
+                    {//WTM:  Note:  I think GetItemCount works for ObjectReferences that are transpiled as ObjectReferences.
+                        //So they don't require the use of ContainsItem.
+                        return null;
+                    }
+                    TES5Integer? value2Integer = rightValue as TES5Integer;
+                    if (value2Integer != null)
+                    {
+                        bool canConvert = false, negate = false;
+                        if (
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_GREATER && value2Integer.IntValue == 0) ||
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_GREATER_OR_EQUAL && value2Integer.IntValue == 1) ||
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL && value2Integer.IntValue == 0)
+                        )
+                        {
+                            canConvert = true;
+                        }
+                        else if (
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_LESS && value2Integer.IntValue == 1) ||
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_LESS_OR_EQUAL && value2Integer.IntValue == 0) ||
+                            (op == TES5ComparisonExpressionOperator.OPERATOR_EQUAL && value2Integer.IntValue == 0)
+                        )
+                        {
+                            canConvert = true;
+                            negate = true;
+                        }
+                        if (canConvert)
+                        {
+                            TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(value1ObjectCall.AccessedObject, "ContainsItem", value1ObjectCall.Arguments);
+                            TES5ComparisonExpression comparisonExpression = TES5ExpressionFactory.CreateComparisonExpression(newObjectCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(!negate));
+                            return comparisonExpression;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private ITES5Value ConvertExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            TES5ComparisonExpressionOperator? ceOp = TES5ComparisonExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (ceOp != null)
             {
                 return this.ConvertComparisonExpression(expression, codeScope, globalScope, multipleScriptsScope);
             }
-            TES5LogicalExpressionOperator leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            TES5LogicalExpressionOperator? leOp = TES5LogicalExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (leOp != null)
             {
                 return TES5ExpressionFactory.CreateLogicalExpression(this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), leOp, this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
             }
-            TES5ArithmeticExpressionOperator aeOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
+            TES5ArithmeticExpressionOperator? aeOp = TES5ArithmeticExpressionOperator.GetFirstOrNull(expression.Operator.Name);
             if (aeOp != null)
             {
                 return TES5ExpressionFactory.CreateArithmeticExpression(this.CreateValue(expression.LeftValue, codeScope, globalScope, multipleScriptsScope), aeOp, this.CreateValue(expression.RightValue, codeScope, globalScope, multipleScriptsScope));
@@ -409,6 +490,5 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 return this.referenceFactory.ExtractImplicitReference(globalScope, multipleScriptsScope, codeScope.LocalScope);
             }
         }
-
     }
 }

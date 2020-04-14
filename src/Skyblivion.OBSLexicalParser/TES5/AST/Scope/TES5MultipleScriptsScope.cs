@@ -22,14 +22,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.globalVariables = globalVariables;
         }
 
-        public TES5ScriptHeader GetScriptHeaderOfScript(string scriptName)
+        public TES5ScriptHeader? TryGetScriptHeaderOfScript(string scriptName, bool throwException)
         {
             TES5GlobalScope globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
-                throw new ConversionException(nameof(TES5MultipleScriptsScope)+"."+nameof(GetScriptHeaderOfScript) +":  Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
+                if (throwException)
+                {
+                    throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetScriptHeaderOfScript) + ":  Cannot find a global scope for script " + scriptName + " - make sure that the multiple scripts scope is built correctly.");
+                }
+                return null;
             }
             return globalScope.ScriptHeader;
+        }
+        public TES5ScriptHeader? TryGetScriptHeaderOfScript(string scriptName)
+        {
+            return TryGetScriptHeaderOfScript(scriptName, false);
+        }
+        public TES5ScriptHeader GetScriptHeaderOfScript(string scriptName)
+        {
+            return TryGetScriptHeaderOfScript(scriptName, true)!;
         }
 
         public TES5Property GetPropertyFromScript(string scriptName, string propertyName)
@@ -39,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
             }
-            TES5Property? property = globalScope.GetPropertyByName(propertyName);
+            TES5Property? property = globalScope.TryGetPropertyByName(propertyName);
             if (property == null)
             {
                 throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a property " + propertyName+" in script name "+scriptName);

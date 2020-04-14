@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         {
             TES4Script script = ParseOrGetFromCache(sourcePath);
             TES4Target tes4Target = new TES4Target(script, outputPath);
-            TES5Target target = this.converter.Convert(tes4Target, globalScope, multipleScriptsScope);
+            TES5Target target = this.converter.Convert(tes4Target, true, globalScope, multipleScriptsScope);
             return target;
         }
     }

@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
-            if (functionArguments == null || !functionArguments.Any())
+            if (!functionArguments.Any())
             {
                 TES5ObjectCallArguments constantArgumentForNoFunctionArguments = new TES5ObjectCallArguments();
                 ITES5VariableOrProperty? meaningVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);

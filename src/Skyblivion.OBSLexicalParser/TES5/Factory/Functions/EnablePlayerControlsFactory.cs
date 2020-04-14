@@ -10,19 +10,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public EnablePlayerControlsFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public EnablePlayerControlsFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
-            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, functionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, functionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }
 }

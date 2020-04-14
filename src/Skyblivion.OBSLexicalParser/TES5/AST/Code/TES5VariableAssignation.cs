@@ -1,3 +1,5 @@
+using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -20,9 +22,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             if (ReferenceAndValueDifferentTypesAndValueIsNonNone() && !ReferenceIsIntAndValueExtendsForm() &&
                 //Oblivion stores boolean-like values in short ints.  Exclude such cases.
                 !(reference.TES5Type == TES5BasicType.T_INT && value.TES5Type==TES5BasicType.T_BOOL) &&
-                !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(value.TES5Type, reference.TES5Type))
+                !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(value.TES5Type, reference.TES5Type, true))
             {
-                throw new ConversionException("A " + value.TES5Type.OriginalName + " cannot be converted to " + reference.TES5Type.OriginalName + ".", expected: true);
+                throw new ConversionTypeMismatchException(value.TES5Type.OriginalName + " : " + value.TES5Type.NativeType.Name + " cannot be assigned to " + reference.TES5Type.OriginalName + " : " + reference.TES5Type.NativeType.Name);
             }
         }
 

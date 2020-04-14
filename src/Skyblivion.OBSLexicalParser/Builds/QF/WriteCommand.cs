@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
         public void Write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Dictionary<string, TES5Target> scripts = buildTracker.GetBuiltScripts(target.GetTargetName());
+            var scripts = buildTracker.GetBuiltScripts(target.GetTargetName()).Values;
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
             /*
@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             /*
              * Group the fragments together
              */
-            foreach (var script in scripts.Values)
+            foreach (var script in scripts)
             {
                 string[] parts = script.Script.ScriptHeader.OriginalScriptName.Split('_');
                 if (parts.Length < 3)
@@ -61,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             }
             progressWriter.ClearByPreviousProgress(joiningQFFragments);
             //WTM:  Note:  Subtract total scripts and add back connected quest fragments.
-            int totalAddend = -scripts.Values.Count + connectedQuestFragments.Count;
+            int totalAddend = -scripts.Count + connectedQuestFragments.Count;
             progressWriter.ModifyTotalAndWrite(totalAddend);
 
             Write(connectedQuestFragments, progressWriter);

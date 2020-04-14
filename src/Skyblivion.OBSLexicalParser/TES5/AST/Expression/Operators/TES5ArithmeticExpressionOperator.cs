@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
             OPERATOR_DIVIDE
         };
 
-        public static TES5ArithmeticExpressionOperator GetFirstOrNull(string name)
+        public static TES5ArithmeticExpressionOperator? GetFirstOrNull(string name)
         {
             return all.Where(o => o.Name == name).FirstOrDefault();
         }

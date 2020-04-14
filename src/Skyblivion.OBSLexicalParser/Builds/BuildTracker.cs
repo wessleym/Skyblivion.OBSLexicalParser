@@ -1,4 +1,3 @@
-using Dissect.Extensions.IDictionaryExtensions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
 
@@ -30,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public Dictionary<string, TES5Target> GetBuiltScripts(string targetName)
         {
-            return builtScripts.GetWithFallback(targetName, () => new Dictionary<string, TES5Target>());
+            return builtScripts[targetName];
         }
     }
 }

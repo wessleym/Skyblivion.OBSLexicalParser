@@ -8,6 +8,10 @@
     <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8609;CS8610;CS8613;CS8614;CS8616;CS8618;CS8619;CS8620;CS8622;CS8625;CS8629;CS8653;CS8714</WarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParser.csproj" />
   </ItemGroup>

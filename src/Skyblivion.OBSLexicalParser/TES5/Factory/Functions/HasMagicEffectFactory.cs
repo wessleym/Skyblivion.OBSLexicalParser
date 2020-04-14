@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -22,8 +23,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments();
-            string dataString = functionArguments[0].StringValue;
-            newArgs.Add(this.referenceFactory.CreateReference("Effect"+dataString, globalScope, multipleScriptsScope, localScope));
+            string firstArgument = functionArguments[0].StringValue;
+            newArgs.Add(this.referenceFactory.CreateReference("Effect" + firstArgument, TES5BasicType.T_MAGICEFFECT, globalScope, multipleScriptsScope, localScope));
             /*switch (dataString)
             {
 

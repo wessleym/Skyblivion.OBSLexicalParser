@@ -16,14 +16,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         private readonly MetadataLogService metadataLogService;
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public MessageBoxFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, MetadataLogService metadataLogService, TES5StaticReferenceFactory staticReferenceFactory)
+        public MessageBoxFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, MetadataLogService metadataLogService)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.referenceFactory = referenceFactory;
             this.metadataLogService = metadataLogService;
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -33,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //todo Refactor - add floating point vars .
             if (functionArguments.Count== 1)
             {
-                TES5StaticReference calledOnRef = staticReferenceFactory.Debug;
+                TES5StaticReference calledOnRef = TES5StaticReferenceFactory.Debug;
                 return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
             }
             else

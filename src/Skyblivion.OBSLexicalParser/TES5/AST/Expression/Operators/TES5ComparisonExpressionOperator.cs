@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
             return all.Where(o => o.Name == name).First();
         }
 
-        public static TES5ComparisonExpressionOperator GetFirstOrNull(string name)
+        public static TES5ComparisonExpressionOperator? GetFirstOrNull(string name)
         {
             return all.Where(o => o.Name == name).FirstOrDefault();
         }

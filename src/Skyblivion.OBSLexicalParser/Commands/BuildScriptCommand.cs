@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             using (BuildLogServices buildLogServices = new BuildLogServices(build))
             {
                 ESMAnalyzer esmAnalyzer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out _, out _);
+                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out _);
                 if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
                 TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName, esmAnalyzer);
 #if !DEBUG

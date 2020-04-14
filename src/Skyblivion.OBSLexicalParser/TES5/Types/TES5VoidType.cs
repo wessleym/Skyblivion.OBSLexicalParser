@@ -5,7 +5,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5VoidType : ITES5Type
     {
-        public ITES5Type NativeType { get => throw new ConversionException("VOID TYPE get native type"); set => throw new ConversionException("Cannot set native type void type."); }
+        private TES5VoidType() { }
+
+        TES5BasicType ITES5Type.NativeType { get => throw new ConversionException("VOID TYPE get native type"); set => throw new ConversionException("Cannot set native type void type."); }
+
+#if ALTERNATE_TYPE_MAPPING
+        TES5BasicTypeRevertible? ITES5Type.Revertible => throw new ConversionException("VOID TYPE Revertible");
+#endif
 
         public string Value => "";
 
@@ -15,8 +21,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public bool IsNativePapyrusType => false;
 
+        public bool AllowInference => false;
+
+        public bool AllowNativeTypeInference => AllowInference;
+
         public string OriginalName => OriginalNameConst;
 
         public const string OriginalNameConst = "void";//WTM:  Added
+        public static readonly TES5VoidType Instance = new TES5VoidType();//WTM:  Added
     }
 }

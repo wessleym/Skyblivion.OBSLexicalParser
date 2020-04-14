@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
@@ -17,14 +18,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader? trackedScript;
 
-        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, bool isPlayerRef = false)
+        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID)
         {
+            this.IsPlayerRef = name == TES5PlayerReference.PlayerRefName && propertyType == TES5PlayerReference.TES5TypeStatic && referenceEDID == TES5PlayerReference.PlayerRefName;
             this.OriginalName = name;
-            this.AllowNameTransformation = !isPlayerRef;
+            this.AllowNameTransformation = !this.IsPlayerRef;
             this.Name = AllowNameTransformation ? AddPropertyNameSuffix(name) : name;
             this.propertyType = propertyType;
             this.ReferenceEDID = referenceEDID;
-            this.IsPlayerRef = isPlayerRef;
             this.trackedScript = null;
         }
 
@@ -64,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             get
             {
-                return this.trackedScript != null ? this.trackedScript.ScriptType: this.propertyType;
+                return this.trackedScript != null ? this.trackedScript.ScriptType : this.propertyType;
             }
             set
             {
@@ -87,7 +88,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             /*
              * Scenario 1 - types are equal or the remote type is higher than ours in which case we do nothing as they have the good type anyway
              */
-            if (ourNativeType == remoteNativeType || TES5InheritanceGraphAnalyzer.IsExtending(remoteNativeType, ourNativeType))
+            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(remoteNativeType, ourNativeType))
             {
                 return;
             }
@@ -95,13 +96,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             /*
              * Scenario 2 - Our current native type is extending remote script"s extended type - we need to set it properly
              */
-            else if(TES5InheritanceGraphAnalyzer.IsExtending(ourNativeType, remoteNativeType))
+            else if (TES5InheritanceGraphAnalyzer.IsExtending(ourNativeType, remoteNativeType))
             {
                 this.trackedScript.SetNativeType(ourNativeType);
             }
-            else 
+            else
             {
-                throw new ConversionException(nameof(TES5Property) + "." + nameof(TrackRemoteScript) + ":  The definitions of local property type and remote property type have diverged.  (Ours: " + ourNativeType.Value + ", remote: " + remoteNativeType.Value);
+                throw new ConversionException(nameof(TES5Property) + "." + nameof(TrackRemoteScript) + ":  The definitions of local property type and remote property type have diverged.  (Ours: " + ourNativeType.Value + ", remote: " + remoteNativeType.Value + ")");
             }
         }
     }

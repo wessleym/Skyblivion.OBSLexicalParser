@@ -7,27 +7,20 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Service
 {
     class TES5TypeInferencer
     {
         private readonly ESMAnalyzer esmAnalyzer;
-        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
-        private readonly string otherScriptsFolder;
-        private readonly string[] otherScriptsLower;
-        public TES5TypeInferencer(ESMAnalyzer esmAnalyzer, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, string otherScriptsFolder)
+        //private readonly string otherScriptsFolder;
+        //private readonly string[] otherScriptsLower;
+        public TES5TypeInferencer(ESMAnalyzer esmAnalyzer/*, string otherScriptsFolder*/)
         {
             this.esmAnalyzer = esmAnalyzer;
-            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
-            this.otherScriptsFolder = otherScriptsFolder;
-            otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
+            //this.otherScriptsFolder = otherScriptsFolder;
+            //otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
         }
 
         /*
@@ -50,49 +43,61 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
              * Inference the arguments
              */
             int argumentIndex = 0;
-            ITES5Type calledOnType = objectCall.AccessedObject.TES5Type.NativeType;
             foreach (ITES5Value argument in objectCall.Arguments)
             {
+                InferenceTypeOfMethodArgument(objectCall, argument, argumentIndex);
+                argumentIndex++;
+            }
+        }
+
+        private void InferenceTypeOfMethodArgument(TES5ObjectCall objectCall, ITES5Value argument, int argumentIndex)
+        {
+            ITES5Type calledOnType = objectCall.AccessedObject.TES5Type.NativeType;
+            /*
+            * Get the argument type according to TES5Inheritance graph.
+            */
+            TES5BasicType argumentTargetType = TES5InheritanceGraphAnalyzer.FindTypeByMethodParameter(calledOnType.NativeType, objectCall.FunctionName, argumentIndex);
+            if (argument.TES5Type != argumentTargetType)
+            {
                 /*
-                 * Get the argument type according to TES5Inheritance graph.
+                 * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
                  */
-                ITES5Type argumentTargetType = inheritanceGraphAnalyzer.FindTypeByMethodParameter(calledOnType, objectCall.FunctionName, argumentIndex);
-                if (argument.TES5Type != argumentTargetType)
+                ITES5Referencer? referencerArgument = argument as ITES5Referencer;
+                if (referencerArgument != null && TES5InheritanceGraphAnalyzer.IsExtending(argumentTargetType, argument.TES5Type.NativeType))
+                { //HACKY!
+                    if (referencerArgument.ReferencesTo == null) { throw new NullableException(nameof(referencerArgument.ReferencesTo)); }
+                    this.InferenceType(referencerArgument.ReferencesTo, argumentTargetType);
+                }
+                else
                 {
-                    /*
-                     * todo - maybe we should move getReferencesTo() to TES5Value and make all of the rest TES5Values just have null references as they do not reference anything? :)
-                     */
-                    ITES5Referencer? referencerArgument = argument as ITES5Referencer;
-                    if (referencerArgument != null && TES5InheritanceGraphAnalyzer.IsExtending(argumentTargetType, argument.TES5Type.NativeType))
-                    { //HACKY!
-                        if (referencerArgument.ReferencesTo == null) { throw new NullableException(nameof(referencerArgument.ReferencesTo)); }
-                        this.InferenceType(referencerArgument.ReferencesTo, argumentTargetType);
-                    }
-                    else
+                    //So there"s one , one special case where we actually have to cast a var from one to another even though they are not ,,inheriting" from themselves, because they are primitives.
+                    //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
+                    //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
+                    //float assigment somewhere in the code )
+                    if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
                     {
-                        //So there"s one , one special case where we actually have to cast a var from one to another even though they are not ,,inheriting" from themselves, because they are primitives.
-                        //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
-                        //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
-                        //float assigment somewhere in the code )
-                        if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
-                        {
-                            TES5Castable? argumentCastable = argument as TES5Castable;
-                            if (argumentCastable != null)
-                            { //HACKY! When we"ll clean up this interface, it will dissapear :)
-                                argumentCastable.ManualCastTo = argumentTargetType;
-                            }
+                        TES5Castable? argumentCastable = argument as TES5Castable;
+                        if (argumentCastable != null)
+                        { //HACKY! When we"ll clean up this interface, it will dissapear :)
+                            argumentCastable.ManualCastTo = argumentTargetType;
                         }
-                        else if (
-                            !TES5InheritanceGraphAnalyzer.IsExtending(argument.TES5Type, argumentTargetType) &&
-                            !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
-                            !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, (new TES5None()).TES5Type)))
+                    }
+                    else if (
+                        !TES5InheritanceGraphAnalyzer.IsExtending(argument.TES5Type, argumentTargetType) &&
+                        !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
+                        !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, TES5None.TES5TypeStatic)))
+                    {
+#if ALTERNATE_TYPE_MAPPING
+                        TES5BasicTypeRevertible? typeRevertible = argument.TES5Type.Revertible;
+                        if (typeRevertible != null && typeRevertible.TryRevertToForm())
                         {
-                            bool expected = /*objectCall.AccessedObject.TES5Type.OriginalName == "TES4TimerHelper" && */objectCall.FunctionName == "LegacySay";
-                            throw new ConversionException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.OriginalName + ".  Found " + argument.TES5Type.OriginalName + ".", expected: expected);
+                            InferenceTypeOfMethodArguments(objectCall);
+                            return;
                         }
+#endif
+                        throw new ConversionTypeMismatchException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.Name + ".  Found " + argument.TES5Type.OriginalName + " : " + argument.TES5Type.NativeType.OriginalName + ".");
                     }
                 }
-                argumentIndex++;
             }
         }
 
@@ -101,18 +106,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             /*
              * Check if we have something to inference inside the code, not some static class or method call return
              */
-            if (objectCall.AccessedObject.ReferencesTo == null)
-            {
-                return;
-            }
+            if (objectCall.AccessedObject.ReferencesTo == null) { return; }
             ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.NativeType;
-            if (inferencableType == null)
-            {
-                throw new ConversionException("Cannot inference a null type");
-            }
             //this is not "exactly" nice solution, but its enough. For now.
-            ITES5Type inferenceType = inheritanceGraphAnalyzer.FindTypeByMethod(objectCall);
-            if (inferencableType == inferenceType)
+            TES5BasicType inferenceType = TES5InheritanceGraphAnalyzer.FindTypeByMethod(objectCall, esmAnalyzer);
+            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(inferencableType, inferenceType))
             {
                 return; //We already have the good type.
             }
@@ -134,26 +132,39 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
          * 
          *  Needed for proxifying the properties to other scripts
          *  - Will return true if inferencing succeeded, false otherwise.
-         * @throws ConversionException
+         * @throws ConversionTypeMismatchException
         */
-        private bool InferenceType(ITES5VariableOrProperty variable, ITES5Type type)
+        private void InferenceType(ITES5VariableOrProperty variable, TES5BasicType type)
         {
-            if (!TES5InheritanceGraphAnalyzer.IsExtending(type, variable.TES5Type.NativeType))
+            if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(type, variable.TES5Type.NativeType, false))
             {
-                return false;
+                if (TES5InheritanceGraphAnalyzer.IsExtending(variable.TES5Type.NativeType, type))
+                {
+                    return;
+                }
+                throw new ConversionTypeMismatchException("Could not extend " + variable.TES5Type.NativeType.Value + " to " + type.Value + ".");
             }
-
-            variable.TES5Type = type;
-            return true;
+            if (variable.TES5Type.AllowInference) { variable.TES5Type = type; }
+            else if (variable.TES5Type.AllowNativeTypeInference) { variable.TES5Type.NativeType = type; }
+            else
+            {
+#if !ALTERNATE_TYPE_MAPPING
+                throw new ConversionTypeMismatchException(variable.Name + " (" + variable.TES5DeclaredType.OriginalName + " : " + variable.TES5DeclaredType.NativeType.Name + ") could not be inferenced to a " + type.Name + " because inference was not allowed.");
+#else
+                variable.TES5Type.NativeType = type;
+#endif
+            }
         }
 
         /*
-             * @throws ConversionException
+             * @throws ConversionTypeMismatchException
         */
-        public ITES5Type ResolveInferenceTypeByReferenceEdid(ITES5VariableOrProperty variable)
+        public ITES5Type GetScriptTypeByReferenceEdid(ITES5VariableOrProperty variable)
         {
             string? edid = variable.ReferenceEDID;
             if (edid == null) { throw new NullableException(nameof(edid)); }
+            //WTM:  Change:  The below section seemed to only introduce issues.
+            /*
             //WTM:  Change:  Without this if statement, SEBrithaurRef finds a reference
             //from qf_se35_01044c44_40_0 to SEBrithaurScript instead of
             //from qf_se35_01044c44_40_0 to SE35BrithaurScript
@@ -172,25 +183,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 string firstNameMatch = namesToTry.Where(n => this.otherScriptsLower.Contains(n.ToLower())).FirstOrDefault();
                 if (firstNameMatch != null) { return TES5TypeFactory.MemberByValue(firstNameMatch, null, esmAnalyzer); }
             }
-
+            */
             //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type
-            return this.esmAnalyzer.ResolveScriptTypeByItsAttachedName(edid);
+            return this.esmAnalyzer.GetScriptTypeByEDID(edid);
         }
 
         /*
         * Inference the variable by its reference EDID
         * 
-        * @throws ConversionException
+        * @throws ConversionTypeMismatchException
         */
         public void InferenceVariableByReferenceEdid(ITES5VariableOrProperty variable, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            //Check if it was inferenced to custom type already
-            if (!variable.TES5Type.IsNativePapyrusType)
+            if (variable.TES5Type.AllowInference)
             {
-                return; //Do not even try to inference a type which is already non-native.
+                ITES5Type type = this.GetScriptTypeByReferenceEdid(variable);
+                this.InferenceWithCustomType(variable, type, multipleScriptsScope);
             }
-
-            this.InferenceWithCustomType(variable, this.ResolveInferenceTypeByReferenceEdid(variable), multipleScriptsScope);
         }
 
         public void InferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value)

@@ -1,5 +1,6 @@
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,12 +9,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     class TES5BasicType : ITES5Type
     {
         public string Name { get; private set; }
-        private TES5BasicType(string name)
+        public bool AllowInference { get; private set; }
+        public bool AllowNativeTypeInference => AllowInference;
+        protected TES5BasicType(string name, bool allowInference = true)
         {
             Name = name;
+            AllowInference = allowInference;
         }
 
         public string OriginalName => Name;
+
+        public bool IsPrimitive => this == T_BOOL || this == T_INT || this == T_FLOAT || this == T_STRING;
+
+        public bool IsNativePapyrusType => true;
+
+        public string Value => Name;
+
+        public IEnumerable<string> Output => new string[] { Name };
+
+        TES5BasicType ITES5Type.NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
+
+#if ALTERNATE_TYPE_MAPPING
+        TES5BasicTypeRevertible? ITES5Type.Revertible { get => null; }
+#endif
 
         public const string TES4ContainerName = TES5TypeFactory.TES4Prefix + "Container";
         public const string TES4TimerHelperName = TES5TypeFactory.TES4Prefix + "TimerHelper";
@@ -108,7 +126,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE = new TES5BasicType("SKSE"),
             T_STRINGUTIL = new TES5BasicType("StringUtil"),
             T_UI = new TES5BasicType("UI"),
-            T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName);
+            T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName, allowInference: false),
+            T_TES4CONTAINER = new TES5BasicType(TES4ContainerName, allowInference: false),
+            T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Added:  SKSE
+            T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Added:  SKSE
+            ;
 
         private static readonly TES5BasicType[] all = new TES5BasicType[]
         {
@@ -202,22 +224,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE,
             T_STRINGUTIL,
             T_UI,
-            T_TES4TIMERHELPER
+            T_TES4TIMERHELPER,
+            T_TES4CONTAINER,
+            T_ART,
+            T_SOUNDDESCRIPTOR
         };
 
-        public static TES5BasicType GetFirstOrNull(string name)
+        public static TES5BasicType? GetFirstOrNullCaseInsensitive(string name)
         {
-            return all.Where(t => t.Name == name).FirstOrDefault();
+            return all.Where(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
         }
 
-        public bool IsPrimitive => this == T_BOOL || this == T_INT || this == T_FLOAT || this == T_STRING;
-
-        public bool IsNativePapyrusType => true;
-
-        public string Value => Name;
-
-        public IEnumerable<string> Output => new string[] { Name };
-
-        public ITES5Type NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
+        public static TES5BasicType GetFirstCaseInsensitive(string name)
+        {
+            return all.Where(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).First();
+        }
     }
 }

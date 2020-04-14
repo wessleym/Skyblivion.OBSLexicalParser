@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string arg0 = functionArguments.Pop(0).StringValue;
             string arg0Lower = arg0.ToLower();
             if (arg0Lower != "x" && arg0Lower != "y" && arg0Lower != "z") { throw new ConversionException("getPos can handle only X,Y,Z parameters."); }
-            string functionName = "GetPosition" + PHPFunction.UCWords(arg0);
+            string functionName = "GetPosition" + arg0.ToUpper();
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }
     }

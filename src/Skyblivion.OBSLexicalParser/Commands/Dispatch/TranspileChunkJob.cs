@@ -23,23 +23,19 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         private readonly Build build;
         private readonly BuildLogServices buildLogServices;
         private readonly ESMAnalyzer esmAnalyzer;
-        private readonly TES5StaticGlobalScopesFactory staticGlobalScopesFactory;
-        private readonly TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer;
         private readonly TES5TypeInferencer typeInferencer;
         /*
         * No injection is done here because of multithreaded enviroment which messes it up.
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5StaticGlobalScopesFactory staticGlobalScopesFactory, TES5InheritanceGraphAnalyzer inheritanceGraphAnalyzer, TES5TypeInferencer typeInferencer)
+        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
             this.build = build;
             this.buildLogServices = buildLogServices;
             this.esmAnalyzer = esmAnalyzer;
-            this.staticGlobalScopesFactory = staticGlobalScopesFactory;
-            this.inheritanceGraphAnalyzer = inheritanceGraphAnalyzer;
             this.typeInferencer = typeInferencer;
             this.buildTargets = new BuildTargetCollection();
         }
@@ -67,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 }
 
                 //Add the static global scopes which are added by complimenting scripts..
-                List<TES5GlobalScope> staticGlobalScopes = staticGlobalScopesFactory.CreateGlobalScopes();
+                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.CreateGlobalScopes();
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)
@@ -122,7 +118,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             if (this.buildTargets.GetByNameOrNull(targetName) == null)
             {
-                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, esmAnalyzer, inheritanceGraphAnalyzer, typeInferencer));
+                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, esmAnalyzer, typeInferencer));
             }
 
             BuildTarget result = this.buildTargets.GetByName(targetName);

@@ -16,7 +16,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
         {
             get
             {
-
                 //First let's check if we do the hacky int-float cast magic
                 //If yes, then use that one
                 if (ManualCastTo != null)

@@ -3,24 +3,18 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
-    class TES5StaticReferenceFactory
+    static class TES5StaticReferenceFactory
     {
-        private readonly ESMAnalyzer esmAnalyzer;
-        public TES5StaticReferenceFactory(ESMAnalyzer esmAnalyzer)
+        private static TES5StaticReference Create(string name)
         {
-            this.esmAnalyzer = esmAnalyzer;
+            return new TES5StaticReference(name);
         }
 
-        private TES5StaticReference Create(string name)
-        {
-            return new TES5StaticReference(name, esmAnalyzer);
-        }
-
-        public TES5StaticReference Debug => Create("Debug");
-        public TES5StaticReference Game => Create("Game");
-        public TES5StaticReference Keyword => Create("Keyword");
-        public TES5StaticReference StringUtil => Create("StringUtil");
-        public TES5StaticReference Utility => Create("Utility");
-        public TES5StaticReference Weather => Create("Weather");
+        public static TES5StaticReference Debug => Create("Debug");
+        public static TES5StaticReference Game => Create("Game");
+        public static TES5StaticReference Keyword => Create("Keyword");
+        public static TES5StaticReference StringUtil => Create("StringUtil");
+        public static TES5StaticReference Utility => Create("Utility");
+        public static TES5StaticReference Weather => Create("Weather");
     }
 }

@@ -58,7 +58,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         /*
                          *  Switch out callee with the reference to attr
                          */
-                        return this.referenceFactory.CreateReadReference(TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
+                        string tes4AttrFirstArg = TES5ReferenceFactory.GetTES4AttrPlusName(firstArgStringLower);
+                        return this.referenceFactory.CreateReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
                     }
 
                 case "fatigue":

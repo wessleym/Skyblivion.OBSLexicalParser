@@ -18,12 +18,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ValueFactory valueFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public MessageFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public MessageFactory(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory)
         {
             this.valueFactory = valueFactory;
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -98,7 +96,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     }
                 }
 
-                calledOn = staticReferenceFactory.Debug;
+                calledOn = TES5StaticReferenceFactory.Debug;
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
                 {
                     TES5PrimitiveValueFactory.CreateConcatenatedValue(combinedValues)
@@ -107,7 +105,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                calledOn = staticReferenceFactory.Debug;
+                calledOn = TES5StaticReferenceFactory.Debug;
                 TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
                 {
                     this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope)

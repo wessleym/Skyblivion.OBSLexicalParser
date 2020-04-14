@@ -29,20 +29,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //    TES5Castable calledOnCastable = calledOn as TES5Reference;
             //    if (calledOn != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_ACTOR, calledOn.TES5Type))
             //    {
-            //        calledOnCastable.ManualCastTo = TES5BasicType.T_OBJECTREFERENCE;
+            //        calledOnCastable.ManualCastTo = TES5BasicType.Tl_OBJECTREFERENCE;
             //    }
             //}
             //arguments.Add(calledOn);
 
             ITES5Value argument0 = this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope);
-            if (argument0.TES5Type != TES5BasicType.T_TOPIC)
+            //WTM:  Change:  Why is the below necessary?
+            /*if (argument0.TES5Type != TES5BasicType.T_TOPIC)
             {
-                TES5Castable? argument1Castable = argument0 as TES5Reference;
-                if (argument1Castable != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_TOPIC, argument0.TES5Type))
+                TES5Reference? argument0Reference = argument0 as TES5Reference;
+                if (argument0Reference != null && TES5InheritanceGraphAnalyzer.IsExtending(TES5BasicType.T_TOPIC, argument0.TES5Type))
                 {
-                    argument1Castable.ManualCastTo = TES5BasicType.T_TOPIC;
+                    argument0Reference.ManualCastTo = TES5BasicType.T_TOPIC;
                 }
-            }
+            }*/
             arguments.Add(argument0);
 
             //ITES4StringValue optionalFlag = functionArguments.GetOrNull(2);

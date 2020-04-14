@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         }
 
                         const string functionName = "SetValue";
-                        string tes4AttrFirstArg = TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower);
+                        string tes4AttrFirstArg = TES5ReferenceFactory.GetTES4AttrPlusName(firstArgStringLower);
                         /*
                          *  Switch out callee with the reference to attr
                          */

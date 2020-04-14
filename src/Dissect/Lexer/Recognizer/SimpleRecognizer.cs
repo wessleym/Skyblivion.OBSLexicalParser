@@ -22,17 +22,14 @@ namespace Dissect.Lexer.Recognizer
             this.ignoreCase = ignoreCase;
         }
 
-        private bool NeedleStartsWith(string haystack)
+        private bool HaystackStartsWith(string haystack)
         {
-            return
-                !ignoreCase ?
-                haystack.StartsWith(needle) :
-                haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) == 0;
+            return haystack.StartsWith(needle, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }
 
         public bool Match(string haystack, [NotNullWhen(true)] out string? result)
         {
-            if (NeedleStartsWith(haystack))
+            if (HaystackStartsWith(haystack))
             {
                 result = needle;
                 return true;

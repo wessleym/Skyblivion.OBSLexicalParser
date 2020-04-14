@@ -12,12 +12,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ReferenceFactory referenceFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public GetIsCurrentWeatherFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public GetIsCurrentWeatherFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
         {
             this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -25,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             //Made in post-analysis
-            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Weather, "GetCurrentWeather");
+            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Weather, "GetCurrentWeather");
             ITES5Referencer argument = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(functionThis, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, argument);
             return expression;

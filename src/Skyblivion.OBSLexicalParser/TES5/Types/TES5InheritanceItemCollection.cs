@@ -20,14 +20,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             list.Add(item);
         }
 
-        public void Add(string name, IEnumerable<TES5InheritanceItem> items)
+        public void Add(TES5BasicType parentType, IEnumerable<TES5InheritanceItem> items)
         {
-            Add(new TES5InheritanceItem(name, items));
+            Add(new TES5InheritanceItem(parentType, items));
         }
 
-        public void Add(string name)
+        public void Add(TES5BasicType parentType)
         {
-            Add(new TES5InheritanceItem(name));
+            Add(new TES5InheritanceItem(parentType));
         }
 
         public IEnumerator<TES5InheritanceItem> GetEnumerator()

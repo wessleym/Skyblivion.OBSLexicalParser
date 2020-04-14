@@ -50,7 +50,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         }
 
                         const string functionName = "SetValue";
-                        calledOn = this.referenceFactory.CreateReference(TES5ReferenceFactory.TES4Attr + PHPFunction.UCWords(firstArgStringLower), globalScope, multipleScriptsScope, localScope);
+                        string tes4AttrFirstArg = TES5ReferenceFactory.GetTES4AttrPlusName(firstArgStringLower);
+                        calledOn = this.referenceFactory.CreateReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return CreateObjectCall(calledOn, functionName, convertedArguments);

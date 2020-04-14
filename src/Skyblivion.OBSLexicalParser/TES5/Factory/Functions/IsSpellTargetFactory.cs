@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -24,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //In Skyrim you can check for effects only.
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments()
             {
-                this.referenceFactory.CreateReference("EffectSEFF", globalScope, multipleScriptsScope, localScope)
+                this.referenceFactory.CreateReference("EffectSEFF", TES5BasicType.T_MAGICEFFECT, globalScope, multipleScriptsScope, localScope)
             };
             return this.objectCallFactory.CreateObjectCall(calledOn, "HasMagicEffect", newArgs);
         }

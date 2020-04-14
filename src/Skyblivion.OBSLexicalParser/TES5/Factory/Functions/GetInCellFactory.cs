@@ -15,12 +15,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public GetInCellFactory(TES5ObjectCallFactory objectCallFactory, ESMAnalyzer esmAnalyzer, TES5StaticReferenceFactory staticReferenceFactory)
+        public GetInCellFactory(TES5ObjectCallFactory objectCallFactory, ESMAnalyzer esmAnalyzer)
         {
             this.esmAnalyzer = esmAnalyzer;
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -40,9 +38,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(0),
                 new TES5Integer(length)
             };
-            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(staticReferenceFactory.StringUtil, "Substring", substringArguments);
-            TES4LoadedRecord cellRecord = this.esmAnalyzer.FindInTES4Collection(cellName);
-            string? cellNameWithSpaces = cellRecord.GetSubrecordTrim("FULL");
+            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.StringUtil, "Substring", substringArguments);
+            TES4LoadedRecord cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellName);
+            string? cellNameWithSpaces = cellRecord.GetSubrecordTrimNullable("FULL");
             if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
             TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
             return TES5ExpressionFactory.CreateComparisonExpression(substring, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);

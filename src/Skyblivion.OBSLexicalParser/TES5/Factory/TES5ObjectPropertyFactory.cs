@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.typeInferencer = typeInferencer;
         }
 
-        public TES5ObjectProperty CreateObjectProperty(TES5MultipleScriptsScope multipleScriptsScope, ITES5Referencer reference, string propertyName)
+        public TES5ObjectProperty CreateObjectProperty(ITES5Referencer reference, string propertyName, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES5VariableOrProperty? referencesTo = reference.ReferencesTo;
             if (referencesTo == null) { throw new NullableException(nameof(referencesTo)); }
@@ -22,6 +22,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5Property remoteProperty = multipleScriptsScope.GetPropertyFromScript(referencesTo.TES5Type.OriginalName, propertyName);
             TES5ObjectProperty objectProperty = new TES5ObjectProperty(reference, remoteProperty);
             return objectProperty;
+        }
+
+        public TES5ObjectProperty CreateObjectProperty(string parentReferenceName, string childReferenceName, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, TES5LocalScope localScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            ITES5Referencer parentReference = referenceFactory.CreateReference(parentReferenceName, globalScope, multipleScriptsScope, localScope);
+            TES5ObjectProperty childReference = objectPropertyFactory.CreateObjectProperty(parentReference, childReferenceName, multipleScriptsScope);//Todo rethink the prefix adding
+            return childReference;
         }
     }
 }

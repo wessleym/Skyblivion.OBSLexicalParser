@@ -9,16 +9,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class ReleaseWeatherOverrideFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public ReleaseWeatherOverrideFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public ReleaseWeatherOverrideFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Weather, "ReleaseOverride", new TES5ObjectCallArguments());
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Weather, "ReleaseOverride", new TES5ObjectCallArguments());
         }
     }
 }

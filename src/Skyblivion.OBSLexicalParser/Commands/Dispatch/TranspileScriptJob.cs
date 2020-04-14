@@ -35,8 +35,9 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 {
                     string scriptName = Path.GetFileNameWithoutExtension(buildScript);
                     string sourcePath = buildTarget.GetSourceFromPath(scriptName);
-                    //string outputPath = buildTarget.getTranspileToPath(scriptName);
-                    scriptsScopes.Add(scriptName, buildTarget.BuildScope(sourcePath, globalVariables));
+                    //string outputPath = buildTarget.GetTranspileToPath(scriptName);
+                    TES5GlobalScope globalScope = buildTarget.BuildScope(sourcePath, globalVariables);
+                    scriptsScopes.Add(scriptName, globalScope);
                 }
 
                 TES5MultipleScriptsScope multipleScriptsScope = new TES5MultipleScriptsScope(scriptsScopes.Values, globalVariables);

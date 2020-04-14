@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
     static class NameTransformer
     {
         private const int maxLength = 38;//Cannot have more than 38 characters
-        public static string Limit(string originalName, string prefix = "")
+        public static string Limit(string originalName, string prefix)
         {
             string fullName = prefix + originalName;
             if (fullName.Length > maxLength)

@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -14,12 +13,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        private readonly ESMAnalyzer esmAnalyzer;
-        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, ESMAnalyzer esmAnalyzer)
+        public SetOwnershipFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
             this.objectCallFactory = objectCallFactory;
-            this.esmAnalyzer = esmAnalyzer;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -30,18 +27,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.Any())
             {
                 args = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-                ITES5Type arg0Type = esmAnalyzer.GetFormTypeByEDID(functionArguments[0].StringValue);
-                if (arg0Type == TES5BasicType.T_ACTOR)
+                var arg0Type = args[0].TES5Type;
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTOR))
                 {
+                    args[0] = objectCallFactory.CreateGetActorBase((ITES5Referencer)args[0]);
                     functionName = "SetActorOwner";
                 }
-                else if (arg0Type == TES5BasicType.T_FACTION)
+                else if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_FACTION))
                 {
                     functionName = "SetFactionOwner";
                 }
                 else
                 {
-                    throw new ConversionException("Unknown setOwnership() param");
+                    throw new ConversionException(function.FunctionCall.FunctionName + " should be called with either an Actor or a Faction.  Instead, it was called with " + calledOn.Name + " (" + calledOn.TES5Type.OriginalName + " : " + calledOn.TES5Type.NativeType.Name + ").");
                 }
             }
             else

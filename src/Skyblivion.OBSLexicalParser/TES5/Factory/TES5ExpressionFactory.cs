@@ -1,5 +1,5 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
+using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory

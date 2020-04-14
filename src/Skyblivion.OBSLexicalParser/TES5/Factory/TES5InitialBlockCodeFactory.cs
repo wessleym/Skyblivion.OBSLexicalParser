@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 case "OnUpdate":
                     {
-                        if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
+                        if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
                         {
                             TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
                             //Even though we"d like this script to not do anything at this time, it seems like sometimes condition races, so we"re putting it into a loop anyways but with early return bailout

@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     {
                         TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope);
                         newBlock.AddChunk(function);
-                        if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_QUEST)
+                        if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
                         {
                             TES5EventCodeBlock onInitBlock = TES5BlockFactory.CreateOnInit();
                             onInitBlock.AddChunk(function);
@@ -197,8 +197,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
             TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
             TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
+            TES5Reference variableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable);
             ITES5Referencer newContainer = this.referenceFactory.CreateReadReference(tesEquippedTarget.BlockParameter, globalScope, multipleScriptsScope, localScope);
-            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, newContainer);
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(variableReference, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, newContainer);
             SetUpBranch(blockFunctionScope, newBlock, expression);
         }
         private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, string variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

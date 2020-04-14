@@ -10,11 +10,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class DisablePlayerControlsFactory : IFunctionFactory
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5StaticReferenceFactory staticReferenceFactory;
-        public DisablePlayerControlsFactory(TES5ObjectCallFactory objectCallFactory, TES5StaticReferenceFactory staticReferenceFactory)
+        public DisablePlayerControlsFactory(TES5ObjectCallFactory objectCallFactory)
         {
             this.objectCallFactory = objectCallFactory;
-            this.staticReferenceFactory = staticReferenceFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -32,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Bool(true),
                 new TES5Bool(true)
             };
-            return this.objectCallFactory.CreateObjectCall(staticReferenceFactory.Game, functionName, newArgs);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, functionName, newArgs);
         }
     }
 }

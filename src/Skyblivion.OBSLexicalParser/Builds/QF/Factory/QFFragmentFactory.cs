@@ -20,12 +20,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
     {
         private readonly MappedTargetsLogService mappedTargetsLogService;
         private readonly ObjectiveHandlingFactory objectiveHandlingFactory;
-        private readonly ESMAnalyzer esmAnalyzer;
-        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory, ESMAnalyzer esmAnalyzer)
+        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory)
         {
             this.mappedTargetsLogService = mappedTargetsLogService;
             this.objectiveHandlingFactory = objectiveHandlingFactory;
-            this.esmAnalyzer = esmAnalyzer;
         }
 
         /*
@@ -41,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * This will give us an array of stages which don"t have script fragment, but will need it anyways
              * for objective handling.
              */
-            TES5ScriptHeader resultingScriptHeader = new TES5ScriptHeader(resultingFragmentName, TES5BasicType.T_QUEST, "", true, esmAnalyzer);
+            TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, "", true);
             TES5BlockList resultingBlockList = new TES5BlockList();
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
             /*
@@ -53,21 +51,19 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string aliasesFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".aliases");
             string[] aliasesLines = File.ReadAllLines(aliasesFile);
-            Dictionary<string, bool> aliasesDeclared = new Dictionary<string, bool>();
+            HashSet<string> aliasesDeclared = new HashSet<string>();
             foreach (var alias in aliasesLines)
             {
                 string trimmedAlias = alias.Trim();
                 if (trimmedAlias == "") { continue; }
-                try
+                if (aliasesDeclared.Add(trimmedAlias))
                 {
-                    aliasesDeclared.Add(trimmedAlias, true);
+                    resultingGlobalScope.AddProperty(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
                 }
-                catch (ArgumentException) { continue; }
-                resultingGlobalScope.AddProperty(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
             }
 
-            Dictionary<int, bool> implementedStages = new Dictionary<int, bool>();
-            Dictionary<string, bool> propertiesNamesDeclared = new Dictionary<string, bool>();
+            HashSet<int> implementedStages = new HashSet<int>();
+            HashSet<string> propertiesNamesDeclared = new HashSet<string>();
             foreach (var subfragment in subfragmentsTrees)
             {
                 TES5Target subfragmentsTree = subfragment.Script;
@@ -78,57 +74,40 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     /*
                      * Move over the properties to the new global scope
                      */
-                    string propertyName;
-                    if (propertiesNamesDeclared.ContainsKey(subfragmentProperty.Name))
+                    if (propertiesNamesDeclared.Add(subfragmentProperty.Name))
                     {
-                        propertyName = GeneratePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty);
-                        subfragmentProperty.Rename(propertyName);
+                        resultingGlobalScope.AddProperty(subfragmentProperty);
                     }
                     else
                     {
-                        propertyName = subfragmentProperty.Name;
-                    }
-
-                    bool newProperty = false;//WTM:  Note:  At this time, the only non-new property is PlayerRef.
-                    try
-                    {
-                        propertiesNamesDeclared.Add(propertyName, true);
-                        newProperty = true;
-                    }
-                    catch (ArgumentException) when (subfragmentProperty.IsPlayerRef) { }
-                    if (newProperty)
-                    {
-                        resultingGlobalScope.AddProperty(subfragmentProperty);
-                        //WTM:  Note:  See QF_FGD03Viranus_0102d154.  Since ViranusDontonREF is present in multiple of the original fragments,
-                        //ViranusDontonREF gets renamed by the above.  So multiple ViranusDontonREF variables are output.
-                        //Below I tried not renaming, assuming instead that variables with matching names and types within a set of fragments were intended to be the same variable.
-                        //It had OK results, but I'm leaving it commented for now.
-                        /*string propertyNameWithSuffix = subfragmentProperty.PropertyNameWithSuffix;
-                        TES5Property existingProperty = resultingGlobalScope.Properties.Where(p => p.PropertyNameWithSuffix == propertyNameWithSuffix).FirstOrDefault();
-                        if (existingProperty != null && TES5InheritanceGraphAnalyzer.isExtending(subfragmentProperty.PropertyType, existingProperty.PropertyType))
+                        if (subfragmentProperty.IsPlayerRef) { continue; }
+                        //WTM:  Change:  I don't think renaming these properties actually helps anything.
+                        /*
+                        string propertyName = GeneratePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty);
+                        subfragmentProperty.Rename(propertyName);
+                        if (!propertiesNamesDeclared.Add(subfragmentProperty.Name))
                         {
-                            existingProperty.PropertyType = subfragmentProperty.PropertyType;
+                            throw new ConversionException(nameof(propertiesNamesDeclared) + " already contained property " + subfragmentProperty.Name + ".");
                         }
-                        else
+                        */
+                        //WTM:  Change:  I'm trying to unify properties and include extended type declarations.
+                        TES5Property existingProperty = resultingGlobalScope.GetPropertyByName(subfragmentProperty.Name);
+                        if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(existingProperty.TES5Type, subfragmentProperty.TES5Type))
                         {
-                            bool add = true;
-                            if (existingProperty != null)
-                            {
-                                if (TES5InheritanceGraphAnalyzer.isExtending(existingProperty.PropertyType, subfragmentProperty.PropertyType))
-                                {
-                                    add = false;
-                                }
-                                else
-                                {
-                                    string generatedPropertyName = generatePropertyName(subfragmentScript.ScriptHeader, subfragmentProperty, i);
-                                    subfragmentProperty.Rename(generatedPropertyName);
-                                }
-                            }
-                            if (add)
-                            {
-                                resultingGlobalScope.Add(subfragmentProperty);
-                            }
-                        }*/
+                            continue;
+                        }
+                        if (TES5InheritanceGraphAnalyzer.IsExtending(subfragmentProperty.TES5Type, existingProperty.TES5Type))
+                        {
+                            existingProperty.TES5Type = subfragmentProperty.TES5Type;
+                            continue;
+                        }
+                        if (TES5InheritanceGraphAnalyzer.IsExtending(existingProperty.TES5Type, subfragmentProperty.TES5Type.NativeType))
+                        {
+                            subfragmentProperty.TES5Type.NativeType = existingProperty.TES5Type.NativeType;
+                            existingProperty.TES5Type = subfragmentProperty.TES5Type;
+                            continue;
+                        }
+                        throw new ConversionException("Types were not compatible for property " + subfragmentProperty.Name + ":  " + subfragmentProperty.TES5Type.Value + " should extend " + existingProperty.TES5Type.Value + ".");
                     }
                 }
 
@@ -158,13 +137,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 resultingBlockList.Add(subfragmentBlock);
-                implementedStages[subfragment.Stage] = true;
+                implementedStages.Add(subfragment.Stage);
             }
 
             /*
              * Diff to find stages which we still need to mark
              */
-            int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.ContainsKey(stageID)).ToArray();
+            int[] nonDoneStages = stageMap.StageIDs.Where(stageID => !implementedStages.Contains(stageID)).ToArray();
             foreach (int nonDoneStage in nonDoneStages)
             {
                 TES5FunctionCodeBlock fragment = objectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
@@ -191,7 +170,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 return "col_" + property.OriginalName + "_" + PHPFunction.MD5(header.EscapedScriptName).Substring(0, 4);
                 //WTM:  Note:  Instead of using an MD5 hash, I tried the below (where index was the property index within the script's TES5GlobalScope).
                 //"col_" + property.OriginalName + "_" + header.EscapedScriptName + "_" + index
-                //It worked, but I don't think the names matched up well with what GECK generates, so I've commented it for now.
+                //It worked, but I don't think the names matched up well with what GECKFrontend generates, so I've commented it for now.
             }
             return property.OriginalName;
         }
