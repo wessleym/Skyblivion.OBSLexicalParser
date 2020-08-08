@@ -71,14 +71,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 }
             }
 
-            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList), target.OutputPath);
+            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList, false), target.OutputPath);
             return result;
         }
 
         private IEnumerable<TES5CodeBlock> CombineRepeatedEventCodeBlockNames(List<ITES5CodeBlock> blocks, string blockType, bool isStandalone, TES5GlobalScope globalScope)
         {
             ITES5CodeBlock[] nonEvents = blocks.Where(b => !(b is TES5EventCodeBlock)).ToArray();
-            if(nonEvents.Any())
+            if (nonEvents.Any())
             {
                 throw new ConversionException("Some non-event code blocks were present in " + nameof(CombineRepeatedEventCodeBlockNames) + ":  " + string.Join("; ", nonEvents.Select(b => b.GetType().FullName)));
             }
@@ -94,7 +94,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     newFunctionScope.AddVariable(variable);
                 }
 
-                TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, TES5VoidType.Instance, isStandalone);
+                TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, TES5VoidType.Instance, isStandalone, false);
                 functions.Add(function);
                 if (localScopeArguments == null)
                 {

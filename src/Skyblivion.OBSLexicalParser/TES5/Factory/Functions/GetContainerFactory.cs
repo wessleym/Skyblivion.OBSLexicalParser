@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //TODO: This function is nonexistent in Papyrus and most likely should be deleted
-            ITES5VariableOrProperty? containerVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);
+            TES5SignatureParameter? containerVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.CONTAINER);
             if (containerVariable == null)
             {
                 throw new ConversionException("GetContainer:  Cannot convert to Skyrim in other contexts than onEquip/onUnequip", expected: true);

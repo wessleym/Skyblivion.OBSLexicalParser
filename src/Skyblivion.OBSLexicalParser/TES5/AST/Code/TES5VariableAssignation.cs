@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         private bool ReferenceAndValueDifferentTypesAndValueIsNonNone()
         {
-            return this.Reference.TES5Type != this.value.TES5Type && !(this.value is TES5None);
+            return !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.value.TES5Type, this.Reference.TES5Type) && !(this.value is TES5None);
         }
 
         private bool ReferenceIsIntAndValueExtendsForm()

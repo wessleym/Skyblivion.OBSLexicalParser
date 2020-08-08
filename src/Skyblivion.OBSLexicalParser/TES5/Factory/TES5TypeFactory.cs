@@ -7,6 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     static class TES5TypeFactory
     {
         public const string TES4Prefix = "TES4";
+        public const string TES4_Prefix = "TES4_";
 
         private static ITES5Type? MemberByValue(string typeName
 #if ALTERNATE_TYPE_MAPPING

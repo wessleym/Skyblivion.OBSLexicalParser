@@ -21,13 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         private readonly bool hasFixedDeclaration;
         private readonly ITES5Type declarationType;
 
-        public TES5SignatureParameter(string nameWithSuffix, 
-                                 TES5BasicType type, 
-                                 bool hasFixedDeclaration,
-                                 TES5LocalVariableParameterMeaning[]? meanings = null
-                                )
+        public TES5SignatureParameter(string nameWithSuffix, TES5BasicType type, bool hasFixedDeclaration, TES5LocalVariableParameterMeaning[]? meanings = null)
         {
-
             Name = nameWithSuffix;
             TES5Type = type;
             declarationType = type;
@@ -40,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         {
             get
             {
-                if(hasFixedDeclaration)
+                if (hasFixedDeclaration)
                 {
                     return declarationType;
                 }

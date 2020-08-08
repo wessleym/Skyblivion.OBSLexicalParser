@@ -36,11 +36,11 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             }
         }
 
-        public static void Run(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
+        public static void Run(string sourcePath, string importPath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
             //PapyrusCompiler seems to require that paths don't start with . and that only forward slashes are used.
             sourcePath = sourcePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
-            workspacePath = workspacePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
+            importPath = importPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             outputPath = outputPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             standardOutputFilePath = standardOutputFilePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             string compilerDirectory = DataDirectory.GetCompilerDirectoryPath();
@@ -48,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             string flagsPath = compilerDirectory.Replace("\\", "/") + "TESV_Papyrus_Flags.flg";
             bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             string fileName = (isWindows ? "\"" : "") + "." + Path.DirectorySeparatorChar + compilerPath + (isWindows ? "\"" : "");
-            string arguments = "\"" + sourcePath + "\" -f=\"" + flagsPath + "\" -i=\"" + workspacePath + "\" -o=\"" + outputPath + "\" -a";
+            string arguments = "\"" + sourcePath + "\" -f=\"" + flagsPath + "\" -i=\"" + importPath + "\" -o=\"" + outputPath + "\" -a";
             Console.WriteLine("Executing PapyrusCompiler.exe:  " + fileName + " " + arguments);
             ProcessStart(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
             Console.WriteLine("PapyrusCompiler.exe Complete");

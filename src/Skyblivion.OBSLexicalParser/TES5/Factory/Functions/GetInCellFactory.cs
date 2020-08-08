@@ -8,6 +8,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -28,22 +29,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //The below will probably not always work.
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES4StringValue apiToken = functionArguments[0];
-            string cellName = apiToken.StringValue;
+            string argument = apiToken.StringValue;
             TES5ObjectCall getParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
             TES5ObjectCall getParentCellName = this.objectCallFactory.CreateObjectCall(getParentCell, "GetName");
-            int length = cellName.Length;
-            TES5ObjectCallArguments substringArguments = new TES5ObjectCallArguments()
+            TES4LoadedRecord cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(argument);
+            string? cellNameWithSpaces = cellRecord.GetSubrecordTrimNullable("FULL");
+            if (cellNameWithSpaces == null || cellNameWithSpaces.IndexOf("Dummy", StringComparison.OrdinalIgnoreCase) != -1) { cellNameWithSpaces = argument; }
+            TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
+            TES5ObjectCallArguments findArguments = new TES5ObjectCallArguments()
             {
                 getParentCellName,
-                new TES5Integer(0),
-                new TES5Integer(length)
+                cellNameTES5String
             };
-            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.StringUtil, "Substring", substringArguments);
-            TES4LoadedRecord cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellName);
-            string? cellNameWithSpaces = cellRecord.GetSubrecordTrimNullable("FULL");
-            if (cellNameWithSpaces == null) { cellNameWithSpaces = cellName; }
-            TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
-            return TES5ExpressionFactory.CreateComparisonExpression(substring, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, cellNameTES5String);
+            TES5ObjectCall substring = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.StringUtil, "Find", findArguments);
+            return TES5ExpressionFactory.CreateComparisonExpression(substring, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
         }
     }
 }

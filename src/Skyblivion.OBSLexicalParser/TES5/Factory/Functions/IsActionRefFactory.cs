@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            ITES5VariableOrProperty? activatorVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+            TES5SignatureParameter? activatorVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
             if (activatorVariable == null)
             {
                 throw new ConversionException("isActionRef called in a context where action ref should not be present");

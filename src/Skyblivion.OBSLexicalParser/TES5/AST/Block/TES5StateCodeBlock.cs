@@ -21,8 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public override IEnumerable<string> Output =>
             (new string[] { (Auto ? "Auto " : "") + "State " + Name })
-            .Concat(CodeBlocks.Output)
-            .Concat(CodeScope.Output)
+            .Concat(CodeBlocks.Output.Select(o => TES5Script.Indent + o))
+            .Concat(CodeScope.Output.Select(o => TES5Script.Indent + o))
             .Concat(new string[] { "EndState" });
 
         public override TES5CodeScope CodeScope { get; set; }

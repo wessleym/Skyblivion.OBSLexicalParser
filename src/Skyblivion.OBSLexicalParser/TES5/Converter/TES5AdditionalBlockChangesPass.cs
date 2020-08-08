@@ -91,9 +91,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             outerBranchCode = newBlock.CodeScope;
                             outerBranchCode.LocalScope.ParentScope = newCodeScope.LocalScope;
                         }
-
                         newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         newBlock.CodeScope = newCodeScope;
+                        break;
+                    }
+
+                case "onhit":
+                    {
+                        TES4BlockParameterList? parameterList = block.BlockParameterList;
+                        if (parameterList != null)
+                        {
+                            TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
+                            List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
+                            ITES5Referencer hitTarget = this.referenceFactory.CreateReadReference(parameterListVariableList[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
+                            TES5SignatureParameter akAggressor = localScope.FunctionScope.Variables["akAggressor"];
+                            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(akAggressor), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, hitTarget);
+                            TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
+                            newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, newBlock.CodeScope)));
+                            newBlock.CodeScope = newCodeScope;
+                        }
                         break;
                     }
 

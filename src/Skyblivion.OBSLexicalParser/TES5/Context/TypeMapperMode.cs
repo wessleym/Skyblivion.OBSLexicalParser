@@ -6,7 +6,6 @@
         CompatibilityForPropertyFactory,
         CompatibilityForReferenceFactory,
         CompatibilityForScripts,
-        IntermediateButStrictWeapons,
         Strict
     }
 }

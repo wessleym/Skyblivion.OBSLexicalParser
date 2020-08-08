@@ -30,15 +30,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
         {
             this.InferenceTypeOfCalledObject(objectCall);
-            if (objectCall.Arguments != null)
-            {
-                this.InferenceTypeOfMethodArguments(objectCall);
-            }
+            this.InferenceTypeOfMethodArguments(objectCall);
         }
 
         private void InferenceTypeOfMethodArguments(TES5ObjectCall objectCall)
         {
-            if (objectCall.Arguments == null) { throw new NullableException(nameof(objectCall.Arguments)); }
             /*
              * Inference the arguments
              */

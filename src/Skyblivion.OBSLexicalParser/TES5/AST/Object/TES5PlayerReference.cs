@@ -11,8 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public const string PlayerRefName = "PlayerRef";
 
-        //WTM:  Note:  I've made changes to GECKFrontend that allow it to use PlayerRef, but since I can't commit to that repository, I'm leaving this as Game.GetPlayer() for now:
-        public IEnumerable<string> Output => new string[] { "Game.GetPlayer()" };
+        public IEnumerable<string> Output => new string[] { PlayerRefName };
 
         public string Name => playerName;
 

@@ -7,6 +7,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,10 +39,46 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5Property(variableName, type, variableName);
         }
 
+        private TES5Property CreateProperty(TES4VariableDeclaration variable, TES5GlobalVariables globalVariables)
+        {
+            string variableName = variable.VariableName;
+            TES4Type variableType = variable.VariableType;
+            if (variableType == TES4Type.T_FLOAT)
+            {
+                return new TES5Property(variableName, TES5BasicType.T_FLOAT, null);
+            }
+            if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
+            {
+                return new TES5Property(variableName, TES5BasicType.T_INT, null);
+            }
+            if (variableType == TES4Type.T_REF)
+            {
+                return CreatePropertyFromReference(variable, globalVariables);
+            }
+            throw new ConversionException("Unknown variable declaration type.");
+        }
+
+        private static ConversionException GetDuplicatePropertyException(string variableName, string existingType, string newType)
+        {
+            return new ConversionException("Double definition of variable named " + variableName + " with different types ( " + existingType + " and " + newType + " )");
+        }
+
+        public TES5Property CreateAndAddProperty(TES4VariableDeclaration variable, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        {
+            TES5Property property = CreateProperty(variable, globalVariables);
+            TES5Property? existingPropertyWithDifferentType = globalScope.Properties.Where(p => p.Name.Equals(property.Name, StringComparison.OrdinalIgnoreCase) && p.TES5DeclaredType != property.TES5DeclaredType).FirstOrDefault();
+            if (existingPropertyWithDifferentType != null)
+            {
+                throw GetDuplicatePropertyException(existingPropertyWithDifferentType.Name, existingPropertyWithDifferentType.TES5DeclaredType.OriginalName, property.TES5DeclaredType.OriginalName);
+            }
+            globalScope.AddProperty(property);
+            return property;
+        }
+
         /*
         * @throws ConversionException
         */
-        public void CreateProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        public void CreateAndAddProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
         {
             Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
             foreach (TES4VariableDeclaration variable in variableList.VariableList)
@@ -56,28 +93,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     {
                         continue; //Same variable defined twice, smack the original script developer and fallthrough silently.
                     }
-                    throw new ConversionException("Double definition of variable named " + variableName + " with different types ( " + alreadyDefinedVariables[variableNameLower].VariableType.Name + " and " + variable.VariableType.Name + " )");
+                    throw GetDuplicatePropertyException(variableName, alreadyDefinedVariable.VariableType.Name, variable.VariableType.Name);
                 }
 
-                TES5Property property;
-                if (variableType == TES4Type.T_FLOAT)
-                {
-                    property = new TES5Property(variable.VariableName, TES5BasicType.T_FLOAT, null);
-                }
-                else if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
-                {
-                    property = new TES5Property(variable.VariableName, TES5BasicType.T_INT, null);
-                }
-                else if (variableType == TES4Type.T_REF)
-                {
-                    property = CreatePropertyFromReference(variable, globalVariables);
-                }
-                else
-                {
-                    throw new ConversionException("Unknown variable declaration type.");
-                }
-
-                globalScope.AddProperty(property);
+                CreateAndAddProperty(variable, globalScope, globalVariables);
                 alreadyDefinedVariables.Add(variableNameLower, variable);
             }
         }

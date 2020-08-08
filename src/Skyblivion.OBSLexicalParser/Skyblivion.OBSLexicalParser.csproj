@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;LOG_EXCEPTIONS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LOG_EXCEPTIONS ALTERNATE_TYPE_MAPPING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

@@ -19,6 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5ObjectCall CreateObjectCall(ITES5Referencer callable, string functionName, TES5ObjectCallArguments? arguments = null, bool inference = true)
         {
+            if (arguments == null) { arguments = new TES5ObjectCallArguments(); }
             TES5ObjectCall objectCall = new TES5ObjectCall(callable, functionName, arguments);
             if (inference)
             {
@@ -29,6 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5ObjectCallCustom CreateObjectCallCustom(ITES5Referencer callable, string functionName, ITES5Type returnType, TES5ObjectCallArguments? arguments = null)
         {
+            if (arguments == null) { arguments = new TES5ObjectCallArguments(); }
             return new TES5ObjectCallCustom(callable, functionName, returnType, arguments);
         }
 

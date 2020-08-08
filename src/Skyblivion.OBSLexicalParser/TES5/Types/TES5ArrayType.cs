@@ -1,6 +1,6 @@
 ﻿namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
-    class TES5ArrayType : TES5BasicType//WTM:  Added
+    class TES5ArrayType : TES5BasicType//WTM:  Change:  Added
     {
         private TES5ArrayType(TES5BasicType elementType)
             : base(elementType.Name + "[]")

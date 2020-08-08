@@ -128,8 +128,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_UI = new TES5BasicType("UI"),
             T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName, allowInference: false),
             T_TES4CONTAINER = new TES5BasicType(TES4ContainerName, allowInference: false),
-            T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Added:  SKSE
-            T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Added:  SKSE
+            T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Change:  Added:  SKSE
+            T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Change:  Added:  SKSE
             ;
 
         private static readonly TES5BasicType[] all = new TES5BasicType[]

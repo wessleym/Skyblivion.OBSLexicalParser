@@ -1,9 +1,7 @@
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

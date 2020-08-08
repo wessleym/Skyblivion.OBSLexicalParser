@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public string OriginalName => OriginalNameConst;
 
-        public const string OriginalNameConst = "void";//WTM:  Added
-        public static readonly TES5VoidType Instance = new TES5VoidType();//WTM:  Added
+        public const string OriginalNameConst = "void";//WTM:  Change:  Added
+        public static readonly TES5VoidType Instance = new TES5VoidType();//WTM:  Change:  Added
     }
 }

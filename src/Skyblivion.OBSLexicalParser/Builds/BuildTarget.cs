@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System.IO;
 using System.Linq;
@@ -146,10 +145,10 @@ namespace Skyblivion.OBSLexicalParser.Builds
              * Only files without extension or .txt are considered sources
              * You can add metadata next to those files, but they cannot have those extensions.
              */
-            string[] sourcePaths = Directory.EnumerateFiles(GetSourcePath(), "*.txt").Select(path=>Path.GetFileName(path)).ToArray();
+            string[] sourcePaths = Directory.EnumerateFiles(GetSourcePath(), "*.txt").Select(path => Path.GetFileName(path)).ToArray();
             if (intersectedSourceFiles != null)
             {
-                sourcePaths = sourcePaths.Where(p=>intersectedSourceFiles.Contains(p)).ToArray();
+                sourcePaths = sourcePaths.Where(p => intersectedSourceFiles.Contains(p)).ToArray();
             }
             return sourcePaths;
         }

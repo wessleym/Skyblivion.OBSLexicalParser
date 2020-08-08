@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
             if (variableList != null)
             {
-                propertyFactory.CreateProperties(variableList, globalScope, globalVariables);
+                propertyFactory.CreateAndAddProperties(variableList, globalScope, globalVariables);
             }
             return globalScope;
         }

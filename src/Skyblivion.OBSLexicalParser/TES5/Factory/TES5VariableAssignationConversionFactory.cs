@@ -69,9 +69,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                      *   this.TES4_MESSAGEBOX_RESULT = -1; ; reassignation
                      * endIf
                      */
-                    TES5Integer minusOne = new TES5Integer(-1);
-                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(reference, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, minusOne);
-                    TES5VariableAssignation reassignation = TES5VariableAssignationFactory.CreateAssignation(referencerValue, minusOne);
+                    TES5Integer negativeOne = new TES5Integer(-1);
+                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(reference, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, negativeOne);
+                    TES5VariableAssignation reassignation = TES5VariableAssignationFactory.CreateAssignation(referencerValue, negativeOne);
                     TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, codeScope.LocalScope);
                     branch.MainBranch.CodeScope.AddChunk(reassignation);
                     codeChunkCollection.Add(branch);

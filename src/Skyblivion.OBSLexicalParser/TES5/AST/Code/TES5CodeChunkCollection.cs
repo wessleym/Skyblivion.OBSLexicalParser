@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             }
         }
 
-        public void Clear()//WTM:  Added for TES5BlockFactory.CreateBlock
+        public void Clear()//WTM:  Change:  Added for TES5BlockFactory.CreateBlock
         {
             values.Clear();
         }

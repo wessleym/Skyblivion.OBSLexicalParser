@@ -22,9 +22,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
-            TES5ObjectCall functionArgument = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope), "GetParentCell");
-            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(functionThis, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, functionArgument);
+            ITES5Referencer functionArgument0Reference = this.referenceFactory.CreateReadReference(functionArguments[0].StringValue, globalScope, multipleScriptsScope, localScope);
+            TES5ObjectCall leftParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
+            TES5ObjectCall rightParentCell = this.objectCallFactory.CreateObjectCall(functionArgument0Reference, "GetParentCell");
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(leftParentCell, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, rightParentCell);
             return expression;
         }
     }

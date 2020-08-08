@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
             if (recordType == TES4RecordType.SPEL) { return TES5BasicType.T_SPELL; }
             if (recordType == TES4RecordType.STAT) { if (mode == TypeMapperMode.Strict) { return TES5BasicType.T_STATIC; } returnedFormForCompatibility = true; return TES5BasicType.T_FORM; }
             if (recordType == TES4RecordType.WTHR) { return TES5BasicType.T_WEATHER; }
-            if (recordType == TES4RecordType.WEAP) { if (mode == TypeMapperMode.Strict || mode == TypeMapperMode.IntermediateButStrictWeapons) { return TES5BasicType.T_WEAPON; } returnedFormForCompatibility = true; return TES5BasicType.T_FORM; }
+            if (recordType == TES4RecordType.WEAP) { if (mode == TypeMapperMode.Strict) { return TES5BasicType.T_WEAPON; } returnedFormForCompatibility = true; return TES5BasicType.T_FORM; }
             if (recordType == TES4RecordType.WRLD) { return TES5BasicType.T_WORLDSPACE; }
             throw new ArgumentException(nameof(recordType) + " " + recordType.Name + " could not be converted to a " + nameof(TES5BasicType) + ".", nameof(recordType));
         }

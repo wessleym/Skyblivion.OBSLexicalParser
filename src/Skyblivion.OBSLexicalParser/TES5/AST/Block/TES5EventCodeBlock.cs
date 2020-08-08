@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public override IEnumerable<string> Output =>
             (new string[] { "Event " + this.BlockName + "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
-            .Concat(this.CodeScope.Output)
+            .Concat(this.CodeScope.Output.Select(o => TES5Script.Indent + o))
             .Concat(new string[] { "EndEvent" });
 
         public override void AddChunk(ITES5CodeChunk chunk)

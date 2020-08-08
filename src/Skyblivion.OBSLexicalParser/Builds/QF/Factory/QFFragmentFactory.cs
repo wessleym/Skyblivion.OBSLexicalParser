@@ -7,6 +7,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * This will give us an array of stages which don"t have script fragment, but will need it anyways
              * for objective handling.
              */
-            TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, "", true);
+            TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
             TES5BlockList resultingBlockList = new TES5BlockList();
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
             /*
@@ -158,7 +159,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 this.mappedTargetsLogService.WriteLine(originalTargetIndex, mappedTargetIndexes);
             }
 
-            TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList);
+            TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList, true);
             string outputPath = target.GetTranspileToPath(resultingFragmentName);
             return new TES5Target(resultingTree, outputPath);
         }

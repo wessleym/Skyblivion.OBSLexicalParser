@@ -351,15 +351,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
                     throw new ConversionException("Type could not be converted.");
                 }
-                TES5ComparisonExpression? containsCall = ConvertGetItemCountCallToContainsItemCall(valueTuple.Item1, op, valueTuple.Item2);//WTM:  Added
+                TES5ComparisonExpression? containsCall = ConvertGetItemCountCallToContainsItemCall(valueTuple.Item1, op, valueTuple.Item2);//WTM:  Change:  Added
                 if (containsCall != null) { return containsCall; }
                 flipOperator = true;
             }
             return TES5ExpressionFactory.CreateComparisonExpression(leftValue, op, rightValue);
         }
 
-        //WTM:  Added:  I think GetItemCount returns 0 for all Containers that get transpiled as ObjectReferences (like TES4Dark11ChorrolDropScript).
+        //WTM:  Change:  Added:
+        //I think GetItemCount returns 0 for all Containers that have ObjectReference scripts before they are opened:
+        //https://forums.nexusmods.com/index.php?/topic/7174696-huge-mystery-with-getitemcount/#entry65389511
         //Once the player opens the Container once, then GetItemCount starts returning the correct count.
+        //This does not seem to apply to ObjectRefence, so I've excluded it below.
         private TES5ComparisonExpression? ConvertGetItemCountCallToContainsItemCall(ITES5Value leftValue, TES5ComparisonExpressionOperator op, ITES5Value rightValue)
         {
             if (rightValue.TES5Type == TES5BasicType.T_INT)
@@ -388,7 +391,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     TES5Integer? value2Integer = rightValue as TES5Integer;
                     if (value2Integer != null)
                     {
-                        bool canConvert = false, negate = false;
+                        bool canConvert, negate = false;
                         if (
                             (op == TES5ComparisonExpressionOperator.OPERATOR_GREATER && value2Integer.IntValue == 0) ||
                             (op == TES5ComparisonExpressionOperator.OPERATOR_GREATER_OR_EQUAL && value2Integer.IntValue == 1) ||
@@ -406,6 +409,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             canConvert = true;
                             negate = true;
                         }
+                        else
+                        {
+                            canConvert = CanConvertGetItemCountSpecialCases(value1ObjectCall, op, value2Integer);
+                        }
                         if (canConvert)
                         {
                             TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(value1ObjectCall.AccessedObject, "ContainsItem", value1ObjectCall.Arguments);
@@ -416,6 +423,30 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
             }
             return null;
+        }
+
+        //WTM:  Change:  Added
+        private static bool CanConvertGetItemCountSpecialCases(TES5ObjectCall value1ObjectCall, TES5ComparisonExpressionOperator op, TES5Integer value2Integer)
+        {
+            if (op == TES5ComparisonExpressionOperator.OPERATOR_EQUAL && value2Integer.IntValue == 1)//Special cases
+            {
+                //I checked the meaning of these scripts, and ContainsItem is a suitable replacement.
+                if (value1ObjectCall.AccessedObject.Name == "MethredhelsChestRef_p" && ((TES5Reference)value1ObjectCall.Arguments[0]).Name == "TG01AmantiusDiary_p") { return true; }//TES4methredhelscript.psc
+                else if (value1ObjectCall.AccessedObject is TES5SelfReference)
+                {
+                    if (
+                        ((TES5Reference)value1ObjectCall.Arguments[0]).Name == "Dark07RoderickPoison_p" ||//TES4dark07cabinetscript.psc
+                        ((TES5Reference)value1ObjectCall.Arguments[0]).Name == "Dark09Finger_p"//TES4dark09deskscript.psc
+                        ) { return true; }
+                }
+                else if (value1ObjectCall.AccessedObject.Name == "TG03MyvrynasCupboardRef_p" && ((TES5Reference)value1ObjectCall.Arguments[0]).Name == "TG03LlathasasBust_p") { return true; }//TES4hieronymuslexscript.psc and tif__010034a3.psc
+                //TES4orumgangcourier1script.psc:  functionality of fake Skooma rock explained here:  https://en.uesp.net/wiki/Oblivion:Camonna_Tong_Thug
+                //Skooma is added to the fake rock if the rock has zero or one Skooma bottles, reaching a maximum of two bottles.
+                //If I use ContainsItem, the rock will only reach a maximum of one bottle.
+                //If I use GetItemCount, the rock will apparently fill infinitely.
+                //I'll need to check this later.  @INCONSISTENCE
+            }
+            return false;
         }
 
         private ITES5Value ConvertExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

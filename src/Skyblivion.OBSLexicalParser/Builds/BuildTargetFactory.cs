@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 case BuildTarget.BUILD_TARGET_TIF:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_TIF, "", build, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.CompileCommand(), new TIF.ASTCommand(), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), new TIF.WriteCommand());
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_TIF, TES5TypeFactory.TES4_Prefix, build, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.CompileCommand(), new TIF.ASTCommand(), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), new TIF.WriteCommand());
                     }
 
                 case BuildTarget.BUILD_TARGET_PF:
@@ -63,7 +63,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(objectCallFactory);
                         QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
                         QF.WriteCommand writeCommand = new QF.WriteCommand(qfFragmentFactory);
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, "", build, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), writeCommand);
+                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, TES5TypeFactory.TES4_Prefix, build, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), writeCommand);
                     }
 
                 default:

@@ -59,7 +59,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
                 }
             }
-
             return new TES5ElseSubBranch(newCodeScope);
         }
 
@@ -79,7 +78,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
                 }
             }
-
             return new TES5SubBranch(expression, newCodeScope);
         }
     }

@@ -103,8 +103,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     { TES5BasicType.T_LOCATION },
                     { TES5BasicType.T_WORDOFPOWER },
                     { TES5BasicType.T_WORLDSPACE },
-                    { TES5BasicType.T_ART },//WTM:  Added
-                    { TES5BasicType.T_SOUNDDESCRIPTOR }//WTM:  Added
+                    { TES5BasicType.T_ART },//WTM:  Change:  Added
+                    { TES5BasicType.T_SOUNDDESCRIPTOR }//WTM:  Change:  Added
                 }
             },
             { TES5BasicType.T_INPUT, new TES5InheritanceItemCollection() },
@@ -2181,7 +2181,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_BOOL,
                                 TES5BasicType.T_BOOL
                             }, TES5BasicType.T_BOOL),
-                new TES5InheritanceFunctionSignature("EssentialDeathReload", new TES5BasicType[] {//WTM:  Added:  Skyblivion.dll
+                new TES5InheritanceFunctionSignature("EssentialDeathReload", new TES5BasicType[] {//WTM:  Change:  Added:  Skyblivion.dll
                                 TES5BasicType.T_STRING
                             }, TES5VoidType.Instance)
             }

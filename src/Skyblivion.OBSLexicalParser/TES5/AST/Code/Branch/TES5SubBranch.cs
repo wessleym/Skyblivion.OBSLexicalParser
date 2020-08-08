@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
         public IEnumerable<string> GetOutput(string ifOrElseIf)
         {
             return (new string[] { GetConditionLineOutput(ifOrElseIf) })
-                .Concat(this.CodeScope.Output);
+                .Concat(this.CodeScope.Output.Select(o => TES5Script.Indent + o));
         }
     }
 }

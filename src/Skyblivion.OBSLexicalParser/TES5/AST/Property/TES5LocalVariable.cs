@@ -15,11 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             TES5Type = type;
         }
 
-        public ITES5Type TES5DeclaredType {
-            get {
-                return TES5Type;
-            }
-        }
+        public ITES5Type TES5DeclaredType => TES5Type;
 
         /*
         * Todo - following two methods should not be in this interface but TES5Property interface

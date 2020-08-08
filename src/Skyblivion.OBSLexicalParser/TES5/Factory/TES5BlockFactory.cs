@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
+using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -213,7 +214,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return newBlockType;
         }
 
-        private static readonly Dictionary<string, TES5BasicType[]?> eventNameToTypes = new Dictionary<string, TES5BasicType[]?>()//WTM:  Added
+        //WTM:  Change:  Added
+        private static readonly Dictionary<string, TES5BasicType[]?> eventNameToTypes = new Dictionary<string, TES5BasicType[]?>()
         {
             { "OnActivate", new TES5BasicType[] { TES5BasicType.T_OBJECTREFERENCE } },
             { "OnAnimationEvent", new TES5BasicType[] { TES5BasicType.T_ACTIVEMAGICEFFECT, TES5BasicType.T_ALIAS, TES5BasicType.T_FORM } },
@@ -333,6 +335,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     return;
                 }
             }
+            //WTM:  Change:  Added:
 #if ALTERNATE_TYPE_MAPPING
             TES5BasicTypeRevertible? typeRevertible = globalScope.ScriptHeader.ScriptType as TES5BasicTypeRevertible;
             if (typeRevertible != null && typeRevertible.TryRevertToForm())
@@ -419,7 +422,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 this.ConvertTES4CodeChunksToTES5EventCodeBlock(chunks, newBlock, globalScope, multipleScriptsScope);
                 if (blockType.Equals("MenuMode", StringComparison.OrdinalIgnoreCase))
                 {
-                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true)), newBlock.CodeScope.LocalScope);
+                    TES5ComparisonExpression isInMenuModeComparisonExpression = GetIsInMenuModeComparisonExpression();
+                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(isInMenuModeComparisonExpression, newBlock.CodeScope.LocalScope);
                     foreach (var chunk in newBlock.CodeScope.CodeChunks)
                     {
                         menuModeBranch.MainBranch.CodeScope.CodeChunks.Add(chunk);
@@ -440,6 +444,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
             }
             return blockList;
+        }
+
+        private TES5ComparisonExpression GetIsInMenuModeComparisonExpression()
+        {
+            return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
         }
 
         private void ConvertTES4CodeChunksToTES5EventCodeBlock(TES4CodeChunks chunks, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)

@@ -11,6 +11,7 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
@@ -31,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             string fragmentName = "Fragment_"+stageId.ToString();
             TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
             TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
-            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance);
+            TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance, false, true);
             List<ITES5CodeChunk> chunks = GenerateObjectiveHandling(codeBlock, globalScope, stageMap);
             foreach (var chunk in chunks)
             {
@@ -42,12 +43,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
         public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
         {
-            TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);
+            List<ITES5CodeChunk> result = new List<ITES5CodeChunk>();
+            //WTM:  Change:
+            if (!stageMap.Any()) { return result; }
+            TES5LocalVariable castedToQuest = new TES5LocalVariable("__temp", TES5BasicType.T_QUEST);//WTM:  Note:  Why is this variable even necessary?
             TES5Reference referenceToTemp = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(castedToQuest);
-            List<ITES5CodeChunk> result = new List<ITES5CodeChunk>()
-            {
-                TES5VariableAssignationFactory.CreateAssignation(referenceToTemp, TES5ReferenceFactory.CreateReferenceToSelf(globalScope))
-            };
+            TES5SelfReference questSelfReference = TES5ReferenceFactory.CreateReferenceToSelf(globalScope);
+            TES5VariableAssignation tempQuestAssignation = TES5VariableAssignationFactory.CreateAssignation(referenceToTemp, questSelfReference);
+            result.Add(tempQuestAssignation);
             TES5LocalScope localScope = codeBlock.CodeScope.LocalScope;
             localScope.AddVariable(castedToQuest);
             int i = 0;

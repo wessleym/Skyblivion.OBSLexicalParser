@@ -23,12 +23,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
             string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");
             //Create the header.
-            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, "", true);
+            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, TES5TypeFactory.TES4_Prefix, true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
             TES4VariableDeclarationList variableList = FragmentsReferencesBuilder.BuildVariableDeclarationList(referencesPath);
             if (variableList != null)
             {
-                propertyFactory.CreateProperties(variableList, globalScope, globalVariables);
+                propertyFactory.CreateAndAddProperties(variableList, globalScope, globalVariables);
             }
             return globalScope;
         }

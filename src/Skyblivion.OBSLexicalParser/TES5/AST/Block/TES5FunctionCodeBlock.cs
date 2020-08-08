@@ -1,9 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
@@ -13,13 +11,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         public override TES5FunctionScope FunctionScope { get; protected set; }
         private readonly ITES5Type returnType;
         private readonly bool isStandalone;//Only needed for PHP_COMPAT
-        public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone = false)
+        private readonly bool isQuestFragmentOrTopicFragment;
+        public TES5FunctionCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope, ITES5Type returnType, bool isStandalone, bool isQuestFragmentOrTopicFragment)
         {
-            if (returnType == null) { throw new ArgumentNullException(nameof(returnType)); }
             this.FunctionScope = functionScope;
             this.CodeScope = codeScope;
             this.returnType = returnType;
             this.isStandalone = isStandalone;
+            this.isQuestFragmentOrTopicFragment = isQuestFragmentOrTopicFragment;
         }
 
         public override IEnumerable<string> Output
@@ -27,16 +26,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
             get
             {
                 string returnTypeValue = this.returnType.Value;
-                string functionReturnType = returnTypeValue != "" ? returnTypeValue + " " :
+                string functionReturnType;
+                if (returnTypeValue != "")
+                {
+                    functionReturnType = returnTypeValue + " ";
 #if PHP_COMPAT
-                isStandalone ? "" : " "
-#else
-                ""
+                    if (!isStandalone) { functionReturnType += " "; }
 #endif
-                ;
-                return (new string[] { functionReturnType + "Function " + this.FunctionScope.BlockName+ "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
-                    .Concat(this.CodeScope.Output)
-                    .Concat(new string[] { "EndFunction" });
+                }
+                else
+                {
+                    functionReturnType = "";
+                }
+                if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN FRAGMENT " + this.FunctionScope.BlockName; }
+                yield return functionReturnType + "Function " + this.FunctionScope.BlockName + "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")";
+                if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN CODE"; }
+                foreach (string o in this.CodeScope.Output) { yield return TES5Script.Indent + o; }
+                if (isQuestFragmentOrTopicFragment) { yield return ";END CODE"; }
+                yield return "EndFunction";
+                if (isQuestFragmentOrTopicFragment)
+                {
+                    yield return ";END FRAGMENT";
+                    yield return "";
+                }
             }
         }
 
