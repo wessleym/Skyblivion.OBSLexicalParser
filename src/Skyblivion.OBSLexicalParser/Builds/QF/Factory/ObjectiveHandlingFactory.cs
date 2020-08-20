@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         */
         public TES5FunctionCodeBlock CreateEnclosedFragment(TES5GlobalScope globalScope, int stageId, List<int> stageMap)
         {
-            string fragmentName = "Fragment_"+stageId.ToString();
+            string fragmentName = TES5FragmentFactory.GetFragmentName(stageId);
             TES5FunctionScope functionScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, TES5FragmentType.T_QF);
             TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
             TES5FunctionCodeBlock codeBlock = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance, false, true);

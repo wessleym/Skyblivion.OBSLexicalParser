@@ -6,8 +6,11 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
+using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -23,7 +26,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
         //Those are used to hook in the internal Skyblivion systems.
-        private readonly Dictionary<string, ITES5Type> specialConversions;
+        private readonly static Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
+        {
+            { TES4Attr + "Strength",  TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Intelligence", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Willpower", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Agility", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Speed", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
+            { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
+            { tContainerName, TES5BasicType.T_TES4CONTAINER },//Data container
+            { tTimerName, TES5BasicType.T_TES4TIMERHELPER },//Timer functions
+            { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
+            { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
+            { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
+            { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
+        };
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectPropertyFactory objectPropertyFactory;
         private readonly ESMAnalyzer esmAnalyzer;
@@ -32,23 +51,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.objectCallFactory = objectCallFactory;
             this.objectPropertyFactory = objectPropertyFactory;
             this.esmAnalyzer = esmAnalyzer;
-            specialConversions = new Dictionary<string, ITES5Type>()
-            {
-                { TES4Attr + "Strength",  TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Intelligence", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Willpower", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Agility", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Speed", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
-                { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
-                { tContainerName, TES5BasicType.T_TES4CONTAINER },//Data container
-                { tTimerName, TES5BasicType.T_TES4TIMERHELPER },//Timer functions
-                { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
-                { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
-                { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
-                { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
-            };
         }
 
         public static string GetTES4AttrPlusName(string name)
@@ -143,6 +145,42 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
         }
 
+        private ITES5Type GetPropertyTypeAndFormIDs(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out List<int> tes4FormIDs)
+        {
+            tes4FormIDs = new List<int>();
+            ITES5Type specialConversion;
+            if (specialConversions.TryGetValue(referenceName, out specialConversion))
+            {
+                return specialConversion;
+            }
+            else if (multipleScriptsScope.ContainsGlobalVariable(referenceName))
+            {
+                return TES5BasicType.T_GLOBALVARIABLE;
+            }
+            else
+            {
+                //propertyType = TES5BasicType.T_FORM;
+                //WTM:  Change:  I commented the above and added the below:
+                if (!referenceName.StartsWith(MessageBoxFactory.MessageBoxPrefix) && referenceName != GetPlayerInSEWorldFactory.SEWorldLocation)
+                {
+                    var scroData = GetTypeFromSCRO(esmAnalyzer, globalScope.ScriptHeader.EDID, referenceName);
+                    if (scroData != null)
+                    {
+                        tes4FormIDs = scroData.Value.Key;
+                        TES5BasicType scroType = scroData.Value.Value;
+                        if (scroType == TES5BasicType.T_BOOK && referenceName.IndexOf("scroll", StringComparison.OrdinalIgnoreCase) != -1)
+                        {//Useful for TES4_qf_ms47_0102f86b.MS47ReverseInvisibilityScroll_p.
+                            scroType = TES5BasicType.T_SCROLL;
+                        }
+                        return scroType;
+                    }
+                }
+                if (tes4ReferenceNameForType == null) { throw new NullableException(nameof(tes4ReferenceNameForType)); }
+                ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(tes4ReferenceNameForType, TypeMapperMode.CompatibilityForReferenceFactory, true);
+                return esmType != null ? esmType : TES5BasicType.T_FORM;
+            }
+        }
+
         /*
         * Create a generic-purpose reference.
         */
@@ -168,31 +206,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 if (property == null)
                 {
                     ITES5Type propertyType;
+                    List<int> tes4FormIDs = new List<int>();
                     if (typeForNewProperty != null)
                     {
                         propertyType = typeForNewProperty;
                     }
                     else
                     {
-                        ITES5Type specialConversion;
-                        if (specialConversions.TryGetValue(referenceName, out specialConversion))
-                        {
-                            propertyType = specialConversion;
-                        }
-                        else if (multipleScriptsScope.ContainsGlobalVariable(referenceName))
-                        {
-                            propertyType = TES5BasicType.T_GLOBALVARIABLE;
-                        }
-                        else
-                        {
-                            //propertyType = TES5BasicType.T_FORM;
-                            //WTM:  Change:  I commented the above and added the below:
-                            if (tes4ReferenceNameForType == null) { throw new NullableException(nameof(tes4ReferenceNameForType)); }
-                            ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(tes4ReferenceNameForType, TypeMapperMode.CompatibilityForReferenceFactory);
-                            propertyType = esmType != null ? esmType : TES5BasicType.T_FORM;
-                        }
+                        propertyType = GetPropertyTypeAndFormIDs(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormIDs);
                     }
-                    TES5Property propertyToAddToGlobalScope = new TES5Property(referenceName, propertyType, referenceName);
+                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.Construct(referenceName, propertyType, referenceName, tes4FormIDs);
                     globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
@@ -211,6 +234,41 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer CreateReference(string referenceName, string tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             return CreateReference(referenceName, null, tes4ReferenceNameForType, globalScope, multipleScriptsScope, localScope);
+        }
+
+        private readonly static Regex fileNameRE = new Regex(@"(qf|tif)_[A-Za-z0-9]*_([0-9a-f]+)(_([0-9]+)_[0-9]+)?", RegexOptions.Compiled);
+        private static Tuple<int, Nullable<int>> GetTES4FormIDAndIndex(string fileNameNoExt, TES5FragmentType fragmentType)
+        {
+            Match fileNameMatch = fileNameRE.Match(fileNameNoExt);
+            if (!fileNameMatch.Success)
+            {
+                throw new ConversionException(fileNameNoExt + " did not match pattern.");
+            }
+            string scriptTES5FormIDHex = fileNameMatch.Groups[2].Value;
+            Nullable<int> index = null;
+            if (fragmentType == TES5FragmentType.T_QF)
+            {
+                index = int.Parse(fileNameMatch.Groups[4].Value);
+            }
+            int scriptTES4FormID = Convert.ToInt32(scriptTES5FormIDHex, 16) - 0x01000000;
+            return new Tuple<int, Nullable<int>>(scriptTES4FormID, index);
+        }
+
+        public static Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(ESMAnalyzer esmAnalyzer, string fileNameNoExt, TES5FragmentType fragmentType)
+        {
+            Tuple<int, Nullable<int>> formIDAndIndex = GetTES4FormIDAndIndex(fileNameNoExt, fragmentType);
+            return esmAnalyzer.GetTypesFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2);
+        }
+
+        private static Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(ESMAnalyzer esmAnalyzer, string edidOrFileNameNoExt, string propertyName)
+        {
+            TES5FragmentType? fragmentType = edidOrFileNameNoExt.StartsWith("qf_") ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith("tif") ? TES5FragmentType.T_TIF : null;
+            if (fragmentType != null)
+            {
+                Tuple<int, Nullable<int>>? formIDAndIndex = GetTES4FormIDAndIndex(edidOrFileNameNoExt, fragmentType);
+                return esmAnalyzer.GetTypeFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2, propertyName);
+            }
+            return esmAnalyzer.GetTypeFromSCRO(edidOrFileNameNoExt, propertyName);
         }
     }
 }

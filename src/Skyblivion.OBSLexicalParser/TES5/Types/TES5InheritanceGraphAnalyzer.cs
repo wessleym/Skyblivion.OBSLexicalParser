@@ -1893,11 +1893,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("ShowFirstPersonGeometry", new TES5BasicType[] {
                                 TES5BasicType.T_BOOL
                             }, TES5VoidType.Instance),
-                new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),//WTM:  Note:  SKSE,
-                new TES5InheritanceFunctionSignature("ModAmountSoldStolen", new TES5BasicType[] {
-                                TES5BasicType.T_INT
-                            }, TES5VoidType.Instance),//WTM:  Note:  SKSE
                 new TES5InheritanceFunctionSignature("GetForm", new TES5BasicType[] {
                                 TES5BasicType.T_INT
                             }, TES5BasicType.T_FORM),
@@ -1957,8 +1952,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, TES5BasicType.T_BOOL),
                 new TES5InheritanceFunctionSignature("IsMovementControlsEnabled", new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
-                new TES5InheritanceFunctionSignature("IsPCAMurderer", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("IsPlayerSungazing", new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
                 new TES5InheritanceFunctionSignature("IsSneakingControlsEnabled", new TES5BasicType[] {
@@ -2181,7 +2174,23 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_BOOL,
                                 TES5BasicType.T_BOOL
                             }, TES5BasicType.T_BOOL),
-                new TES5InheritanceFunctionSignature("EssentialDeathReload", new TES5BasicType[] {//WTM:  Change:  Added:  Skyblivion.dll
+                //WTM:  Note:  These methods actually seem to exist natively in Skyrim, but in my tests, they don't work reliably.
+                //I seemed to only be able to call ModAmountSoldStolen once.  After that, I couldn't get it to have any affect on the stored value.
+                /*new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new TES5BasicType[] {
+                            }, TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("ModAmountSoldStolen", new TES5BasicType[] {
+                                TES5BasicType.T_INT
+                            }, TES5VoidType.Instance),*/
+                new TES5InheritanceFunctionSignature("LegacyGetAmountSoldStolen", new TES5BasicType[] {
+                            }, TES5BasicType.T_INT),//WTM:  Change:  Added via Skyblivion.dll
+                new TES5InheritanceFunctionSignature("LegacyModAmountSoldStolen", new TES5BasicType[] {
+                                TES5BasicType.T_INT
+                            }, TES5VoidType.Instance),//WTM:  Change:  Added via Skyblivion.dll
+                /*new TES5InheritanceFunctionSignature("IsPCAMurderer", new TES5BasicType[] {
+                            }, TES5BasicType.T_INT),*/
+                new TES5InheritanceFunctionSignature("LegacyIsPCAMurderer", new TES5BasicType[] {
+                            }, TES5BasicType.T_INT),//WTM:  Change:  Added via Skyblivion.dll (experimenting)
+                new TES5InheritanceFunctionSignature("EssentialDeathReload", new TES5BasicType[] {//WTM:  Change:  Added via Skyblivion.dll (experimenting)
                                 TES5BasicType.T_STRING
                             }, TES5VoidType.Instance)
             }
@@ -2863,6 +2872,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             {
                                 TES5BasicType.T_FORM
                             }, TES5BasicType.T_BOOL),//WTM:  Change:  Added.  See modified ObjectReference.psc.
+                new TES5InheritanceFunctionSignature("LegacyStartConversation", new TES5BasicType[]
+                            {
+                                TES5BasicType.T_ACTOR,
+                                TES5BasicType.T_TOPIC
+                            }, TES5VoidType.Instance),//WTM:  Change:  Added.  See modified ObjectReference.psc.
                 new TES5InheritanceFunctionSignature("LegacySay", new TES5BasicType[] {
                         TES5BasicType.T_TOPIC,
                         TES5BasicType.T_BOOL

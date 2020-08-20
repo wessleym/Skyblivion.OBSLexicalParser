@@ -4,18 +4,23 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    class BuildLogServices : IDisposable
+    class BuildLogServiceCollection : IDisposable
     {
         private readonly Lazy<MetadataLogService> metadataLogService;
         private readonly Lazy<MappedTargetsLogService> mappedTargetsLogService;
         public MetadataLogService MetadataLogService => metadataLogService.Value;
         public MappedTargetsLogService MappedTargetsLogService => mappedTargetsLogService.Value;
-        public BuildLogServices(Build build)
+        private BuildLogServiceCollection(Build build)
         {
             MetadataLogService.DeleteFile(build);
             MappedTargetsLogService.DeleteFile(build);
             metadataLogService = new Lazy<MetadataLogService>(() => new MetadataLogService(build));
             mappedTargetsLogService = new Lazy<MappedTargetsLogService>(() => new MappedTargetsLogService(build));
+        }
+
+        public static BuildLogServiceCollection DeleteAndStartNewFiles(Build build)
+        {
+            return new BuildLogServiceCollection(build);
         }
 
         public void Dispose()

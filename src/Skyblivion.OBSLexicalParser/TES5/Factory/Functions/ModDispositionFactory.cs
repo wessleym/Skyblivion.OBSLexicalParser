@@ -11,10 +11,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public ModDispositionFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly FillerFactory fillerFactory;
+        public ModDispositionFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, FillerFactory fillerFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
+            this.fillerFactory = fillerFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -31,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                return new TES5Filler();
+                return fillerFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
             }
         }
     }

@@ -13,18 +13,18 @@ namespace Skyblivion.OBSLexicalParser.Builds
         /*
         * BuildTracker constructor.
         */
-        public BuildTracker(BuildTargetCollection buildTargetCollection)
+        public BuildTracker(IEnumerable<IBuildTarget> buildTargets)
         {
             //this.buildTargetCollection = buildTargetCollection;
-            foreach (var buildTarget in buildTargetCollection)
+            foreach (var buildTarget in buildTargets)
             {
-                this.builtScripts.Add(buildTarget.GetTargetName(), new Dictionary<string, TES5Target>());
+                this.builtScripts.Add(buildTarget.Name, new Dictionary<string, TES5Target>());
             }
         }
 
-        public void RegisterBuiltScript(BuildTarget buildTarget, TES5Target script)
+        public void RegisterBuiltScript(IBuildTarget buildTarget, TES5Target script)
         {
-            this.builtScripts[buildTarget.GetTargetName()][script.Script.ScriptHeader.OriginalScriptName] = script;
+            this.builtScripts[buildTarget.Name][script.Script.ScriptHeader.OriginalScriptName] = script;
         }
 
         public Dictionary<string, TES5Target> GetBuiltScripts(string targetName)

@@ -28,7 +28,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 args = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
                 var arg0Type = args[0].TES5Type;
-                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTOR))
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTORBASE))
+                {
+                    functionName = "SetActorOwner";
+                }
+                else if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTOR))
                 {
                     args[0] = objectCallFactory.CreateGetActorBase((ITES5Referencer)args[0]);
                     functionName = "SetActorOwner";
@@ -39,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
                 else
                 {
-                    throw new ConversionException(function.FunctionCall.FunctionName + " should be called with either an Actor or a Faction.  Instead, it was called with " + calledOn.Name + " (" + calledOn.TES5Type.OriginalName + " : " + calledOn.TES5Type.NativeType.Name + ").");
+                    throw new ConversionException(function.FunctionCall.FunctionName + " should be called with either an ActorBase or a Faction.  Instead, it was called with " + arg0Type.Value + " (" + arg0Type.OriginalName + " : " + arg0Type.NativeType.Name + ").");
                 }
             }
             else

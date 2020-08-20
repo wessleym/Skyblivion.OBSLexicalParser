@@ -1,4 +1,6 @@
+using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -27,8 +29,27 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     function.AddChunk(newCodeChunk);
                 }
             }
-
             return function;
+        }
+
+        private TES5FunctionCodeBlock CreateFragment(TES5FragmentType fragmentType, int stageID, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES4CodeChunks chunks)
+        {
+            string fragmentName = GetFragmentName(stageID);
+            return CreateFragment(fragmentType, fragmentName, globalScope, multipleScriptsScope, chunks);
+        }
+
+        public TES5Target Convert(TES5FragmentType fragmentType, TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            TES5FunctionCodeBlock fragment = CreateFragment(fragmentType, 0, globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
+            TES5BlockList blockList = new TES5BlockList() { fragment };
+            TES5Script script = new TES5Script(globalScope, blockList, true);
+            TES5Target target = new TES5Target(script, fragmentTarget.OutputPath);
+            return target;
+        }
+
+        public static string GetFragmentName(int stageID, int logIndex = 0)
+        {
+            return "Fragment_" + stageID.ToString() + (logIndex != 0 ? "_" + logIndex : "");
         }
     }
 }

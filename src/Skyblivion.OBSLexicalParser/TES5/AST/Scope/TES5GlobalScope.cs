@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
+using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 const string name = TES5PlayerReference.PlayerRefName;
                 TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
-                TES5Property property = new TES5Property(name, playerType, name);
+                TES5Property property = TES5PropertyFactory.ConstructWithoutFormIDs(name, playerType, name);
                 AddProperty(property);
                 playerRefPropertyAdded = true;
             }

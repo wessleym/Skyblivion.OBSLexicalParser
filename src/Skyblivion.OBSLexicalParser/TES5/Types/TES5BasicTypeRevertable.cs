@@ -70,8 +70,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         private bool TryRevertToForm(bool throwException)
         {
-            if (OriginalName.ToLower().Contains("Dark11ChorrolDrop".ToLower()) || OriginalName == "Dark11ChorrolDropScript")
-            { }
             if (!mayRevertToForm)
             {
                 if (throwException) { throw new InvalidOperationException("!" + nameof(mayRevertToForm)); }

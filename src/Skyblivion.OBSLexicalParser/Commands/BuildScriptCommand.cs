@@ -3,6 +3,8 @@ using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -14,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             : base("skyblivion:parser:buildScript", "Build Script", "Create artifact from OBScript source")
         {
             Input.AddArgument(new LPCommandArgument("scriptName", "Script name"));
-            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
+            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTargetFactory.DefaultNames));
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
@@ -31,39 +33,44 @@ namespace Skyblivion.OBSLexicalParser.Commands
             throw new NotImplementedException();
         }
 
-        public void Execute(string scriptName, string targets = BuildTarget.DEFAULT_TARGETS, string? buildPath = null)
+        public void Execute(string scriptName, string targets = BuildTargetFactory.DefaultNames, string? buildPath = null)
         {
             if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
             Build build = new Build(buildPath);
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
+            BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
+            if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
+            BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
+            using (BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build))
             {
                 ESMAnalyzer esmAnalyzer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out _);
-                if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
-                TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargets, scriptName, esmAnalyzer);
-#if !DEBUG
-                try
+                BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(buildTargetsSimple, buildLogServices, out esmAnalyzer, out _);
+                using (esmAnalyzer)
                 {
-#endif
-                    transpileJob.Run();
+                    TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargetsAdvanced, scriptName, esmAnalyzer);
 #if !DEBUG
-                }
-                catch (ConversionException ex)
-                {
-                    Console.WriteLine("Exception occured." + Environment.NewLine + ex.GetType().FullName + ":  " + ex.Message);
-                    return;
-                }
+                    try
+                    {
 #endif
-                PrepareWorkspace(buildTargets);
-                Compile(build, buildTargets);
+                        transpileJob.Run();
+#if !DEBUG
+                    }
+                    catch (ConversionException ex)
+                    {
+                        Console.WriteLine("Exception occured." + Environment.NewLine + ex.GetType().FullName + ":  " + ex.Message);
+                        return;
+                    }
+#endif
+                }
             }
+            PrepareWorkspace(buildTargets);
+            Compile(build, buildTargetsSimple);
             Console.WriteLine("Build Complete");
             string compileLog = File.ReadAllText(build.GetCompileStandardOutputPath());
             Console.WriteLine(compileLog);
         }
 
-        private static void PrepareWorkspace(BuildTargetCollection buildTargets)
+        private static void PrepareWorkspace(IList<BuildTarget> buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
@@ -71,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
-        private static void Compile(Build build, BuildTargetCollection buildTargets)
+        private static void Compile(Build build, IList<BuildTargetSimple> buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.Run();

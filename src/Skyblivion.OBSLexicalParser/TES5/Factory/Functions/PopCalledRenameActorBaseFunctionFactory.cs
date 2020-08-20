@@ -28,10 +28,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             string newCalledOnString = functionArguments.Pop(0).StringValue;
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(newCalledOnString, globalScope, multipleScriptsScope, localScope);
-            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(newCalledOn.TES5Type, TES5BasicType.T_ACTOR)) { newCalledOn = this.objectCallFactory.CreateGetActorBase(newCalledOn); }
-            else
+            if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(newCalledOn.TES5Type, TES5BasicType.T_ACTORBASE))
             {
-                throw new ConversionException(newFunctionName + " should be called with an Actor.  Instead, it was called with " + newCalledOnString + " (" + newCalledOn.TES5Type.OriginalName + " : " + newCalledOn.TES5Type.NativeType.Name + ").");
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(newCalledOn.TES5Type, TES5BasicType.T_ACTOR))
+                {
+                    newCalledOn = this.objectCallFactory.CreateGetActorBase(newCalledOn);
+                }
+                else
+                {
+                    throw new ConversionException(newFunctionName + " should be called with an ActorBase.  Instead, it was called with " + newCalledOnString + " (" + newCalledOn.TES5Type.OriginalName + " : " + newCalledOn.TES5Type.NativeType.Name + ").");
+                }
             }
             return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
         }

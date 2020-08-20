@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         * Joins N QF subfragments into one QF fragment that can be properly binded into Skyrim VM
         * @throws ConversionException
         */
-        public TES5Target JoinQFFragments(BuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
+        public TES5Target JoinQFFragments(IBuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
         {
             StageMap stageMap = BuildStageMap(target, resultingFragmentName);
             /*
@@ -41,7 +41,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * for objective handling.
              */
             TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
-            TES5BlockList resultingBlockList = new TES5BlockList();
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
             /*
              * Add ReferenceAlias"es
@@ -57,12 +56,26 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             {
                 string trimmedAlias = alias.Trim();
                 if (trimmedAlias == "") { continue; }
-                if (aliasesDeclared.Add(trimmedAlias))
+                //WTM:  Change:  This used to build an alias like this:
+                //Alias_[FormID]_p
+                //I changed it to generate this:
+                //Alias_[EditorID]_p
+                /*const string Alias_ = "Alias_";
+                if (!trimmedAlias.StartsWith(Alias_)) { throw new ConversionException(nameof(trimmedAlias) + " did not start with " + Alias_ + ":  " + trimmedAlias); }
+                string formIDString = trimmedAlias.Substring(Alias_.Length);
+                int formID = Convert.ToInt32(formIDString, 16);
+                string? edid = esmAnalyzer.GetEDIDByFormIDNullable(formID);
+                string innerName = edid != null ? edid : formIDString;
+                string propertyName = Alias_ + innerName;*/
+                //WTM:  Note:  The above didn't work.  GECKFrontend couldn't seem to associate the properties correctly.
+                string propertyName = trimmedAlias;
+                if (aliasesDeclared.Add(propertyName))
                 {
-                    resultingGlobalScope.AddProperty(new TES5Property(trimmedAlias, TES5BasicType.T_REFERENCEALIAS, trimmedAlias));
+                    resultingGlobalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormIDs(propertyName, TES5BasicType.T_REFERENCEALIAS, propertyName));
                 }
             }
 
+            List<QuestStageBlock> questStageBlocks = new List<QuestStageBlock>();
             HashSet<int> implementedStages = new HashSet<int>();
             HashSet<string> propertiesNamesDeclared = new HashSet<string>();
             foreach (var subfragment in subfragmentsTrees)
@@ -108,7 +121,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                             existingProperty.TES5Type = subfragmentProperty.TES5Type;
                             continue;
                         }
-                        throw new ConversionException("Types were not compatible for property " + subfragmentProperty.Name + ":  " + subfragmentProperty.TES5Type.Value + " should extend " + existingProperty.TES5Type.Value + ".");
+                        throw new ConversionException("Types were not compatible for property " + subfragmentProperty.Name + ":  " + subfragmentProperty.TES5Type.Value + " should extend " + existingProperty.TES5Type.Value + " (" + existingProperty.TES5Type.NativeType.Value + ").");
                     }
                 }
 
@@ -119,16 +132,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 }
 
                 ITES5CodeBlock subfragmentBlock = subfragmentBlocks[0];
-                if (subfragmentBlock.FunctionScope.BlockName != "Fragment_0")
+                if (subfragmentBlock.FunctionScope.BlockName != TES5FragmentFactory.GetFragmentName(0))
                 {
-                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName + "..");
+                    throw new ConversionException("Wrong QF fragment funcname, actual function name: " + subfragmentBlock.FunctionScope.BlockName + ".");
                 }
 
-                string newFragmentFunctionName = "Fragment_" + subfragment.Stage.ToString();
-                if (subfragment.LogIndex != 0)
-                {
-                    newFragmentFunctionName += "_" + subfragment.LogIndex;
-                }
+                string newFragmentFunctionName = TES5FragmentFactory.GetFragmentName(subfragment.Stage, subfragment.LogIndex);
 
                 subfragmentBlock.FunctionScope.Rename(newFragmentFunctionName);
                 var objectiveCodeChunks = objectiveHandlingFactory.GenerateObjectiveHandling(subfragmentBlock, resultingGlobalScope, stageMap.GetStageTargetsMap(subfragment.Stage));
@@ -137,7 +146,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     subfragmentBlock.AddChunk(newCodeChunk);
                 }
 
-                resultingBlockList.Add(subfragmentBlock);
+                questStageBlocks.Add(new QuestStageBlock(subfragment.Stage, subfragment.LogIndex, subfragmentBlock));
                 implementedStages.Add(subfragment.Stage);
             }
 
@@ -148,7 +157,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             foreach (int nonDoneStage in nonDoneStages)
             {
                 TES5FunctionCodeBlock fragment = objectiveHandlingFactory.CreateEnclosedFragment(resultingGlobalScope, nonDoneStage, stageMap.GetStageTargetsMap(nonDoneStage));
-                resultingBlockList.Add(fragment);
+                questStageBlocks.Add(new QuestStageBlock(nonDoneStage, 0, fragment));
             }
 
             this.mappedTargetsLogService.WriteScriptName(resultingFragmentName);
@@ -159,6 +168,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 this.mappedTargetsLogService.WriteLine(originalTargetIndex, mappedTargetIndexes);
             }
 
+            TES5BlockList resultingBlockList = new TES5BlockList(questStageBlocks.OrderBy(b => b.StageID).ThenBy(b => b.LogIndex).Select(b => b.CodeBlock));
             TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList, true);
             string outputPath = target.GetTranspileToPath(resultingFragmentName);
             return new TES5Target(resultingTree, outputPath);
@@ -176,7 +186,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return property.OriginalName;
         }
 
-        public static Dictionary<int, List<int>> BuildStageMapDictionary(BuildTarget target, string resultingFragmentName)
+        public static Dictionary<int, List<int>> BuildStageMapDictionary(IBuildTarget target, string resultingFragmentName)
         {
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             //ToLower() is needed for Linux's case-sensitive file system since these files seem to all be lowercase.
@@ -208,7 +218,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             return stageMap;
         }
 
-        private static StageMap BuildStageMap(BuildTarget target, string resultingFragmentName)
+        private static StageMap BuildStageMap(IBuildTarget target, string resultingFragmentName)
         {
             Dictionary<int, List<int>> stageMap = BuildStageMapDictionary(target, resultingFragmentName);
             return new StageMap(stageMap);

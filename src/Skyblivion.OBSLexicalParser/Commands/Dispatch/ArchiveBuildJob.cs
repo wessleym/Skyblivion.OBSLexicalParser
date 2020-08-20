@@ -21,26 +21,21 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
 #nullable disable
             Build build = null;//WTM:  Change:  BuildTargetFactory.get originally took two arguments, but in PHP, it was invoked with one argument.  This file will fail to run.
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
-            {
-                ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
-                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
-                BuildTarget buildTarget = BuildTargetFactory.Get(this.buildTarget, build, buildLogServices, esmAnalyzer, typeInferencer);
-                int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
-                    .Select(path => Path.GetFileName(path))
-                    .Select(name =>
-                    {
-                        int fileBuild;
-                        return int.TryParse(name, out fileBuild) ? fileBuild : 0;
-                    })
-                    .Max();
-                int archivedBuild = latestBuild + 1;
-                Directory.CreateDirectory(buildTarget.GetArchivedBuildPath(archivedBuild));
-                //WTM:  Change:  buildTarget.getBuildPath() is not a valid method.
-                string sourcePath = null;//buildTarget.getBuildPath()
-                string destinationPath = buildTarget.GetArchivedBuildPath(archivedBuild);
-                FileTransfer.CopyDirectoryFiles(sourcePath, destinationPath, false);
-            }
+            BuildTarget buildTarget = BuildTargetFactory.Construct(this.buildTarget, build);
+            int latestBuild = Directory.EnumerateFileSystemEntries(buildTarget.GetArchivePath())
+                .Select(path => Path.GetFileName(path))
+                .Select(name =>
+                {
+                    int fileBuild;
+                    return int.TryParse(name, out fileBuild) ? fileBuild : 0;
+                })
+                .Max();
+            int archivedBuild = latestBuild + 1;
+            Directory.CreateDirectory(buildTarget.GetArchivedBuildPath(archivedBuild));
+            //WTM:  Change:  buildTarget.getBuildPath() is not a valid method.
+            string sourcePath = null;//buildTarget.getBuildPath()
+            string destinationPath = buildTarget.GetArchivedBuildPath(archivedBuild);
+            FileTransfer.CopyDirectoryFiles(sourcePath, destinationPath, false);
             Process.Start("clean.sh", this.buildTarget);
         }
     }

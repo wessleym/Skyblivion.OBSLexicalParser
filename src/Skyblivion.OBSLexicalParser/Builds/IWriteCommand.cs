@@ -4,6 +4,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     interface IWriteCommand
     {
-        void Write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter);
+        void Write(IBuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter);
     }
 }

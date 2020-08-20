@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 
         private string GetConditionLineOutput(string ifOrElseIf)
         {
-            return ifOrElseIf + "(" + this.expression.Output.Single() + ")";
+            return ifOrElseIf + " (" + this.expression.Output.Single() + ")";
         }
 
         public IEnumerable<string> GetOutput(string ifOrElseIf)

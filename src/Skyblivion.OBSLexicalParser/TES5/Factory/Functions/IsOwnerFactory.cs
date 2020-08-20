@@ -29,7 +29,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             var arg0Type = targetReference.TES5Type;
             string functionName;
             ITES5Referencer baseReference;
-            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTOR))
+            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTORBASE))
+            {
+                functionName = "GetActorOwner";
+                baseReference = targetReference;
+            }
+            else if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(arg0Type, TES5BasicType.T_ACTOR))
             {
                 functionName = "GetActorOwner";
                 baseReference = this.objectCallFactory.CreateGetActorBase(targetReference);
@@ -41,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                throw new ConversionException(function.FunctionCall.FunctionName + " should be called with either an actor or a faction.");
+                throw new ConversionException(function.FunctionCall.FunctionName + " should be called with either an ActorBase or a Faction.");
             }
             TES5ObjectCall owner = this.objectCallFactory.CreateObjectCall(calledOn, functionName);
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(owner, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, baseReference);

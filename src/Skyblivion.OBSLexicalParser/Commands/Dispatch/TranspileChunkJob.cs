@@ -18,10 +18,10 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     class TranspileChunkJob
     {
         private readonly BuildTracker buildTracker;
-        private readonly BuildTargetCollection buildTargets;
+        private readonly BuildTargetAdvancedCollection buildTargets;
         private readonly List<Dictionary<string, List<string>>> buildPlan;
         private readonly Build build;
-        private readonly BuildLogServices buildLogServices;
+        private readonly BuildLogServiceCollection buildLogServices;
         private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5TypeInferencer typeInferencer;
         /*
@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServices buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServiceCollection buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
@@ -37,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             this.buildLogServices = buildLogServices;
             this.esmAnalyzer = esmAnalyzer;
             this.typeInferencer = typeInferencer;
-            this.buildTargets = new BuildTargetCollection();
+            this.buildTargets = new BuildTargetAdvancedCollection();
         }
 
         public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 {
                     var buildTargetName = kvp.Key;
                     var buildScripts = kvp.Value;
-                    BuildTarget buildTarget = this.GetBuildTarget(buildTargetName);
+                    BuildTargetAdvanced buildTarget = this.GetBuildTarget(buildTargetName);
                     foreach (var buildScript in buildScripts)
                     {
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
@@ -80,7 +80,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     var buildScripts = kvp.Value;
                     foreach (var buildScript in buildScripts)
                     {
-                        BuildTarget buildTarget = this.GetBuildTarget(buildTargetName);
+                        BuildTargetAdvanced buildTarget = this.GetBuildTarget(buildTargetName);
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
@@ -114,14 +114,15 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             }
         }
 
-        private BuildTarget GetBuildTarget(string targetName)
+        private BuildTargetAdvanced GetBuildTarget(string targetName)
         {
-            if (this.buildTargets.GetByNameOrNull(targetName) == null)
+            BuildTargetAdvanced? result = this.buildTargets.GetByNameOrNull(targetName);
+            if (result == null)
             {
-                this.buildTargets.Add(BuildTargetFactory.Get(targetName, this.build, buildLogServices, esmAnalyzer, typeInferencer));
+                BuildTargetSimple buildTarget = BuildTargetFactory.ConstructSimple(BuildTargetFactory.Construct(targetName, this.build));
+                result = BuildTargetFactory.ConstructAdvanced(buildTarget, buildLogServices, esmAnalyzer, typeInferencer);
+                this.buildTargets.Add(result);
             }
-
-            BuildTarget result = this.buildTargets.GetByName(targetName);
             return result;
         }
     }

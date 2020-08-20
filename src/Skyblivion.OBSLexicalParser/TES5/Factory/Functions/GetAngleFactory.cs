@@ -22,9 +22,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             string arg0 = functionArguments.Pop(0).StringValue;
-            string arg0Lower = arg0.ToLower();
-            if (arg0Lower != "x" && arg0Lower != "y" && arg0Lower != "z") { throw new ConversionException("getAngle can handle only X,Y,Z parameters."); }
-            string functionName = "GetAngle" + arg0.ToUpper();
+            string arg0Upper = arg0.ToUpper();
+            if (arg0Upper != "X" && arg0Upper != "Y" && arg0Upper != "Z") { throw new ConversionException("getAngle can handle only X,Y,Z parameters."); }
+            string functionName = "GetAngle" + arg0Upper;
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newArguments);
         }

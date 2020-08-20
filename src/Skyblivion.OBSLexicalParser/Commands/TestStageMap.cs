@@ -21,14 +21,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             if (!PreExecutionChecks(false, true, false, false)) { return; }
             Build build = new Build(Build.DEFAULT_BUILD_PATH);
-            Dictionary<int, List<int>> originalStageMap;
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
-            {
-                ESMAnalyzer esmAnalyzer = new ESMAnalyzer(true);
-                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
-                BuildTarget buildTarget = BuildTargetFactory.Get(BuildTarget.BUILD_TARGET_QF, build, buildLogServices, esmAnalyzer, typeInferencer);
-                originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
-            }
+            BuildTarget buildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, build);
+            Dictionary<int, List<int>> originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
             StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary
             StringBuilder output = new StringBuilder();
             foreach (var stageId in stageMap.StageIDs)

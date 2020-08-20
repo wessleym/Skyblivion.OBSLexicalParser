@@ -1,53 +1,131 @@
-using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
+﻿using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.Service;
 using Skyblivion.OBSLexicalParser.DI;
+using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
     static class BuildTargetFactory
     {
-        public static BuildTargetCollection GetCollection(string targetsString, Build build, BuildLogServices buildLogServices, bool loadESMAnalyzerLazily, out ESMAnalyzer esmAnalyzer, out TES5TypeInferencer typeInferencer)
+        public const string StandaloneName = "Standalone";
+        public const string TIFName = "TIF";
+        public const string QFName = "QF";
+        public const string PFName = "PF";
+        public const string DefaultNames = StandaloneName + "," + TIFName + "," + QFName;
+
+        public static BuildTarget[] ParseCollection(string names, Build build)
         {
-            esmAnalyzer = new ESMAnalyzer(loadESMAnalyzerLazily);
-            typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
-            string[] targets = targetsString.Split(',');
-            BuildTargetCollection collection = new BuildTargetCollection();
-            foreach (var target in targets)
+            return names.Split(',').Select(n => Construct(n, build)).ToArray();
+        }
+
+        public static BuildTargetSimple[] GetCollection(IEnumerable<BuildTarget> buildTargets)
+        {
+            return buildTargets.Select(bt => ConstructSimple(bt)).ToArray();
+        }
+
+        public static BuildTargetAdvancedCollection GetCollection(IEnumerable<BuildTargetSimple> buildTargets, BuildLogServiceCollection buildLogServices, out ESMAnalyzer esmAnalyzer, out TES5TypeInferencer typeInferencer)
+        {
+            esmAnalyzer = ESMAnalyzer.Load();
+            typeInferencer = new TES5TypeInferencer(esmAnalyzer);
+            BuildTargetAdvancedCollection collection = new BuildTargetAdvancedCollection();
+            foreach (var target in buildTargets)
             {
-                collection.Add(Get(target, build, buildLogServices, esmAnalyzer, typeInferencer));
+                collection.Add(ConstructAdvanced(target, buildLogServices, esmAnalyzer, typeInferencer));
             }
             return collection;
         }
 
-        public static BuildTarget Get(string target, Build build, BuildLogServices buildLogServices, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        public static BuildTarget Construct(string name, Build build)
         {
-            switch (target)
+            switch (name)
             {
-                case BuildTarget.BUILD_TARGET_STANDALONE:
+                case StandaloneName:
+                    {
+                        return new BuildTarget(StandaloneName, TES5TypeFactory.TES4Prefix, build);
+                    }
+
+                case TIFName:
+                    {
+                        return new BuildTarget(TIFName, TES5TypeFactory.TES4_Prefix, build);
+                    }
+
+                case PFName:
+                    {
+                        return new BuildTarget(PFName, "", build);
+                    }
+
+                case QFName:
+                    {
+                        return new BuildTarget(QFName, TES5TypeFactory.TES4_Prefix, build);
+                    }
+
+                default:
+                    {
+                        throw new InvalidOperationException("Unknown target " + name);
+                    }
+            }
+        }
+
+        public static BuildTargetSimple ConstructSimple(BuildTarget buildTarget)
+        {
+            switch (buildTarget.Name)
+            {
+                case StandaloneName:
+                    {
+                        return new BuildTargetSimple(buildTarget, new Standalone.CompileCommand(), new Standalone.ASTCommand());
+                    }
+
+                case TIFName:
+                    {
+                        return new BuildTargetSimple(buildTarget, new TIF.CompileCommand(), new TIF.ASTCommand());
+                    }
+
+                case PFName:
+                    {
+                        return new BuildTargetSimple(buildTarget, new PF.CompileCommand(), new PF.ASTCommand());
+                    }
+
+                case QFName:
+                    {
+                        return new BuildTargetSimple(buildTarget, new QF.CompileCommand(), new QF.ASTCommand());
+                    }
+
+                default:
+                    {
+                        throw new InvalidOperationException("Unknown target " + buildTarget.Name);
+                    }
+            }
+        }
+
+        public static BuildTargetAdvanced ConstructAdvanced(BuildTargetSimple buildTarget, BuildLogServiceCollection buildLogServices, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        {
+            switch (buildTarget.Name)
+            {
+                case StandaloneName:
                     {
                         StandaloneParsingService standaloneParsingService = new StandaloneParsingService(new SyntaxErrorCleanParser(new TES4OBScriptGrammar()));
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_STANDALONE, TES5TypeFactory.TES4Prefix, build, new Standalone.TranspileCommand(standaloneParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new Standalone.CompileCommand(), new Standalone.ASTCommand(), new Standalone.BuildScopeCommand(standaloneParsingService, esmAnalyzer, new TES5PropertyFactory(esmAnalyzer)), new Standalone.WriteCommand());
+                        return new BuildTargetAdvanced(buildTarget, new Standalone.TranspileCommand(standaloneParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new Standalone.BuildScopeCommand(standaloneParsingService, esmAnalyzer, new TES5PropertyFactory(esmAnalyzer)), new Standalone.WriteCommand());
                     }
 
-                case BuildTarget.BUILD_TARGET_TIF:
+                case TIFName:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_TIF, TES5TypeFactory.TES4_Prefix, build, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.CompileCommand(), new TIF.ASTCommand(), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), new TIF.WriteCommand());
+                        return new BuildTargetAdvanced(buildTarget, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer)), new TIF.WriteCommand());
                     }
 
-                case BuildTarget.BUILD_TARGET_PF:
+                case PFName:
                     {
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_PF, "", build, new PF.TranspileCommand(), new PF.CompileCommand(), new PF.ASTCommand(), new PF.BuildScopeCommand(), new PF.WriteCommand());
+                        return new BuildTargetAdvanced(buildTarget, new PF.TranspileCommand(), new PF.BuildScopeCommand(), new PF.WriteCommand());
                     }
 
-                case BuildTarget.BUILD_TARGET_QF:
+                case QFName:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
                         TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
@@ -63,12 +141,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(objectCallFactory);
                         QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
                         QF.WriteCommand writeCommand = new QF.WriteCommand(qfFragmentFactory);
-                        return new BuildTarget(BuildTarget.BUILD_TARGET_QF, TES5TypeFactory.TES4_Prefix, build, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.CompileCommand(), new QF.ASTCommand(), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer)), writeCommand);
+                        return new BuildTargetAdvanced(buildTarget, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer)), writeCommand);
                     }
 
                 default:
                     {
-                        throw new InvalidOperationException("Unknown target " + target);
+                        throw new InvalidOperationException("Unknown target " + buildTarget.Name);
                     }
             }
         }

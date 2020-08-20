@@ -3,8 +3,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {

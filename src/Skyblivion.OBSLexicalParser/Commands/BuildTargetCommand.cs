@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public BuildTargetCommand()
             : base("skyblivion:parser:build", "Build Target", "Create artifact(s) from OBScript source")
         {
-            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
+            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTargetFactory.DefaultNames));
             Input.AddArgument(new LPCommandArgument("threadsNumber", "Threads number", DefaultThreads.ToString()));
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         }
         public void Execute(bool writeTranspiledFilesAndCompile)
         {
-            Execute(BuildTarget.DEFAULT_TARGETS, writeTranspiledFilesAndCompile);
+            Execute(BuildTargetFactory.DefaultNames, writeTranspiledFilesAndCompile);
         }
         public override void Execute()
         {
@@ -43,32 +43,33 @@ namespace Skyblivion.OBSLexicalParser.Commands
             if (!PreExecutionChecks(true, true, true, true)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
             Build build = new Build(buildPath);
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
+            BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
+            if (writeTranspiledFilesAndCompile && !buildTargets.CanBuildAndWarnIfNot()) { return; }
+            BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
+            BuildTracker buildTracker = new BuildTracker(buildTargets);
+            using (BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build))
             {
                 ESMAnalyzer esmAnalyzer;
                 TES5TypeInferencer typeInferencer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out esmAnalyzer, out typeInferencer);
-                if (writeTranspiledFilesAndCompile && !buildTargets.CanBuildAndWarnIfNot()) { return; }
-                BuildTracker buildTracker = new BuildTracker(buildTargets);
-                Transpile(build, buildTracker, buildTargets, buildLogServices, threadsNumber, esmAnalyzer, typeInferencer);
-                if (writeTranspiledFilesAndCompile)
+                BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(buildTargetsSimple, buildLogServices, out esmAnalyzer, out typeInferencer);
+                using (esmAnalyzer)
                 {
-                    WriteTranspiled(buildTargets, buildTracker);
-                }
-                esmAnalyzer.Deallocate();//Hack - force ESM analyzer deallocation.
-                if (writeTranspiledFilesAndCompile)
-                {
-                    PrepareWorkspace(buildTargets);
-                    Compile(build, buildTargets);
+                    Transpile(build, buildTracker, buildTargetsAdvanced, buildLogServices, threadsNumber, esmAnalyzer, typeInferencer);
+                    if (writeTranspiledFilesAndCompile)
+                    {
+                        WriteTranspiled(buildTargetsAdvanced, buildTracker);
+                    }
                 }
             }
             if (writeTranspiledFilesAndCompile)
             {
+                PrepareWorkspace(buildTargets);
+                Compile(build, buildTargetsSimple);
                 Console.WriteLine("Build Complete");
             }
         }
 
-        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetCollection buildTargets, BuildLogServices buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetAdvancedCollection buildTargets, BuildLogServiceCollection buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             var buildPlan = buildTargets.GetBuildPlan(threadsNumber);
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
@@ -84,20 +85,20 @@ namespace Skyblivion.OBSLexicalParser.Commands
             progressWriter.WriteLast();
         }
 
-        private static void WriteTranspiled(BuildTargetCollection buildTargets, BuildTracker buildTracker)
+        private static void WriteTranspiled(BuildTargetAdvancedCollection buildTargets, BuildTracker buildTracker)
         {
-            ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.GetTargetName()).Count));
+            ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.Name).Count));
             //WTM:  Change:  Transpile QF first since some transpilation will be done while writing.
             //Types will be inferenced like TES4PublicanBloatedFloatOrmil, and if Standalone gets written first, those files will be incorrect.
             //The below OrderBy statement puts QF first.
-            foreach (var buildTarget in buildTargets.OrderBy(bt => bt.GetTargetName() != BuildTarget.BUILD_TARGET_QF))
+            foreach (var buildTarget in buildTargets.OrderBy(bt => !bt.IsQF()))
             {
                 buildTarget.Write(buildTracker, progressWriter);
             }
             progressWriter.WriteLast();
         }
 
-        private static void PrepareWorkspace(BuildTargetCollection buildTargets)
+        private static void PrepareWorkspace(IList<BuildTarget> buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
             PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
@@ -105,7 +106,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
-        private static void Compile(Build build, BuildTargetCollection buildTargets)
+        private static void Compile(Build build, IList<BuildTargetSimple> buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.Run();

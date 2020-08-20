@@ -7,11 +7,15 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
-    //[Obsolete("Unused.  Aerisarn added an OBStartConversation native function.")]//I'm rolling back this change until Aerisarn includes his changes in skyblivion-skse.
     class StartConversationFactory : IFunctionFactory
     {
-        public StartConversationFactory()
-        { }
+        private readonly RenamedFunctionFactory renamedFunctionFactory;
+        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
+        public StartConversationFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, LogUnknownFunctionFactory logUnknownFunctionFactory)
+        {
+            this.renamedFunctionFactory = new RenamedFunctionFactory("LegacyStartConversation", objectCallFactory, objectCallArgumentsFactory);
+            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
+        }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
@@ -29,8 +33,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
             return this.objectCallFactory.createObjectCall(reference, "ForceStart",multipleScriptsScope, funcArgs);
             */
-
-            return new TES5Filler();
+            if (function.Arguments.Count == 1)
+            {
+                return logUnknownFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+            }
+            return renamedFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
         }
     }
 }

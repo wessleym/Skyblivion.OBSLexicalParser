@@ -14,8 +14,9 @@ namespace Skyblivion.OBSLexicalParser.DI
         {
             DefaultFunctionFactory defaultFunctionFactory = new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory);
             LogUnknownFunctionFactory logUnknownFunctionFactory = new LogUnknownFunctionFactory(objectCallFactory);
+            FillerFactory fillerFactory = new FillerFactory();
             valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory));
-            valueFactory.AddFunctionFactory("addachievement", new FillerFactory());
+            valueFactory.AddFunctionFactory("addachievement", fillerFactory);
             valueFactory.AddFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("addscriptpackage", new AddScriptPackageFactory(referenceFactory, metadataLogService, objectCallFactory));
             valueFactory.AddFunctionFactory("addspell", defaultFunctionFactory);
@@ -157,7 +158,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("modactorvalue", new ModActorValueFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("modamountsoldstolen", new ModAmountSoldStolenFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("modcrimegold", new ModCrimeGoldFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("moddisposition", new ModDispositionFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("moddisposition", new ModDispositionFactory(objectCallFactory, objectCallArgumentsFactory, fillerFactory));
             valueFactory.AddFunctionFactory("modfactionreaction", new PopCalledRenameFunctionFactory("ModReaction", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("modpcfame", new ModPCFameFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("modpcinfamy", new ModPCInfamyFactory(referenceFactory, objectCallFactory));
@@ -174,7 +175,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("playmagicshadervisuals", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("playsound3d", new PlaySound3DFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("playsound", new PlaySoundFactory(referenceFactory, objectCallFactory));
-            valueFactory.AddFunctionFactory("purgecellbuffers", new FillerFactory());
+            valueFactory.AddFunctionFactory("purgecellbuffers", fillerFactory);
             valueFactory.AddFunctionFactory("pushactoraway", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("refreshtopiclist", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("releaseweatheroverride", new ReleaseWeatherOverrideFactory(objectCallFactory));
@@ -250,8 +251,8 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("showmap", new ShowMapFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.AddFunctionFactory("showracemenu", new ShowRaceMenuFactory(objectCallFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("showspellmaking", logUnknownFunctionFactory);
-            valueFactory.AddFunctionFactory("startcombat", defaultFunctionFactory);
-            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory());//WTM:  Note:  I should be able to use this soon:  new RenamedFunctionFactory("OBStartConversation", objectCallFactory, objectCallArgumentsFactory)
+            valueFactory.AddFunctionFactory("startcombat", new StartCombatFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(objectCallFactory, objectCallArgumentsFactory, logUnknownFunctionFactory));
             valueFactory.AddFunctionFactory("startquest", new PopCalledRenameFunctionFactory("Start", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombatalarmonactor", new RenamedFunctionFactory("StopCombatAlarm", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombat", new StopCombatFactory(objectCallFactory));
@@ -280,7 +281,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("modpcskill", new ModActorValueFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("pme", logUnknownFunctionFactory);//WTM:  Note:  PlayMagicEffectVisuals
             valueFactory.AddFunctionFactory("pms", logUnknownFunctionFactory);//WTM:  Note:  PlayMagicShaderVisuals
-            valueFactory.AddFunctionFactory("pcb", new FillerFactory());//WTM:  Note:  PurgeCellBuffers
+            valueFactory.AddFunctionFactory("pcb", fillerFactory);//WTM:  Note:  PurgeCellBuffers
             valueFactory.AddFunctionFactory("scripteffectelapsedseconds", new GetSecondsPassedFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("saa", new SetActorAlphaFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("setav", new SetActorValueFactory(valueFactory, objectCallFactory, referenceFactory));

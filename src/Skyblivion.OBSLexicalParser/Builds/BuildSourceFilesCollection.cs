@@ -8,9 +8,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
     class BuildSourceFilesCollection : IEnumerable<KeyValuePair<string, string[]>>
     {
         private readonly Dictionary<string, string[]> sourceFiles = new Dictionary<string, string[]>();
-        public void Add(BuildTarget buildTarget, string[] sourceFiles)
+        public void Add(IBuildTarget buildTarget, string[] sourceFiles)
         {
-            string targetName = buildTarget.GetTargetName();
+            string targetName = buildTarget.Name;
             this.sourceFiles[targetName] = this.sourceFiles.GetWithFallback(targetName, () => new string[] { }).Concat(sourceFiles).Distinct().ToArray();
         }
 

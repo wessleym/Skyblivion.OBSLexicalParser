@@ -14,18 +14,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public bool AllowNameTransformation { get; private set; }
         public string Name { get; private set; }
         private ITES5Type propertyType; //If we"re tracking a script, this won"t be used anymore
+        private readonly ITES5Type originalPropertyType; //If we"re tracking a script, this won"t be used anymore
         public string? ReferenceEDID { get; private set; }
         public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader? trackedScript;
+        private readonly List<int> tes4FormIDs;
 
-        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID)
+        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, List<int> tes4FormIDs)
         {
             this.IsPlayerRef = name == TES5PlayerReference.PlayerRefName && propertyType == TES5PlayerReference.TES5TypeStatic && referenceEDID == TES5PlayerReference.PlayerRefName;
             this.OriginalName = name;
             this.AllowNameTransformation = !this.IsPlayerRef;
             this.Name = AllowNameTransformation ? AddPropertyNameSuffix(name) : name;
             this.propertyType = propertyType;
+            originalPropertyType = propertyType;
             this.ReferenceEDID = referenceEDID;
+            this.tes4FormIDs = tes4FormIDs;
             this.trackedScript = null;
         }
 
@@ -43,7 +47,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             {
                 string propertyTypeName = this.TES5Type.Output.Single();
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
-                yield return propertyTypeName + " Property " + this.Name + " Auto Conditional";
+                string output = propertyTypeName + " Property " + this.Name + " Auto Conditional";
+                //if property has a TES4 form ID and its type has not been changed
+                if (tes4FormIDs.Any() && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
+                {
+                    bool multiple = tes4FormIDs.Count > 1;
+                    output += ";TES4FormID" + (multiple ? "Multiple" : "") + ":" + string.Join(",", tes4FormIDs) + ";";
+                }
+                yield return output;
             }
         }
 
@@ -102,7 +113,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
             else
             {
-                throw new ConversionException(nameof(TES5Property) + "." + nameof(TrackRemoteScript) + ":  The definitions of local property type and remote property type have diverged.  (Ours: " + ourNativeType.Value + ", remote: " + remoteNativeType.Value + ")");
+                //WTM:  Note:  Special Cases:  Let some script transpile without throwing.
+                if (!(
+                    (ourNativeType == TES5BasicType.T_ACTIVATOR && remoteNativeType == TES5BasicType.T_OBJECTREFERENCE && (scriptHeader.EDID == "SE01MetronomeScript" || scriptHeader.EDID == "SE11TrigZoneHowlingHallsEnterSCRIPT")) ||
+                    (ourNativeType == TES5BasicType.T_ACTORBASE && remoteNativeType == TES5BasicType.T_ACTOR && (scriptHeader.EDID == "HieronymusLexScript" || scriptHeader.EDID == "SERunsInCirclesSCRIPT"))))
+                {
+                    throw new ConversionException(nameof(TES5Property) + "." + nameof(TrackRemoteScript) + ":  The definitions of local property type and remote property type have diverged.  (Ours: " + ourNativeType.Value + ", remote: " + remoteNativeType.Value + ")");
+                }
             }
         }
     }

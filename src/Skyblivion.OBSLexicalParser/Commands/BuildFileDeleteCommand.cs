@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public override void Execute()
         {
-            Execute(BuildTarget.DEFAULT_TARGETS);
+            Execute(BuildTargetFactory.DefaultNames);
         }
 
         public void Execute(string targets, string? buildPath = null)
@@ -23,11 +23,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             if (!PreExecutionChecks(false, true, false, false)) { return; }
             if (buildPath == null) { buildPath = Build.DEFAULT_BUILD_PATH; }
             Build build = new Build(buildPath);
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
-            {
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, true, out _, out _);
-                buildTargets.DeleteBuildFiles();
-            }
+            BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
+            buildTargets.DeleteBuildFiles();
             Console.WriteLine("Deletion Complete");
         }
     }

@@ -1,12 +1,15 @@
 using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.TES5.AST;
+using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
      * Acts as a legacy adapter interface between ScriptConverter and ESReader
      *
      */
-    class ESMAnalyzer
+    class ESMAnalyzer : IDisposable
     {
         private Lazy<TES4Collection>? esmLazy = null;
         private TES4Collection ESM { get { if (esmLazy == null) { throw new NullableException(nameof(esmLazy)); } return esmLazy.Value; } }
@@ -29,12 +32,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         private readonly Lazy<TES5GlobalVariables> globalVariablesLazy;
         public TES5GlobalVariables GlobalVariables => globalVariablesLazy.Value;
         private readonly Dictionary<string, ITES5Type> edidLowerCache = new Dictionary<string, ITES5Type>();
-        public ESMAnalyzer(bool loadLazily)
+        private ESMAnalyzer(bool loadLazily)
         {
             esmLazy = new Lazy<TES4Collection>(() => GetESM());
             scriptTypesLazy = new Lazy<Dictionary<string, ITES5Type>>(GetScriptTypes);
             globalVariablesLazy = new Lazy<TES5GlobalVariables>(GetGlobalVariables);
             if (!loadLazily) { LoadLazyObjects(); }
+        }
+
+        public static ESMAnalyzer Load()
+        {
+            return new ESMAnalyzer(false);
         }
 
         private static TES4Collection GetESM()
@@ -52,19 +60,26 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 string edid = scpt.GetSubrecordTrim("EDID");
                 if (edid == "") { throw new InvalidOperationException("EDID was empty."); }//WTM:  Note:  I doubt this will ever happen.
                 ITES5Type scriptType;
-                //bool isQuest = ((int)schr[16]) != 0;
+                bool isQuest = ((int)schr[16]) != 0;
                 bool isActiveMagicEffect = ((int)schr[17]) != 0;
-                /*if (isQuest)
+                if (isQuest)
                 {
                     scriptType = TES5BasicType.T_QUEST;
                 }
-                else */if (isActiveMagicEffect)
+                else if (isActiveMagicEffect)
                 {
                     scriptType = TES5BasicType.T_ACTIVEMAGICEFFECT;
                 }
                 else
                 {
-                    //scriptType = TES5BasicType.T_OBJECTREFERENCE;
+                    scriptType =
+                        //WTM:  Change:  Special Case:
+                        edid == "Dark09SkeletonSuicideSCRIPT"? TES5BasicType.T_ACTOR ://Compilation fails without this.
+                        TES5BasicType.T_OBJECTREFERENCE;
+#if !DEBUG
+is this a good idea?  i also restored isQuest code above.
+#endif
+                    /*
                     //WTM:  Change:  Replaced above with the below:
                     TES4LoadedRecord[] tes4Records = ESM.GetRecordsBySCRI(scpt.GetFormId());
                     ITES5Type? esmType = GetTypeByRecords(tes4Records, edid, edid, TypeMapperMode.CompatibilityForScripts);
@@ -76,6 +91,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                     {//Instead, I replace them with their native types.
                         scriptType = scriptType.NativeType;
                     }
+                    */
                 }
                 scriptTypes.Add(edid.ToLower(), scriptType);
             }
@@ -120,6 +136,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return ESM.GetRecordByEDID(edid);
         }
 
+        public List<int>? TryGetFormIDsByName(int nameFormID)
+        {
+            return ESM.TryGetFormIDsByName(nameFormID);
+        }
+
         /*
              * @throws ConversionException
         */
@@ -128,7 +149,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             TES4LoadedRecord? record = TryGetRecordByEDIDInTES4Collection(edid);
             if (record == null)
             {
-                //WTM:  Change:  These EDIDs can't be found, so I've written them into the code.
+                //WTM:  Change:  Special Cases:
+                //These EDIDs can't be found, so I've written them into the code.
                 if (edid == "SE02FIN") { return TES5BasicType.T_QUEST; }
                 //if (edid == "LvlSpell") { return TES5BasicType.T_SPELL; }
                 //if (edid == "GatekeeperRef") { return TES5BasicType.T_ACTOR; }
@@ -174,7 +196,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return commonBaseType;
         }
 
-        //WTM:  Note:  For the type inferencer (and eventually compilation) to work, I need to allow inference for some types.  I'm guessing this will cause runtime problems.
+        //WTM:  Note:  Special Cases:  For the type inferencer (and eventually compilation) to work, I need to allow inference for some types.  I'm guessing this will cause runtime problems.
         private static readonly string[] mayRevertToFormScriptNames = new string[] { "NoActivationScript", "SE32GhostObject", "SE38MuseumItemSCRIPT", "SE38OdditySCRIPT", "SE39ObjectScript" };
         private static ITES5Type? GetTypeByRecords(IList<TES4LoadedRecord> tes4Records, string? scriptName, string edid, TypeMapperMode typeMapperMode)
         {
@@ -198,10 +220,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return tes5Type;
         }
 
-        public ITES5Type? GetTypeByEDIDWithFollow(string edid, TypeMapperMode typeMapperMode, bool useScriptTypeCache = true)
+        public ITES5Type? GetTypeByEDIDWithFollow(string edid, TypeMapperMode typeMapperMode, bool followName, bool useScriptTypeCache = true)
         {
             string? scriptName;
-            TES4LoadedRecord[] records = TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(edid, out scriptName);
+            TES4LoadedRecord[] records = TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(edid, followName, out scriptName);
             if (useScriptTypeCache && scriptName != null) { return GetScriptTypeByScriptNameFromCache(scriptName); }
             string typeEDID = scriptName != null ? scriptName : edid;
             return GetTypeByRecords(records, scriptName, typeEDID, typeMapperMode);
@@ -225,7 +247,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return GetScriptTypeByScriptNameFromCache(scriptName).NativeType;
         }
 
-        private TES4LoadedRecord? TryGetRecordByEDIDAndFollowNAME(string edid, bool throwException)
+        public TES4LoadedRecord GetRecordByFormID(int formID)
+        {
+            return ESM.GetRecordByFormID(formID);
+        }
+
+        private TES4LoadedRecord? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName, bool throwException)
         {
             TES4LoadedRecord? record = TryGetRecordByEDIDInTES4Collection(edid);
             if (record == null)
@@ -237,27 +264,27 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 return null;
             }
             TES4RecordType recordType = record.RecordType;
-            if (recordType == TES4RecordType.REFR || recordType == TES4RecordType.ACRE || recordType == TES4RecordType.ACHR)
+            if (followName && (recordType == TES4RecordType.REFR || recordType == TES4RecordType.ACRE || recordType == TES4RecordType.ACHR))
             {
                 //Resolve the reference
                 int baseFormid = record.GetSubrecordAsFormid("NAME");
-                record = ESM.GetRecordByFormID(baseFormid);
+                record = GetRecordByFormID(baseFormid);
             }
             return record;
         }
         public TES4LoadedRecord GetRecordByEDIDAndFollowNAME(string edid)
         {
-            return TryGetRecordByEDIDAndFollowNAME(edid, true)!;
+            return TryGetRecordByEDIDAndFollowNAME(edid, true, true)!;
         }
-        public TES4LoadedRecord? TryGetRecordByEDIDAndFollowNAME(string edid)
+        public TES4LoadedRecord? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName)
         {
-            return TryGetRecordByEDIDAndFollowNAME(edid, false);
+            return TryGetRecordByEDIDAndFollowNAME(edid, followName, false);
         }
 
-        private TES4LoadedRecord[] TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(string edid, out string? scriptEDID)
+        private TES4LoadedRecord[] TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(string edid, bool followName, out string? scriptEDID)
         {
             scriptEDID = null;
-            TES4LoadedRecord? record = TryGetRecordByEDIDAndFollowNAME(edid, false);
+            TES4LoadedRecord? record = TryGetRecordByEDIDAndFollowNAME(edid, followName);
             if (record == null)
             {
                 return new TES4LoadedRecord[] { };
@@ -277,8 +304,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 Nullable<int> scri = record.GetSubrecordAsFormidNullable("SCRI");
                 if (scri != null)
                 {
-                    TES4LoadedRecord scptRecord = ESM.GetRecordByFormID(scri.Value);
-                    scriptEDID = scptRecord.GetSubrecordTrimNullable("EDID");
+                    scriptEDID = GetEDIDByFormID(scri.Value);
                 }
             }
             return new TES4LoadedRecord[] { record };
@@ -301,23 +327,116 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 throw new ConversionException("Cannot resolve script type for " + edid + " - Asked base record has no script bound.");
             }
 
-            TES4LoadedRecord scriptRecord = ESM.GetRecordByFormID(scriptFormid.Value);
-            string? subrecord = scriptRecord.GetSubrecordTrimNullable("EDID");
-            if (subrecord == null) { throw new InvalidOperationException(nameof(subrecord) + " was null for EDID."); }
-            ITES5Type customType = TES5TypeFactory.MemberByValue(subrecord, this);
-            this.edidLowerCache.Add(edidLower, customType);
-            return customType;
+            string scriptRecordEDID = GetEDIDByFormID(scriptFormid.Value);
+            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType, out _), TES5TypeFactory.TES4Prefix, false); ;
+            this.edidLowerCache.Add(edidLower, scriptHeader.ScriptType);
+            return scriptHeader.ScriptType;
         }
 
-        /*
-        * Makes the adapter unusable by deallocating the esm object.
-         * This really ought to be more clean, but until this class is used statically we have no other choice
-        */
-        public void Deallocate()
+        public string? GetEDIDByFormIDNullable(int formID)
         {
-            //Drop the ref
+            return ESM.GetEDIDByFormIDNullable(formID);
+        }
+
+        public string GetEDIDByFormID(int formID)
+        {
+            return ESM.GetEDIDByFormID(formID);
+        }
+
+        //WTM:  Note:  Special Cases
+        private Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index)
+        {
+            IEnumerable<byte[]> scroRecords = scriptTES4Record.GetSCRORecords(index).ToArray();
+            List<int> foundFormIDs = new List<int>();
+            return scroRecords
+                .Select(r => BitConverter.ToInt32(r, 0))
+                .Where(formID => !foundFormIDs.Contains(formID))
+                .Select(formID =>
+                {
+                    foundFormIDs.Add(formID);
+                    string edid;
+                    TES5BasicType tes5Type;
+                    List<int> formIDs = new List<int>() { formID };
+                    if (formID == TES5PlayerReference.FormID)
+                    {
+                        edid = TES5PlayerReference.PlayerRefName;
+                        tes5Type = TES5PlayerReference.TES5TypeStatic;
+                    }
+                    else
+                    {
+                        TES4LoadedRecord record = GetRecordByFormID(formID);
+                        edid = record.GetSubrecordTrim("EDID");
+                        /*
+                        if (record.RecordType == TES4RecordType.CREA || record.RecordType == TES4RecordType.NPC_)
+                        {
+                            //These probably just need to be ActorBase, but that doesn't work in all situations.
+                            List<int>? formIDsFromName = TryGetFormIDsByName(formID);
+                            if (formIDsFromName == null || formIDsFromName.Count != 1)
+                            {//If no form IDs were found or if not exactly one form ID was found, refer to the ActorBase.
+                                tes5Type = TES5BasicType.T_ACTORBASE;
+                            }
+                            else
+                            {//If exactly one form ID was found, refer to the Actor;
+                                if (formIDsFromName != null) { formIDs = formIDsFromName; }
+                                tes5Type = TES5BasicType.T_ACTOR;
+                            }
+                            tes5Type = TES5BasicType.T_ACTORBASE;
+                        }
+                        else
+                        {
+                            tes5Type = TypeMapper.GetTES5BasicType(record.RecordType, out _);
+                        }
+                        */
+                        tes5Type = TypeMapper.GetTES5BasicType(record.RecordType, out _);
+                    }
+                    return new KeyValuePair<string, KeyValuePair<List<int>, TES5BasicType>>(edid, new KeyValuePair<List<int>, TES5BasicType>(formIDs, tes5Type));
+                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value,
+                    StringComparer.OrdinalIgnoreCase//WTM:  Note:  required since cases aren't consistent (e.g., MS40HalLiurzCourtyardMark vs. MS40HalliurzCourtyardMark--notice second L)
+                    );
+        }
+
+        public Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(int scriptTES4FormID, Nullable<int> index)
+        {
+            TES4LoadedRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
+            return GetTypesFromSCRO(scriptTES4Record, index);
+        }
+
+        private Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index, string propertyName, bool throwException)
+        {
+            var types = GetTypesFromSCRO(scriptTES4Record, index);
+            KeyValuePair<List<int>, TES5BasicType> type;
+            if (types.TryGetValue(propertyName, out type))
+            {
+                return type;
+            }
+            if (throwException)
+            {
+                if (propertyName.Contains("tmp"))
+                {
+                    //Because of the replacement PapyrusCompiler.FixReferenceName makes, this reversal is necessary to find some references (e.g., cloudrulertemplemapmarker).
+                    if (types.TryGetValue(PapyrusCompiler.UnfixReferenceName(propertyName), out type))
+                    {
+                        return type;
+                    }
+                }
+                throw new ConversionException("Form " + scriptTES4Record.GetFormId().ToString() + (index != null ? ", index " + index.Value.ToString() : "") + " did not have a property named " + propertyName + ".");
+            }
+            return null;
+        }
+        public Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(string scriptEDID, string propertyName)
+        {
+            TES4LoadedRecord scriptTES4Record = GetRecordByEDIDInTES4Collection(scriptEDID);
+            return GetTypeFromSCRO(scriptTES4Record, null, propertyName, !(scriptTES4Record.GetFormId() == 211721 && propertyName == "test"));//WTM:  Note:  Special Case:  property not found in SCRO records
+        }
+        public Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(int scriptTES4FormID, Nullable<int> index, string propertyName)
+        {
+            TES4LoadedRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
+            return GetTypeFromSCRO(scriptTES4Record, index, propertyName, !(scriptTES4FormID == 73629 && index == 150 && propertyName == "SE02FIN"));//WTM:  Note:  Special Case:  property not found in SCRO records
+        }
+
+        public void Dispose()
+        {
             esmLazy = null;
-            //Force the GC
             GC.Collect();
         }
     }

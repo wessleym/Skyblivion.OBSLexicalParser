@@ -21,6 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 
         public static readonly TES5BasicType TES5TypeStatic = TES5BasicType.T_ACTOR;
 
+        public const int FormID = 0x14;
+
         public static bool EqualsPlayer(string name)
         {
             return name.Equals(playerName, StringComparison.OrdinalIgnoreCase);

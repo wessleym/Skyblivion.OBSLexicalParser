@@ -7,7 +7,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
@@ -28,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         private static void GetFactories(MetadataLogService metadataLogService, ESMAnalyzer esmAnalyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ChainedCodeChunkFactory chainedCodeChunkFactory, out TES5AdditionalBlockChangesPass additionalBlockChangesPass)
         {
-            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer/*, BuildTarget.StandaloneSourcePath*/);
+            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
             TES5ObjectPropertyFactory objectPropertyFactory = new TES5ObjectPropertyFactory(typeInferencer);
             objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory, esmAnalyzer);

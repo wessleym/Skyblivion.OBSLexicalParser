@@ -1,0 +1,154 @@
+﻿using Skyblivion.ESReader.PHP;
+using Skyblivion.OBSLexicalParser.Commands;
+using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.TES5.Graph;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace Skyblivion.OBSLexicalParser.Builds
+{
+    static class IBuildTargetExtensions
+    {
+        public static bool IsQF(this IBuildTarget buildTarget)
+        {
+            return buildTarget.Name == BuildTargetFactory.QFName;
+        }
+
+        public static string GetRootBuildTargetPath(this IBuildTarget buildTarget)
+        {
+            return Path.Combine(DataDirectory.GetBuildTargetsPath(), buildTarget.Name) + Path.DirectorySeparatorChar;
+        }
+
+        public static string GetSourcePath(this IBuildTarget buildTarget)
+        {
+            return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Source") + Path.DirectorySeparatorChar;
+        }
+
+        public static string GetSourceFromPath(this IBuildTarget buildTarget, string scriptName)
+        {
+            return buildTarget.GetSourcePath() + scriptName + ".txt";
+        }
+
+        public static string GetDependenciesPath(this IBuildTarget buildTarget)
+        {
+            return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Dependencies") + Path.DirectorySeparatorChar;
+        }
+
+        public static string GetArchivePath(this IBuildTarget buildTarget)
+        {
+            return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Archive") + Path.DirectorySeparatorChar;
+        }
+
+        public static string GetArchivedBuildPath(this IBuildTarget buildTarget, int buildNumber)
+        {
+            return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Archive", buildNumber.ToString()) + Path.DirectorySeparatorChar;
+        }
+
+        /*
+        * Get the sources file list
+        * If intersected source files is not null, they will be intersected with build target source files,
+        * otherwise all files will be claimed
+        */
+        public static string[] GetSourceFileList(this IBuildTarget buildTargets, string[]? intersectedSourceFiles = null)
+        {
+            /*
+             * Only files without extension or .txt are considered sources
+             * You can add metadata next to those files, but they cannot have those extensions.
+             */
+            string[] sourcePaths = Directory.EnumerateFiles(buildTargets.GetSourcePath(), "*.txt").Select(path => Path.GetFileName(path)).ToArray();
+            if (intersectedSourceFiles != null)
+            {
+                sourcePaths = sourcePaths.Where(p => intersectedSourceFiles.Contains(p)).ToArray();
+            }
+            return sourcePaths;
+        }
+
+        public static Dictionary<string, T> ToDictionary<T>(this IEnumerable<T> buildTargets) where T : IBuildTarget
+        {
+            return buildTargets.ToDictionary(bt => bt.Name, bt => bt);
+        }
+
+        /*
+        * Get source files, assigned per-build target
+        * If intersected source files is not null, they will be intersected with build target source files,
+        * otherwise all files will be claimed
+        */
+        public static BuildSourceFilesCollection GetSourceFiles(this IEnumerable<IBuildTarget> buildTargets, string[]? intersectedSourceFiles = null)
+        {
+            BuildSourceFilesCollection collection = new BuildSourceFilesCollection();
+            foreach (var buildTarget in buildTargets)
+            {
+                collection.Add(buildTarget, buildTarget.GetSourceFileList(intersectedSourceFiles));
+            }
+            return collection;
+        }
+
+        public static int GetTotalSourceFiles(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
+            return sourceFiles.Sum(sf => sf.Value.Length);
+        }
+
+        private static string GetUniqueBuildFingerprint(this IEnumerable<IBuildTarget> buildTargets)
+        {
+#if PHP_COMPAT
+            string md5 = PHPFunction.MD5("randomseed");
+            foreach (var key in this.buildTargets.Select(kvp => kvp.Key).OrderBy(k => k))
+            {
+                md5 = PHPFunction.MD5(md5 + key);
+            }
+            return md5;
+#else
+            string fileName = string.Join("", buildTargets.Select(bt => bt.Name));
+            foreach (char invalid in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(invalid.ToString(), "");
+            }
+            return fileName;
+#endif
+        }
+
+        private static string GetFilePath(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            return DataDirectory.GetGraphPath("graph_" + buildTargets.GetUniqueBuildFingerprint() + ".txt");
+        }
+
+        public static TES5ScriptDependencyGraph ReadGraph(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            string graphPath = buildTargets.GetFilePath();
+            string serializedGraph = File.ReadAllText(graphPath);
+            return PHPFunction.Deserialize<TES5ScriptDependencyGraph>(serializedGraph);
+        }
+
+        public static void WriteGraph(this IEnumerable<IBuildTarget> buildTargets, TES5ScriptDependencyGraph graph)
+        {
+            string graphPath = buildTargets.GetFilePath();
+            string serializedGraph = PHPFunction.Serialize(graph);
+            Directory.CreateDirectory(Path.GetDirectoryName(graphPath));
+            File.WriteAllText(graphPath, serializedGraph);
+        }
+
+        private static bool CanBuild(this IEnumerable<IBuildTarget> buildTargets, bool deleteFiles)
+        {
+            return buildTargets.All(bt => bt.CanBuild(deleteFiles));
+        }
+        private static bool CanBuild(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            return buildTargets.CanBuild(false);
+        }
+
+        public static bool CanBuildAndWarnIfNot(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            if (buildTargets.CanBuild()) { return true; }
+            Console.WriteLine(DataDirectory.GetBuildPath() + " had old files.  Clear them manually, or use " + BuildFileDeleteCommand.FriendlyNameConst + ".");
+            return false;
+        }
+
+        public static void DeleteBuildFiles(this IEnumerable<IBuildTarget> buildTargets)
+        {
+            buildTargets.CanBuild(true);
+        }
+    }
+}

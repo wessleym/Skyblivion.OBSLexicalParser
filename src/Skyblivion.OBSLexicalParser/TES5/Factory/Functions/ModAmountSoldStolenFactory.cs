@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5ObjectCallArguments arguments = objectCallArgumentsFactory.CreateArgumentList(function.Arguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "ModAmountSoldStolen", arguments);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "LegacyModAmountSoldStolen", arguments);
         }
     }
 }

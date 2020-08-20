@@ -10,6 +10,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 
         public IEnumerable<string> Output => Blocks.SelectMany(b => b.Output);
 
+        public TES5BlockList() { }
+
+        public TES5BlockList(IEnumerable<ITES5CodeBlock> blocks)
+        {
+            foreach(ITES5CodeBlock block in blocks)
+            {
+                Add(block);
+            }
+        }
+
         public void Add(ITES5CodeBlock block)
         {
             Blocks.Add(block);

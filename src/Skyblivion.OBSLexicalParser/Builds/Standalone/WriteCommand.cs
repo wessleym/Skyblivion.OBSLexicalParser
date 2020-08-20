@@ -4,9 +4,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
     class WriteCommand : WriteCommandBase, IWriteCommand
     {
-        public void Write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
+        public void Write(IBuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Write(buildTracker.GetBuiltScripts(target.GetTargetName()).Values, progressWriter);
+            Write(buildTracker.GetBuiltScripts(target.Name).Values, progressWriter);
         }
     }
 }

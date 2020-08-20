@@ -17,9 +17,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             this.QFFragmentFactory = QFFragmentFactory;
         }
 
-        public void Write(BuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
+        public void Write(IBuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            var scripts = buildTracker.GetBuiltScripts(target.GetTargetName()).Values;
+            var scripts = buildTracker.GetBuiltScripts(target.Name).Values;
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
             /*

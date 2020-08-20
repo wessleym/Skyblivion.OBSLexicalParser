@@ -13,6 +13,7 @@ using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.Commands
@@ -23,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public BuildInteroperableCompilationGraphs()
             : base("skyblivion:parser:buildGraphs", FriendlyNameConst, "Build graphs of scripts which are interconnected to be transpiled together")
         {
-            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTarget.DEFAULT_TARGETS));
+            Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTargetFactory.DefaultNames));
         }
 
         public void Execute(LPCommandInput input)
@@ -34,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         public override void Execute()
         {
-            Execute(BuildTarget.DEFAULT_TARGETS);
+            Execute(BuildTargetFactory.DefaultNames);
         }
 
         public void Execute(string targets)
@@ -42,15 +43,16 @@ namespace Skyblivion.OBSLexicalParser.Commands
             if (!PreExecutionChecks(true, true, false, false)) { return; }
             Directory.CreateDirectory(DataDirectory.GetGraphDirectoryPath());
             Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
-            using (BuildLogServices buildLogServices = new BuildLogServices(build))
+            BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
+            BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
+            Dictionary<string, BuildTargetSimple> buildTargetsSimpleDictionary = buildTargetsSimple.ToDictionary();
+            ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
+            Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
+            using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load())
             {
-                TES5TypeInferencer typeInferencer;
-                BuildTargetCollection buildTargets = BuildTargetFactory.GetCollection(targets, build, buildLogServices, false, out _, out typeInferencer);
-                //if (!buildTargets.CanBuildAndWarnIfNot()) { return; }//WTM:  Change:  This doesn't matter for building graphs.
-                Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
-                Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
+                TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
                 BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
-                ProgressWriter progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
                 using (StreamWriter errorLog = new StreamWriter(TES5ScriptDependencyGraph.ErrorLogPath, false))
                 {
                     using (StreamWriter debugLog = new StreamWriter(TES5ScriptDependencyGraph.DebugLogPath, false))
@@ -59,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                         {
                             var buildTargetName = kvp.Key;
                             var sourceBuildFiles = kvp.Value;
-                            BuildTarget buildTarget = buildTargets.GetByName(buildTargetName);
+                            BuildTargetSimple buildTarget = buildTargetsSimpleDictionary[buildTargetName];
                             foreach (var sourceFile in sourceBuildFiles)
                             {
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);
@@ -90,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     string propertyName = match.Groups[1].Value;
                                     string propertyKeyName = propertyName.ToLower();
                                     bool containedKey;
-                                    TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => new TES5Property(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
+                                    TES5Property preparedProperty = preparedProperties.GetOrAdd(propertyKeyName, () => TES5PropertyFactory.ConstructWithoutFormIDs(propertyName, TES5BasicType.T_FORM, propertyName), out containedKey);
                                     ITES5Type inferencingType = typeInferencer.GetScriptTypeByReferenceEdid(preparedProperty);
                                     if (!containedKey)
                                     {
@@ -124,11 +126,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
                         }
                     }
                 }
-                progressWriter.Write("Saving");
-                TES5ScriptDependencyGraph graph = new TES5ScriptDependencyGraph(dependencyGraph, usageGraph);
-                buildTargets.WriteGraph(graph);
-                progressWriter.WriteLast();
             }
+            progressWriter.Write("Saving");
+            TES5ScriptDependencyGraph graph = new TES5ScriptDependencyGraph(dependencyGraph, usageGraph);
+            buildTargets.WriteGraph(graph);
+            progressWriter.WriteLast();
         }
     }
 }
