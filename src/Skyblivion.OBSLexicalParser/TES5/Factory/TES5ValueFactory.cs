@@ -381,7 +381,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         if (calledOn == null) { throw new InvalidOperationException("Called on object could not be found."); }
                     }
                     if (calledOn.ReferenceEDID == null) { throw new NullableException(nameof(calledOn.ReferenceEDID)); }
-                    ITES5Type? referenceType = esmAnalyzer.GetTypeByEDIDWithFollow(calledOn.ReferenceEDID, TypeMapperMode.Strict, true, useScriptTypeCache: false);
+                    ITES5Type? referenceType = esmAnalyzer.GetTypeByEDIDWithFollow(calledOn.ReferenceEDID, true, useScriptTypeCache: false);
                     if (referenceType == null) { referenceType = calledOn.TES5Type; }//WTM:  Note:  Revert to type determined by previous inferences.
                     if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(referenceType, TES5BasicType.T_OBJECTREFERENCE))
                     {//WTM:  Note:  I think GetItemCount works for ObjectReferences that are transpiled as ObjectReferences.

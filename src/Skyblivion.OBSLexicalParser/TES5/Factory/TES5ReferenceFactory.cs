@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
@@ -145,9 +144,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
         }
 
-        private ITES5Type GetPropertyTypeAndFormIDs(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out List<int> tes4FormIDs)
+        private ITES5Type GetPropertyTypeAndFormIDs(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out Nullable<int> tes4FormID)
         {
-            tes4FormIDs = new List<int>();
+            tes4FormID = null;
             ITES5Type specialConversion;
             if (specialConversions.TryGetValue(referenceName, out specialConversion))
             {
@@ -166,7 +165,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     var scroData = GetTypeFromSCRO(esmAnalyzer, globalScope.ScriptHeader.EDID, referenceName);
                     if (scroData != null)
                     {
-                        tes4FormIDs = scroData.Value.Key;
+                        tes4FormID = scroData.Value.Key;
                         TES5BasicType scroType = scroData.Value.Value;
                         if (scroType == TES5BasicType.T_BOOK && referenceName.IndexOf("scroll", StringComparison.OrdinalIgnoreCase) != -1)
                         {//Useful for TES4_qf_ms47_0102f86b.MS47ReverseInvisibilityScroll_p.
@@ -176,7 +175,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
                 }
                 if (tes4ReferenceNameForType == null) { throw new NullableException(nameof(tes4ReferenceNameForType)); }
-                ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(tes4ReferenceNameForType, TypeMapperMode.CompatibilityForReferenceFactory, true);
+                ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(tes4ReferenceNameForType, true);
                 return esmType != null ? esmType : TES5BasicType.T_FORM;
             }
         }
@@ -205,17 +204,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 property = globalScope.TryGetPropertyByName(referenceName); //todo rethink how to unify the prefix searching
                 if (property == null)
                 {
-                    ITES5Type propertyType;
-                    List<int> tes4FormIDs = new List<int>();
-                    if (typeForNewProperty != null)
-                    {
-                        propertyType = typeForNewProperty;
-                    }
-                    else
-                    {
-                        propertyType = GetPropertyTypeAndFormIDs(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormIDs);
-                    }
-                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.Construct(referenceName, propertyType, referenceName, tes4FormIDs);
+                    Nullable<int> tes4FormID = null;
+                    ITES5Type propertyType =
+                        typeForNewProperty != null ? typeForNewProperty :
+                        GetPropertyTypeAndFormIDs(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
+                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.Construct(referenceName, propertyType, referenceName, tes4FormID);
                     globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
@@ -254,13 +247,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new Tuple<int, Nullable<int>>(scriptTES4FormID, index);
         }
 
-        public static Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(ESMAnalyzer esmAnalyzer, string fileNameNoExt, TES5FragmentType fragmentType)
+        public static Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(ESMAnalyzer esmAnalyzer, string fileNameNoExt, TES5FragmentType fragmentType)
         {
             Tuple<int, Nullable<int>> formIDAndIndex = GetTES4FormIDAndIndex(fileNameNoExt, fragmentType);
             return esmAnalyzer.GetTypesFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2);
         }
 
-        private static Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(ESMAnalyzer esmAnalyzer, string edidOrFileNameNoExt, string propertyName)
+        private static Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(ESMAnalyzer esmAnalyzer, string edidOrFileNameNoExt, string propertyName)
         {
             TES5FragmentType? fragmentType = edidOrFileNameNoExt.StartsWith("qf_") ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith("tif") ? TES5FragmentType.T_TIF : null;
             if (fragmentType != null)

@@ -21,13 +21,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.esmAnalyzer = esmAnalyzer;
         }
 
-        public static TES5Property Construct(string name, ITES5Type propertyType, string? referenceEdid, List<int> tes4FormIDs)
+        public static TES5Property Construct(string name, ITES5Type propertyType, string? referenceEdid, Nullable<int> tes4FormID)
         {
-            return new TES5Property(name, propertyType, referenceEdid, tes4FormIDs);
+            return new TES5Property(name, propertyType, referenceEdid, tes4FormID);
         }
         public static TES5Property ConstructWithoutFormIDs(string name, ITES5Type propertyType, string? referenceEdid)
         {
-            return Construct(name, propertyType, referenceEdid, new List<int>());
+            return Construct(name, propertyType, referenceEdid, null);
         }
 
         /*
@@ -36,12 +36,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private TES5Property CreatePropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
         {
             string variableName = declaration.VariableName;
-            List<int>? tes4FormIDs = new List<int>();
+            Nullable<int> tes4FormID = null;
             ITES5Type type;
             if (globalVariables.ContainsName(variableName)) { type = TES5BasicType.T_GLOBALVARIABLE; }
             else
             {
-                tes4FormIDs = declaration.FormIDs;
+                tes4FormID = declaration.FormID;
                 //type = TES5BasicType.T_FORM;
                 //WTM:  Change:  I commented the above and added the below:
                 if (declaration.TES5Type != null)
@@ -50,11 +50,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 else
                 {
-                    ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(variableName, TypeMapperMode.CompatibilityForPropertyFactory, false);
+                    ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(variableName, false);
                     type = esmType != null ? esmType : TES5BasicType.T_FORM;
                 }
             }
-            return Construct(variableName, type, variableName, tes4FormIDs);
+            return Construct(variableName, type, variableName, tes4FormID);
         }
 
         private TES5Property CreateProperty(TES4VariableDeclaration variable, TES5GlobalVariables globalVariables)

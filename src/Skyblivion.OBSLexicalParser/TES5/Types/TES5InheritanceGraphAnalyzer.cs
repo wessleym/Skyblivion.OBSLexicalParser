@@ -4889,22 +4889,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 case 0:
                     {
-#if ALTERNATE_TYPE_MAPPING
-                        TES5BasicTypeRevertible? typeRevertible = calledOnType.Revertible;
-                        if (typeRevertible != null && typeRevertible.TryRevertToForm())
-                        {
-                            return FindTypeByMethod(objectCall, esmAnalyzer);
-                        }
-                        if (IsTypeOrExtendsType(calledOnType, TES5BasicType.T_DOOR))//qf_daperyite_010146ab_80_0.psc:  DAPeryiteDoorREFX_p.Enable()
-                        {
-                            TES5Property? calledOnProperty = calledOn as TES5Property;
-                            if (calledOnProperty != null)
-                            {
-                                calledOnProperty.TES5Type = TES5BasicType.T_FORM;
-                                return FindTypeByMethod(objectCall, esmAnalyzer);
-                            }
-                        }
-#endif
                         string possibleMatchesString = string.Join(", ", possibleMatches.Select(m => m.Value));
                         throw new ConversionTypeMismatchException("Cannot find any possible type for method " + methodName + ", trying to extend " + actualType.Value + " with following types: " + possibleMatchesString);
                     }

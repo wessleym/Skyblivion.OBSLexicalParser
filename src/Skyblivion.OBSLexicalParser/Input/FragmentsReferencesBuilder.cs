@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.Input
                     continue;
                 }
                 var scroReference = scroRecords[trimmedReference];
-                list.Add(new TES4VariableDeclaration(trimmedReference, TES4Type.T_REF, formIDs: scroReference.Key, tes5Type: scroReference.Value));
+                list.Add(new TES4VariableDeclaration(trimmedReference, TES4Type.T_REF, formID: scroReference.Key, tes5Type: scroReference.Value));
             }
             return list;
         }

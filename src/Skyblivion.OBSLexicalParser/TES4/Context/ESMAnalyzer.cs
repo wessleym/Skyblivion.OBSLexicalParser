@@ -136,11 +136,6 @@ is this a good idea?  i also restored isQuest code above.
             return ESM.GetRecordByEDID(edid);
         }
 
-        public List<int>? TryGetFormIDsByName(int nameFormID)
-        {
-            return ESM.TryGetFormIDsByName(nameFormID);
-        }
-
         /*
              * @throws ConversionException
         */
@@ -160,11 +155,7 @@ is this a good idea?  i also restored isQuest code above.
                 }
                 return null;
             }
-            return TypeMapper.GetTES5BasicType(record.RecordType,
-#if !ALTERNATE_TYPE_MAPPING
-                TypeMapperMode.Strict,
-#endif
-                out _);
+            return TypeMapper.GetTES5BasicType(record.RecordType);
         }
         public TES5BasicType? TryGetTypeByEDID(string edid)
         {
@@ -175,58 +166,40 @@ is this a good idea?  i also restored isQuest code above.
             return TryGetTypeByEDID(edid, true)!;
         }
 
-        private static TES5BasicType? GetCommonBaseTES5Type(IList<TES4LoadedRecord> tes4Records, string edid, TypeMapperMode typeMapperMode, out bool compatibility)
+        private static TES5BasicType? GetCommonBaseTES5Type(IList<TES4LoadedRecord> tes4Records)
         {
-            compatibility = false;
             if (!tes4Records.Any()) { return null; }
-            bool allCompatibility = true;
             TES5BasicType[] tes5Types = tes4Records.Select(r =>
             {
-                bool currentCompatibility;
-                TES5BasicType basicType = TypeMapper.GetTES5BasicType(r.RecordType,
-#if !ALTERNATE_TYPE_MAPPING
-                    typeMapperMode,
-#endif
-                    out currentCompatibility);
-                if (!currentCompatibility) { allCompatibility = false; }
+                TES5BasicType basicType = TypeMapper.GetTES5BasicType(r.RecordType);
                 return basicType;
             }).ToArray();
-            compatibility = allCompatibility;
             TES5BasicType commonBaseType = TES5InheritanceGraphAnalyzer.GetCommonBaseType(tes5Types);
             return commonBaseType;
         }
 
-        //WTM:  Note:  Special Cases:  For the type inferencer (and eventually compilation) to work, I need to allow inference for some types.  I'm guessing this will cause runtime problems.
-        private static readonly string[] mayRevertToFormScriptNames = new string[] { "NoActivationScript", "SE32GhostObject", "SE38MuseumItemSCRIPT", "SE38OdditySCRIPT", "SE39ObjectScript" };
-        private static ITES5Type? GetTypeByRecords(IList<TES4LoadedRecord> tes4Records, string? scriptName, string edid, TypeMapperMode typeMapperMode)
+        private static ITES5Type? GetTypeByRecords(IList<TES4LoadedRecord> tes4Records, string? scriptName)
         {
-            bool compatibility;
-            TES5BasicType? commonBaseType = GetCommonBaseTES5Type(tes4Records, edid, typeMapperMode, out compatibility);
+            TES5BasicType? commonBaseType = GetCommonBaseTES5Type(tes4Records);
             if (commonBaseType == null) { return null; }
             ITES5Type tes5Type;
             if (scriptName != null)
             {
-                if (!compatibility && mayRevertToFormScriptNames.Contains(scriptName)) { compatibility = true; }
-                tes5Type = TES5TypeFactory.MemberByValue(scriptName, commonBaseType, compatibility);
+                tes5Type = TES5TypeFactory.MemberByValue(scriptName, commonBaseType);
             }
             else
             {
-                tes5Type =
-#if ALTERNATE_TYPE_MAPPING
-                    compatibility ? new TES5BasicTypeRevertible(commonBaseType) : (ITES5Type)
-#endif
-                    commonBaseType;
+                tes5Type = commonBaseType;
             }
             return tes5Type;
         }
 
-        public ITES5Type? GetTypeByEDIDWithFollow(string edid, TypeMapperMode typeMapperMode, bool followName, bool useScriptTypeCache = true)
+        public ITES5Type? GetTypeByEDIDWithFollow(string edid, bool followName, bool useScriptTypeCache = true)
         {
             string? scriptName;
             TES4LoadedRecord[] records = TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(edid, followName, out scriptName);
             if (useScriptTypeCache && scriptName != null) { return GetScriptTypeByScriptNameFromCache(scriptName); }
-            string typeEDID = scriptName != null ? scriptName : edid;
-            return GetTypeByRecords(records, scriptName, typeEDID, typeMapperMode);
+            return GetTypeByRecords(records, scriptName);
         }
 
         /*
@@ -328,7 +301,7 @@ is this a good idea?  i also restored isQuest code above.
             }
 
             string scriptRecordEDID = GetEDIDByFormID(scriptFormid.Value);
-            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType, out _), TES5TypeFactory.TES4Prefix, false); ;
+            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType), TES5TypeFactory.TES4Prefix, false); ;
             this.edidLowerCache.Add(edidLower, scriptHeader.ScriptType);
             return scriptHeader.ScriptType;
         }
@@ -344,10 +317,10 @@ is this a good idea?  i also restored isQuest code above.
         }
 
         //WTM:  Note:  Special Cases
-        private Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index)
+        private Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index)
         {
             IEnumerable<byte[]> scroRecords = scriptTES4Record.GetSCRORecords(index).ToArray();
-            List<int> foundFormIDs = new List<int>();
+            HashSet<int> foundFormIDs = new HashSet<int>();
             return scroRecords
                 .Select(r => BitConverter.ToInt32(r, 0))
                 .Where(formID => !foundFormIDs.Contains(formID))
@@ -356,7 +329,6 @@ is this a good idea?  i also restored isQuest code above.
                     foundFormIDs.Add(formID);
                     string edid;
                     TES5BasicType tes5Type;
-                    List<int> formIDs = new List<int>() { formID };
                     if (formID == TES5PlayerReference.FormID)
                     {
                         edid = TES5PlayerReference.PlayerRefName;
@@ -387,48 +359,48 @@ is this a good idea?  i also restored isQuest code above.
                             tes5Type = TypeMapper.GetTES5BasicType(record.RecordType, out _);
                         }
                         */
-                        tes5Type = TypeMapper.GetTES5BasicType(record.RecordType, out _);
+                        tes5Type = TypeMapper.GetTES5BasicType(record.RecordType);
                     }
-                    return new KeyValuePair<string, KeyValuePair<List<int>, TES5BasicType>>(edid, new KeyValuePair<List<int>, TES5BasicType>(formIDs, tes5Type));
+                    return new KeyValuePair<string, KeyValuePair<int, TES5BasicType>>(edid, new KeyValuePair<int, TES5BasicType>(formID, tes5Type));
                 }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value,
                     StringComparer.OrdinalIgnoreCase//WTM:  Note:  required since cases aren't consistent (e.g., MS40HalLiurzCourtyardMark vs. MS40HalliurzCourtyardMark--notice second L)
                     );
         }
 
-        public Dictionary<string, KeyValuePair<List<int>, TES5BasicType>> GetTypesFromSCRO(int scriptTES4FormID, Nullable<int> index)
+        public Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(int scriptTES4FormID, Nullable<int> index)
         {
             TES4LoadedRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
             return GetTypesFromSCRO(scriptTES4Record, index);
         }
 
-        private Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index, string propertyName, bool throwException)
+        private Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index, string propertyName, bool throwException)
         {
             var types = GetTypesFromSCRO(scriptTES4Record, index);
-            KeyValuePair<List<int>, TES5BasicType> type;
+            KeyValuePair<int, TES5BasicType> type;
             if (types.TryGetValue(propertyName, out type))
             {
                 return type;
             }
+            if (propertyName.Contains("tmp"))
+            {
+                //Because of the replacement PapyrusCompiler.FixReferenceName makes, this reversal is necessary to find some references (e.g., cloudrulertemplemapmarker).
+                if (types.TryGetValue(PapyrusCompiler.UnfixReferenceName(propertyName), out type))
+                {
+                    return type;
+                }
+            }
             if (throwException)
             {
-                if (propertyName.Contains("tmp"))
-                {
-                    //Because of the replacement PapyrusCompiler.FixReferenceName makes, this reversal is necessary to find some references (e.g., cloudrulertemplemapmarker).
-                    if (types.TryGetValue(PapyrusCompiler.UnfixReferenceName(propertyName), out type))
-                    {
-                        return type;
-                    }
-                }
                 throw new ConversionException("Form " + scriptTES4Record.GetFormId().ToString() + (index != null ? ", index " + index.Value.ToString() : "") + " did not have a property named " + propertyName + ".");
             }
             return null;
         }
-        public Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(string scriptEDID, string propertyName)
+        public Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(string scriptEDID, string propertyName)
         {
             TES4LoadedRecord scriptTES4Record = GetRecordByEDIDInTES4Collection(scriptEDID);
             return GetTypeFromSCRO(scriptTES4Record, null, propertyName, !(scriptTES4Record.GetFormId() == 211721 && propertyName == "test"));//WTM:  Note:  Special Case:  property not found in SCRO records
         }
-        public Nullable<KeyValuePair<List<int>, TES5BasicType>> GetTypeFromSCRO(int scriptTES4FormID, Nullable<int> index, string propertyName)
+        public Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(int scriptTES4FormID, Nullable<int> index, string propertyName)
         {
             TES4LoadedRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
             return GetTypeFromSCRO(scriptTES4Record, index, propertyName, !(scriptTES4FormID == 73629 && index == 150 && propertyName == "SE02FIN"));//WTM:  Note:  Special Case:  property not found in SCRO records

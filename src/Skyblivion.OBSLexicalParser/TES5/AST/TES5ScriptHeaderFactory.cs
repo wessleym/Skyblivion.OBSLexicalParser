@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             TES5ScriptHeader? header = TryGetScriptHeader(scriptName);
             if (header != null) { return header; }
             TES5BasicType? basicType = type as TES5BasicType;
-            if (basicType != null) { type = TES5TypeFactory.MemberByValue(scriptName, basicType, basicType.AllowInference); }
+            if (basicType != null) { type = TES5TypeFactory.MemberByValue(scriptName, basicType); }
             header = Construct(scriptName, type, scriptNamePrefix, isHidden);
             cache.Add(scriptName, header);
             return header;

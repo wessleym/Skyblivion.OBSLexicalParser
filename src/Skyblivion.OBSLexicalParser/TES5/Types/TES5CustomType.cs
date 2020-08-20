@@ -7,21 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
     class TES5CustomType : ITES5Type, IEquatable<ITES5Type>
     {
         private readonly string prefix;
-        public TES5BasicType NativeType
-#if !ALTERNATE_TYPE_MAPPING
-        { get; set; }
-#else
-        {
-            get => baseType.NativeType;
-            set
-            {
-                if (baseType is TES5BasicType) { baseType = value; }
-                else { baseType.NativeType = value; }
-            }
-        }
-        private ITES5Type baseType;
-        public TES5BasicTypeRevertible? Revertible => baseType as TES5BasicTypeRevertible;
-#endif
+        public TES5BasicType NativeType { get; set; }
         private static readonly EquatableUtility<TES5CustomType, ITES5Type> equatableUtility = new EquatableUtility<TES5CustomType, ITES5Type>((left, right) =>
           {
               if (left.Value == right.Value && left.NativeType == right.NativeType)
@@ -32,23 +18,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
               return false;
           });
 
-        public TES5CustomType(string originalName, string prefix,
-#if !ALTERNATE_TYPE_MAPPING
-            TES5BasicType nativeType, bool allowNativeTypeInference
-#else
-            ITES5Type baseType
-#endif
-            )
+        public TES5CustomType(string originalName, string prefix, TES5BasicType nativeType)
         {
             this.Value = NameTransformer.Limit(originalName, prefix);
             this.prefix = prefix;
             this.OriginalName = originalName;
-#if !ALTERNATE_TYPE_MAPPING
             this.NativeType = nativeType;
-            this.AllowNativeTypeInference = allowNativeTypeInference;
-#else
-            this.baseType = baseType;
-#endif
             //qt = new ReflectionClass(get_class(this));//WTM:  Change:  Unused
             //this.constants = qt.getConstants();
         }
@@ -92,12 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public bool AllowInference => false;
 
-        public bool AllowNativeTypeInference
-#if !ALTERNATE_TYPE_MAPPING
-            { get; private set; }
-#else
-            => Revertible == null || Revertible.AllowNativeTypeInference;
-#endif
+        public bool AllowNativeTypeInference => true;
 
         public string OriginalName { get; private set; }
     }

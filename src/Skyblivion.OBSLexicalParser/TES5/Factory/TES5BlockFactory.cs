@@ -6,7 +6,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
-using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
@@ -335,20 +334,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     return;
                 }
             }
-            //WTM:  Change:  Added:
-#if ALTERNATE_TYPE_MAPPING
-            TES5BasicTypeRevertible? typeRevertible = globalScope.ScriptHeader.ScriptType as TES5BasicTypeRevertible;
-            if (typeRevertible != null && typeRevertible.TryRevertToForm())
-            {
-                InferEventBlockContainingType(functionBlockName, globalScope);
-                return;
-            }
-            if (allowedTypes.Length == 1 && allowedTypes[0] == TES5BasicType.T_OBJECTREFERENCE &&
-                TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(globalScope.ScriptHeader.ScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_ARMOR, TES5BasicType.T_BOOK, TES5BasicType.T_CONTAINER, TES5BasicType.T_DOOR, TES5BasicType.T_INGREDIENT, TES5BasicType.T_LEVELEDACTOR, TES5BasicType.T_LIGHT, TES5BasicType.T_MISCOBJECT, TES5BasicType.T_POTION, TES5BasicType.T_WEAPON }))
-            {
-                globalScope.ScriptHeader.SetNativeType(allowedTypes[0], false);
-                return;
-            }
             ITES5Type basicScriptType = globalScope.ScriptHeader.ScriptType.NativeType;
             bool expected =
             /*//WTM:  Note:  These are the errors I've witnessed.
@@ -366,7 +351,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             */
                 functionBlockName == "OnHit" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_ACTIVEMAGICEFFECT);
             throw new ConversionTypeMismatchException("Event " + functionBlockName + " is not allowed on " + globalScope.ScriptHeader.ScriptType.Value + " (" + basicScriptType.Value + ").", expected: expected);
-#endif
         }
         public static TES5EventCodeBlock CreateEventCodeBlock(TES5FunctionScope functionScope, TES5GlobalScope globalScope)
         {

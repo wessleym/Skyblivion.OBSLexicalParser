@@ -7,9 +7,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         //Get native type on which this type is based
         //If this type is native, it will return itself.
         TES5BasicType NativeType { get; set; }
-#if ALTERNATE_TYPE_MAPPING
-        TES5BasicTypeRevertible? Revertible { get; }//WTM:  Change:  Added
-#endif
         string Value { get; }
         bool IsPrimitive { get; }
         bool AllowInference { get; }//WTM:  Change:  Added

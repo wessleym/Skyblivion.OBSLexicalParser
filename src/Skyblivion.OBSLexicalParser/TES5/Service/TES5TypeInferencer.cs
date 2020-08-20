@@ -83,14 +83,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                         !TES5InheritanceGraphAnalyzer.IsNumberTypeOrBoolAndInt(argument.TES5Type, argumentTargetType) &&
                         !(argument is TES5None && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(argumentTargetType, TES5None.TES5TypeStatic)))
                     {
-#if ALTERNATE_TYPE_MAPPING
-                        TES5BasicTypeRevertible? typeRevertible = argument.TES5Type.Revertible;
-                        if (typeRevertible != null && typeRevertible.TryRevertToForm())
-                        {
-                            InferenceTypeOfMethodArguments(objectCall);
-                            return;
-                        }
-#endif
                         throw new ConversionTypeMismatchException("Argument type mismatch at " + objectCall.FunctionName + " index " + argumentIndex + ".  Expected " + argumentTargetType.Name + ".  Found " + argument.TES5Type.OriginalName + " : " + argument.TES5Type.NativeType.OriginalName + ".");
                     }
                 }
@@ -142,14 +134,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             }
             if (variable.TES5Type.AllowInference) { variable.TES5Type = type; }
             else if (variable.TES5Type.AllowNativeTypeInference) { variable.TES5Type.NativeType = type; }
-            else
-            {
-#if !ALTERNATE_TYPE_MAPPING
-                throw new ConversionTypeMismatchException(variable.Name + " (" + variable.TES5DeclaredType.OriginalName + " : " + variable.TES5DeclaredType.NativeType.Name + ") could not be inferenced to a " + type.Name + " because inference was not allowed.");
-#else
-                variable.TES5Type.NativeType = type;
-#endif
-            }
+            else { throw new ConversionTypeMismatchException(variable.Name + " (" + variable.TES5DeclaredType.OriginalName + " : " + variable.TES5DeclaredType.NativeType.Name + ") could not be inferenced to a " + type.Name + " because inference was not allowed."); }
         }
 
         /*

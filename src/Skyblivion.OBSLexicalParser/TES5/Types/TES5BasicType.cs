@@ -29,10 +29,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         TES5BasicType ITES5Type.NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
 
-#if ALTERNATE_TYPE_MAPPING
-        TES5BasicTypeRevertible? ITES5Type.Revertible { get => null; }
-#endif
-
         public const string TES4ContainerName = TES5TypeFactory.TES4Prefix + "Container";
         public const string TES4TimerHelperName = TES5TypeFactory.TES4Prefix + "TimerHelper";
         public static readonly TES5BasicType

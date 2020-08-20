@@ -18,9 +18,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public string? ReferenceEDID { get; private set; }
         public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader? trackedScript;
-        private readonly List<int> tes4FormIDs;
+        private readonly Nullable<int> tes4FormID;
 
-        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, List<int> tes4FormIDs)
+        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, Nullable<int> tes4FormID)
         {
             this.IsPlayerRef = name == TES5PlayerReference.PlayerRefName && propertyType == TES5PlayerReference.TES5TypeStatic && referenceEDID == TES5PlayerReference.PlayerRefName;
             this.OriginalName = name;
@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.propertyType = propertyType;
             originalPropertyType = propertyType;
             this.ReferenceEDID = referenceEDID;
-            this.tes4FormIDs = tes4FormIDs;
+            this.tes4FormID = tes4FormID;
             this.trackedScript = null;
         }
 
@@ -49,10 +49,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
                 string output = propertyTypeName + " Property " + this.Name + " Auto Conditional";
                 //if property has a TES4 form ID and its type has not been changed
-                if (tes4FormIDs.Any() && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
+                if (tes4FormID != null && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
                 {
-                    bool multiple = tes4FormIDs.Count > 1;
-                    output += ";TES4FormID" + (multiple ? "Multiple" : "") + ":" + string.Join(",", tes4FormIDs) + ";";
+                    output += ";TES4FormID:" + tes4FormID.Value.ToString() + ";";
                 }
                 yield return output;
             }
