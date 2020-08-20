@@ -74,11 +74,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 {
                     scriptType =
                         //WTM:  Change:  Special Case:
-                        edid == "Dark09SkeletonSuicideSCRIPT"? TES5BasicType.T_ACTOR ://Compilation fails without this.
+                        edid == "Dark09SkeletonSuicideSCRIPT" ? TES5BasicType.T_ACTOR ://Compilation fails without this.
                         TES5BasicType.T_OBJECTREFERENCE;
-#if !DEBUG
-is this a good idea?  i also restored isQuest code above.
-#endif
                     /*
                     //WTM:  Change:  Replaced above with the below:
                     TES4LoadedRecord[] tes4Records = ESM.GetRecordsBySCRI(scpt.GetFormId());
