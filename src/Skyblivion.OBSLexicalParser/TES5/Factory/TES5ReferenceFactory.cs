@@ -1,5 +1,6 @@
 using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
+using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -18,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5ReferenceFactory
     {
         public const string MESSAGEBOX_VARIABLE_CONST = TES5TypeFactory.TES4Prefix + "_MESSAGEBOX_RESULT";
-        public static readonly Regex PropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
+        public static readonly Regex ReferenceAndPropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
         private const string tContainerName = "tContainer";
         private const string tTimerName = "tTimer";
         private const string tGSPLocalTimerName = "tGSPLocalTimer";
@@ -144,7 +145,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
         }
 
-        private ITES5Type GetPropertyTypeAndFormIDs(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out Nullable<int> tes4FormID)
+        private ITES5Type GetPropertyTypeAndFormID(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out Nullable<int> tes4FormID)
         {
             tes4FormID = null;
             ITES5Type specialConversion;
@@ -191,10 +192,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
 
             referenceName = PapyrusCompiler.FixReferenceName(referenceName);
-            Match match = PropertyNameRegex.Match(referenceName);
+            Match match = ReferenceAndPropertyNameRegex.Match(referenceName);
             if (match.Success)
             {
-                TES5ObjectProperty propertyReference = this.objectPropertyFactory.CreateObjectProperty(match.Groups[1].Value, match.Groups[2].Value, this, objectPropertyFactory, localScope, globalScope, multipleScriptsScope);
+                TES5ObjectProperty propertyReference = this.objectPropertyFactory.CreateObjectProperty(match.Groups[1].Value, match.Groups[2].Value, this, localScope, globalScope, multipleScriptsScope);
                 return propertyReference;
             }
 
@@ -207,7 +208,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     Nullable<int> tes4FormID = null;
                     ITES5Type propertyType =
                         typeForNewProperty != null ? typeForNewProperty :
-                        GetPropertyTypeAndFormIDs(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
+                        GetPropertyTypeAndFormID(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
                     TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.Construct(referenceName, propertyType, referenceName, tes4FormID);
                     globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
@@ -255,13 +256,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private static Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(ESMAnalyzer esmAnalyzer, string edidOrFileNameNoExt, string propertyName)
         {
-            TES5FragmentType? fragmentType = edidOrFileNameNoExt.StartsWith("qf_") ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith("tif") ? TES5FragmentType.T_TIF : null;
+            TES5FragmentType? fragmentType = GetFragmentType(edidOrFileNameNoExt);
             if (fragmentType != null)
             {
                 Tuple<int, Nullable<int>>? formIDAndIndex = GetTES4FormIDAndIndex(edidOrFileNameNoExt, fragmentType);
                 return esmAnalyzer.GetTypeFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2, propertyName);
             }
             return esmAnalyzer.GetTypeFromSCRO(edidOrFileNameNoExt, propertyName);
+        }
+
+        private static TES5FragmentType? GetFragmentType(string edidOrFileNameNoExt)
+        {
+            return edidOrFileNameNoExt.StartsWith("qf_") ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith("tif_") ? TES5FragmentType.T_TIF : null;
         }
     }
 }

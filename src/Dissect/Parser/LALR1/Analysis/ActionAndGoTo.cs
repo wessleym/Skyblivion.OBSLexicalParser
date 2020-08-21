@@ -1,4 +1,4 @@
-﻿using Dissect.Extensions.IDictionaryExtensions;
+﻿using Dissect.Extensions;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis

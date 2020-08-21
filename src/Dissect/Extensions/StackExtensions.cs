@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dissect.Extensions.StackExtensions
+namespace Dissect.Extensions
 {
     public static class StackExtensions
     {

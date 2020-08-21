@@ -1,4 +1,4 @@
-using Dissect.Extensions.IDictionaryExtensions;
+using Dissect.Extensions;
 using Dissect.Parser.LALR1.Analysis.Exceptions;
 using System;
 using System.Collections.Generic;

@@ -1,20 +1,17 @@
-using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    class BuildSourceFilesCollection : IEnumerable<KeyValuePair<string, string[]>>
+    class BuildSourceFilesCollection<T> : IEnumerable<KeyValuePair<T, string[]>> where T : IBuildTarget
     {
-        private readonly Dictionary<string, string[]> sourceFiles = new Dictionary<string, string[]>();
-        public void Add(IBuildTarget buildTarget, string[] sourceFiles)
+        private readonly Dictionary<T, string[]> sourceFiles = new Dictionary<T, string[]>();
+        public void Add(T buildTarget, string[] sourceFiles)
         {
-            string targetName = buildTarget.Name;
-            this.sourceFiles[targetName] = this.sourceFiles.GetWithFallback(targetName, () => new string[] { }).Concat(sourceFiles).Distinct().ToArray();
+            this.sourceFiles.Add(buildTarget, sourceFiles);
         }
 
-        public IEnumerator<KeyValuePair<string, string[]>> GetEnumerator()
+        public IEnumerator<KeyValuePair<T, string[]>> GetEnumerator()
         {
             return sourceFiles.GetEnumerator();
         }

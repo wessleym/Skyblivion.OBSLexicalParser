@@ -19,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     {
         private readonly BuildTracker buildTracker;
         private readonly BuildTargetAdvancedCollection buildTargets;
-        private readonly List<Dictionary<string, List<string>>> buildPlan;
+        private readonly List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan;
         private readonly Build build;
         private readonly BuildLogServiceCollection buildLogServices;
         private readonly ESMAnalyzer esmAnalyzer;
@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServiceCollection buildLogServices, List<Dictionary<string, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServiceCollection buildLogServices, List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
@@ -51,9 +51,8 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                  */
                 foreach (var kvp in buildChunk)
                 {
-                    var buildTargetName = kvp.Key;
-                    var buildScripts = kvp.Value;
-                    BuildTargetAdvanced buildTarget = this.GetBuildTarget(buildTargetName);
+                    BuildTargetAdvanced buildTarget = kvp.Key;
+                    List<string> buildScripts = kvp.Value;
                     foreach (var buildScript in buildScripts)
                     {
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
@@ -76,11 +75,10 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 //Dictionary<string, TES5Target> convertedScripts = new Dictionary<string, TES5Target>();
                 foreach (var kvp in buildChunk)
                 {
-                    var buildTargetName = kvp.Key;
-                    var buildScripts = kvp.Value;
-                    foreach (var buildScript in buildScripts)
+                    BuildTargetAdvanced buildTarget = kvp.Key;
+                    List<string> buildScripts = kvp.Value;
+                    foreach (string buildScript in buildScripts)
                     {
-                        BuildTargetAdvanced buildTarget = this.GetBuildTarget(buildTargetName);
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
@@ -112,18 +110,6 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     Console.WriteLine("Script Complete:  " + originalScriptName);
                 }*/
             }
-        }
-
-        private BuildTargetAdvanced GetBuildTarget(string targetName)
-        {
-            BuildTargetAdvanced? result = this.buildTargets.GetByNameOrNull(targetName);
-            if (result == null)
-            {
-                BuildTargetSimple buildTarget = BuildTargetFactory.ConstructSimple(BuildTargetFactory.Construct(targetName, this.build));
-                result = BuildTargetFactory.ConstructAdvanced(buildTarget, buildLogServices, esmAnalyzer, typeInferencer);
-                this.buildTargets.Add(result);
-            }
-            return result;
         }
     }
 }

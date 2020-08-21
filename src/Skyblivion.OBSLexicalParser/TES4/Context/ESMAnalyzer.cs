@@ -313,8 +313,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return ESM.GetEDIDByFormID(formID);
         }
 
-        //WTM:  Note:  Special Cases
-        private Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index)
+        public Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(TES4LoadedRecord scriptTES4Record, Nullable<int> index)
         {
             IEnumerable<byte[]> scroRecords = scriptTES4Record.GetSCRORecords(index).ToArray();
             HashSet<int> foundFormIDs = new HashSet<int>();

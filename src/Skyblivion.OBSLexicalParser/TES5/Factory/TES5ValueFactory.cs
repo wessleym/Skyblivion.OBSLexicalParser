@@ -383,6 +383,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     if (calledOn.ReferenceEDID == null) { throw new NullableException(nameof(calledOn.ReferenceEDID)); }
                     ITES5Type? referenceType = esmAnalyzer.GetTypeByEDIDWithFollow(calledOn.ReferenceEDID, true, useScriptTypeCache: false);
                     if (referenceType == null) { referenceType = calledOn.TES5Type; }//WTM:  Note:  Revert to type determined by previous inferences.
+                    /*
+                    //WTM:  Note:  Example:
+                    calledOn.ReferenceEDID:  Dark11ChorrolSackRef
+                    referenceType.OriginalName:  Dark11ChorrolDropScript
+                    referenceType.NativeType:  Container
+                    Dark11ChorrolSack "Old Sack" [CONT:00031B2B] SCRI:  Dark11ChorrolDropScript [SCPT:00031B28]
+                    Dark11ChorrolSackRef is an ObjectReference with a base object of a Container,
+                    but Dark11ChorrolDropScript had to be inferred as an ObjectReference for transpilation to complete.
+                    */
                     if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(referenceType, TES5BasicType.T_OBJECTREFERENCE))
                     {//WTM:  Note:  I think GetItemCount works for ObjectReferences that are transpiled as ObjectReferences.
                         //So they don't require the use of ContainsItem.

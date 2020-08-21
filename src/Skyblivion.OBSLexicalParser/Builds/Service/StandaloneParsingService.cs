@@ -1,5 +1,5 @@
 using Dissect.Lexer.TokenStream;
-using Dissect.Extensions.IDictionaryExtensions;
+using Dissect.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;

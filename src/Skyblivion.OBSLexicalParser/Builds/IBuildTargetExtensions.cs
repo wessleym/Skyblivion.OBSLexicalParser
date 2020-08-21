@@ -65,19 +65,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return sourcePaths;
         }
 
-        public static Dictionary<string, T> ToDictionary<T>(this IEnumerable<T> buildTargets) where T : IBuildTarget
-        {
-            return buildTargets.ToDictionary(bt => bt.Name, bt => bt);
-        }
-
         /*
         * Get source files, assigned per-build target
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public static BuildSourceFilesCollection GetSourceFiles(this IEnumerable<IBuildTarget> buildTargets, string[]? intersectedSourceFiles = null)
+        public static BuildSourceFilesCollection<T> GetSourceFiles<T>(this IEnumerable<T> buildTargets, string[]? intersectedSourceFiles = null) where T : IBuildTarget
         {
-            BuildSourceFilesCollection collection = new BuildSourceFilesCollection();
+            BuildSourceFilesCollection<T> collection = new BuildSourceFilesCollection<T>();
             foreach (var buildTarget in buildTargets)
             {
                 collection.Add(buildTarget, buildTarget.GetSourceFileList(intersectedSourceFiles));
@@ -87,7 +82,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public static int GetTotalSourceFiles(this IEnumerable<IBuildTarget> buildTargets)
         {
-            BuildSourceFilesCollection sourceFiles = buildTargets.GetSourceFiles();
+            BuildSourceFilesCollection<IBuildTarget> sourceFiles = buildTargets.GetSourceFiles();
             return sourceFiles.Sum(sf => sf.Value.Length);
         }
 

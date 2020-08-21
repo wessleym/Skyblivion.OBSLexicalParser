@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dissect.Extensions.IDictionaryExtensions
+namespace Dissect.Extensions
 {
     public static class IDictionaryExtensions
     {
@@ -20,18 +20,16 @@ namespace Dissect.Extensions.IDictionaryExtensions
             return dictionary.GetOrAdd(key, addValueFactory, out _);
         }
 
-        public static TValue GetWithFallback<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> fallbackValue)
-        {
-            TValue value;
-            return dictionary.TryGetValue(key, out value) ? value : fallbackValue();
-        }
-
-        public static void AddIfNotContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue)
+        public static void AddIfNotContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> addValueFactory)
         {
             if (!dictionary.ContainsKey(key))
             {
-                dictionary.Add(key, addValue);
+                dictionary.Add(key, addValueFactory());
             }
+        }
+        public static void AddIfNotContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue)
+        {
+            dictionary.AddIfNotContainsKey(key, () => addValue);
         }
 
         public static TValue GetOrAddNewIfNotContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()

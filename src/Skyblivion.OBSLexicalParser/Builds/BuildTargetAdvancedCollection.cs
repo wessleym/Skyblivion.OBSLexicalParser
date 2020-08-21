@@ -1,4 +1,4 @@
-using Skyblivion.ESReader.Extensions.IDictionaryExtensions;
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.Data;
@@ -34,11 +34,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
         /*
         * Plan the build against N workers
         */
-        public Dictionary<int, List<Dictionary<string, List<string>>>> GetBuildPlan(int workers)
+        public Dictionary<int, List<Dictionary<BuildTargetAdvanced, List<string>>>> GetBuildPlan(int workers)
         {
-            BuildSourceFilesCollection sourceFiles = this.GetSourceFiles();
+            BuildSourceFilesCollection<BuildTargetAdvanced> sourceFiles = this.GetSourceFiles();
             TES5BuildPlanBuilder buildPlanBuilder = new TES5BuildPlanBuilder(this.GetDependencyGraph());
-            Dictionary<int, List<Dictionary<string, List<string>>>> buildPlan = buildPlanBuilder.CreateBuildPlan(sourceFiles, workers);
+            Dictionary<int, List<Dictionary<BuildTargetAdvanced, List<string>>>> buildPlan = buildPlanBuilder.CreateBuildPlan(sourceFiles, workers);
             return buildPlan;
         }
 

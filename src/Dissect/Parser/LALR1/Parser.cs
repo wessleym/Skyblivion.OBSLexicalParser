@@ -1,4 +1,4 @@
-using Dissect.Extensions.StackExtensions;
+using Dissect.Extensions;
 using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
 using Dissect.Parser.Exceptions;

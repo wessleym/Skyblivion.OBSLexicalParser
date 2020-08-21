@@ -71,7 +71,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 string propertyName = trimmedAlias;
                 if (aliasesDeclared.Add(propertyName))
                 {
-                    resultingGlobalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormIDs(propertyName, TES5BasicType.T_REFERENCEALIAS, propertyName));
+                    resultingGlobalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormID(propertyName, TES5BasicType.T_REFERENCEALIAS, propertyName));
                 }
             }
 

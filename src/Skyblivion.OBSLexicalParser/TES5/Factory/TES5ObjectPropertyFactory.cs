@@ -24,10 +24,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return objectProperty;
         }
 
-        public TES5ObjectProperty CreateObjectProperty(string parentReferenceName, string childReferenceName, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, TES5LocalScope localScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5ObjectProperty CreateObjectProperty(string parentReferenceName, string childReferenceName, TES5ReferenceFactory referenceFactory, TES5LocalScope localScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES5Referencer parentReference = referenceFactory.CreateReference(parentReferenceName, globalScope, multipleScriptsScope, localScope);
-            TES5ObjectProperty childReference = objectPropertyFactory.CreateObjectProperty(parentReference, childReferenceName, multipleScriptsScope);//Todo rethink the prefix adding
+            TES5ObjectProperty childReference = CreateObjectProperty(parentReference, childReferenceName, multipleScriptsScope);//Todo rethink the prefix adding
             return childReference;
         }
     }

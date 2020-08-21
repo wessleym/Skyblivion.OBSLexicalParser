@@ -1,4 +1,4 @@
-using Dissect.Extensions.IDictionaryExtensions;
+using Dissect.Extensions;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Commands;

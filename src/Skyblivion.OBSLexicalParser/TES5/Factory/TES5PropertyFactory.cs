@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.TES4.Types;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
@@ -25,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             return new TES5Property(name, propertyType, referenceEdid, tes4FormID);
         }
-        public static TES5Property ConstructWithoutFormIDs(string name, ITES5Type propertyType, string? referenceEdid)
+        public static TES5Property ConstructWithoutFormID(string name, ITES5Type propertyType, string? referenceEdid)
         {
             return Construct(name, propertyType, referenceEdid, null);
         }
@@ -42,15 +41,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             else
             {
                 tes4FormID = declaration.FormID;
-                //type = TES5BasicType.T_FORM;
-                //WTM:  Change:  I commented the above and added the below:
                 if (declaration.TES5Type != null)
                 {
                     type = declaration.TES5Type;
                 }
                 else
                 {
-                    ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(variableName, false);
+                    ITES5Type? esmType = esmAnalyzer.GetTypeByEDIDWithFollow(variableName, false);//This seems to return null always, which makes sense since declaration.TES5Type is null.
                     type = esmType != null ? esmType : TES5BasicType.T_FORM;
                 }
             }
@@ -63,11 +60,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4Type variableType = variable.VariableType;
             if (variableType == TES4Type.T_FLOAT)
             {
-                return ConstructWithoutFormIDs(variableName, TES5BasicType.T_FLOAT, null);
+                return ConstructWithoutFormID(variableName, TES5BasicType.T_FLOAT, null);
             }
             if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
             {
-                return ConstructWithoutFormIDs(variableName, TES5BasicType.T_INT, null);
+                return ConstructWithoutFormID(variableName, TES5BasicType.T_INT, null);
             }
             if (variableType == TES4Type.T_REF)
             {

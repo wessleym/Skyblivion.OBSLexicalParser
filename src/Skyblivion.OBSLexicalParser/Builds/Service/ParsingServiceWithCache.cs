@@ -1,4 +1,4 @@
-﻿using Dissect.Extensions.IDictionaryExtensions;
+﻿using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 using System.Collections.Generic;

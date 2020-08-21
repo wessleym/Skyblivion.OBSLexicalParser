@@ -77,7 +77,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 const string name = TES5PlayerReference.PlayerRefName;
                 TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
-                TES5Property property = TES5PropertyFactory.ConstructWithoutFormIDs(name, playerType, name);
+                TES5Property property = TES5PropertyFactory.Construct(name, playerType, name, TES5PlayerReference.FormID);
                 AddProperty(property);
                 playerRefPropertyAdded = true;
             }
