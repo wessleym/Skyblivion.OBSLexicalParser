@@ -26,6 +26,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.CodeChunks.Add(chunk);
         }
 
+        public void AddChunks(IEnumerable<ITES5CodeChunk> chunks)
+        {
+            this.CodeChunks.AddRange(chunks);
+        }
+
         public void AddVariable(TES5LocalVariable localVariable)
         {
             this.LocalScope.AddVariable(localVariable);

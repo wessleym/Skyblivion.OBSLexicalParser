@@ -67,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getdayofweek", new GetDayOfWeekFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdeadcount", new PopCalledRenameActorBaseFunctionFactory("GetDeadCount", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdead", new RenamedFunctionFactory("IsDead", objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("getdestroyed", defaultFunctionFactory);
+            valueFactory.AddFunctionFactory("getdestroyed", new RenamedFunctionFactory("LegacyGetDestroyed", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdetected", new GetDetectedFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getdisabled", new RenamedFunctionFactory("IsDisabled", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdisposition", new GetDispositionFactory(objectCallFactory));
@@ -158,7 +158,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("modactorvalue", new ModActorValueFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("modamountsoldstolen", new ModAmountSoldStolenFactory(objectCallFactory, objectCallArgumentsFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("modcrimegold", new ModCrimeGoldFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("moddisposition", new ModDispositionFactory(objectCallFactory, objectCallArgumentsFactory, fillerFactory));
+            valueFactory.AddFunctionFactory("moddisposition", new ModDispositionFactory(objectCallFactory, objectCallArgumentsFactory, logUnknownFunctionFactory));
             valueFactory.AddFunctionFactory("modfactionreaction", new PopCalledRenameFunctionFactory("ModReaction", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("modpcfame", new ModPCFameFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("modpcinfamy", new ModPCInfamyFactory(referenceFactory, objectCallFactory));
@@ -206,7 +206,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("setcellpublicflag", new SetCellPublicFlagFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.AddFunctionFactory("setcellownership", new SetCellOwnershipFactory(objectCallFactory, referenceFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("setclass", logUnknownFunctionFactory);
-            valueFactory.AddFunctionFactory("setcombatstyle", new SetCombatStyleFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("setcombatstyle", new SetCombatStyleFactory(objectCallFactory, objectCallArgumentsFactory, logUnknownFunctionFactory));
             valueFactory.AddFunctionFactory("setcrimegold", new SetCrimeGoldFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.AddFunctionFactory("setdestroyed", new RenamedFunctionFactory("BlockActivation", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("setdoordefaultopen", logUnknownFunctionFactory);
@@ -252,7 +252,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("showracemenu", new ShowRaceMenuFactory(objectCallFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("showspellmaking", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("startcombat", new StartCombatFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(objectCallFactory, objectCallArgumentsFactory, logUnknownFunctionFactory));
+            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("startquest", new PopCalledRenameFunctionFactory("Start", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombatalarmonactor", new RenamedFunctionFactory("StopCombatAlarm", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombat", new StopCombatFactory(objectCallFactory));

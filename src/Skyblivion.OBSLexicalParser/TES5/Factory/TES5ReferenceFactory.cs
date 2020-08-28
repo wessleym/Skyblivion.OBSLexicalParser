@@ -167,12 +167,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     if (scroData != null)
                     {
                         tes4FormID = scroData.Value.Key;
-                        TES5BasicType scroType = scroData.Value.Value;
-                        if (scroType == TES5BasicType.T_BOOK && referenceName.IndexOf("scroll", StringComparison.OrdinalIgnoreCase) != -1)
-                        {//Useful for TES4_qf_ms47_0102f86b.MS47ReverseInvisibilityScroll_p.
-                            scroType = TES5BasicType.T_SCROLL;
-                        }
-                        return scroType;
+                        return scroData.Value.Value;
                     }
                 }
                 if (tes4ReferenceNameForType == null) { throw new NullableException(nameof(tes4ReferenceNameForType)); }
@@ -191,7 +186,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 return CreateReferenceToPlayer(globalScope);
             }
 
-            referenceName = PapyrusCompiler.FixReferenceName(referenceName);
             Match match = ReferenceAndPropertyNameRegex.Match(referenceName);
             if (match.Success)
             {
@@ -202,7 +196,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES5VariableOrProperty? property = localScope.TryGetVariable(referenceName);
             if (property == null)
             {
-                property = globalScope.TryGetPropertyByName(referenceName); //todo rethink how to unify the prefix searching
+                property = globalScope.TryGetPropertyByOriginalName(referenceName); //todo rethink how to unify the prefix searching
                 if (property == null)
                 {
                     Nullable<int> tes4FormID = null;

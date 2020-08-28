@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.Input
         {
             this.esmAnalyzer = esmAnalyzer;
         }
-        
+
         public TES4VariableDeclarationList BuildVariableDeclarationList(string path, TES5FragmentType fragmentType)
         {
             TES4VariableDeclarationList list = new TES4VariableDeclarationList();
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.Input
             foreach (var reference in references)
             {
                 string trimmedReference = reference.Trim();
-                if (trimmedReference=="")
+                if (trimmedReference == "")
                 {
                     continue;
                 }

@@ -335,21 +335,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
             }
             ITES5Type basicScriptType = globalScope.ScriptHeader.ScriptType.NativeType;
-            bool expected =
-            /*//WTM:  Note:  These are the errors I've witnessed.
-                (functionBlockName == "OnActivate" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_BOOK, TES5BasicType.T_CONTAINER, TES5BasicType.T_DOOR, TES5BasicType.T_MISCOBJECT, TES5BasicType.T_WEAPON })) ||
-                (functionBlockName == "OnCellAttach" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_ACTIVEMAGICEFFECT)) ||
-                (functionBlockName == "OnContainerChanged" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ARMOR, TES5BasicType.T_BOOK, TES5BasicType.T_INGREDIENT, TES5BasicType.T_MISCOBJECT, TES5BasicType.T_POTION, TES5BasicType.T_WEAPON })) ||
-                (functionBlockName == "OnEquipped" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ARMOR, TES5BasicType.T_BOOK, TES5BasicType.T_INGREDIENT, TES5BasicType.T_SOULGEM, TES5BasicType.T_WEAPON })) ||
-                (functionBlockName == "OnHit" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_ACTIVEMAGICEFFECT, })) ||
-                (functionBlockName == "OnLoad" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_CONTAINER, TES5BasicType.T_DOOR, TES5BasicType.T_LEVELEDACTOR, TES5BasicType.T_MISCOBJECT, TES5BasicType.T_WEAPON })) ||
-                (functionBlockName == "OnMagicEffectApply" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_CONTAINER })) ||
-                (functionBlockName == "OnReset" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_CONTAINER)) ||
-                (functionBlockName == "OnSell" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_MISCOBJECT)) ||
-                (functionBlockName == "OnTrigger" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, new TES5BasicType[] { TES5BasicType.T_ACTIVATOR, TES5BasicType.T_LIGHT })) ||
-                (functionBlockName == "OnTriggerEnter" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_ACTIVATOR));
-            */
-                functionBlockName == "OnHit" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_ACTIVEMAGICEFFECT);
+            bool expected = functionBlockName == "OnHit" && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(basicScriptType, TES5BasicType.T_ACTIVEMAGICEFFECT);
             throw new ConversionTypeMismatchException("Event " + functionBlockName + " is not allowed on " + globalScope.ScriptHeader.ScriptType.Value + " (" + basicScriptType.Value + ").", expected: expected);
         }
         public static TES5EventCodeBlock CreateEventCodeBlock(TES5FunctionScope functionScope, TES5GlobalScope globalScope)
@@ -381,42 +367,37 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4CodeChunks? chunks = block.Chunks;
             if (chunks != null && chunks.Any())
             {
-                TES5EventCodeBlock newBlock;
+                TES5FunctionScope blockFunctionScope = TES5FunctionScopeFactory.CreateFromBlockType(newBlockType);
                 bool onUpdateOfNonQuestOrAME = newBlockType == "OnUpdate" && globalScope.ScriptHeader.ScriptType.NativeType != TES5BasicType.T_QUEST && globalScope.ScriptHeader.ScriptType.NativeType != TES5BasicType.T_ACTIVEMAGICEFFECT;
                 bool onUpdateBlockOfNonQuestOrAMEAlreadyPresent = onUpdateBlockForNonQuestOrAME != null;
                 TES5BlockList? onUpdateAdditionalBlocksOfNonQuestOrAME = null;
+                TES5EventCodeBlock targetEventBlock;
+                TES5CodeScope targetCodeScope;
                 if (onUpdateOfNonQuestOrAME)
                 {
                     if (!onUpdateBlockOfNonQuestOrAMEAlreadyPresent)
                     {
-                        CreateActivationStates(globalScope, out onUpdateAdditionalBlocksOfNonQuestOrAME, out newBlock);
-                        onUpdateBlockForNonQuestOrAME = newBlock;
+                        CreateActivationStates(globalScope, out onUpdateAdditionalBlocksOfNonQuestOrAME, out targetEventBlock);
+                        onUpdateBlockForNonQuestOrAME = targetEventBlock;
                     }
                     else
                     {
                         if (onUpdateBlockForNonQuestOrAME == null) { throw new NullableException(nameof(onUpdateBlockForNonQuestOrAME)); }
-                        newBlock = onUpdateBlockForNonQuestOrAME;
+                        targetEventBlock = onUpdateBlockForNonQuestOrAME;
                     }
+                    targetCodeScope = targetEventBlock.CodeScope;
                 }
                 else
                 {
-                    TES5FunctionScope blockFunctionScope = TES5FunctionScopeFactory.CreateFromBlockType(newBlockType);
-                    newBlock = CreateEventCodeBlock(blockFunctionScope, globalScope);
+                    targetEventBlock = CreateEventCodeBlock(blockFunctionScope, globalScope);
+                    targetCodeScope = this.initialBlockCodeFactory.AddInitialCode(globalScope, targetEventBlock);
                 }
-                this.ConvertTES4CodeChunksToTES5EventCodeBlock(chunks, newBlock, globalScope, multipleScriptsScope);
-                if (blockType.Equals("MenuMode", StringComparison.OrdinalIgnoreCase))
-                {
-                    TES5ComparisonExpression isInMenuModeComparisonExpression = GetIsInMenuModeComparisonExpression();
-                    TES5Branch menuModeBranch = TES5BranchFactory.CreateSimpleBranch(isInMenuModeComparisonExpression, newBlock.CodeScope.LocalScope);
-                    foreach (var chunk in newBlock.CodeScope.CodeChunks)
-                    {
-                        menuModeBranch.MainBranch.CodeScope.CodeChunks.Add(chunk);
-                    }
-                    newBlock.CodeScope.CodeChunks.Clear();
-                    newBlock.AddChunk(menuModeBranch);
-                }
-                this.changesPass.Modify(block, blockList, newBlock, globalScope, multipleScriptsScope);
-                blockList.Add(newBlock);
+                TES5CodeScope newScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(targetCodeScope.LocalScope);
+                TES5CodeScope convertedCodeScope = this.ConvertTES4CodeChunksToTES5CodeScope(chunks, newScope, globalScope, multipleScriptsScope);
+                TES5CodeScope modifiedCodeScope = this.changesPass.Modify(block, blockList, blockFunctionScope, convertedCodeScope, globalScope, multipleScriptsScope);
+                targetEventBlock.CodeScope.LocalScope.CopyVariablesFrom(modifiedCodeScope.LocalScope);
+                targetEventBlock.CodeScope.AddChunks(modifiedCodeScope.CodeChunks);
+                blockList.Add(targetEventBlock);
                 if (onUpdateOfNonQuestOrAME)
                 {
                     if (!onUpdateBlockOfNonQuestOrAMEAlreadyPresent)
@@ -430,22 +411,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return blockList;
         }
 
-        private TES5ComparisonExpression GetIsInMenuModeComparisonExpression()
+        private TES5CodeScope ConvertTES4CodeChunksToTES5CodeScope(TES4CodeChunks chunks, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
-        }
-
-        private void ConvertTES4CodeChunksToTES5EventCodeBlock(TES4CodeChunks chunks, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
-        {
-            TES5CodeScope conversionScope = this.initialBlockCodeFactory.AddInitialCode(globalScope, newBlock);
+            TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScope(codeScope.LocalScope);
             foreach (ITES4CodeChunk codeChunk in chunks)
             {
-                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.CreateCodeChunk(codeChunk, newBlock.CodeScope, globalScope, multipleScriptsScope);
-                foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                {
-                    conversionScope.AddChunk(newCodeChunk);
-                }
+                TES5CodeChunkCollection codeChunks = this.codeChunkFactory.CreateCodeChunk(codeChunk, codeScope, globalScope, multipleScriptsScope);
+                newCodeScope.AddChunk(codeChunks);
             }
+            return newCodeScope;
         }
 
         public static TES5EventCodeBlock CreateOnInit()

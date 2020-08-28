@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
         public readonly TES5BasicType? TES5Type;//WTM:  Change:  Added
         public TES4VariableDeclaration(string variableName, TES4Type variableType, Nullable<int> formID = null, TES5BasicType? tes5Type = null)
         {
-            this.VariableName = PapyrusCompiler.FixReferenceName(variableName);
+            this.VariableName = variableName;
             this.VariableType = variableType;
             FormID = formID;
             TES5Type = tes5Type;

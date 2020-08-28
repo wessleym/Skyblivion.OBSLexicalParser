@@ -41,27 +41,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
             BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
             if (!buildTargets.CanBuildAndWarnIfNot()) { return; }
             BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
-            using (BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build))
+            using (BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(build, buildTargetsSimple))
             {
-                ESMAnalyzer esmAnalyzer;
-                BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(buildTargetsSimple, buildLogServices, out esmAnalyzer, out _);
-                using (esmAnalyzer)
-                {
-                    TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargetsAdvanced, scriptName, esmAnalyzer);
-#if !DEBUG
-                    try
-                    {
-#endif
-                        transpileJob.Run();
-#if !DEBUG
-                    }
-                    catch (ConversionException ex)
-                    {
-                        Console.WriteLine("Exception occured." + Environment.NewLine + ex.GetType().FullName + ":  " + ex.Message);
-                        return;
-                    }
-#endif
-                }
+                TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargetsAdvanced, scriptName);
+                transpileJob.Run();
             }
             PrepareWorkspace(buildTargets);
             Compile(build, buildTargetsSimple);

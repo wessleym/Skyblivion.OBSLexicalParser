@@ -26,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES4StringValue value = functionArguments[0];
             TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments()
             {
-                this.valueFactory.CreateValue(new TES4ApiToken(calledOn.Name), codeScope, globalScope, multipleScriptsScope)
+                calledOn
             };
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "IsDetectedBy";

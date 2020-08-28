@@ -29,7 +29,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             const string functionName = "GetActorValue";
             TES4FunctionArguments functionArguments = function.Arguments;
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
-            Dictionary<string, string> actorValueMap = ActorValueMap.Map;
             ITES4StringValue firstArg = functionArguments[0];
             string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
@@ -79,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistpoison":
                 case "resistshock":
                     {
-                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(actorValueMap[firstArgStringLower]) };
+                        TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(ActorValueMap.Map[firstArgStringLower]) };
                         return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
                     }
 

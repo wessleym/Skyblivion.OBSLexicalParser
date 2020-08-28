@@ -46,19 +46,13 @@ namespace Skyblivion.OBSLexicalParser.Commands
             BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
             if (writeTranspiledFilesAndCompile && !buildTargets.CanBuildAndWarnIfNot()) { return; }
             BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
-            BuildTracker buildTracker = new BuildTracker(buildTargets);
-            using (BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build))
+            using (BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(build, buildTargetsSimple))
             {
-                ESMAnalyzer esmAnalyzer;
-                TES5TypeInferencer typeInferencer;
-                BuildTargetAdvancedCollection buildTargetsAdvanced = BuildTargetFactory.GetCollection(buildTargetsSimple, buildLogServices, out esmAnalyzer, out typeInferencer);
-                using (esmAnalyzer)
+                BuildTracker buildTracker = new BuildTracker(buildTargets);
+                Transpile(build, buildTracker, buildTargetsAdvanced, threadsNumber);
+                if (writeTranspiledFilesAndCompile)
                 {
-                    Transpile(build, buildTracker, buildTargetsAdvanced, buildLogServices, threadsNumber, esmAnalyzer, typeInferencer);
-                    if (writeTranspiledFilesAndCompile)
-                    {
-                        WriteTranspiled(buildTargetsAdvanced, buildTracker);
-                    }
+                    WriteTranspiled(buildTargetsAdvanced, buildTracker);
                 }
             }
             if (writeTranspiledFilesAndCompile)
@@ -69,16 +63,17 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
         }
 
-        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetAdvancedCollection buildTargets, BuildLogServiceCollection buildLogServices, int threadsNumber, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        private static void Transpile(Build build, BuildTracker buildTracker, BuildTargetAdvancedCollection buildTargets, int threadsNumber)
         {
             var buildPlan = buildTargets.GetBuildPlan(threadsNumber);
+            ESMAnalyzer esmAnalyzer = buildTargets.ESMAnalyzer;
             int totalScripts = buildPlan.Sum(p => p.Value.Sum(chunk => chunk.Sum(c => c.Value.Count)));
             ProgressWriter progressWriter = new ProgressWriter("Transpiling Scripts", totalScripts);
             using (StreamWriter errorLog = new StreamWriter(build.GetErrorLogPath(), false))
             {
                 foreach (var threadBuildPlan in buildPlan)
                 {
-                    TranspileChunkJob task = new TranspileChunkJob(build, buildTracker, buildLogServices, threadBuildPlan.Value, esmAnalyzer, typeInferencer);
+                    TranspileChunkJob task = new TranspileChunkJob(buildTracker, threadBuildPlan.Value, esmAnalyzer);
                     task.RunTask(errorLog, progressWriter);
                 }
             }

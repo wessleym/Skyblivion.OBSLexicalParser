@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 string workspacePath = buildTarget.GetWorkspacePath();
                 FileTransfer.CopyDirectoryFiles(buildTarget.GetTranspiledPath(), workspacePath, false);
                 progressWriter.IncrementAndWrite();
-                FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) conflict.
+                FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) overwrite each other.
                 progressWriter.IncrementAndWrite();
             }
         }

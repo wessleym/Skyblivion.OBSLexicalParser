@@ -11,12 +11,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        private readonly FillerFactory fillerFactory;
-        public ModDispositionFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, FillerFactory fillerFactory)
+        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
+        public ModDispositionFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, LogUnknownFunctionFactory logUnknownFunctionFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.fillerFactory = fillerFactory;
+            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //Faction Reactions are Per-Faction not per-Actor, so we just simulate what would potentially happen in Skyrim
             var argument1 = functionArguments[1];
             Nullable<int> argument1NullableInt = argument1.Data as Nullable<int>;
-            if (argument1NullableInt != null && argument1NullableInt.Value==-100)
+            if (argument1NullableInt != null && argument1NullableInt.Value == -100)
             {
                 const string functionName = "StartCombat";
                 functionArguments.RemoveAt(1);
@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                return fillerFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+                return logUnknownFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
             }
         }
     }

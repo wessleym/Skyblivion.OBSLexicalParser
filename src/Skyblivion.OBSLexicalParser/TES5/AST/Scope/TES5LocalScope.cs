@@ -1,10 +1,8 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
@@ -46,12 +44,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             throw new InvalidOperationException(nameof(variable) + " was null when " + nameof(name) + " was " + name + ".");
         }
 
-        /**
-         * TODO - Maybe we ought to create a new interface marking locally
-         * scoped variables and have TES5LocalVariable and TES5SignatureParameter
-         * implement it?
-         */
-        private IEnumerable<ITES5VariableOrProperty> GetAllVariables()
+        private IEnumerable<TES5LocalVariable> GetScopeVariables()
         {
             TES5LocalScope? scope = this;
             do
@@ -63,10 +56,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
                 scope = scope.ParentScope;
             }
             while (scope != null);
-            foreach (TES5SignatureParameter variable in this.FunctionScope.Variables.Values)
-            {
-                yield return variable;
-            }
+        }
+
+        /**
+         * TODO - Maybe we ought to create a new interface marking locally
+         * scoped variables and have TES5LocalVariable and TES5SignatureParameter
+         * implement it?
+         */
+        private IEnumerable<ITES5VariableOrProperty> GetAllVariables()
+        {
+            return GetScopeVariables().Cast<ITES5VariableOrProperty>().Concat(this.FunctionScope.Variables.Values);
         }
 
         public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
@@ -76,6 +75,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
             return this.FunctionScope.GetVariableWithMeaning(meaning);
+        }
+
+        public void CopyVariablesFrom(TES5LocalScope otherScope)
+        {
+            TES5LocalVariable[] scopeVariables = GetScopeVariables().ToArray();
+            TES5LocalVariable[] otherScopeVariables = otherScope.localVariables.Where(v => !scopeVariables.Contains(v)).ToArray();
+            foreach (var variable in otherScopeVariables)
+            {
+                localVariables.Add(variable);
+            }
         }
     }
 }

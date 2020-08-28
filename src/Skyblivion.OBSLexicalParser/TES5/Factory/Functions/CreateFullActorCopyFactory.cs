@@ -21,12 +21,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //We move the called upon to function arg ( cloned object ) and we replace placed upon to player
-            TES4ApiToken newToken = new TES4ApiToken(calledOn.Name);
             ITES5Referencer newCalledOn = TES5ReferenceFactory.CreateReferenceToPlayer(globalScope);
             const string functionName = "PlaceAtMe";
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
             {
-                this.valueFactory.CreateValue(newToken, codeScope, globalScope, multipleScriptsScope),
+                calledOn,
                 new TES5Integer(1),//WTM:  Change:  I added this argument.
                 new TES5Bool(true)
             };

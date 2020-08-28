@@ -18,34 +18,26 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     class TranspileChunkJob
     {
         private readonly BuildTracker buildTracker;
-        private readonly BuildTargetAdvancedCollection buildTargets;
         private readonly List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan;
-        private readonly Build build;
-        private readonly BuildLogServiceCollection buildLogServices;
         private readonly ESMAnalyzer esmAnalyzer;
-        private readonly TES5TypeInferencer typeInferencer;
         /*
         * No injection is done here because of multithreaded enviroment which messes it up.
         * Maybe at some point we will have a proper DI into the jobs.
         * TranspileChunkJob constructor.
         */
-        public TranspileChunkJob(Build build, BuildTracker buildTracker, BuildLogServiceCollection buildLogServices, List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        public TranspileChunkJob(BuildTracker buildTracker, List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer)
         {
             this.buildPlan = buildPlan;
             this.buildTracker = buildTracker;
-            this.build = build;
-            this.buildLogServices = buildLogServices;
             this.esmAnalyzer = esmAnalyzer;
-            this.typeInferencer = typeInferencer;
-            this.buildTargets = new BuildTargetAdvancedCollection();
         }
 
         public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
         {
+            TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildChunk in this.buildPlan)
             {
                 Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
-                TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
                 /*
                  * First, build the scripts global scopes
                  */

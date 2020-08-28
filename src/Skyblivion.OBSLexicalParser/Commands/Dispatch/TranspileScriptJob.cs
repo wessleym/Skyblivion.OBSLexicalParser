@@ -16,11 +16,11 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         /*
         * TranspileScriptJob constructor.
         */
-        public TranspileScriptJob(BuildTargetAdvancedCollection buildTargets, string scriptName, ESMAnalyzer esmAnalyzer)
+        public TranspileScriptJob(BuildTargetAdvancedCollection buildTargets, string scriptName)
         {
             this.buildTargets = buildTargets;
             this.scriptName = scriptName;
-            this.esmAnalyzer = esmAnalyzer;
+            this.esmAnalyzer = buildTargets.ESMAnalyzer;
         }
 
         public void Run()

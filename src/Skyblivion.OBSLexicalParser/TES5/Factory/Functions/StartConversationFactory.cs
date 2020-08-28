@@ -3,18 +3,20 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class StartConversationFactory : IFunctionFactory
     {
-        private readonly RenamedFunctionFactory renamedFunctionFactory;
-        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
-        public StartConversationFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, LogUnknownFunctionFactory logUnknownFunctionFactory)
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
+        public StartConversationFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
         {
-            this.renamedFunctionFactory = new RenamedFunctionFactory("LegacyStartConversation", objectCallFactory, objectCallArgumentsFactory);
-            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
+            this.objectCallFactory = objectCallFactory;
+            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -31,13 +33,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCallArguments funcArgs = new TES5ObjectCallArguments();*/
             /*
             Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
-            return this.objectCallFactory.createObjectCall(reference, "ForceStart",multipleScriptsScope, funcArgs);
+            return this.objectCallFactory.createObjectCall(reference, "ForceStart", multipleScriptsScope, funcArgs);
             */
-            if (function.Arguments.Count == 1)
-            {
-                return logUnknownFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
-            }
-            return renamedFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+            TES4FunctionArguments oldArguments = function.Arguments;
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(oldArguments, codeScope, globalScope, multipleScriptsScope);
+            if (!newArguments.Any()) { throw new ConversionException(function.FunctionCall.FunctionName + " must be called with arguments."); }
+            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacyStartConversation", newArguments);
         }
     }
 }

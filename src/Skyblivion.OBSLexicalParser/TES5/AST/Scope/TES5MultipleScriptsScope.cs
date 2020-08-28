@@ -51,7 +51,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
             }
-            TES5Property? property = globalScope.TryGetPropertyByName(propertyName);
+            TES5Property? property = globalScope.TryGetPropertyByOriginalName(propertyName);
             if (property == null)
             {
                 throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a property " + propertyName+" in script name "+scriptName);

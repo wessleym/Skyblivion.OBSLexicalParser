@@ -26,16 +26,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             this.referenceFactory = referenceFactory;
         }
         
-        public void Modify(TES4CodeBlock block, TES5BlockList blockList, TES5EventCodeBlock newBlock, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5CodeScope Modify(TES4CodeBlock block, TES5BlockList blockList, TES5FunctionScope blockFunctionScope, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5FunctionScope blockFunctionScope = newBlock.FunctionScope;
             switch (block.BlockType.ToLower())
             {
                 case "gamemode":
                 case "scripteffectupdate":
                     {
                         TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope);
-                        newBlock.AddChunk(function);
+                        codeScope.AddChunk(function);
                         if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
                         {
                             TES5EventCodeBlock onInitBlock = TES5BlockFactory.CreateOnInit();
@@ -56,43 +55,37 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                 case "onactorequip":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, TES5LocalVariableParameterMeaning.CONTAINER, globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, TES5LocalVariableParameterMeaning.CONTAINER, globalScope, multipleScriptsScope);
                         break;
                     }
 
                 case "ontriggeractor":
                     {
                         TES4BlockParameterList? parameterList = block.BlockParameterList;
-                        TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
+                        TES5LocalScope localScope = codeScope.LocalScope;
                         ITES5VariableOrProperty activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
                         TES5Reference referenceToCastedVariable = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(castedToActor);
                         TES5Reference referenceToNonCastedVariable = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activator);
                         TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(referenceToCastedVariable, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, new TES5None());
                         TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
-                        newCodeScope.LocalScope.AddVariable(castedToActor);
+                        newCodeScope.AddVariable(castedToActor);
                         newCodeScope.AddChunk(TES5VariableAssignationFactory.CreateAssignation(referenceToCastedVariable, referenceToNonCastedVariable));
-                        TES5CodeScope outerBranchCode;
+                        TES5CodeScope outerBranchCode = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
+                        outerBranchCode.LocalScope.CopyVariablesFrom(codeScope.LocalScope);
                         if (parameterList != null)
                         {
-                            //NOT TESTED
                             List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
                             ITES5Referencer targetActor = this.referenceFactory.CreateReadReference(parameterListVariableList[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
                             TES5ComparisonExpression interExpression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activator), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, targetActor);
-                            //TES5CodeScope interBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.CodeScope));//WTM:  Change:  Why serialize and then deserialize?
-                            TES5CodeScope interBranchCode = newBlock.CodeScope;
-                            outerBranchCode = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
-                            interBranchCode.LocalScope.ParentScope = outerBranchCode.LocalScope;
-                            outerBranchCode.AddChunk(new TES5Branch(new TES5SubBranch(interExpression, interBranchCode)));
+                            outerBranchCode.AddChunk(new TES5Branch(new TES5SubBranch(interExpression, codeScope)));
                         }
                         else
                         {
-                            //outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.CodeScope));//WTM:  Change:  Why serialize and then deserialize?
-                            outerBranchCode = newBlock.CodeScope;
-                            outerBranchCode.LocalScope.ParentScope = newCodeScope.LocalScope;
+                            outerBranchCode.AddChunks(codeScope.CodeChunks);
                         }
                         newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
-                        newBlock.CodeScope = newCodeScope;
+                        codeScope = newCodeScope;
                         break;
                     }
 
@@ -101,33 +94,33 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         TES4BlockParameterList? parameterList = block.BlockParameterList;
                         if (parameterList != null)
                         {
-                            TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
+                            TES5LocalScope localScope = codeScope.LocalScope;
                             List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
                             ITES5Referencer hitTarget = this.referenceFactory.CreateReadReference(parameterListVariableList[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
                             TES5SignatureParameter akAggressor = localScope.FunctionScope.Variables["akAggressor"];
                             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(akAggressor), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, hitTarget);
                             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
-                            newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, newBlock.CodeScope)));
-                            newBlock.CodeScope = newCodeScope;
+                            newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, codeScope)));
+                            codeScope = newCodeScope;
                         }
                         break;
                     }
 
                 case "onadd":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, "akNewContainer", globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akNewContainer", globalScope, multipleScriptsScope);
                         break;
                     }
 
                 case "ondrop":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, "akOldContainer", globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akOldContainer", globalScope, multipleScriptsScope);
                         break;
                     }
 
                 case "onpackagestart":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, "akNewPackage", globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akNewPackage", globalScope, multipleScriptsScope);
                         break;
                     }
 
@@ -135,7 +128,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onpackagechange":
                 case "onpackageend":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, "akOldPackage", globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akOldPackage", globalScope, multipleScriptsScope);
                         break;
                     }
 
@@ -143,7 +136,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     {
                         //@INCONSISTENCE - We don"t account for alarm type.
                         TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
-                        SetUpBranch(blockFunctionScope, newBlock, expression);
+                        codeScope = SetUpBranch(blockFunctionScope, codeScope, expression);
+                        break;
+                    }
+
+                case "menumode":
+                    {
+                        TES5ComparisonExpression isInMenuModeComparisonExpression = GetIsInMenuModeComparisonExpression();
+                        codeScope = SetUpBranch(blockFunctionScope, codeScope, isInMenuModeComparisonExpression);
                         break;
                     }
 
@@ -188,43 +188,49 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onequip":
                 case "onunequip":
                     {
-                        SetUpBranch(block, newBlock, blockFunctionScope, "akActor", globalScope, multipleScriptsScope);
+                        codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akActor", globalScope, multipleScriptsScope);
                         break;
                     }
             }
+            return codeScope;
         }
 
-        private static void SetUpBranch(TES5FunctionScope blockFunctionScope, TES5EventCodeBlock newBlock, ITES5Value expression)
+        private static TES5CodeScope SetUpBranch(TES5FunctionScope blockFunctionScope, TES5CodeScope codeScope, ITES5Value expression)
         {
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
             //TES5CodeScope outerBranchCode = PHPFunction.Deserialize<TES5CodeScope>(PHPFunction.Serialize(newBlock.CodeScope));//WTM:  Change:  Why serialize and then deserialize?
-            TES5CodeScope outerBranchCode = newBlock.CodeScope;
+            TES5CodeScope outerBranchCode = codeScope;
             outerBranchCode.LocalScope.ParentScope = newCodeScope.LocalScope;
             newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
-            newBlock.CodeScope = newCodeScope;
+            return newCodeScope;
         }
-        private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, ITES5VariableOrProperty variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private TES5CodeScope SetUpBranch(TES4CodeBlock block, TES5CodeScope codeScope, TES5FunctionScope blockFunctionScope, ITES5VariableOrProperty variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4BlockParameterList? parameterList = block.BlockParameterList;
             if (parameterList == null)
             {
-                return;
+                return codeScope;
             }
             List<TES4BlockParameter> parameterListVariableList = parameterList.Parameters;
             TES4BlockParameter tesEquippedTarget = parameterListVariableList[0];
-            TES5LocalScope localScope = newBlock.CodeScope.LocalScope;
+            TES5LocalScope localScope = codeScope.LocalScope;
             TES5Reference variableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable);
             ITES5Referencer newContainer = this.referenceFactory.CreateReadReference(tesEquippedTarget.BlockParameter, globalScope, multipleScriptsScope, localScope);
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(variableReference, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, newContainer);
-            SetUpBranch(blockFunctionScope, newBlock, expression);
+            return SetUpBranch(blockFunctionScope, codeScope, expression);
         }
-        private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, string variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private TES5CodeScope SetUpBranch(TES4CodeBlock block, TES5CodeScope codeScope, TES5FunctionScope blockFunctionScope, string variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            SetUpBranch(block, newBlock, blockFunctionScope, newBlock.CodeScope.LocalScope.GetVariable(variable), globalScope, multipleScriptsScope);
+            return SetUpBranch(block, codeScope, blockFunctionScope, codeScope.LocalScope.GetVariable(variable), globalScope, multipleScriptsScope);
         }
-        private void SetUpBranch(TES4CodeBlock block, TES5EventCodeBlock newBlock, TES5FunctionScope blockFunctionScope, TES5LocalVariableParameterMeaning variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        private TES5CodeScope SetUpBranch(TES4CodeBlock block, TES5CodeScope codeScope, TES5FunctionScope blockFunctionScope, TES5LocalVariableParameterMeaning variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            SetUpBranch(block, newBlock, blockFunctionScope, newBlock.CodeScope.LocalScope.GetVariableWithMeaning(variable), globalScope, multipleScriptsScope);
+            return SetUpBranch(block, codeScope, blockFunctionScope, codeScope.LocalScope.GetVariableWithMeaning(variable), globalScope, multipleScriptsScope);
+        }
+
+        private TES5ComparisonExpression GetIsInMenuModeComparisonExpression()
+        {
+            return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
         }
     }
 }

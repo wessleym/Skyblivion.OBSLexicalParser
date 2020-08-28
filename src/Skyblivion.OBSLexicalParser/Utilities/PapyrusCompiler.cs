@@ -57,12 +57,8 @@ namespace Skyblivion.OBSLexicalParser.Utilities
         public static string FixReferenceName(string referenceName)
         {
             //Papyrus compiler somehow treats properties with "temp" in them in a special way, so we change them to tmp to accommodate that.
-            return Regex.Replace(referenceName, "temp", "tmp");
-        }
-
-        public static string UnfixReferenceName(string referenceName)
-        {
-            return Regex.Replace(referenceName, "tmp", "temp");
+            //WTM:  Note:  In the original PHP version, this was case sensitive.  I'm leaving it as such.
+            return referenceName.Replace("temp", "tmp");
         }
     }
 }

@@ -2491,8 +2491,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, TES5BasicType.T_LOCATION),
                 new TES5InheritanceFunctionSignature("GetCurrentScene", new TES5BasicType[] {
                             }, TES5BasicType.T_SCENE),
-                new TES5InheritanceFunctionSignature("GetDestroyed", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("GetDistance", new TES5BasicType[] {
                                 TES5BasicType.T_OBJECTREFERENCE
                             }, TES5BasicType.T_FLOAT),
@@ -2885,7 +2883,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                         TES5BasicType.T_ACTOR,
                         TES5BasicType.T_TOPIC,
                         TES5BasicType.T_BOOL
-                    }, TES5BasicType.T_FLOAT)
+                    }, TES5BasicType.T_FLOAT),
+                new TES5InheritanceFunctionSignature("LegacyGetDestroyed", new TES5BasicType[] {
+                            }, TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("LegacyGetActionRef", new TES5BasicType[] {
+                            }, TES5BasicType.T_OBJECTREFERENCE)
             }
         },
         { TES5BasicType.T_OUTFIT,

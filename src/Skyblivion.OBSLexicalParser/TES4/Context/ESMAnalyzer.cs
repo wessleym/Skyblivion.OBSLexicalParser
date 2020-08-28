@@ -356,6 +356,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                         }
                         */
                         tes5Type = TypeMapper.GetTES5BasicType(record.RecordType);
+                        if (tes5Type == TES5BasicType.T_BOOK && edid.IndexOf("scroll", StringComparison.OrdinalIgnoreCase) != -1)
+                        {//It seems Oblivion.esm's scroll BOOK records are now SCRL records in Skyblivion.esm with the same form ID.
+                            tes5Type = TES5BasicType.T_SCROLL;
+                        }
                     }
                     return new KeyValuePair<string, KeyValuePair<int, TES5BasicType>>(edid, new KeyValuePair<int, TES5BasicType>(formID, tes5Type));
                 }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value,
@@ -376,14 +380,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             if (types.TryGetValue(propertyName, out type))
             {
                 return type;
-            }
-            if (propertyName.Contains("tmp"))
-            {
-                //Because of the replacement PapyrusCompiler.FixReferenceName makes, this reversal is necessary to find some references (e.g., cloudrulertemplemapmarker).
-                if (types.TryGetValue(PapyrusCompiler.UnfixReferenceName(propertyName), out type))
-                {
-                    return type;
-                }
             }
             if (throwException)
             {

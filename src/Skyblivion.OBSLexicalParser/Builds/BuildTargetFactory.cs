@@ -30,11 +30,12 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return buildTargets.Select(bt => ConstructSimple(bt)).ToArray();
         }
 
-        public static BuildTargetAdvancedCollection GetCollection(IEnumerable<BuildTargetSimple> buildTargets, BuildLogServiceCollection buildLogServices, out ESMAnalyzer esmAnalyzer, out TES5TypeInferencer typeInferencer)
+        public static BuildTargetAdvancedCollection GetCollection(Build build, IEnumerable<BuildTargetSimple> buildTargets)
         {
-            esmAnalyzer = ESMAnalyzer.Load();
-            typeInferencer = new TES5TypeInferencer(esmAnalyzer);
-            BuildTargetAdvancedCollection collection = new BuildTargetAdvancedCollection();
+            BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build);
+            ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load();
+            TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
+            BuildTargetAdvancedCollection collection = new BuildTargetAdvancedCollection(buildLogServices, esmAnalyzer);
             foreach (var target in buildTargets)
             {
                 collection.Add(ConstructAdvanced(target, buildLogServices, esmAnalyzer, typeInferencer));

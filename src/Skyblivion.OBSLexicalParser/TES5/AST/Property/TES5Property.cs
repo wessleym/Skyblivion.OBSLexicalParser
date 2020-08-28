@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public bool AllowNameTransformation { get; private set; }
         public string Name { get; private set; }
         private ITES5Type propertyType; //If we"re tracking a script, this won"t be used anymore
-        private readonly ITES5Type originalPropertyType; //If we"re tracking a script, this won"t be used anymore
+        private readonly ITES5Type originalPropertyType;
         public string? ReferenceEDID { get; private set; }
         public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader? trackedScript;
@@ -25,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.IsPlayerRef = name == TES5PlayerReference.PlayerRefName && propertyType == TES5PlayerReference.TES5TypeStatic && referenceEDID == TES5PlayerReference.PlayerRefName;
             this.OriginalName = name;
             this.AllowNameTransformation = !this.IsPlayerRef;
-            this.Name = AllowNameTransformation ? AddPropertyNameSuffix(name) : name;
+            this.Name = AllowNameTransformation ? AddPropertyNameSuffix(PapyrusCompiler.FixReferenceName(name)) : name;
             this.propertyType = propertyType;
             originalPropertyType = propertyType;
             this.ReferenceEDID = referenceEDID;

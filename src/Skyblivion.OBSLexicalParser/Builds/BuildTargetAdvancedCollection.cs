@@ -1,22 +1,23 @@
 using Skyblivion.ESReader.Extensions;
-using Skyblivion.ESReader.PHP;
-using Skyblivion.OBSLexicalParser.Commands;
-using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    class BuildTargetAdvancedCollection : IEnumerable<BuildTargetAdvanced>
+    class BuildTargetAdvancedCollection : IEnumerable<BuildTargetAdvanced>, IDisposable
     {
+        public readonly BuildLogServiceCollection buildLogServices;
+        public readonly ESMAnalyzer ESMAnalyzer;
         private readonly Lazy<TES5ScriptDependencyGraph> dependencyGraph;
         private readonly Dictionary<string, BuildTargetAdvanced> buildTargets;
-        public BuildTargetAdvancedCollection()
+        public BuildTargetAdvancedCollection(BuildLogServiceCollection buildLogServices, ESMAnalyzer esmAnalyzer)
         {
+            this.buildLogServices = buildLogServices;
+            this.ESMAnalyzer = esmAnalyzer;
             buildTargets = new Dictionary<string, BuildTargetAdvanced>();
             dependencyGraph = new Lazy<TES5ScriptDependencyGraph>(() => this.ReadGraph());
         }
@@ -62,5 +63,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
         }
 
         public int Count => buildTargets.Count;
+
+        public void Dispose()
+        {
+            buildLogServices.Dispose();
+            ESMAnalyzer.Dispose();
+        }
     }
 }

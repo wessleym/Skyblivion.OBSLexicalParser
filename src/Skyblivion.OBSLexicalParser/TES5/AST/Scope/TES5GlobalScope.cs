@@ -15,12 +15,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public List<TES5Property> Properties { get; private set; } = new List<TES5Property>();
         private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
         private bool playerRefPropertyAdded = false;
+        public bool QuestHasOnUpdateRegisterForSingleUpdate;
         /*
         * TES5GlobalScope constructor.
         */
         public TES5GlobalScope(TES5ScriptHeader scriptHeader)
         {
             this.ScriptHeader = scriptHeader;
+            QuestHasOnUpdateRegisterForSingleUpdate = false;
         }
 
         public void AddProperty(TES5Property property)
@@ -69,6 +71,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public TES5Property GetPropertyByName(string propertyName)
         {
             return TryGetPropertyByName(propertyName, true)!;
+        }
+
+        private TES5Property? TryGetPropertyByOriginalName(string originalName, bool throwException)
+        {
+            TES5Property? property = this.Properties.Where(p => p.OriginalName.Equals(originalName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            if (property == null && throwException) { throw new InvalidOperationException(nameof(originalName) + " " + originalName + " not found."); }
+            return property;
+        }
+        public TES5Property? TryGetPropertyByOriginalName(string originalName)
+        {
+            return TryGetPropertyByOriginalName(originalName, false);
         }
 
         public void AddPlayerRefPropertyIfNotExists()

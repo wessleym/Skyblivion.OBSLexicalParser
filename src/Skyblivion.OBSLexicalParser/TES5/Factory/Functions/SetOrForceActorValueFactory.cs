@@ -29,7 +29,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            Dictionary<string, string> actorValueMap = ActorValueMap.Map;
             ITES4StringValue firstArg = functionArguments[0];
             string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
@@ -82,7 +81,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistpoison":
                 case "resistshock":
                     {
-                        convertedArguments.Add(new TES5String(actorValueMap[firstArgStringLower]));
+                        convertedArguments.Add(new TES5String(ActorValueMap.Map[firstArgStringLower]));
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments);

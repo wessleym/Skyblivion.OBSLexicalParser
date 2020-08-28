@@ -39,7 +39,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
 
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            var actorValueMap = ActorValueMap.Map;
             string firstArgString = functionArguments[0].StringValue;
             string firstArgStringLower = firstArgString.ToLower();
             switch (firstArgStringLower)
@@ -89,7 +88,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistshock":
                     {
                         const string functionName = "ModActorValue";
-                        convertedArguments.Add(new TES5String(actorValueMap[firstArgStringLower]));
+                        convertedArguments.Add(new TES5String(ActorValueMap.Map[firstArgStringLower]));
                         ITES4StringValue secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
                         return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
