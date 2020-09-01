@@ -21,6 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //WTM:  Note:  I'd prefer a single method call obviously, but this is the best solution I can imagine.
+            //https://www.creationkit.com/index.php?title=GetIsPlayableRace
+            /*
             TES5ObjectCall calledOnRaceName = objectCallFactory.CreateObjectCall(objectCallFactory.CreateObjectCall(calledOn, "GetRace"), "GetName");
             string[] playableRaces = new string[] { "Altmer", "Argonian", "Bosmer", "Breton", "Dunmer", "Imperial", "Khajiit", "Nord", "Orc", "Redguard" };
             ITES5Expression? accumulatedStatement = null;
@@ -38,6 +40,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             if (accumulatedStatement == null) { throw new NullableException(nameof(accumulatedStatement)); }
             return accumulatedStatement;
+            */
+            //Actor.GetRace().IsPlayable() might work:
+            //https://www.creationkit.com/index.php?title=Race_Script
+            return objectCallFactory.CreateObjectCall(objectCallFactory.CreateObjectCall(calledOn, "GetRace"), "IsPlayable");
         }
     }
 }
