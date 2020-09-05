@@ -130,7 +130,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 case "OnMagicEffectApply":
                     {
                         functionScope.AddVariable(new TES5SignatureParameter("akCaster", TES5BasicType.T_OBJECTREFERENCE, true, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }));
-                        functionScope.AddVariable(new TES5SignatureParameter("akMagicEffect", TES5BasicType.T_MAGICEFFECT, true));
+                        functionScope.AddVariable(new TES5SignatureParameter("akEffect", TES5BasicType.T_MAGICEFFECT, true));
                         break;
                     }
 

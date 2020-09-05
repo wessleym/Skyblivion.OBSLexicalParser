@@ -83,7 +83,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private static void WriteTranspiled(BuildTargetAdvancedCollection buildTargets, BuildTracker buildTracker)
         {
             ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.Name).Count));
-            //WTM:  Change:  Transpile QF first since some transpilation will be done while writing.
+            //WTM:  Added:  Change:  Transpile QF first since some transpilation will be done while writing.
             //Types will be inferenced like TES4PublicanBloatedFloatOrmil, and if Standalone gets written first, those files will be incorrect.
             //The below OrderBy statement puts QF first.
             foreach (var buildTarget in buildTargets.OrderBy(bt => !bt.IsQF()))

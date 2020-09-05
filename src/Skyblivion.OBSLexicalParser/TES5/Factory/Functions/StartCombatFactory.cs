@@ -22,13 +22,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            //WTM:  Added:  This is to prevent these Papyrus messages (and what I believe to be an associated crash):
+            //WTM:  Added:  This is to prevent these Papyrus messages:
             /*
             Actor is dead, cannot start combat.
             Actor has no AI process, cannot start combat. [I might need to use Actor.IsAIEnabled or even Actor.EnableAI(True).]
             */
             TES5ObjectCall isDeadCall = this.objectCallFactory.CreateObjectCall(calledOn, "IsDead");
-            TES5ComparisonExpression isNotDead = TES5ExpressionFactory.CreateComparisonExpression(isDeadCall, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, new TES5Bool(false));
+            TES5ComparisonExpression isNotDead = TES5ExpressionFactory.CreateComparisonExpression(isDeadCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false));
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             TES5ObjectCall startCombatCall = this.objectCallFactory.CreateObjectCall(calledOn, "StartCombat", newArguments);

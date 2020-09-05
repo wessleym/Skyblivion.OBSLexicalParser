@@ -22,6 +22,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             }
         }
 
+        public void Insert(int index, ITES5CodeChunk chunk)
+        {
+            values.Insert(index, chunk);
+        }
+
         public void Clear()//WTM:  Change:  Added for TES5BlockFactory.CreateBlock
         {
             values.Clear();

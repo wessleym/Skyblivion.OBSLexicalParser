@@ -33,184 +33,107 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private static string MapBlockType(string blockType)
         {
-            string newBlockType;
             switch (blockType.ToLower())
             {
-                case "gamemode":
-                    {
-                        newBlockType = "OnUpdate";
-                        break;
-                    }
-
                 case "onactivate":
                     {
-                        newBlockType = "OnActivate";
-                        break;
+                        return "OnActivate";
                     }
-
-                case "oninit":
-                    {
-                        newBlockType = "OnInit";
-                        break;
-                    }
-
-                case "onsell":
-                    {
-                        newBlockType = "OnSell";
-                        break;
-                    }
-
-                case "ondeath":
-                    {
-                        newBlockType = "OnDeath";
-                        break;
-                    }
-
-                case "onload":
-                    {
-                        newBlockType = "OnLoad";
-                        break;
-                    }
-
-                case "onactorequip":
-                    {
-                        newBlockType = "OnObjectEquipped";
-                        break;
-                    }
-
-                case "ontriggeractor":
-                    {
-                        newBlockType = "OnTriggerEnter";
-                        break;
-                    }
-
-                case "onadd":
-                    {
-                        newBlockType = "OnContainerChanged";
-                        break;
-                    }
-
-                case "onequip":
-                    {
-                        newBlockType = "OnEquipped";
-                        break;
-                    }
-
-                case "onunequip":
-                    {
-                        newBlockType = "OnUnequipped";
-                        break;
-                    }
-
-                case "ondrop":
-                    {
-                        newBlockType = "OnContainerChanged";
-                        break;
-                    }
-
-                case "ontriggermob":
-                    {
-                        newBlockType = "OnTriggerEnter";
-                        break;
-                    }
-
-                case "ontrigger":
-                    {
-                        newBlockType = "OnTrigger";
-                        break;
-                    }
-
-                case "onhitwith":
-                    {
-                        newBlockType = "OnHit";
-                        break;
-                    }
-
-                case "onhit":
-                    {
-                        newBlockType = "OnHit";
-                        break;
-                    }
-
-                case "onalarm":
-                    {
-                        newBlockType = "OnUpdate";
-                        break;
-                    }
-
                 case "onstartcombat":
                     {
-                        newBlockType = "OnCombatStateChanged";
-                        break;
+                        return "OnCombatStateChanged";
                     }
-
-                case "onpackagestart":
+                case "onadd":
+                case "ondrop":
                     {
-                        newBlockType = "OnPackageStart";
-                        break;
+                        return "OnContainerChanged";
                     }
-
-                case "onpackagedone":
+                case "ondeath":
                     {
-                        newBlockType = "OnPackageEnd";
-                        break;
+                        return "OnDeath";
                     }
-
-                case "onpackageend":
-                    {
-                        newBlockType = "OnPackageEnd";
-                        break;
-                    }
-
-                case "onpackagechange":
-                    {
-                        newBlockType = "OnPackageChange";
-                        break;
-                    }
-
-                case "onmagiceffecthit":
-                    {
-                        newBlockType = "OnMagicEffectApply";
-                        break;
-                    }
-
-                case "onreset":
-                    {
-                        newBlockType = "OnReset";
-                        break;
-                    }
-
-                case "scripteffectstart":
-                    {
-                        newBlockType = "OnEffectStart";
-                        break;
-                    }
-
-                case "scripteffectupdate":
-                    {
-                        newBlockType = "OnUpdate";
-                        break;
-                    }
-
                 case "scripteffectfinish":
                     {
-                        newBlockType = "OnEffectFinish";
-                        break;
+                        return "OnEffectFinish";
                     }
-
+                case "scripteffectstart":
+                    {
+                        return "OnEffectStart";
+                    }
+                case "onequip":
+                    {
+                        return "OnEquipped";
+                    }
+                case "onhit":
+                case "onhitwith":
+                    {
+                        return "OnHit";
+                    }
+                case "oninit":
+                    {
+                        return "OnInit";
+                    }
+                case "onload":
+                    {
+                        return "OnLoad";
+                    }
+                case "onmagiceffecthit":
+                    {
+                        return "OnMagicEffectApply";
+                    }
+                case "onactorequip":
+                    {
+                        return "OnObjectEquipped";
+                    }
+                case "onpackagechange":
+                    {
+                        return "OnPackageChange";
+                    }
+                case "onpackagedone":
+                case "onpackageend":
+                    {
+                        return "OnPackageEnd";
+                    }
+                case "onpackagestart":
+                    {
+                        return "OnPackageStart";
+                    }
+                case "onreset":
+                    {
+                        return "OnReset";
+                    }
+                case "onsell":
+                    {
+                        return "OnSell";
+                    }
+                case "ontrigger":
+                    {
+                        return "OnTrigger";
+                    }
+                case "ontriggeractor":
+                    {
+                        return "OnTriggerEnter";
+                    }
+                case "ontriggermob":
+                    {
+                        return "OnTriggerEnter";
+                    }
+                case "onunequip":
+                    {
+                        return "OnUnequipped";
+                    }
+                case "gamemode":
                 case "menumode":
+                case "scripteffectupdate":
                     {
-                        newBlockType = "OnUpdate";
-                        break;
+                        return "OnUpdate";
                     }
-
-                default:
+                case "onalarm":
                     {
-                        throw new ConversionException("Cannot find new block type out of " + blockType);
+                        return "OnUpdate";
                     }
             }
-
-            return newBlockType;
+            throw new ConversionException("Cannot find new block type from old block type of " + blockType);
         }
 
         //WTM:  Change:  Added
