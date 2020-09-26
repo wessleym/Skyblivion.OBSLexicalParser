@@ -3,20 +3,15 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using System;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class StartConversationFactory : IFunctionFactory
     {
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public StartConversationFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
+        public StartConversationFactory(LogUnknownFunctionFactory logUnknownFunctionFactory)
         {
-            this.objectCallFactory = objectCallFactory;
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
+            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -35,10 +30,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
             return this.objectCallFactory.createObjectCall(reference, "ForceStart", multipleScriptsScope, funcArgs);
             */
-            TES4FunctionArguments oldArguments = function.Arguments;
+            //WTM:  Note:  Even though I got some parts of LegacyStartConversation to work, I realized that Oblivion calls StartConversation with DIAL.
+            //DIAL is not a type in Papyrus.  The DIAL record would have to be converted to a Topic first somehow so StartConversation could be called.
+            //I'm going to log calls to this function.
+            /*TES4FunctionArguments oldArguments = function.Arguments;
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(oldArguments, codeScope, globalScope, multipleScriptsScope);
-            if (!newArguments.Any()) { throw new ConversionException(function.FunctionCall.FunctionName + " must be called with arguments."); }
-            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacyStartConversation", newArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacyStartConversation", newArguments);*/
+            return logUnknownFunctionFactory.CreateLogCall(function);
         }
     }
 }

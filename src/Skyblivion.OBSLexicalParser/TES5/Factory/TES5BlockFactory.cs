@@ -3,15 +3,10 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Block;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
-using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

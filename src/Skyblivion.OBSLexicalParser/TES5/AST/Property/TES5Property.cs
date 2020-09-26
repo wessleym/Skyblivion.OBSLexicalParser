@@ -19,9 +19,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         public string? ReferenceEDID { get; private set; }
         public bool IsPlayerRef { get; private set; }
         private TES5ScriptHeader? trackedScript;
-        private readonly Nullable<int> tes4FormID;
+        public Nullable<int> TES4FormID { get; private set; }
+        private readonly Nullable<int> tes5FormID;
 
-        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, Nullable<int> tes4FormID)
+        public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, Nullable<int> tes4FormID, Nullable<int> tes5FormID)
         {
             this.IsPlayerRef = name == TES5PlayerReference.PlayerRefName && propertyType == TES5PlayerReference.TES5TypeStatic && referenceEDID == TES5PlayerReference.PlayerRefName;
             this.OriginalName = name;
@@ -30,7 +31,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.propertyType = propertyType;
             originalPropertyType = propertyType;
             this.ReferenceEDID = referenceEDID;
-            this.tes4FormID = tes4FormID;
+            this.TES4FormID = tes4FormID;
+            this.tes5FormID = tes5FormID;
             this.trackedScript = null;
         }
 
@@ -49,10 +51,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
                 string propertyTypeName = this.TES5Type.Output.Single();
                 //Todo - Actually differentiate between properties which need and do not need to be conditional
                 string output = propertyTypeName + " Property " + this.Name + " Auto Conditional";
-                //if property has a TES4 form ID and its type has not been changed
-                if (tes4FormID != null && TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
-                {
-                    output += ";TES4FormID:" + tes4FormID.Value.ToString() + ";";
+                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
+                {//If type has not been changed
+                    if (TES4FormID != null)
+                    {
+                        output += ";TES4FormID:" + TES4FormID.Value.ToString() + ";";
+                    }
+                    if (tes5FormID != null)
+                    {
+                        output += ";TES5FormID:" + tes5FormID.Value.ToString() + ";";
+                    }
                 }
                 yield return output;
             }

@@ -16,6 +16,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return buildTarget.Name == BuildTargetFactory.QFName;
         }
 
+        public static bool IsTIF(this IBuildTarget buildTarget)
+        {
+            return buildTarget.Name == BuildTargetFactory.TIFName;
+        }
+
         public static string GetRootBuildTargetPath(this IBuildTarget buildTarget)
         {
             return Path.Combine(DataDirectory.GetBuildTargetsPath(), buildTarget.Name) + Path.DirectorySeparatorChar;

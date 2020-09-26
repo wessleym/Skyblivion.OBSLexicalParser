@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.DI
         /*
         * Injects function handlers to value factory, as only two-way link in whole project
         */
-        public static void FillFunctions(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, ESMAnalyzer esmAnalyzer, MetadataLogService metadataLogService)
+        public static void FillFunctions(TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5ReferenceFactory referenceFactory, TES5ObjectPropertyFactory objectPropertyFactory, MetadataLogService metadataLogService, ESMAnalyzer esmAnalyzer)
         {
             DefaultFunctionFactory defaultFunctionFactory = new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory);
             LogUnknownFunctionFactory logUnknownFunctionFactory = new LogUnknownFunctionFactory(objectCallFactory);
@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("addscriptpackage", new AddScriptPackageFactory(referenceFactory, metadataLogService, objectCallFactory));
             valueFactory.AddFunctionFactory("addspell", defaultFunctionFactory);
-            valueFactory.AddFunctionFactory("addtopic", new PopCalledRenameFunctionFactory("Add", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("addtopic", new AddTopicFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("autosave", new AutosaveFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("cast", new CastFactory(objectCallFactory, referenceFactory));
             valueFactory.AddFunctionFactory("clearownership", new ClearOwnershipFactory(objectCallFactory));
@@ -252,7 +252,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("showracemenu", new ShowRaceMenuFactory(objectCallFactory));//WTM:  Change:  Added
             valueFactory.AddFunctionFactory("showspellmaking", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("startcombat", new StartCombatFactory(objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("startconversation", new StartConversationFactory(logUnknownFunctionFactory));
             valueFactory.AddFunctionFactory("startquest", new PopCalledRenameFunctionFactory("Start", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombatalarmonactor", new RenamedFunctionFactory("StopCombatAlarm", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("stopcombat", new StopCombatFactory(objectCallFactory));

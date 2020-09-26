@@ -19,12 +19,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
     class TES5ReferenceFactory
     {
         public const string MESSAGEBOX_VARIABLE_CONST = TES5TypeFactory.TES4Prefix + "_MESSAGEBOX_RESULT";
-        public static readonly Regex ReferenceAndPropertyNameRegex = new Regex(@"([0-9a-zA-Z]+)\.([0-9a-zA-Z]+)", RegexOptions.Compiled);
+        public static readonly Regex ReferenceAndPropertyNameRegex = new Regex(@"([0-9A-Za-z]+)\.([0-9A-Za-z]+)", RegexOptions.Compiled);
         private const string tContainerName = "tContainer";
         private const string tTimerName = "tTimer";
         private const string tGSPLocalTimerName = "tGSPLocalTimer";
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
+        private const string qf_Prefix = "qf_";
+        public const string tif_Prefix = "tif_";
         //Those are used to hook in the internal Skyblivion systems.
         private readonly static Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
         {
@@ -203,7 +205,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     ITES5Type propertyType =
                         typeForNewProperty != null ? typeForNewProperty :
                         GetPropertyTypeAndFormID(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
-                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.Construct(referenceName, propertyType, referenceName, tes4FormID);
+                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.ConstructWithTES4FormID(referenceName, propertyType, referenceName, tes4FormID);
                     globalScope.AddProperty(propertyToAddToGlobalScope);
                     property = propertyToAddToGlobalScope;
                 }
@@ -261,7 +263,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private static TES5FragmentType? GetFragmentType(string edidOrFileNameNoExt)
         {
-            return edidOrFileNameNoExt.StartsWith("qf_") ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith("tif_") ? TES5FragmentType.T_TIF : null;
+            return edidOrFileNameNoExt.StartsWith(qf_Prefix) ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith(tif_Prefix) ? TES5FragmentType.T_TIF : null;
         }
     }
 }

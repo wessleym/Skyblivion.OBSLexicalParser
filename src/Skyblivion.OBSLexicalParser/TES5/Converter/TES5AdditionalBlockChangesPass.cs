@@ -31,8 +31,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         public TES5CodeScope Modify(TES4CodeBlock block, TES5BlockList blockList, TES5FunctionScope blockFunctionScope, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //https://cs.elderscrolls.com/index.php?title=Begin
-            //WTM:  Added:  Change:  I reorganized this method and forced each event to account for the first Oblivion parameter.
-            bool accountedForFirstParameter = false;
+            //WTM:  Change:  Added:  I reorganized this method and forced each event to account for the first Oblivion parameter.
+            bool accountedForParameter = false;
             switch (block.BlockType.ToLower())
             {
                 case "gamemode":
@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     {
                         TES5ComparisonExpression isInMenuModeComparisonExpression = GetIsInMenuModeComparisonExpression();
                         codeScope = SetUpBranch(blockFunctionScope, codeScope, isInMenuModeComparisonExpression);
-                        accountedForFirstParameter = true;//Skyrim handles menus differently than Oblivion's MenuType.
+                        accountedForParameter = true;//Skyrim handles menus differently than Oblivion's MenuType.
                         break;
                     }
 
@@ -63,11 +63,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         TES5ObjectCall function = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "BlockActivation");
                         onInitBlock.AddChunk(function);
                         blockList.Add(onInitBlock);
-                        //WTM:  Added:  Change:  The following scripts erroneously add a parameter to their OnActivate block:
+                        //WTM:  Change:  Added:  The following scripts erroneously add a parameter to their OnActivate block:
                         //MS11BradonCorpse, SE01WaitingRoomScript, SE02LoveLetterScript, SE08Xeddefen03DoorSCRIPT, SE08Xeddefen05DoorSCRIPT, SE32TombEpitaph01SCRIPT, SEHillofSuicidesSCRIPT, SEXidPuzButton1, SEXidPuzButton2, SEXidPuzButton3, SEXidPuzButton4, SEXidPuzButtonSCRIPT, SEXidPuzHungerSCRIPT, XPEbroccaCrematorySCRIPT
                         //But OnActivate does not take a parameter.  I'm trying to use the author's intended parameter instead of just ignoring it.
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akActivateRef", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -75,14 +75,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onactorequip":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, TES5LocalVariableParameterMeaning.CONTAINER, globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onadd":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akNewContainer", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -92,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         codeScope.AddChunk(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Debug, "Trace", new TES5ObjectCallArguments() { new TES5String("This function does not account for OnAlarm's CrimeType or Criminal.") }));
                         ITES5Value isAlarmed = TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                         codeScope = SetUpBranch(blockFunctionScope, codeScope, isAlarmed);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
                 /*
@@ -136,14 +136,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "ondeath":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akKiller", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "ondrop":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akOldContainer", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -151,14 +151,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onunequip":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akActor", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onhit":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akAggressor", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -179,21 +179,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                             newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(hitWithEqualsSource, codeScope)));
                             codeScope = newCodeScope;
                         }
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onmagiceffecthit":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akEffect", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onpackagestart":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akNewPackage", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -202,28 +202,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 case "onpackageend":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akOldPackage", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onsell":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akSeller", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "onstartcombat":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akTarget", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
                 case "ontrigger":
                     {
                         codeScope = SetUpBranch(block, codeScope, blockFunctionScope, "akActivateRef", globalScope, multipleScriptsScope);
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -253,7 +253,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         }
                         newCodeScope.AddChunk(new TES5Branch(new TES5SubBranch(expression, outerBranchCode)));
                         codeScope = newCodeScope;
-                        accountedForFirstParameter = true;
+                        accountedForParameter = true;
                         break;
                     }
 
@@ -270,7 +270,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         throw new InvalidOperationException(block.BlockType + " not found.");
                     }
             }
-            if (!accountedForFirstParameter)
+            if (!accountedForParameter)
             {
                 TES4BlockParameterList? parameterList = block.BlockParameterList;
                 if (parameterList != null && parameterList.Parameters.Any())

@@ -30,6 +30,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.Properties.Add(property);
         }
 
+        public void AddPropertyIfNotExists(TES5Property property)
+        {
+            if (!Properties.Where(p => p.OriginalName == property.OriginalName).Any())
+            {
+                AddProperty(property);
+            }
+        }
+
         public void AddFunction(TES5FunctionCodeBlock functionCodeBlock)
         {
             functions.Add(functionCodeBlock);
@@ -90,7 +98,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 const string name = TES5PlayerReference.PlayerRefName;
                 TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
-                TES5Property property = TES5PropertyFactory.Construct(name, playerType, name, TES5PlayerReference.FormID);
+                TES5Property property = TES5PropertyFactory.ConstructWithTES4FormID(name, playerType, name, TES5PlayerReference.FormID);
                 AddProperty(property);
                 playerRefPropertyAdded = true;
             }

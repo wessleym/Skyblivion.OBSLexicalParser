@@ -1,7 +1,7 @@
 using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.Builds.TIF;
 using Skyblivion.OBSLexicalParser.Commands.Dispatch;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.Service;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -50,6 +50,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             {
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 Transpile(build, buildTracker, buildTargetsAdvanced, threadsNumber);
+                AddTopicBuilderCommand.GenerateINFOAddTopicScripts(buildTargetsAdvanced.ESMAnalyzer, buildTracker, buildTargetsAdvanced.First(t => t.IsTIF()));
                 if (writeTranspiledFilesAndCompile)
                 {
                     WriteTranspiled(buildTargetsAdvanced, buildTracker);
@@ -83,7 +84,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         private static void WriteTranspiled(BuildTargetAdvancedCollection buildTargets, BuildTracker buildTracker)
         {
             ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.Name).Count));
-            //WTM:  Added:  Change:  Transpile QF first since some transpilation will be done while writing.
+            //WTM:  Change:  Added:  Transpile QF first since some transpilation will be done while writing.
             //Types will be inferenced like TES4PublicanBloatedFloatOrmil, and if Standalone gets written first, those files will be incorrect.
             //The below OrderBy statement puts QF first.
             foreach (var buildTarget in buildTargets.OrderBy(bt => !bt.IsQF()))

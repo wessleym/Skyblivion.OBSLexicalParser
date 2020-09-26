@@ -28,14 +28,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             }
         }
 
-        private bool ReferenceAndValueDifferentTypesAndValueIsNonNone()
-        {
-            return !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.value.TES5Type, this.Reference.TES5Type) && !(this.value is TES5None);
-        }
-
         private bool ReferenceIsIntAndValueExtendsForm()
         {
             return this.Reference.TES5Type == TES5BasicType.T_INT && TES5InheritanceGraphAnalyzer.IsExtending(this.value.TES5Type, TES5BasicType.T_FORM);
+        }
+
+        private bool ReferenceIsFloatAndValueIsNumber()
+        {
+            return this.Reference.TES5Type == TES5BasicType.T_FLOAT && this.value.TES5Type == TES5BasicType.T_INT;
+        }
+
+        private bool ReferenceAndValueDifferentTypesAndValueIsNonNone()
+        {
+            return !TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.value.TES5Type, this.Reference.TES5Type) && !(this.value is TES5None);
         }
 
         public IEnumerable<string> Output
@@ -44,10 +49,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             {
                 string referenceOutput = this.Reference.Output.Single();
                 string valueOutput = this.value.Output.Single();
-                if (ReferenceAndValueDifferentTypesAndValueIsNonNone())
+                if (ReferenceAndValueDifferentTypesAndValueIsNonNone() && !ReferenceIsFloatAndValueIsNumber())
                 {
+                    //WTM:  Change:  Added
+                    //This is when the Oblivion code tried to save an actor to a property named "target" in two scripts (DANamiraSpell, DASanguineSpell).
+                    //The property is written but never read.
                     if (ReferenceIsIntAndValueExtendsForm())
-                    {//WTM:  Change:  Added
+                    {
                         valueOutput += ".GetFormID()";
                     }
                     else

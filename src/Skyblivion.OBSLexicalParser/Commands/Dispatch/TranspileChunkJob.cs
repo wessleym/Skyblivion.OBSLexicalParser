@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.Builds;
-using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
@@ -7,8 +6,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
-using Skyblivion.OBSLexicalParser.TES5.Service;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;

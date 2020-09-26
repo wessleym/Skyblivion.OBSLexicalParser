@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory, esmAnalyzer);
             TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, esmAnalyzer);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, esmAnalyzer, metadataLogService);
+            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, metadataLogService, esmAnalyzer);
             TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, typeInferencer);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory);
             chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);

@@ -3,7 +3,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -23,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "SetCombatStyle";
             TES4FunctionArguments functionArguments = function.Arguments;
-            if (functionArguments.Count == 0) { return logUnknownFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope); }
+            if (functionArguments.Count == 0) { return logUnknownFunctionFactory.CreateLogCall(function); }
             TES5ObjectCall getActorBase = this.objectCallFactory.CreateGetActorBase(calledOn);
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(getActorBase, functionName, newArguments);
