@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
                     functionReturnType = "";
                 }
                 if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN FRAGMENT " + this.FunctionScope.BlockName; }
-                yield return functionReturnType + "Function " + this.FunctionScope.BlockName + "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")";
+                yield return functionReturnType + "Function " + this.FunctionScope.BlockName + "(" + string.Join(", ", this.FunctionScope.GetParametersOutput()) + ")";
                 if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN CODE"; }
                 foreach (string o in this.CodeScope.Output) { yield return TES5Script.Indent + o; }
                 if (isQuestFragmentOrTopicFragment) { yield return ";END CODE"; }

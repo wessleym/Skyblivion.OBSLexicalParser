@@ -23,14 +23,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            TES5SignatureParameter? activatorVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
-            if (activatorVariable == null)
+            TES5SignatureParameter? activatorParameter = codeScope.TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+            if (activatorParameter == null)
             {
                 throw new ConversionException("isActionRef called in a context where action ref should not be present");
             }
 
             string dataString = functionArguments[0].StringValue;
-            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activatorVariable), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.CreateReadReference(dataString, globalScope, multipleScriptsScope, localScope));
+            TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activatorParameter), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, this.referenceFactory.CreateReadReference(dataString, globalScope, multipleScriptsScope, localScope));
             return expression;
         }
     }

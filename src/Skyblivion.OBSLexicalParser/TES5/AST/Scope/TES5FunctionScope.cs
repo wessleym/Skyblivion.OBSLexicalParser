@@ -18,11 +18,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         *  This might be the Event"s name, or Function"s name.
         */
         public string BlockName { get; private set; }
-        public Dictionary<string, TES5SignatureParameter> Variables { get; private set; } = new Dictionary<string, TES5SignatureParameter>();
+        private readonly Dictionary<string, TES5SignatureParameter> parameters = new Dictionary<string, TES5SignatureParameter>();
         /*
         * A hashmap to speedup the search
         */
-        private readonly Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter> variablesByMeanings = new Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter>();
+        private readonly Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter> parametersByMeanings = new Dictionary<TES5LocalVariableParameterMeaning, TES5SignatureParameter>();
         /*
         * TES5FunctionScope constructor.
         */
@@ -31,18 +31,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.BlockName = blockName;
         }
 
-        public void AddVariable(TES5SignatureParameter localVariable)
+        public void AddParameter(TES5SignatureParameter parameter)
         {
-            this.Variables.Add(localVariable.Name, localVariable);
-            foreach (TES5LocalVariableParameterMeaning meaning in localVariable.Meanings)
+            this.parameters.Add(parameter.Name, parameter);
+            foreach (TES5LocalVariableParameterMeaning meaning in parameter.Meanings)
             {
                 try
                 {
-                    this.variablesByMeanings.Add(meaning, localVariable);
+                    this.parametersByMeanings.Add(meaning, parameter);
                 }
                 catch (ArgumentException)
                 {
-                    throw new ConversionException("Cannot register variable " + localVariable.Name+ " - it has a meaning " + meaning.Name + " that was already registered before.");
+                    throw new ConversionException("Cannot register parameter " + parameter.Name+ " - it has a meaning " + meaning.Name + " that was already registered before.");
                 }
             }
         }
@@ -52,24 +52,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             this.BlockName = newName;
         }
 
-        public TES5SignatureParameter? GetVariable(string name)
+        public TES5SignatureParameter GetParameter(string name)
         {
-            return this.Variables.GetWithFallbackNullable(name, () => null);
+            return this.parameters[name];
         }
 
-        public IEnumerable<string> GetVariablesOutput()
+        public IEnumerable<TES5SignatureParameter> GetParameters()
+        {
+            return this.parameters.Values;
+        }
+
+        public IEnumerable<string> GetParametersOutput()
         {
             //WTM:  Changed TES5Type to TES5DeclaredType
-            return this.Variables.Values.Select(v => v.TES5DeclaredType.Output.Single() + " " + v.Name);
+            return this.parameters.Values.Select(v => v.TES5DeclaredType.Output.Single() + " " + v.Name);
         }
 
-        public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter? TryGetParameterByMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.variablesByMeanings.GetWithFallbackNullable(meaning, () => null);
+            return this.parametersByMeanings.GetWithFallbackNullable(meaning, () => null);
         }
-        public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter GetParameterByMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.variablesByMeanings[meaning];
+            return this.parametersByMeanings[meaning];
         }
     }
 }

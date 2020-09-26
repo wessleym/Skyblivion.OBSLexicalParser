@@ -45,6 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, TES5TypeFactory.TES4_Prefix, true);
                         TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
                         TES5FunctionScope functionScope = new TES5FunctionScope(fragment0Name);
+                        functionScope.AddParameter(new TES5SignatureParameter("akSpeakerRef", TES5BasicType.T_OBJECTREFERENCE, true));
                         TES5LocalScope localScope = new TES5LocalScope(functionScope);
                         TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScope(localScope);
                         fragment0 = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance, false, true);

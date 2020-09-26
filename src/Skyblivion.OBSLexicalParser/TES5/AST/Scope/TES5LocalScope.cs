@@ -65,16 +65,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
          */
         private IEnumerable<ITES5VariableOrProperty> GetAllVariables()
         {
-            return GetScopeVariables().Cast<ITES5VariableOrProperty>().Concat(this.FunctionScope.Variables.Values);
+            return GetScopeVariables().Cast<ITES5VariableOrProperty>().Concat(this.FunctionScope.GetParameters());
         }
 
-        public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter? TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.FunctionScope.TryGetVariableWithMeaning(meaning);
+            return this.FunctionScope.TryGetParameterByMeaning(meaning);
         }
         public TES5SignatureParameter GetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.FunctionScope.GetVariableWithMeaning(meaning);
+            return this.FunctionScope.GetParameterByMeaning(meaning);
         }
 
         public void CopyVariablesFrom(TES5LocalScope otherScope)

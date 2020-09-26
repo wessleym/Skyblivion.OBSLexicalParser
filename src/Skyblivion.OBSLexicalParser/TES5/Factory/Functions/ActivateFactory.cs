@@ -28,10 +28,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (!functionArguments.Any())
             {
                 TES5ObjectCallArguments constantArgumentForNoFunctionArguments = new TES5ObjectCallArguments();
-                TES5SignatureParameter? meaningVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
-                if (meaningVariable != null)
+                TES5SignatureParameter? parameterByMeaning = codeScope.TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+                if (parameterByMeaning != null)
                 {
-                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(meaningVariable));
+                    constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(parameterByMeaning));
                 }
                 else
                 {

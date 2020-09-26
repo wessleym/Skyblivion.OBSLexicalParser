@@ -15,12 +15,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5SignatureParameter? activatorVariable = codeScope.TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
-            if (activatorVariable == null)
+            TES5SignatureParameter? activatorParameter = codeScope.TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
+            if (activatorParameter == null)
             {
                 throw new ConversionException("getActionRef in non-activator scope found. Cannot convert that one.", expected: true);
             }
-            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activatorVariable);
+            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activatorParameter);
         }
     }
 }

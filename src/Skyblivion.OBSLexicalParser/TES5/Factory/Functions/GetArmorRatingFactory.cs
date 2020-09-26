@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5FunctionCodeBlock functionCodeBlock = new TES5FunctionCodeBlock(new TES5FunctionScope(functionName), TES5CodeScopeFactory.CreateCodeScope(codeScope.LocalScope), TES5BasicType.T_INT, false, false);
             TES5SignatureParameter slotMaskParameter = new TES5SignatureParameter("slotMask", TES5BasicType.T_INT, true);
-            functionCodeBlock.FunctionScope.AddVariable(slotMaskParameter);
+            functionCodeBlock.FunctionScope.AddParameter(slotMaskParameter);
             TES5ObjectCall getWornForm = GetGetWornFormObjectCall(calledOn, TES5ReferenceFactory.CreateReferenceToVariableOrProperty(slotMaskParameter));
             TES5LocalVariable wornFormVariable = new TES5LocalVariable("wornForm", TES5BasicType.T_ARMOR);
             functionCodeBlock.CodeScope.AddVariable(wornFormVariable);

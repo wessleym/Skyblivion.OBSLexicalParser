@@ -169,7 +169,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         {
                             TES5LocalScope localScope = codeScope.LocalScope;
                             ITES5Referencer hitWithCriteria = this.referenceFactory.CreateReadReference(parameterList.Parameters[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
-                            TES5SignatureParameter akSource = localScope.FunctionScope.Variables["akSource"];
+                            TES5SignatureParameter akSource = localScope.FunctionScope.GetParameter("akSource");
                             TES5ComparisonExpression hitWithEqualsSource = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(akSource), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, hitWithCriteria);
                             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
                             if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(TES5BasicType.T_AMMO, hitWithCriteria.TES5Type))

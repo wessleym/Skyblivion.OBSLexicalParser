@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
         }
 
         public override IEnumerable<string> Output =>
-            (new string[] { "Event " + this.BlockName + "(" + string.Join(", ", this.FunctionScope.GetVariablesOutput()) + ")" })
+            (new string[] { "Event " + this.BlockName + "(" + string.Join(", ", this.FunctionScope.GetParametersOutput()) + ")" })
             .Concat(this.CodeScope.Output.Select(o => TES5Script.Indent + o))
             .Concat(new string[] { "EndEvent" });
 

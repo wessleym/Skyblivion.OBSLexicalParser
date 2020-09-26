@@ -89,9 +89,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             {
                 ITES5CodeBlock block = eventBlocks[i];
                 TES5FunctionScope newFunctionScope = new TES5FunctionScope(blockType + "_" + (i + 1).ToString());
-                foreach (var variable in block.FunctionScope.Variables.Values)
+                foreach (var parameter in block.FunctionScope.GetParameters())
                 {
-                    newFunctionScope.AddVariable(variable);
+                    newFunctionScope.AddParameter(parameter);
                 }
 
                 TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, TES5VoidType.Instance, isStandalone, false);
@@ -99,9 +99,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 if (localScopeArguments == null)
                 {
                     localScopeArguments = new TES5ObjectCallArguments();
-                    foreach (var variable in block.FunctionScope.Variables.Values)
+                    foreach (var parameter in block.FunctionScope.GetParameters())
                     {
-                        localScopeArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable));
+                        localScopeArguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(parameter));
                     }
                 }
             }

@@ -13,11 +13,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5FunctionScope localScope = new TES5FunctionScope(fragmentName);
             if (fragmentType == TES5FragmentType.T_TIF)
             {
-                localScope.AddVariable(new TES5SignatureParameter("akSpeakerRef", TES5BasicType.T_OBJECTREFERENCE, true, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }));
+                localScope.AddParameter(new TES5SignatureParameter("akSpeakerRef", TES5BasicType.T_OBJECTREFERENCE, true, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }));
             }
             else if (fragmentType == TES5FragmentType.T_PF)
             {
-                localScope.AddVariable(new TES5SignatureParameter("akActor", TES5BasicType.T_ACTOR, true, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }));
+                localScope.AddParameter(new TES5SignatureParameter("akActor", TES5BasicType.T_ACTOR, true, new TES5LocalVariableParameterMeaning[] { TES5LocalVariableParameterMeaning.ACTIVATOR }));
             }
             return localScope;
         }

@@ -36,9 +36,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.LocalScope.AddVariable(localVariable);
         }
 
-        public TES5SignatureParameter? TryGetVariableWithMeaning(TES5LocalVariableParameterMeaning meaning)
+        public TES5SignatureParameter? TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning meaning)
         {
-            return this.LocalScope.TryGetVariableWithMeaning(meaning);
+            return this.LocalScope.TryGetFunctionParameterByMeaning(meaning);
         }
     }
 }
