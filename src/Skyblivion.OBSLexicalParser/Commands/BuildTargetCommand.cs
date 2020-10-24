@@ -50,7 +50,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
             {
                 BuildTracker buildTracker = new BuildTracker(buildTargets);
                 Transpile(build, buildTracker, buildTargetsAdvanced, threadsNumber);
-                AddTopicBuilderCommand.GenerateINFOAddTopicScripts(buildTargetsAdvanced.ESMAnalyzer, buildTracker, buildTargetsAdvanced.First(t => t.IsTIF()));
                 if (writeTranspiledFilesAndCompile)
                 {
                     WriteTranspiled(buildTargetsAdvanced, buildTracker);
@@ -78,6 +77,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     task.RunTask(errorLog, progressWriter);
                 }
             }
+            AddTopicBuilderCommand.GenerateINFOAddTopicScripts(buildTargets.ESMAnalyzer, buildTracker, buildTargets.First(t => t.IsTIF()));
             progressWriter.WriteLast();
         }
 

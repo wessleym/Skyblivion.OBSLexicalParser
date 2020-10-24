@@ -64,8 +64,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         Nullable<int> globalVariableTES5FormID = globalVariable != null ? globalVariable.Item1 : (Nullable<int>)null;
                         TES5Property topicAddedProperty = TES5PropertyFactory.ConstructWithTES5FormID(globalVariableEditorID, TES5BasicType.T_GLOBALVARIABLE, globalVariableEditorID, globalVariableTES5FormID);
                         infoTIF.GlobalScope.AddPropertyIfNotExists(topicAddedProperty);
-                        TES5ReferenceFactory.CreateReferenceToVariableOrProperty(topicAddedProperty);
-                        fragment0.AddChunk(objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(topicAddedProperty), "SetValueInt", new TES5ObjectCallArguments() { new TES5Integer(1) }));
+                        TES5Reference topicAddedReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(topicAddedProperty);
+                        fragment0.AddChunk(objectCallFactory.CreateObjectCall(topicAddedReference, "SetValueInt", new TES5ObjectCallArguments() { new TES5Integer(1) }));
                     }
                 }
             }

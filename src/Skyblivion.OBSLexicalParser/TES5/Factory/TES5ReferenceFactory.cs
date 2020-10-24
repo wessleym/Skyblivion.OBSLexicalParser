@@ -163,7 +163,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 //propertyType = TES5BasicType.T_FORM;
                 //WTM:  Change:  I commented the above and added the below:
-                if (!referenceName.StartsWith(MessageBoxFactory.MessageBoxPrefix) && referenceName != GetPlayerInSEWorldFactory.SEWorldLocation)
+                if (!referenceName.StartsWith(MessageBoxFactory.MessageBoxPrefix) && referenceName != GetPlayerInSEWorldFactory.SEWorldLocationPropertyName)
                 {
                     var scroData = GetTypeFromSCRO(esmAnalyzer, globalScope.ScriptHeader.EDID, referenceName);
                     if (scroData != null)

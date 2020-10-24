@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
+using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 
 namespace Skyblivion.OBSLexicalParser.DI
@@ -15,6 +16,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             DefaultFunctionFactory defaultFunctionFactory = new DefaultFunctionFactory(objectCallFactory, objectCallArgumentsFactory);
             LogUnknownFunctionFactory logUnknownFunctionFactory = new LogUnknownFunctionFactory(objectCallFactory);
             FillerFactory fillerFactory = new FillerFactory();
+            CellToLocationFinder cellToLocationFinder = new CellToLocationFinder();
             valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("addachievement", fillerFactory);
             valueFactory.AddFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
@@ -78,7 +80,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getgamesetting", new GetGameSettingFactory());
             valueFactory.AddFunctionFactory("getgold", new RenamedFunctionFactory("GetGoldAmount", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getheadingangle", defaultFunctionFactory);
-            valueFactory.AddFunctionFactory("getincell", new GetInCellFactory(objectCallFactory, esmAnalyzer));
+            valueFactory.AddFunctionFactory("getincell", new GetInCellFactory(objectCallFactory, cellToLocationFinder, esmAnalyzer));
             valueFactory.AddFunctionFactory("getinfaction", new RenamedFunctionFactory("IsInFaction", objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getinsamecell", new GetInSameCellFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getinworldspace", new GetInWorldspaceFactory(referenceFactory, objectCallFactory));
@@ -108,7 +110,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getpcissex", new GetPCIsSexFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getpcmiscstat", new GetPCMiscStatFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getplayercontrolsdisabled", new GetPlayerControlsDisabledFactory(objectCallFactory));
-            valueFactory.AddFunctionFactory("getplayerinseworld", new GetPlayerInSEWorldFactory(referenceFactory, objectCallFactory));
+            valueFactory.AddFunctionFactory("getplayerinseworld", new GetPlayerInSEWorldFactory(objectCallFactory, cellToLocationFinder));
             valueFactory.AddFunctionFactory("getpos", new GetPosFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getquestrunning", new PopCalledRenameFunctionFactory("IsRunning", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getrandompercent", new GetRandomPercentFactory(objectCallFactory));
