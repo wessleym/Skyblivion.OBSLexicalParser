@@ -233,7 +233,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         public ITES5Type GetScriptTypeByScriptNameFromCache(string scriptName)
         {
             string scriptNameLower = scriptName.ToLower();
-            ITES5Type value;
+            ITES5Type? value;
             if (ScriptTypes.TryGetValue(scriptNameLower, out value)) { return value; }
             string scriptNameLowerNoPoundSymbols = scriptNameLower.Replace("#", "");
             if (ScriptTypes.TryGetValue(scriptNameLowerNoPoundSymbols, out value)) { return value; }
@@ -310,7 +310,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         public ITES5Type GetScriptTypeByEDID(string edid)
         {
             string edidLower = edid.ToLower();
-            ITES5Type value;
+            ITES5Type? value;
             if (this.edidLowerCache.TryGetValue(edidLower, out value)) { return value; }
             TES4LoadedRecord attachedNameRecord = GetRecordByEDIDAndFollowNAME(edid);
 

@@ -28,15 +28,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             //this.constants = qt.getConstants();
         }
 
-        private static bool Equals(TES5CustomType left, ITES5Type right)
+        private static bool Equals(TES5CustomType left, ITES5Type? right)
         {
             return equatableUtility.Equals(left, right);
         }
-        public bool Equals(ITES5Type other)
+        public bool Equals(ITES5Type? other)
         {
             return Equals(this, other);
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return equatableUtility.Equals(this, obj);
         }

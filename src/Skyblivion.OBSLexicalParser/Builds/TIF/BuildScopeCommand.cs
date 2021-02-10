@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -24,7 +25,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
         public TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string referencesPath = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".references");
+            string? sourceDirectory = Path.GetDirectoryName(sourcePath);
+            if (sourceDirectory == null) { throw new NullableException(nameof(sourceDirectory)); }
+            string referencesPath = Path.Combine(sourceDirectory, scriptName + ".references");
             //Create the header.
             TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, TES5TypeFactory.TES4_Prefix, true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);

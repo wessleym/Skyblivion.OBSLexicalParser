@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Data
 {
-    class OrderableDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+    class OrderableDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull
     {
         private readonly Dictionary<TKey, TValue> dictionary;
         private List<TKey> orderedKeys;

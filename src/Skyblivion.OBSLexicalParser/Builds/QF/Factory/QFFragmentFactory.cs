@@ -1,3 +1,4 @@
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service;
@@ -49,7 +50,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              */
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string aliasesFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".aliases");
+            string? sourceDirectory = Path.GetDirectoryName(sourcePath);
+            if (sourceDirectory == null) { throw new NullableException(nameof(sourceDirectory)); }
+            string aliasesFile = Path.Combine(sourceDirectory, scriptName + ".aliases");
             string[] aliasesLines = File.ReadAllLines(aliasesFile);
             HashSet<string> aliasesDeclared = new HashSet<string>();
             foreach (var alias in aliasesLines)
@@ -191,7 +194,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             //ToLower() is needed for Linux's case-sensitive file system since these files seem to all be lowercase.
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath).ToLower();
-            string stageMapFile = Path.Combine(Path.GetDirectoryName(sourcePath), scriptName + ".map");
+            string? sourceDirectory = Path.GetDirectoryName(sourcePath);
+            if (sourceDirectory == null) { throw new NullableException(nameof(sourceDirectory)); }
+            string stageMapFile = Path.Combine(sourceDirectory, scriptName + ".map");
             string[] stageMapFileLines = File.ReadAllLines(stageMapFile);
             Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
             foreach (var stageMapLine in stageMapFileLines)

@@ -500,7 +500,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES5Referencer calledOnReference = this.CreateCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
             string functionName = function.FunctionCall.FunctionName;
             string functionKey = functionName.ToLower();
-            IFunctionFactory factory;
+            IFunctionFactory? factory;
             if (!this.functionFactories.TryGetValue(functionKey, out factory))
             {
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");

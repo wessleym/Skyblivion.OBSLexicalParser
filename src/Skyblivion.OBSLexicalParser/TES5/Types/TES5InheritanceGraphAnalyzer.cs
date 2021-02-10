@@ -4796,7 +4796,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public static TES5BasicType FindTypeByMethodParameter(TES5BasicType calledOnType, string methodName, int parameterIndex)
         {
-            TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
+            TES5InheritanceFunctionSignature[]? callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType, out callReturnsOfCalledOnType))
             {
                 throw new ConversionException("Inference type exception - no methods found for " + calledOnType.Value+ "!");
@@ -4834,7 +4834,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public static ITES5Type FindReturnTypeForObjectCall(TES5BasicType calledOnType, string methodName)
         {
-            TES5InheritanceFunctionSignature[] callReturnsOfCalledOnType;
+            TES5InheritanceFunctionSignature[]? callReturnsOfCalledOnType;
             if (!callReturns.TryGetValue(calledOnType, out callReturnsOfCalledOnType))
             {
                 //Type not present in inheritance graph, check if its a basic type ( which means its basically an exception )

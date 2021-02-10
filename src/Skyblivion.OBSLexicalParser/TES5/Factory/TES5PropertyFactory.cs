@@ -113,7 +113,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 string variableName = variable.VariableName;
                 string variableNameLower = variableName.ToLower();
                 TES4Type variableType = variable.VariableType;
-                TES4VariableDeclaration alreadyDefinedVariable;
+                TES4VariableDeclaration? alreadyDefinedVariable;
                 if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
                 {
                     if (variableType == alreadyDefinedVariable.VariableType)

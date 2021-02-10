@@ -151,7 +151,7 @@ TES4MessageBoxfb20cb4e657e612e016eea67bb60b10a [MESG:0119402A]";
 
         public string GetEDID(string[] stringArguments)
         {
-            string md5 = messageMD5s.Where(kvp => kvp.Key.SequenceEqual(stringArguments)).Select(kvp => kvp.Value).FirstOrDefault();//WTM:  Added:  See notes on messageEDIDs.
+            string? md5 = messageMD5s.Where(kvp => kvp.Key.SequenceEqual(stringArguments)).Select(kvp => kvp.Value).FirstOrDefault();//WTM:  Added:  See notes on messageEDIDs.
             if (md5 != null)
             {
                 return TES5TypeFactory.TES4Prefix + "MessageBox" + md5;

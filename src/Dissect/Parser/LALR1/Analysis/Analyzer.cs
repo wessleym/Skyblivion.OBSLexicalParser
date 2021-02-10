@@ -266,7 +266,7 @@ namespace Dissect.Parser.LALR1.Analysis
                         int ruleNumber = item.Rule.Number;
                         foreach (var token in item.Lookahead)
                         {
-                            Dictionary<string, bool> errorsOfNum;
+                            Dictionary<string, bool>? errorsOfNum;
                             if (errors.TryGetValue(num, out errorsOfNum) && errorsOfNum.ContainsKey(token))
                             {
                                 // there was a previous conflict resolved as an error

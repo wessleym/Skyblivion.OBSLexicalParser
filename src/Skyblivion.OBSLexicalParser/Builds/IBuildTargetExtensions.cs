@@ -1,4 +1,5 @@
-﻿using Skyblivion.ESReader.PHP;
+﻿using Skyblivion.ESReader.Extensions;
+using Skyblivion.ESReader.PHP;
 using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
@@ -126,7 +127,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
         {
             string graphPath = buildTargets.GetFilePath();
             string serializedGraph = PHPFunction.Serialize(graph);
-            Directory.CreateDirectory(Path.GetDirectoryName(graphPath));
+            string? graphDirectory = Path.GetDirectoryName(graphPath);
+            if (graphDirectory == null) { throw new NullableException(nameof(graphDirectory)); }
+            Directory.CreateDirectory(graphDirectory);
             File.WriteAllText(graphPath, serializedGraph);
         }
 

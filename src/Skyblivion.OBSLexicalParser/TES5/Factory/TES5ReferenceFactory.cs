@@ -150,7 +150,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private ITES5Type GetPropertyTypeAndFormID(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out Nullable<int> tes4FormID)
         {
             tes4FormID = null;
-            ITES5Type specialConversion;
+            ITES5Type? specialConversion;
             if (specialConversions.TryGetValue(referenceName, out specialConversion))
             {
                 return specialConversion;

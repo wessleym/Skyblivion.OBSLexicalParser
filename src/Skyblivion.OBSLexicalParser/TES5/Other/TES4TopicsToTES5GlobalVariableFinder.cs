@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -701,14 +702,14 @@ WeynonPrioryTopic;000247E4;TopicWeynonPrioryAdded;0119564A";
             //string cppString = string.Join("\r\n", cppLines);//The cpp lines are only used to generate code for GECKFrontend.
         }
 
-        public bool TryGetGlobalVariable(int tes4FormID, out Tuple<int, string> globalVariable)
+        public bool TryGetGlobalVariable(int tes4FormID, [NotNullWhen(true)] out Tuple<int, string>? globalVariable)
         {
             return tes4TopicsToTES5GlobalVariables.TryGetValue(tes4FormID, out globalVariable);
         }
 
         public Tuple<int, string>? GetGlobalVariableNullable(int tes4FormID)
         {
-            Tuple<int, string> globalVariable;
+            Tuple<int, string>? globalVariable;
             return TryGetGlobalVariable(tes4FormID, out globalVariable) ? globalVariable : null;
         }
 

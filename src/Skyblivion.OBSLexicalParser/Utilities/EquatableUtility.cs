@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             if (left is null || right is null) { return (left is null) == (right is null); }
             return equalsFunc(left, right);
         }
-        public bool Equals(T left, object obj)
+        public bool Equals(T left, object? obj)
         {
             TBase? baseObj = obj as TBase;
             return !(baseObj is null) ? Equals(left, baseObj) : false;

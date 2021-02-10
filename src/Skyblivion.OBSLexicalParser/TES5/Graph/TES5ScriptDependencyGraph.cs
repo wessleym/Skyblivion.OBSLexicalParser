@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
         {
             string scriptNameLower = scriptName.ToLower();
             List<string> dependencies = new List<string>();
-            List<string> graphOfScriptName;
+            List<string>? graphOfScriptName;
             if (this.Graph.TryGetValue(scriptNameLower, out graphOfScriptName))
             {
                 foreach (var dependencyScript in graphOfScriptName)
@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
                 }
             }
 
-            List<string> usageGraphOfScriptName;
+            List<string>? usageGraphOfScriptName;
             if (this.UsageGraph.TryGetValue(scriptNameLower, out usageGraphOfScriptName))
             {
                 foreach (var usingScript in usageGraphOfScriptName)

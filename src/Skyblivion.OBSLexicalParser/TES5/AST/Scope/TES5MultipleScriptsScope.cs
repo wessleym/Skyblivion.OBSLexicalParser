@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5ScriptHeader? TryGetScriptHeaderOfScript(string scriptName, bool throwException)
         {
-            TES5GlobalScope globalScope;
+            TES5GlobalScope? globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
                 if (throwException)
@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public TES5Property GetPropertyFromScript(string scriptName, string propertyName)
         {
-            TES5GlobalScope globalScope;
+            TES5GlobalScope? globalScope;
             if (!this.globalScopes.TryGetValue(scriptName.ToLower(), out globalScope))
             {
                 throw new ConversionException(nameof(TES5MultipleScriptsScope) + "." + nameof(GetPropertyFromScript) + ": - Cannot find a global scope for script " + scriptName+" - make sure that the multiple scripts scope is built correctly.");
