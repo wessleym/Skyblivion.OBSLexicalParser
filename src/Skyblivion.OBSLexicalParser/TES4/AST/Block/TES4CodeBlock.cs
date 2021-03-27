@@ -7,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
     class TES4CodeBlock : ITES4CodeFilterable
     {
-        public string BlockType { get; private set; }
-        public TES4BlockParameterList? BlockParameterList { get; private set; }
-        public TES4CodeChunks? Chunks { get; private set; }
+        public string BlockType { get; }
+        public TES4BlockParameterList? BlockParameterList { get; }
+        public TES4CodeChunks? Chunks { get; }
         public TES4CodeBlock(string blockType, TES4BlockParameterList? blockParameterList = null, TES4CodeChunks? chunks = null)
         {
             this.BlockType = blockType;

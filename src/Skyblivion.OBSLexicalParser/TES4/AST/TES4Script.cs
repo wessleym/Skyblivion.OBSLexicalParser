@@ -9,9 +9,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST
 {
     class TES4Script : ITES4CodeFilterable
     {
-        public TES4ScriptHeader ScriptHeader { get; private set; }
-        public TES4VariableDeclarationList? VariableDeclarationList { get; private set; }
-        public TES4BlockList? BlockList { get; private set; }
+        public TES4ScriptHeader ScriptHeader { get; }
+        public TES4VariableDeclarationList? VariableDeclarationList { get; }
+        public TES4BlockList? BlockList { get; }
         public TES4Script(TES4ScriptHeader scriptHeader, TES4VariableDeclarationList? declarationList = null, TES4BlockList? blockList = null)
         {
             this.ScriptHeader = scriptHeader;

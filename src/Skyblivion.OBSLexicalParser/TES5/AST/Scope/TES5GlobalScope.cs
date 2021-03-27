@@ -11,8 +11,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 {
     class TES5GlobalScope : ITES5Outputtable
     {
-        public TES5ScriptHeader ScriptHeader { get; private set; }
-        public List<TES5Property> Properties { get; private set; } = new List<TES5Property>();
+        public TES5ScriptHeader ScriptHeader { get; }
+        public List<TES5Property> Properties { get; } = new List<TES5Property>();
         private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
         private bool playerRefPropertyAdded = false;
         public bool QuestHasOnUpdateRegisterForSingleUpdate;

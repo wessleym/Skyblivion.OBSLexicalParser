@@ -12,8 +12,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
      */
     class TES5CodeScope : ITES5Outputtable
     {
-        public TES5CodeChunkCollection CodeChunks { get; private set; } = new TES5CodeChunkCollection();
-        public TES5LocalScope LocalScope { get; private set; }
+        public TES5CodeChunkCollection CodeChunks { get; } = new TES5CodeChunkCollection();
+        public TES5LocalScope LocalScope { get; }
         public TES5CodeScope(TES5LocalScope localScope)
         {
             this.LocalScope = localScope;

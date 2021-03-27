@@ -7,8 +7,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
     class TES4VariableAssignation : ITES4CodeChunk
     {
-        public ITES4Reference Reference { get; private set; }
-        public ITES4Value Value { get; private set; }
+        public ITES4Reference Reference { get; }
+        public ITES4Value Value { get; }
         public TES4VariableAssignation(ITES4Reference reference, ITES4Value value)
         {
             this.Reference = reference;

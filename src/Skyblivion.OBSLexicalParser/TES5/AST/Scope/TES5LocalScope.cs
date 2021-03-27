@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
      */
     class TES5LocalScope : ITES5Outputtable
     {
-        public TES5FunctionScope FunctionScope { get; private set; }
+        public TES5FunctionScope FunctionScope { get; }
         public TES5LocalScope? ParentScope { get; set; }
         private readonly List<TES5LocalVariable> localVariables = new List<TES5LocalVariable>();
         /*

@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
     class TES4BlockParameterList : ITES4CodeFilterable
     {
-        public List<TES4BlockParameter> Parameters { get; private set; } = new List<TES4BlockParameter>();
+        public List<TES4BlockParameter> Parameters { get; } = new List<TES4BlockParameter>();
         public void Add(TES4BlockParameter parameter)
         {
             this.Parameters.Add(parameter);

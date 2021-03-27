@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
     class StageMap
     {
         private readonly OrderableDictionary<int, List<int>> stageMap =  new OrderableDictionary<int, List<int>>();
-        public Dictionary<int, List<int>> MappedTargetsIndex { get; private set; } = new Dictionary<int, List<int>>();
+        public Dictionary<int, List<int>> MappedTargetsIndex { get; } = new Dictionary<int, List<int>>();
         public StageMap(IDictionary<int, List<int>> stageMapUnordered)
         {
             stageMap = new OrderableDictionary<int, List<int>>(stageMapUnordered);

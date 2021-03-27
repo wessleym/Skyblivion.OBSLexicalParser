@@ -7,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5StateCodeBlock : TES5CodeBlock
     {
-        public string Name { get; private set; }
-        public bool Auto { get; private set; }
-        public TES5BlockList CodeBlocks { get; private set; }
+        public string Name { get; }
+        public bool Auto { get; }
+        public TES5BlockList CodeBlocks { get; }
         public TES5StateCodeBlock(string name, bool auto, TES5FunctionScope functionScope, TES5CodeScope codeScope)
         {
             this.Name = name;

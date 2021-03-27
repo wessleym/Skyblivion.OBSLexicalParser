@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5Integer : TES5IntegerOrFloat
     {
-        public int IntValue { get; private set; }
+        public int IntValue { get; }
         public TES5Integer(int integer)
         {
             this.IntValue = integer;

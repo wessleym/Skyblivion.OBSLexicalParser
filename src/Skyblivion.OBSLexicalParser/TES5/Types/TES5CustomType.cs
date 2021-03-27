@@ -50,7 +50,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             return hashCode;
         }
 
-        public string Value { get; private set; }
+        public string Value { get; }
 
         public IEnumerable<string> Output
         {
@@ -69,6 +69,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public bool AllowNativeTypeInference => true;
 
-        public string OriginalName { get; private set; }
+        public string OriginalName { get; }
     }
 }

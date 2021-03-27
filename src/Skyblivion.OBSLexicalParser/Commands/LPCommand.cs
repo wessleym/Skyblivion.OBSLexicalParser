@@ -6,9 +6,9 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     public abstract class LPCommand
     {
-        public string CommandName { get; private set; }
-        public string FriendlyName { get; private set; }
-        public string? Description { get; private set; }
+        public string CommandName { get; }
+        public string FriendlyName { get; }
+        public string? Description { get; }
         protected LPCommandInput Input = new LPCommandInput();
         protected LPCommand(string commandName, string friendlyName, string? description)
         {

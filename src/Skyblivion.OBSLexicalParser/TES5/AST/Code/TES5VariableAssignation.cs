@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
     class TES5VariableAssignation : ITES5ValueCodeChunk
     {
-        public ITES5Value Reference { get; private set; }
+        public ITES5Value Reference { get; }
         private readonly ITES5Value value;
         public TES5VariableAssignation(ITES5Value reference, ITES5Value value)
         {

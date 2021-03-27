@@ -11,15 +11,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
     class TES5Property : ITES5VariableOrProperty
     {
         private const string PROPERTY_SUFFIX = "_p";
-        public string OriginalName { get; private set; }
-        public bool AllowNameTransformation { get; private set; }
+        public string OriginalName { get; }
+        public bool AllowNameTransformation { get; }
         public string Name { get; private set; }
         private ITES5Type propertyType; //If we"re tracking a script, this won"t be used anymore
         private readonly ITES5Type originalPropertyType;
-        public string? ReferenceEDID { get; private set; }
-        public bool IsPlayerRef { get; private set; }
+        public string? ReferenceEDID { get; }
+        public bool IsPlayerRef { get; }
         private TES5ScriptHeader? trackedScript;
-        public Nullable<int> TES4FormID { get; private set; }
+        public Nullable<int> TES4FormID { get; }
         private readonly Nullable<int> tes5FormID;
 
         public TES5Property(string name, ITES5Type propertyType, string? referenceEDID, Nullable<int> tes4FormID, Nullable<int> tes5FormID)

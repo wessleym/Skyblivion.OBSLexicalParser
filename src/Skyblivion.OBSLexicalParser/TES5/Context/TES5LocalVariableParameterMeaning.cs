@@ -2,7 +2,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Context
 {
     class TES5LocalVariableParameterMeaning
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         private TES5LocalVariableParameterMeaning(string name)
         {
             Name = name;

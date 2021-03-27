@@ -9,9 +9,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
     class TES4ArithmeticExpression : ITES4BinaryExpression
     {
-        public ITES4Value LeftValue { get; private set; }
+        public ITES4Value LeftValue { get; }
         private readonly TES4ArithmeticExpressionOperator op;
-        public ITES4Value RightValue { get; private set; }
+        public ITES4Value RightValue { get; }
         public TES4ArithmeticExpression(ITES4Value left, TES4ArithmeticExpressionOperator op, ITES4Value right)
         {
             this.LeftValue = left;

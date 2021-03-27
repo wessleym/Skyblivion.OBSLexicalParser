@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
     class TES5LocalVariable : ITES5VariableOrProperty
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         public ITES5Type TES5Type { get; set; }
         public TES5LocalVariable(string nameWithSuffix, TES5BasicType type)
         {

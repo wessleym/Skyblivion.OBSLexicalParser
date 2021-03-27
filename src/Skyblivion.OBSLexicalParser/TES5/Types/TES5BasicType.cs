@@ -8,8 +8,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5BasicType : ITES5Type
     {
-        public string Name { get; private set; }
-        public bool AllowInference { get; private set; }
+        public string Name { get; }
+        public bool AllowInference { get; }
         public bool AllowNativeTypeInference => AllowInference;
         protected TES5BasicType(string name, bool allowInference = true)
         {

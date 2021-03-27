@@ -4,9 +4,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
 {
     class QuestStageScript//WTM:  Added:  For ordering stages in PSC output
     {
-        public TES5Target Script { get; private set; }
-        public int Stage { get; private set; }
-        public int LogIndex { get; private set; }
+        public TES5Target Script { get; }
+        public int Stage { get; }
+        public int LogIndex { get; }
         public QuestStageScript(TES5Target script, int stage, int logIndex)
         {
             this.Script = script;

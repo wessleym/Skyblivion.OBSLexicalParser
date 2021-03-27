@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTarget : IBuildTarget
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         private readonly string filePrefix;
         private readonly Build build;
         public BuildTarget(string name, string filePrefix, Build build)

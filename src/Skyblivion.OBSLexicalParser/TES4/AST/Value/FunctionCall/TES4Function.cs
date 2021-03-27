@@ -7,8 +7,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
     class TES4Function : ITES4Callable, ITES4Value, ITES4CodeChunk
     {
-        public TES4FunctionCall FunctionCall { get; private set; }
-        public TES4FunctionArguments Arguments { get; private set; }
+        public TES4FunctionCall FunctionCall { get; }
+        public TES4FunctionArguments Arguments { get; }
         public TES4Function(TES4FunctionCall functionCall, TES4FunctionArguments arguments)
         {
             this.FunctionCall = functionCall;

@@ -4,7 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Types
 {
     class TES4Type
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         private TES4Type(string name)
         {
             this.Name = name;

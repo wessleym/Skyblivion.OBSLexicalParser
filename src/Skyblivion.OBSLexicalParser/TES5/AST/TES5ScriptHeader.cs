@@ -8,12 +8,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
     class TES5ScriptHeader : ITES5Outputtable
     {
-        public string OriginalScriptName { get; private set; }
-        public string EscapedScriptName { get; private set; }
-        public ITES5Type ScriptType { get; private set; }
+        public string OriginalScriptName { get; }
+        public string EscapedScriptName { get; }
+        public ITES5Type ScriptType { get; }
         private readonly string scriptNamePrefix;
         private readonly bool isHidden;
-        public string EDID { get; private set; }
+        public string EDID { get; }
         public TES5ScriptHeader(string scriptName, ITES5Type type, string scriptNamePrefix, bool isHidden)
         {
             this.OriginalScriptName = scriptName;

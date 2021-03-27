@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
     class TES5SubBranch
     {
         private readonly ITES5Value expression;
-        public TES5CodeScope CodeScope { get; private set; }
+        public TES5CodeScope CodeScope { get; }
         public TES5SubBranch(ITES5Value expression, TES5CodeScope codeScope)
         {
             this.expression = expression;

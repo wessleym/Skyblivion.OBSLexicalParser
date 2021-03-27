@@ -5,7 +5,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5String : ITES5Primitive
     {
-        public string StringValue { get; private set; }
+        public string StringValue { get; }
         public TES5String(string str)
         {
             if (!str.StartsWith("\"")) { str = "\"" + str; }

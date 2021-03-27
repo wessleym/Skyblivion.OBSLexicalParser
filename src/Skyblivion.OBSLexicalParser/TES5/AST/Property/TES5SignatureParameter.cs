@@ -14,9 +14,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      */
     class TES5SignatureParameter : ITES5VariableOrProperty
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         public ITES5Type TES5Type { get; set; }
-        public TES5LocalVariableParameterMeaning[] Meanings { get; private set; }
+        public TES5LocalVariableParameterMeaning[] Meanings { get; }
 
         private readonly bool hasFixedDeclaration;
         private readonly ITES5Type declarationType;

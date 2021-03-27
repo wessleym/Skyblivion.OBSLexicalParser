@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5BlockList : ITES5Outputtable, IEnumerable<ITES5CodeBlock>
     {
-        public List<ITES5CodeBlock> Blocks { get; private set; } = new List<ITES5CodeBlock>();
+        public List<ITES5CodeBlock> Blocks { get; } = new List<ITES5CodeBlock>();
 
         public IEnumerable<string> Output => Blocks.SelectMany(b => b.Output);
 

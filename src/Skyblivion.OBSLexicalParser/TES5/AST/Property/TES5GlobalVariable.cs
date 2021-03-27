@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      */
     class TES5GlobalVariable
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public TES5GlobalVariable(string name)
         {

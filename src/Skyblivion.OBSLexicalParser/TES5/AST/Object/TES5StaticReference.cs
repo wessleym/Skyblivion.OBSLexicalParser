@@ -8,7 +8,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5StaticReference : ITES5Referencer
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         public TES5StaticReference(string name)
         {
             this.Name = name;

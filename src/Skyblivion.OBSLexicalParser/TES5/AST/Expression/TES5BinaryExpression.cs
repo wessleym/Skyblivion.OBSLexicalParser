@@ -8,9 +8,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
 {
     abstract class TES5BinaryExpression<T> : ITES5Expression where T : TES5ExpressionOperator
     {
-        protected ITES5Value LeftValue { get; private set; }
+        protected ITES5Value LeftValue { get; }
         private readonly T op;
-        protected ITES5Value RightValue { get; private set; }
+        protected ITES5Value RightValue { get; }
         public TES5BinaryExpression(ITES5Value leftValue, T op, ITES5Value rightValue)
         {
             this.LeftValue = leftValue;

@@ -9,8 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
     //But if this class does not implement ITES4StringValue, exceptions are thrown in TES4ObscriptCodeGrammar.
     class TES4ObjectCall : ITES4Callable, ITES4CodeChunk, ITES4StringValue
     {
-        public TES4ApiToken CalledOn { get; private set; }
-        public TES4Function Function { get; private set; }
+        public TES4ApiToken CalledOn { get; }
+        public TES4Function Function { get; }
         public TES4ObjectCall(TES4ApiToken apiToken, TES4Function function)
         {
             this.CalledOn = apiToken;

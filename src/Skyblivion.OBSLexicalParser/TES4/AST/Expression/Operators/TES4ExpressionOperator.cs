@@ -2,7 +2,7 @@
 {
     class TES4ExpressionOperator
     {
-        public string Name { get; private set; }
+        public string Name { get; }
         protected TES4ExpressionOperator(string name)
         {
             Name = name;

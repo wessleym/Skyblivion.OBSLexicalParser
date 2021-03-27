@@ -7,7 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5ObjectProperty : TES5Castable, ITES5Referencer, ITES5ObjectAccess
     {
-        public ITES5Referencer AccessedObject { get; private set; }
+        public ITES5Referencer AccessedObject { get; }
         private readonly TES5Property property;
         public TES5ObjectProperty(ITES5Referencer objectReference, TES5Property property)
         {

@@ -2,9 +2,9 @@
 {
     class TES5InheritanceFunctionSignature
     {
-        public string Name { get; private set; }
-        public TES5BasicType[] Arguments { get; private set; }
-        public ITES5Type ReturnType { get; private set; }
+        public string Name { get; }
+        public TES5BasicType[] Arguments { get; }
+        public ITES5Type ReturnType { get; }
         public TES5InheritanceFunctionSignature(string name, TES5BasicType[] arguments, ITES5Type returnType)
         {
             Name = name;

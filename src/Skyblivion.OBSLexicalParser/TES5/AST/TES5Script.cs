@@ -7,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
     class TES5Script : ITES5Outputtable
     {
-        public TES5ScriptHeader ScriptHeader { get; private set; }
-        public TES5GlobalScope GlobalScope { get; private set; }
-        public TES5BlockList BlockList { get; private set; }
+        public TES5ScriptHeader ScriptHeader { get; }
+        public TES5GlobalScope GlobalScope { get; }
+        public TES5BlockList BlockList { get; }
         private readonly bool isQuestOrTopicInfo;
         public const string Indent = "    ";
         public TES5Script(TES5GlobalScope globalScope, TES5BlockList blockList, bool isQuestOrTopicInfo)

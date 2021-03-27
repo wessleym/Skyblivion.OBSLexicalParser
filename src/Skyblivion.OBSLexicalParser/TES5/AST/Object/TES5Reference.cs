@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5Reference : TES5Castable, ITES5Referencer
     {
-        public ITES5VariableOrProperty ReferencesTo { get; private set; }
+        public ITES5VariableOrProperty ReferencesTo { get; }
         public TES5Reference(ITES5VariableOrProperty referencesTo)
         {
             this.ReferencesTo = referencesTo;

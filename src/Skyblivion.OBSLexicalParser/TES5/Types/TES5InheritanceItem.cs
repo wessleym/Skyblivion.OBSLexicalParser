@@ -5,8 +5,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
     class TES5InheritanceItem
     {
-        public TES5BasicType? ParentType { get; private set; }
-        public TES5InheritanceItemCollection Items { get; private set; }
+        public TES5BasicType? ParentType { get; }
+        public TES5InheritanceItemCollection Items { get; }
         public TES5InheritanceItem(TES5BasicType? parentType, IEnumerable<TES5InheritanceItem> items)
         {
             this.ParentType = parentType;
