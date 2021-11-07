@@ -33,6 +33,7 @@ namespace Dissect.Lexer
         protected virtual void ResetStatesForNewString() { }
         public ArrayTokenStream Lex(string str)
         {
+            Line = 1;//WTM:  Fixed
             ResetStatesForNewString();
             // normalize line endings
             str = str.Replace("\r\n", "\n").Replace("\r", "\n");

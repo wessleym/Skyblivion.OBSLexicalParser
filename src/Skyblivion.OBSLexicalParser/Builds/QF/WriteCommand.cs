@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {
@@ -28,7 +29,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
              * through it too ( just with empty subfragments trees ), to generate the objective handlings
              */
             string sourcePath = target.GetSourcePath();
-            foreach (var mapFilePath in Directory.EnumerateFiles(sourcePath, "*.map"))
+            foreach (var mapFilePath in
+                Directory.EnumerateFiles(sourcePath, "*.map")
+                .Concat(Directory.EnumerateFiles(sourcePath, "*.map2")))
             {
                 string mapFileName = Path.GetFileNameWithoutExtension(mapFilePath);
                 jointScripts.AddNewListIfNotContainsKey(mapFileName);

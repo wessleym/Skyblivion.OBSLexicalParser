@@ -19,7 +19,6 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 
         protected abstract OBScriptLexer GetLexer();
         protected abstract SyntaxErrorCleanParser GetParser();
-
         public T Parse(string scriptPath)
         {
             OBScriptLexer lexer = this.lexerLazy.Value;

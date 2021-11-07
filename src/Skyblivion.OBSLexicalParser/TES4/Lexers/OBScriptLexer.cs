@@ -1,6 +1,7 @@
 #define INCLUDE_LEXER_FIXES
 using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Lexers
@@ -188,57 +189,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
             this.AddCommentsRecognition();
         }
 
-        private static readonly Regex getStartingPosOrAngleUnquotedArguments = new Regex("(getstartingpos|getstartingangle) (x|y|z)", RegexOptions.Compiled);
-        private static string FixScriptErrors(string str)
-        {
-            //WTM:  Change:  In tif__0101efc0 and other TGExpelledScripts, PayFine gets misunderstood as a function call instead of a variable.
-            str = str.Replace("TGExpelled.PayFine", "TGExpelled.PayFineTemp");
-            //WTM:  Change:  In tgcastout, the below replacement must be made to accomodate for the above change.
-            if (str.StartsWith("ScriptName TGCastOut"))
-            {
-                str = str.Replace("Float PayFine", "Float PayFineTemp");
-            }
-            //WTM:  Change:  In darkperenniaghostscript, Disable gets misunderstood as a function call instead of a variable.
-            if (str.StartsWith("Scriptname DarkPerenniaGhostScript"))
-            {
-                str = str.Replace("Disable", "DisableTemp");
-            }
-            //WTM:  Change:  In blade3script, Look gets misunderstood as a function call instead of a variable.
-            if (str.StartsWith("Scriptname Blade3Script"))
-            {
-                str = str
-                    .Replace("short Look", "short LookTemp")
-                    .Replace("if Look == ", "if LookTemp == ")
-                    .Replace("set Look to ", "set LookTemp to ");
-            }
-            //WTM:  Change:  In qf_tg03elven_01034ea2_100_0, a variable is apparently accidentally quoted.
-            if (str.Contains("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\""))
-            {
-                str = str.Replace("TG03LlathasasBustMarker.PlaceAtMe \"TG03LlathasasBust\"", "TG03LlathasasBustMarker.PlaceAtMe TG03LlathasasBust");
-            }
-            //WTM:  Change:  In sebruscusdannusitemscript, getstartingpos's arguments are not quoted.
-            if (str.StartsWith("scn SEBruscusDannusItemSCRIPT"))
-            {
-                str = getStartingPosOrAngleUnquotedArguments.Replace(str, "$1 \"$2\"");
-            }
-            //WTM:  Change:  In DABoethiaCageOpenScript01, a variable gets declared as "Short Salutation" which conflicts with a Topic named Salutation.
-            //This page shows the Topic named Salutation, which is apparently set based on the player's race:  http://jpmod.oblivion.z49.org/?Vanilla%2FDialogue%2FDABoethia
-            if (str.StartsWith("scriptName DABoethiaCageOpenScript01"))
-            {
-                str = str.Replace("Short Salutation", "Short SalutationInt").Replace("set salutation to ", "set SalutationInt to ").Replace("Salutation == 1", "SalutationInt == 1");
-            }
-            //WTM:  Change:  In HackdirtMoslinsInnBedScript, an integer (1) is stored in a variable that previously stored an actor.
-            //Since 1 is meant only to prevent the code from running again, I'm instead going to store a reference to HackdirtBrethren01.
-            if (str.StartsWith("scn HackdirtMoslinsInnBedScript"))
-            {
-                str = str.Replace("set attackRef to 1", "set attackRef to HackdirtBrethren01");
-            }
-            return str;
-        }
-
         public ArrayTokenStream LexWithFixes(string str)
         {
-            str = FixScriptErrors(str);
+            str = OBScriptFixer.FixScriptErrors(str);
             ArrayTokenStream tokens = Lex(str);
             return tokens;
         }

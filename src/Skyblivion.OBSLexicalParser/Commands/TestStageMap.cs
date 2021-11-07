@@ -22,22 +22,10 @@ namespace Skyblivion.OBSLexicalParser.Commands
             if (!PreExecutionChecks(false, true, false, false)) { return; }
             Build build = new Build(Build.DEFAULT_BUILD_PATH);
             BuildTarget buildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, build);
-            Dictionary<int, List<int>> originalStageMap = QFFragmentFactory.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713");
-            StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()));//Copy dictionary
-            StringBuilder output = new StringBuilder();
-            foreach (var stageId in stageMap.StageIDs)
-            {
-                output.AppendLine(stageId.ToString()+" - "+string.Join(" ", originalStageMap[stageId]));
-                output.Append(stageId.ToString()+" -");
-                List<int> map = stageMap.GetStageTargetsMap(stageId);
-                foreach (var val in map)
-                {
-                    output.Append(" " + val);
-                }
-
-                output.AppendLine();
-            }
-
+            bool preprocessed;
+            Dictionary<int, List<int>> originalStageMap = StageMapFromMAPBuilder.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713", out preprocessed);
+            StageMap stageMap = new StageMap(originalStageMap.ToDictionary(m => m.Key, m => m.Value.ToList()), preprocessed);//Copy dictionary
+            StringBuilder output = new StringBuilder(StageMapToMAPBuilder.GetContents(stageMap, originalStageMap));
             output.Append("Mapping index print");
             foreach (var kvp in stageMap.MappedTargetsIndex)
             {

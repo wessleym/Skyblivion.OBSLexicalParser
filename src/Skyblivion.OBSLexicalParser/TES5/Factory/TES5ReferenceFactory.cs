@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private const string tGSPLocalTimerName = "tGSPLocalTimer";
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
-        private const string qf_Prefix = "qf_";
+        public const string qf_Prefix = "qf_";
         public const string tif_Prefix = "tif_";
         //Those are used to hook in the internal Skyblivion systems.
         private readonly static Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
@@ -226,8 +226,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateReference(referenceName, null, tes4ReferenceNameForType, globalScope, multipleScriptsScope, localScope);
         }
 
-        private readonly static Regex fileNameRE = new Regex(@"(qf|tif)_[A-Za-z0-9]*_([0-9a-f]+)(_([0-9]+)_[0-9]+)?", RegexOptions.Compiled);
-        private static Tuple<int, Nullable<int>> GetTES4FormIDAndIndex(string fileNameNoExt, TES5FragmentType fragmentType)
+        private readonly static Regex fileNameRE = new Regex(@"(qf|tif)_[A-Za-z0-9]*_([0-9a-f]+)(_([0-9]+)_([0-9]+))?", RegexOptions.Compiled);
+        private static Tuple<int, StageIndexAndLogIndex?> GetTES4FormIDStageIndexAndLogIndex(string fileNameNoExt, TES5FragmentType fragmentType)
         {
             Match fileNameMatch = fileNameRE.Match(fileNameNoExt);
             if (!fileNameMatch.Success)
@@ -235,19 +235,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 throw new ConversionException(fileNameNoExt + " did not match pattern.");
             }
             string scriptTES5FormIDHex = fileNameMatch.Groups[2].Value;
-            Nullable<int> index = null;
+            StageIndexAndLogIndex? stageIndexAndLogIndex = null;
             if (fragmentType == TES5FragmentType.T_QF)
             {
-                index = int.Parse(fileNameMatch.Groups[4].Value);
+                stageIndexAndLogIndex = new StageIndexAndLogIndex(int.Parse(fileNameMatch.Groups[4].Value), int.Parse(fileNameMatch.Groups[5].Value));
             }
             int scriptTES4FormID = Convert.ToInt32(scriptTES5FormIDHex, 16) - 0x01000000;
-            return new Tuple<int, Nullable<int>>(scriptTES4FormID, index);
+            return new Tuple<int, StageIndexAndLogIndex?>(scriptTES4FormID, stageIndexAndLogIndex);
         }
 
         public static Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(ESMAnalyzer esmAnalyzer, string fileNameNoExt, TES5FragmentType fragmentType)
         {
-            Tuple<int, Nullable<int>> formIDAndIndex = GetTES4FormIDAndIndex(fileNameNoExt, fragmentType);
-            return esmAnalyzer.GetTypesFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2);
+            Tuple<int, StageIndexAndLogIndex?> formIDStageIndexAndLogIndex = GetTES4FormIDStageIndexAndLogIndex(fileNameNoExt, fragmentType);
+            return esmAnalyzer.GetTypesFromSCRO(formIDStageIndexAndLogIndex.Item1, formIDStageIndexAndLogIndex.Item2);
         }
 
         private static Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(ESMAnalyzer esmAnalyzer, string edidOrFileNameNoExt, string propertyName)
@@ -255,8 +255,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES5FragmentType? fragmentType = GetFragmentType(edidOrFileNameNoExt);
             if (fragmentType != null)
             {
-                Tuple<int, Nullable<int>>? formIDAndIndex = GetTES4FormIDAndIndex(edidOrFileNameNoExt, fragmentType);
-                return esmAnalyzer.GetTypeFromSCRO(formIDAndIndex.Item1, formIDAndIndex.Item2, propertyName);
+                Tuple<int, StageIndexAndLogIndex?> formIDStageIndexAndLogIndex = GetTES4FormIDStageIndexAndLogIndex(edidOrFileNameNoExt, fragmentType);
+                return esmAnalyzer.GetTypeFromSCRO(formIDStageIndexAndLogIndex.Item1, formIDStageIndexAndLogIndex.Item2, propertyName);
             }
             return esmAnalyzer.GetTypeFromSCRO(edidOrFileNameNoExt, propertyName);
         }

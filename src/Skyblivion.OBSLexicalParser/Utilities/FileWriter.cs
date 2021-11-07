@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Utilities
 {
-    public static class FileTransfer
+    public static class FileWriter
     {
         public static void CopyDirectoryFiles(string sourceDirectory, string destinationDirectory, bool overwrite)
         {
@@ -24,10 +24,29 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             }
             foreach (string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
             {
-                DirectoryInfo sourceSubDirectory = new DirectoryInfo(sourceSubDirectoryPath);
-                string destinationSubDirectoryPath = Path.Combine(destinationDirectory, sourceSubDirectory.Name) + Path.DirectorySeparatorChar;
+                string destinationSubDirectoryPath = Path.Combine(destinationDirectory, Path.GetFileName(sourceSubDirectoryPath)) + Path.DirectorySeparatorChar;
                 CopyDirectoryFiles(sourceSubDirectoryPath + Path.DirectorySeparatorChar, destinationSubDirectoryPath, overwrite);
             }
+        }
+
+        public static void WriteAllTextOrThrowIfExists(string filePath, string contents)
+        {
+            using (FileStream stream = new FileStream(filePath, FileMode.CreateNew))
+            {
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
+                    writer.Write(contents);
+                }
+            }
+        }
+
+        public static void WriteAllTextIfNotExists(string filePath, string contents)
+        {
+            try
+            {
+                WriteAllTextOrThrowIfExists(filePath, contents);
+            }
+            catch (IOException) { }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 
         public T ParseOrGetFromCache(string scriptPath)
         {
-            return parsingCache.GetOrAdd(scriptPath, () => (T)Parse(scriptPath));
+            return parsingCache.GetOrAdd(scriptPath, () => Parse(scriptPath));
         }
     }
 }

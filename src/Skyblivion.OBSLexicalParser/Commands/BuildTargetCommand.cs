@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("buildPath", "Build folder", Build.DEFAULT_BUILD_PATH));
         }
 
-        public void Execute(IList<LPCommandArgument> input)
+        public void Execute(IReadOnlyList<LPCommandArgument> input)
         {
             string targets = LPCommandArgumentOrOption.GetValue(input, "targets");
             int threadsNumber = int.Parse(LPCommandArgumentOrOption.GetValue(input, "threadsNumber"), CultureInfo.InvariantCulture);
@@ -57,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
             if (writeTranspiledFilesAndCompile)
             {
-                PrepareWorkspace(buildTargets);
+                PrepareWorkspace(build, buildTargets);
                 Compile(build, buildTargetsSimple);
                 Console.WriteLine("Build Complete");
             }
@@ -94,15 +94,15 @@ namespace Skyblivion.OBSLexicalParser.Commands
             progressWriter.WriteLast();
         }
 
-        private static void PrepareWorkspace(IList<BuildTarget> buildTargets)
+        private static void PrepareWorkspace(Build build, IReadOnlyList<BuildTarget> buildTargets)
         {
-            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
-            PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
+            ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", (buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget)+1);
+            PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(build, buildTargets);
             prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
-        private static void Compile(Build build, IList<BuildTargetSimple> buildTargets)
+        private static void Compile(Build build, IReadOnlyList<BuildTargetSimple> buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.Run();

@@ -9,7 +9,6 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter

@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails.
             //The below two lines works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
-            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].Type== EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }
+            if (firstTwoTokens.Length == 1 && firstTwoTokens[0].Type == EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }//File is just a comment.
             try
             {
                 return Parse(stream);

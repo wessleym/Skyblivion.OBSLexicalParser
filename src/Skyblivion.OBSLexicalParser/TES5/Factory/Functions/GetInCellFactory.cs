@@ -48,8 +48,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 {
                     TES5ObjectCall getParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
                     TES5ObjectCall getParentCellName = this.objectCallFactory.CreateObjectCall(getParentCell, "GetName");
-                    TES4LoadedRecord cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellEditorID);
-                    string? cellNameWithSpaces = cellRecord.GetSubrecordTrimNullable("FULL");
+                    TES4Record cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellEditorID);
+                    string? cellNameWithSpaces = cellRecord.TryGetSubrecordTrim("FULL");
                     if (cellNameWithSpaces == null || cellNameWithSpaces.IndexOf("Dummy", StringComparison.OrdinalIgnoreCase) != -1) { cellNameWithSpaces = cellEditorID; }
                     TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);
                     TES5ObjectCallArguments findArguments = new TES5ObjectCallArguments()

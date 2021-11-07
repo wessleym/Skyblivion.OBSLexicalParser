@@ -59,10 +59,11 @@ namespace Skyblivion.OBSLexicalParser.Commands
                             foreach (var sourceFile in sourceBuildFiles)
                             {
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);//remove extension
+                                string source = buildTarget.GetSourceFromPath(scriptName);
                                 ITES4CodeFilterable ast;
                                 try
                                 {
-                                    ast = buildTarget.GetAST(buildTarget.GetSourceFromPath(scriptName));
+                                    ast = buildTarget.GetAST(source);
                                 }
                                 catch (EOFOnlyException) { continue; }//Ignore files that are only whitespace or comments.
                                 /*catch (UnexpectedTokenException ex)

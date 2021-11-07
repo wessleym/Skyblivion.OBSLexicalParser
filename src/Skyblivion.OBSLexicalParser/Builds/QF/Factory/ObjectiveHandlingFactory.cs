@@ -57,30 +57,16 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             foreach (var stageTargetState in stageMap)
             {
                 TES5Integer targetIndex = new TES5Integer(i);
-                if (stageTargetState != 0)
-                {
-                    //Should be visible
-                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
-                    TES5ObjectCall isObjectiveDisplayed = objectCallFactory.CreateObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments, inference: false);
-                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(0));
-                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
-                    TES5ObjectCall showTheObjective = objectCallFactory.CreateObjectCall(referenceToTemp, "SetObjectiveDisplayed", arguments, inference: false);
-                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
-                    branch.MainBranch.CodeScope.AddChunk(showTheObjective);
-                    result.Add(branch);
-                }
-                else
-                {
-                    TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
-                    TES5ObjectCall isObjectiveDisplayed = objectCallFactory.CreateObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments, inference: false);
-                    TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(1));
-                    TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
-                    TES5ObjectCall completeTheObjective = objectCallFactory.CreateObjectCall(referenceToTemp, "SetObjectiveCompleted", arguments, inference: false);
-                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
-                    branch.MainBranch.CodeScope.AddChunk(completeTheObjective);
-                    result.Add(branch);
-                }
-
+                TES5ObjectCallArguments displayedArguments = new TES5ObjectCallArguments() { targetIndex };
+                TES5ObjectCall isObjectiveDisplayed = objectCallFactory.CreateObjectCall(referenceToTemp, "IsObjectiveDisplayed", displayedArguments, inference: false);
+                int isObjectiveDisplayedArgument = stageTargetState != 0 ? 0 : 1;
+                TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(isObjectiveDisplayed, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(isObjectiveDisplayedArgument));
+                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { targetIndex, new TES5Integer(1) };
+                string setObjectiveFunction = stageTargetState != 0 ? "SetObjectiveDisplayed" : "SetObjectiveCompleted";
+                TES5ObjectCall setObjectiveObjectCall = objectCallFactory.CreateObjectCall(referenceToTemp, setObjectiveFunction, arguments, inference: false);
+                TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, localScope);
+                branch.MainBranch.CodeScope.AddChunk(setObjectiveObjectCall);
+                result.Add(branch);
                 ++i;
             }
 

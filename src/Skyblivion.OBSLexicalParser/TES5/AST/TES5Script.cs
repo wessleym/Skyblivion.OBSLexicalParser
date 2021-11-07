@@ -1,7 +1,9 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST
 {
@@ -33,12 +35,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
             }
         }
 
+        private static readonly Regex fragmentRE = new Regex("^Fragment_([0-9]+)(_[0-9]+)?$", RegexOptions.Compiled);
+        private int GetNextFragmentIndex()
+        {
+            if (!BlockList.Blocks.Any()) { return 0; }
+            return BlockList.Blocks.Select(b =>
+            {
+                Match fragmentMatch = fragmentRE.Match(b.BlockName);
+                if (!fragmentMatch.Success) { throw new InvalidOperationException("Fragment match failed for block name " + b.BlockName); }
+                return int.Parse(fragmentMatch.Groups[1].Value);
+            }).Max() + 10;
+        }
+
         private IEnumerable<string> OutputQuestOrTopicInfo
         {
             get
             {
                 yield return ";BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment";
-                yield return ";NEXT FRAGMENT INDEX " + BlockList.Blocks.Count.ToString();
+                yield return ";NEXT FRAGMENT INDEX " + GetNextFragmentIndex();
                 foreach (string o in ScriptHeader.Output) { yield return o; }
                 yield return "";
                 foreach (string o in BlockList.Output) { yield return o; }

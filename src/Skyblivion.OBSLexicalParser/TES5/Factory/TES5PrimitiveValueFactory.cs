@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             throw new ConversionException("Unknown value type to be factored from " + value.GetType().FullName);
         }
 
-        public static TES5ConcatenatedValue CreateConcatenatedValue(IList<ITES5Value> concatenateValues)
+        public static TES5ConcatenatedValue CreateConcatenatedValue(IReadOnlyList<ITES5Value> concatenateValues)
         {
             return new TES5ConcatenatedValue(concatenateValues);
         }

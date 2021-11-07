@@ -51,7 +51,7 @@ namespace Dissect.Parser.LALR1
                     string type = token.Type;
                     Dictionary<string, int> typeToAction = this.ParseTable.Action[currentState];
                     int action;
-                    if(!typeToAction.TryGetValue(type, out action))
+                    if (!typeToAction.TryGetValue(type, out action))
                     {// unexpected token
                         throw new UnexpectedTokenException(token, this.ParseTable.Action[currentState].Select(kvp => kvp.Key).ToArray());
                     }
@@ -73,7 +73,15 @@ namespace Dissect.Parser.LALR1
                         var callback = rule.Callback;
                         if (callback != null)
                         {
-                            object newToken = callback.Invoke(newArgs);
+                            object newToken;
+                            try//WTM:  Added:  try-catch
+                            {
+                                newToken = callback.Invoke(newArgs);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new CallbackException(token, ex);
+                            }
                             args.Push(newToken);
                         }
                         else

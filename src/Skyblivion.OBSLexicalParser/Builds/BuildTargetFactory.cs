@@ -140,7 +140,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
                         TES5FragmentFactory fragmentFactory = new TES5FragmentFactory(chainedCodeChunkFactory);
                         ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(objectCallFactory);
-                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory);
+                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory, esmAnalyzer);
                         QF.WriteCommand writeCommand = new QF.WriteCommand(qfFragmentFactory);
                         return new BuildTargetAdvanced(buildTarget, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer)), writeCommand);
                     }

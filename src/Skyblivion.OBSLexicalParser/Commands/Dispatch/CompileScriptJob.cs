@@ -8,10 +8,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class CompileScriptJob
     {
-        private readonly IList<BuildTargetSimple> buildTargets;
+        private readonly IReadOnlyList<BuildTargetSimple> buildTargets;
+        private readonly string workspacePath;
         private readonly string standardOutputFilePath, standardErrorFilePath;
-        public CompileScriptJob(Build build, IList<BuildTargetSimple> buildTargets)
+        public CompileScriptJob(Build build, IReadOnlyList<BuildTargetSimple> buildTargets)
         {
+            this.workspacePath = build.GetWorkspacePath();
             this.standardOutputFilePath = build.GetCompileStandardOutputPath();
             this.standardErrorFilePath = build.GetCompileStandardErrorPath();
             this.buildTargets = buildTargets;
@@ -28,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 string targetName = buildTarget.Name;
                 targetNumber++;
                 Console.WriteLine("Compiling Target " + targetName + " (" + targetNumber + "/" + buildTargets.Count + "):");
-                buildTarget.Compile(buildTarget.GetTranspiledPath(), buildTarget.GetWorkspacePath(), buildTarget.GetArtifactsPath(), standardOutputFilePath, standardErrorFilePath);
+                buildTarget.Compile(buildTarget.GetTranspiledPath(), workspacePath, buildTarget.GetArtifactsPath(), standardOutputFilePath, standardErrorFilePath);
                 Console.WriteLine("Compiling Target " + targetName + " (" + targetNumber + "/" + buildTargets.Count + ") Complete");
             }
             Console.WriteLine("Compiling Targets Complete");

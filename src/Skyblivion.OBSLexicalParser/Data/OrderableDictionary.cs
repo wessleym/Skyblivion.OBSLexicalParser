@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Data
 {
-    class OrderableDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull
+    class OrderableDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull where TValue: class
     {
         private readonly Dictionary<TKey, TValue> dictionary;
         private List<TKey> orderedKeys;
@@ -29,6 +29,11 @@ namespace Skyblivion.OBSLexicalParser.Data
             {
                 return dictionary[key];
             }
+        }
+
+        public bool TryGetValue(TKey key, out TValue? value)
+        {
+            return dictionary.TryGetValue(key, out value);
         }
 
         public void Add(TKey key, TValue value)

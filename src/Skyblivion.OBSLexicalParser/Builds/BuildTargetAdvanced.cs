@@ -45,16 +45,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return this.buildTargetSimple.GetTranspileToPath(scriptName);
         }
 
-        public string GetWorkspacePath()
-        {
-            return this.buildTargetSimple.GetWorkspacePath();
-        }
-
-        public string GetWorkspaceFromPath(string scriptName)
-        {
-            return this.buildTargetSimple.GetWorkspaceFromPath(scriptName);
-        }
-
         public string GetArtifactsPath()
         {
             return this.buildTargetSimple.GetArtifactsPath();

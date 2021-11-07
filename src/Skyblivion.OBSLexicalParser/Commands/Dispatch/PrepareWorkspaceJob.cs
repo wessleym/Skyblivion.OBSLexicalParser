@@ -6,22 +6,28 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
     class PrepareWorkspaceJob
     {
-        public const int CopyOperationsPerBuildTarget = 2;
+        public const int CopyOperationsPerBuildTarget = 1/*2*/;
+        private readonly Build build;
         private readonly IEnumerable<BuildTarget> buildTargets;
-        public PrepareWorkspaceJob(IEnumerable<BuildTarget> buildTargets)
+        public PrepareWorkspaceJob(Build build, IEnumerable<BuildTarget> buildTargets)
         {
+            this.build = build;
             this.buildTargets = buildTargets;
         }
 
         public void Run(ProgressWriter progressWriter)
         {
+            string dependenciesPath = build.GetDependenciesPath();
+            string workspacePath = build.GetWorkspacePath();
+            FileWriter.CopyDirectoryFiles(dependenciesPath, workspacePath, false);
+            progressWriter.IncrementAndWrite();
             foreach (var buildTarget in buildTargets)
             {
-                string workspacePath = buildTarget.GetWorkspacePath();
-                FileTransfer.CopyDirectoryFiles(buildTarget.GetTranspiledPath(), workspacePath, false);
+                FileWriter.CopyDirectoryFiles(buildTarget.GetTranspiledPath(), workspacePath, false);
                 progressWriter.IncrementAndWrite();
-                FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) overwrite each other.
-                progressWriter.IncrementAndWrite();
+                //WTM:  Change:  I'm now using one dependencies folder instead of three.
+                //FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) overwrite each other.
+                //progressWriter.IncrementAndWrite();
             }
         }
     }

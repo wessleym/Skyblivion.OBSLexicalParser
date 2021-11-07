@@ -46,22 +46,22 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 TranspileScriptJob transpileJob = new TranspileScriptJob(buildTargetsAdvanced, scriptName);
                 transpileJob.Run();
             }
-            PrepareWorkspace(buildTargets);
+            PrepareWorkspace(build, buildTargets);
             Compile(build, buildTargetsSimple);
             Console.WriteLine("Build Complete");
             string compileLog = File.ReadAllText(build.GetCompileStandardOutputPath());
             Console.WriteLine(compileLog);
         }
 
-        private static void PrepareWorkspace(IList<BuildTarget> buildTargets)
+        private static void PrepareWorkspace(Build build, IReadOnlyList<BuildTarget> buildTargets)
         {
             ProgressWriter preparingBuildWorkspaceProgressWriter = new ProgressWriter("Preparing Build Workspace", buildTargets.Count * PrepareWorkspaceJob.CopyOperationsPerBuildTarget);
-            PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(buildTargets);
+            PrepareWorkspaceJob prepareCommand = new PrepareWorkspaceJob(build, buildTargets);
             prepareCommand.Run(preparingBuildWorkspaceProgressWriter);
             preparingBuildWorkspaceProgressWriter.WriteLast();
         }
 
-        private static void Compile(Build build, IList<BuildTargetSimple> buildTargets)
+        private static void Compile(Build build, IReadOnlyList<BuildTargetSimple> buildTargets)
         {
             CompileScriptJob task = new CompileScriptJob(build, buildTargets);
             task.Run();

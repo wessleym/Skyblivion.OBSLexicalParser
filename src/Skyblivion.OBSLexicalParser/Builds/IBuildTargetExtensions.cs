@@ -37,11 +37,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return buildTarget.GetSourcePath() + scriptName + ".txt";
         }
 
-        public static string GetDependenciesPath(this IBuildTarget buildTarget)
-        {
-            return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Dependencies") + Path.DirectorySeparatorChar;
-        }
-
         public static string GetArchivePath(this IBuildTarget buildTarget)
         {
             return Path.Combine(buildTarget.GetRootBuildTargetPath(), "Archive") + Path.DirectorySeparatorChar;
@@ -57,13 +52,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
         * If intersected source files is not null, they will be intersected with build target source files,
         * otherwise all files will be claimed
         */
-        public static string[] GetSourceFileList(this IBuildTarget buildTargets, string[]? intersectedSourceFiles = null)
+        public static string[] GetSourceFileList(this IBuildTarget buildTarget, string[]? intersectedSourceFiles = null)
         {
             /*
              * Only files without extension or .txt are considered sources
              * You can add metadata next to those files, but they cannot have those extensions.
              */
-            string[] sourcePaths = Directory.EnumerateFiles(buildTargets.GetSourcePath(), "*.txt").Select(path => Path.GetFileName(path)).ToArray();
+            string[] sourcePaths = Directory.EnumerateFiles(buildTarget.GetSourcePath(), "*.txt").Select(path => Path.GetFileName(path)).ToArray();
             if (intersectedSourceFiles != null)
             {
                 sourcePaths = sourcePaths.Where(p => intersectedSourceFiles.Contains(p)).ToArray();

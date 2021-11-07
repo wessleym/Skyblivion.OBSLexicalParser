@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
     class WriteCommandBase
     {
         //This functions the same as File.WriteAllLines except that it doesn't leave a trailing \r\n.
-        private static void Write(string path, IList<string> output)
+        private static void Write(string path, IReadOnlyList<string> output)
         {
             using (StreamWriter writer = new StreamWriter(path))
             {

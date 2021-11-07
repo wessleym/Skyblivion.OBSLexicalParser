@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Console.ReadKey(true);
         }
 
-        private static int GetCommandNumberFromUser(IList<int> allowedInputs)
+        private static int GetCommandNumberFromUser(IReadOnlyList<int> allowedInputs)
         {
             while (true)
             {

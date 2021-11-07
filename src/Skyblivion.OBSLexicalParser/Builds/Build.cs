@@ -40,6 +40,16 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return CombineWithBuildPath("Workspace") + Path.DirectorySeparatorChar;
         }
 
+        public string GetWorkspacePath(string scriptName)
+        {
+            return this.GetWorkspacePath() + scriptName + ".psc";
+        }
+
+        public string GetDependenciesPath()
+        {
+            return CombineWithBuildPath("Dependencies") + Path.DirectorySeparatorChar;
+        }
+
         public static bool CanBuildIn(string directory, bool deleteFiles)
         {
             IEnumerable<string> fileSystemEntries;

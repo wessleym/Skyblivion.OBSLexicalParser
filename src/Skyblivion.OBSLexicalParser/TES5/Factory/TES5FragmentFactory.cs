@@ -47,9 +47,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return target;
         }
 
-        public static string GetFragmentName(int stageID, int logIndex = 0)
+        public static string GetFragmentName(int stageIndex, int logIndex = 0)
         {
-            return "Fragment_" + stageID.ToString() + (logIndex != 0 ? "_" + logIndex : "");
+            return "Fragment_" + stageIndex.ToString() + (logIndex != 0 ? "_" + logIndex : "");
         }
     }
 }

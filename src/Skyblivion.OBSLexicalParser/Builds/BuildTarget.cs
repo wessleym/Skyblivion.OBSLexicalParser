@@ -26,16 +26,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return this.GetTranspiledPath() + this.filePrefix + transformedName + ".psc";
         }
 
-        public string GetWorkspacePath()
-        {
-            return this.build.GetWorkspacePath();
-        }
-
-        public string GetWorkspaceFromPath(string scriptName)
-        {
-            return this.build.GetWorkspacePath() + scriptName + ".psc";
-        }
-
         public string GetArtifactsPath()
         {
             return this.build.CombineWithBuildPath(Path.Combine("Artifacts", Name)) + Path.DirectorySeparatorChar;

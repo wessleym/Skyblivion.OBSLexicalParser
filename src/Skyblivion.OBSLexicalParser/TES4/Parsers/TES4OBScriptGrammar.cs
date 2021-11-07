@@ -35,6 +35,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 return new TES4Script(header, variableList, blockList);
             })
 
+#if NEWBT
+            .
+            Is("ScriptHeader").Call((TES4ScriptHeader header) =>//WTM:  Change:  I added this section to allow for a few more scripts to parsed (scripts that are just a header).
+            {
+                return new TES4Script(header, null, null);
+            })
+#endif
+
             ;
             __invoke("ScriptHeader").Is("ScriptHeaderToken", "ScriptName").Call((object headerToken, CommonToken scriptName) =>
             {

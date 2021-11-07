@@ -26,13 +26,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
             TES4TopicsToTES5GlobalVariableFinder globalVariableFinder = new TES4TopicsToTES5GlobalVariableFinder();
             TES5GlobalVariables globalVariables = esmAnalyzer.GlobalVariables;
             var builtTIFs = buildTracker.GetBuiltScripts(BuildTargetFactory.TIFName);
-            foreach (TES4LoadedRecord infoRecord in esmAnalyzer.GetRecords().Where(r => r.RecordType == TES4RecordType.INFO))
+            foreach (TES4Record infoRecord in esmAnalyzer.GetRecords().Where(r => r.RecordType == TES4RecordType.INFO))
             {
-                byte[][] names = infoRecord.GetSubrecords("NAME").ToArray();
+                TES4SubrecordData[] names = infoRecord.GetSubrecords("NAME").ToArray();
                 if (names.Any())
                 {
                     string fragment0Name = TES5FragmentFactory.GetFragmentName(0);
-                    string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString("x2").PadLeft(8, '0');
+                    string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString("x8");
                     string scriptName = TES5ReferenceFactory.tif_Prefix + "_" + nameTES5FormIDHex;
                     TES5Script? infoTIF = builtTIFs.Where(s => s.Key == scriptName).Select(s => s.Value.Script).FirstOrDefault();
                     TES5FunctionCodeBlock? fragment0;
@@ -55,10 +55,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         TES5Target target = new TES5Target(infoTIF, outputPath);
                         buildTracker.RegisterBuiltScript(tifBuildTarget, target);
                     }
-                    foreach (byte[] name in names)
+                    foreach (TES4SubrecordData name in names)
                     {
                         int formID = infoRecord.ExpandBytesIntoFormID(name);
-                        TES4LoadedRecord addedTopic = esmAnalyzer.GetRecordByFormID(formID);
+                        TES4Record addedTopic = esmAnalyzer.GetRecordByFormID(formID);
                         Tuple<int, string>? globalVariable = globalVariableFinder.GetGlobalVariableNullable(addedTopic.FormID);
                         string globalVariableEditorID = globalVariable != null ? globalVariable.Item2 : globalVariableFinder.GetGlobalVariableEditorID(addedTopic.GetEditorID());
                         Nullable<int> globalVariableTES5FormID = globalVariable != null ? globalVariable.Item1 : (Nullable<int>)null;

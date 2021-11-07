@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
@@ -14,7 +15,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public TES5ScriptHeader ScriptHeader { get; }
         public List<TES5Property> Properties { get; } = new List<TES5Property>();
         private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
-        private bool playerRefPropertyAdded = false;
         public bool QuestHasOnUpdateRegisterForSingleUpdate;
         /*
         * TES5GlobalScope constructor.
@@ -25,16 +25,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             QuestHasOnUpdateRegisterForSingleUpdate = false;
         }
 
-        public void AddProperty(TES5Property property)
-        {
-            this.Properties.Add(property);
-        }
-
-        public void AddPropertyIfNotExists(TES5Property property)
+        public bool AddPropertyIfNotExists(TES5Property property)
         {
             if (!Properties.Where(p => p.OriginalName == property.OriginalName).Any())
             {
-                AddProperty(property);
+                this.Properties.Add(property);
+                return true;
+            }
+            return false;
+        }
+
+        public void AddProperty(TES5Property property)
+        {
+            if (!AddPropertyIfNotExists(property))
+            {
+                throw new ConversionException("Property " + property.Name + " was not unique");
             }
         }
 
@@ -94,14 +99,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
 
         public void AddPlayerRefPropertyIfNotExists()
         {
-            if (!playerRefPropertyAdded)
-            {
-                const string name = TES5PlayerReference.PlayerRefName;
-                TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
-                TES5Property property = TES5PropertyFactory.ConstructWithTES4FormID(name, playerType, name, TES5PlayerReference.FormID);
-                AddProperty(property);
-                playerRefPropertyAdded = true;
-            }
+            const string name = TES5PlayerReference.PlayerRefName;
+            TES5BasicType playerType = TES5PlayerReference.TES5TypeStatic;
+            TES5Property property = TES5PropertyFactory.ConstructWithTES4FormID(name, playerType, name, TES5PlayerReference.FormID);
+            AddPropertyIfNotExists(property);
         }
     }
 }
