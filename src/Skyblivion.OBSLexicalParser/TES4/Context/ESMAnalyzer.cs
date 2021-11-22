@@ -334,7 +334,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             TES4SubrecordData[] scroRecords = scriptTES4Record.GetSCRORecords(stageIndexAndLogIndex).ToArray();
             HashSet<int> foundFormIDs = new HashSet<int>();
             return scroRecords
-                .Select(r => r.ToInt())
+                .Select(r => r.FirstFourBytesToInt())
                 .Where(formID => !foundFormIDs.Contains(formID))
                 .Select(formID =>
                 {

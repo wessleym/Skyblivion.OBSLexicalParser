@@ -79,7 +79,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                             convertedScript = buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
                         }
                         catch (EOFOnlyException) { }//Ignore files that are only whitespace or comments.
-#if !DEBUG || LOG_EXCEPTIONS
+#if !DEBUG || LOGEXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {
                             errorLog.Write(scriptName + " (" + sourcePath + ")" + Environment.NewLine + ex.Message + Environment.NewLine + Environment.NewLine);

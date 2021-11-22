@@ -31,42 +31,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             this.esmAnalyzer = esmAnalyzer;
         }
 
-        private IEnumerable<string> GetReferenceAliases(IBuildTarget target, string resultingFragmentName)
+        private static int GetTES4FormID(string resultingFragmentName)
         {
-            /*
-             * Add ReferenceAlias"es
-             * At some point, we might port the conversion so it doesn"t use the directly injected property,
-             * but instead has a map to aliases and we"ll map accordingly and have references point to aliases instead
-             */
-            string sourcePath = target.GetSourceFromPath(resultingFragmentName);
-            string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            string? sourceDirectory = Path.GetDirectoryName(sourcePath);
-            if (sourceDirectory == null) { throw new NullableException(nameof(sourceDirectory)); }
-            string aliasesFile = Path.Combine(sourceDirectory, scriptName + ".aliases");
-            string[] aliasesLines = File.ReadAllLines(aliasesFile);
-            return aliasesLines.Select(a => a.Trim()).Where(a => a != "").Select(a =>
-            {
-                //WTM:  Change:  This used to build an alias like this:
-                //Alias_[FormID]_p
-                //I changed it to generate this:
-                //Alias_[EditorID]_p
-                /*const string Alias_ = "Alias_";
-                if (!trimmedAlias.StartsWith(Alias_)) { throw new ConversionException(nameof(trimmedAlias) + " did not start with " + Alias_ + ":  " + trimmedAlias); }
-                string formIDString = trimmedAlias.Substring(Alias_.Length);
-                int formID = Convert.ToInt32(formIDString, 16);
-                string? edid = esmAnalyzer.GetEDIDByFormIDNullable(formID);
-                string innerName = edid != null ? edid : formIDString;
-                string propertyName = Alias_ + innerName;*/
-                //WTM:  Note:  The above didn't work.  GECKFrontend couldn't seem to associate the properties correctly.
-                return a;
-            }).Distinct();
-        }
-
-        private IEnumerable<string> GetReferenceAliases(string resultingFragmentName)
-        {
-            int tes4FormID = Convert.ToInt32(resultingFragmentName.Split('_')[2], 16) - 0x01000000;
-            TES4Record qust = esmAnalyzer.GetRecordByFormID(tes4FormID);
-            return ESMAnalyzer.GetReferenceAliases(qust);
+            return Convert.ToInt32(resultingFragmentName.Split('_')[2], 16) - 0x01000000;
         }
 
         /*
@@ -75,7 +42,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         */
         public TES5Target JoinQFFragments(IBuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
         {
-            StageMap stageMap = StageMapFromMAPBuilder.BuildStageMap(target, resultingFragmentName);
+            int tes4FormID = GetTES4FormID(resultingFragmentName);
+            StageMap stageMap = StageMapBuilder.Build(target, resultingFragmentName, esmAnalyzer, tes4FormID);
             /*
              * We need script fragment for objective handling for each stage, so when parsing the script fragments,
              * we"ll be marking them there, and intersecting this with stage.
@@ -84,13 +52,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              */
             TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
-            string[] referenceAliases =
-#if !REFSFROMESM
-                GetReferenceAliases(target, resultingFragmentName)
-#else
-                GetReferenceAliases(resultingFragmentName)
-#endif
-                .ToArray();
+            string[] referenceAliases = ReferenceAliasBuilder.Build(target, resultingFragmentName, esmAnalyzer, tes4FormID).ToArray();
             foreach (string propertyName in referenceAliases)
             {
                 resultingGlobalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormID(propertyName, TES5BasicType.T_REFERENCEALIAS, propertyName));

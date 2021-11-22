@@ -10,9 +10,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
         public static void Write()
         {
             TES4ScriptWriter.Write();
-            QFReferenceAliasFinder.Write();
-            ReferencesFinder.Write();
-            StageMapFromPSCBuilder.Write();
+            QFReferenceAliasesFileWriter.Write();
+            ReferencesFileWriter.Write();
+            StageMapFromESMWriter.Write();
        }
 
         public static string GetFileNameNoExt(string prefix, TES4Record record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex)

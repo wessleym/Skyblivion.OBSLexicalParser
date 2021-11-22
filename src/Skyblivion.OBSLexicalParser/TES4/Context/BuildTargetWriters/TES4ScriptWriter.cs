@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
-    class TES4ScriptWriter
+    static class TES4ScriptWriter
     {
         public static void Write()
         {

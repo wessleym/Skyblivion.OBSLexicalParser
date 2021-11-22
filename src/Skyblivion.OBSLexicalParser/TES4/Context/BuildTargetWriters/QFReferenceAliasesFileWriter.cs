@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
-    static class QFReferenceAliasFinder
+    static class QFReferenceAliasesFileWriter
     {
         public static void Write(string sourcePath, TES4Record qust)
         {

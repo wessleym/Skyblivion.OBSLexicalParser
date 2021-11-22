@@ -54,14 +54,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
             /*
              * Traverse through the map, and duplicate targets as needed
              */
-            foreach (var kvp in stageMap)
+            foreach (var stageMapLine in stageMap)
             {
-                var stageId = kvp.Key;
-                var rows = kvp.Value;
+                int stageId = stageMapLine.Key;
+                List<int> row = stageMapLine.Value;
                 int targetIndex = 0;
-                foreach (var row in rows)
+                foreach (int cell in row)
                 {
-                    if (row != 0)
+                    if (cell != 0)
                     {
                         bool targetState;
                         if (targetsStateMap.TryGetValue(targetIndex, out targetState))

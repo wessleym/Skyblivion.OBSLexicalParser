@@ -11,7 +11,8 @@ using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
-    static class StageMapFromPSCBuilder
+    //This is likely no longer necessary thanks to StageMapFromESMWriter.
+    static class StageMapFromPSCWriter
     {
         private readonly static Regex fragmentRE = new Regex(@"Function Fragment_([0-9]+)(_[0-9]+)?\(\)\r\n(.*?)\r\nEndFunction", RegexOptions.Compiled | RegexOptions.Singleline);
         private readonly static Regex isObjectiveDisplayedRE = new Regex(@"If \(\(__temp\.IsObjectiveDisplayed\(([0-9]+)\) == (0|1)\)\)", RegexOptions.Compiled);
@@ -67,7 +68,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             {
                 Write(sourcePath, pscPath);
             }
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExporting(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
+            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromPSCFiles(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
             IEnumerable<TES4Record> qustRecords = collection.GetGrupRecords(TES4RecordType.QUST);
             foreach (TES4Record qust in qustRecords)
             {

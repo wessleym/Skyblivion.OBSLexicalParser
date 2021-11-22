@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.Input
             TES4VariableDeclarationList list = new TES4VariableDeclarationList();
             var scroRecords = TES5ReferenceFactory.GetTypesFromSCRO(esmAnalyzer, scriptName, fragmentType);
             string[] references =
-#if !REFSFROMESM
+#if USEFILESINSTEADOFESM
                 GetReferences(sourcePath, scriptName)
 #else
                 scroRecords

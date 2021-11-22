@@ -1,7 +1,5 @@
 ﻿using Skyblivion.ESReader.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
@@ -9,6 +7,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
     static class StageMapFromMAPBuilder
     {
         public static Dictionary<int, List<int>> BuildStageMapDictionary(IBuildTarget target, string resultingFragmentName, out bool preprocessed)
+        {
+            string[] stageMapFileLines = GetStageMapFileLines(target, resultingFragmentName, out preprocessed);
+            return StageMapDictionaryBuilder.Build(stageMapFileLines);
+        }
+
+        private static string[] GetStageMapFileLines(IBuildTarget target, string resultingFragmentName, out bool preprocessed)
         {
             preprocessed = false;
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
@@ -28,29 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                 stageMapFile = Path.Combine(sourceDirectory, scriptName + ".map2");
                 stageMapFileLines = File.ReadAllLines(stageMapFile);
             }
-            Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
-            foreach (var stageMapLine in stageMapFileLines)
-            {
-                string[] numberAndItemsSplit = stageMapLine.Split('-');
-                int stageId = int.Parse(numberAndItemsSplit[0].Trim(), CultureInfo.InvariantCulture);
-                /*
-                 * Clear the rows
-                 */
-                string[] items = numberAndItemsSplit[1].Split(' ');
-                List<int> stageRows = new List<int>();
-                foreach (string item in items)
-                {
-                    string itemTrimmed = item.Trim();
-                    if (itemTrimmed != "")
-                    {
-                        stageRows.Add(int.Parse(itemTrimmed, CultureInfo.InvariantCulture));
-                    }
-                }
-
-                stageMap.Add(stageId, stageRows);
-            }
-
-            return stageMap;
+            return stageMapFileLines;
         }
 
         public static StageMap BuildStageMap(IBuildTarget target, string resultingFragmentName)

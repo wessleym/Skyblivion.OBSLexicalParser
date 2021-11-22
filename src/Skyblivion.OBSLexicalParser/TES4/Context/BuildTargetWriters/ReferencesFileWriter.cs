@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
-    class ReferencesFinder
+    static class ReferencesFileWriter
     {
         public static void Write()
         {
@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
                     Dictionary<StageIndexAndLogIndex, List<string>> aliasesDictionary = new Dictionary<StageIndexAndLogIndex, List<string>>();
                     foreach (var subrecord in record.GetSubrecordsWithStageIndexAndLogIndex("SCRO"))
                     {
-                        int formID = subrecord.Item1.Value.ToInt();
+                        int formID = subrecord.Item1.Value.FirstFourBytesToInt();
                         string name = formID == TES5PlayerReference.FormID ? TES5PlayerReference.PlayerRefName : esmAnalyzer.GetEDIDByFormID(formID);
                         aliasesDictionary.AddNewListIfNotContainsKeyAndAddValueToList(subrecord.Item2, name);
                     }

@@ -530,10 +530,10 @@ Float NewScale");
             return str;
         }
 
-        private static string FixCompilationErrors(string str)
+        private static string MatchSourceFiles(string str)//WTM:  Added:  meant to make files modified source files from Monocleus
         {
             if (str.StartsWith("scn CGAkaviriLongswordScript"))
-            {//WTM:  Added:  meant to match modified source files
+            {
                 str = str.Replace(
 @"
 		if getcontainer == 0
@@ -545,7 +545,7 @@ Float NewScale");
 		endif", "");
             }
             else if (str.StartsWith("scn CGBladesEquipmentScript"))
-            {//WTM:  Added:  meant to match modified source files
+            {
                 str = str.Replace(
 @"
 		if getcontainer == 0
@@ -561,7 +561,7 @@ Float NewScale");
 
         public static string FixScriptErrors(string str)
         {
-            return FixCompilationErrors(FixBuildErrors(FixSyntaxErrors(str)));
+            return MatchSourceFiles(FixBuildErrors(FixSyntaxErrors(str)));
         }
     }
 }
