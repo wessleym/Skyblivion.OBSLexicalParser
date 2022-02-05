@@ -31,14 +31,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
              * to be started again. Hence, we need to call a Papyrus endpoint to stop the quest and
              * reset this field, and be able to reset the quest completely.
              */
+            TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
+            codeChunks.Add(this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope)));
             if (questName == "FGInterimConversation" || questName == "ArenaIC" || questName == "ArenaICGrandChampion" || questName == "ArenaAggression" || questName == "ArenaAnnouncer" || questName == "ArenaDisqualification" || questName == "Arena")
             {
-                return this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", new TES5ObjectCallArguments());
+                codeChunks.Add(this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", new TES5ObjectCallArguments()));
             }
-            else
-            {
-                return this.objectCallFactory.CreateObjectCall(newCalledOn, "Stop", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
-            }
+            return codeChunks;
         }
     }
 }
