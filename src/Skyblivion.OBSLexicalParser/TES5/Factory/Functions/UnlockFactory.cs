@@ -23,10 +23,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 new TES5Bool(false)//override different behaviour
             };
-            ITES4StringValue? lockAsOwner = functionArguments.GetOrNull(1);
-            bool lockAsOwnerBool = lockAsOwner != null && (bool)lockAsOwner.Data;
+            ITES4ValueString? lockAsOwner = functionArguments.GetOrNull(1);
+            bool lockAsOwnerBool = lockAsOwner != null && (bool)lockAsOwner.Constant;
             methodArguments.Add(new TES5Bool(lockAsOwnerBool));
-            return this.objectCallFactory.CreateObjectCall(calledOn, "Lock", methodArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "Lock", methodArguments, comment: function.Comment);
         }
     }
 }

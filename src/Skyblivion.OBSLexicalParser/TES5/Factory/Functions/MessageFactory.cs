@@ -27,13 +27,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            string messageString = functionArguments[0].StringValue;
+            ITES4ValueString arg0 = functionArguments[0];
+            string messageString = arg0.StringValue;
             MatchCollection messageMatches = Regex.Matches(messageString, @"%([ +-0]*[1-9]*\.[0-9]+[ef]|g)");
-            if (messageMatches.Cast<Match>().Any(m=>m.Success))
+            TES5StaticReference debug = TES5StaticReferenceFactory.Debug;
+            TES5ObjectCallArguments arguments;
+            if (messageMatches.Cast<Match>().Any(m => m.Success))
             {
                 //Pack the printf syntax
                 //TODO - Perhaps we can use sprintf?
-                ITES4StringValue arg0 = functionArguments.Pop(0);
+                functionArguments.RemoveAt(0);
                 if (!(arg0 is TES4String))
                 { //hacky
                     throw new ConversionException("Cannot transform printf like syntax to concat on string loaded dynamically");
@@ -77,8 +80,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
 
                 List<ITES5Value> combinedValues = new List<ITES5Value>();
-                Stack<TES5String> stringsStack = new Stack<TES5String>(stringsList.Select(kvp=>kvp).Reverse());
-                Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesArray.Select(kvp=>kvp).Reverse());
+                Stack<TES5String> stringsStack = new Stack<TES5String>(stringsList.Select(kvp => kvp).Reverse());
+                Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesArray.Select(kvp => kvp).Reverse());
                 if (startWithVariable)
                 {
                     if (variablesStack.Any())
@@ -96,22 +99,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     }
                 }
 
-                calledOn = TES5StaticReferenceFactory.Debug;
-                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
+                arguments = new TES5ObjectCallArguments()
                 {
                     TES5PrimitiveValueFactory.CreateConcatenatedValue(combinedValues)
                 };
-                return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", arguments);
             }
             else
             {
-                calledOn = TES5StaticReferenceFactory.Debug;
-                TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
+                arguments = new TES5ObjectCallArguments()
                 {
                     this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope)
                 };
-                return this.objectCallFactory.CreateObjectCall(calledOn, "Notification", arguments);
             }
+            return this.objectCallFactory.CreateObjectCall(debug, "Notification", arguments, comment: function.Comment);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //WTM:  Note:  This always uses the player to send the tresspass alarm.  This might mean the player ultimately sends the trespass alarm for the player.
             //Oblivion doesn't seem to have a sender, only a trespasser.
             TES5ObjectCallArguments arguments = objectCallArgumentsFactory.CreateArgumentList(function.Arguments, codeScope, globalScope, multipleScriptsScope);
-            return objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), function.FunctionCall.FunctionName, arguments);
+            return objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), function.FunctionCall.FunctionName, arguments, comment: function.Comment);
         }
     }
 }

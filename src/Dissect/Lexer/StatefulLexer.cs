@@ -132,11 +132,11 @@ namespace Dissect.Lexer
         }
         public StatefulLexer Action(string actionString)
         {
-            return Action((object)actionString);
+            return Action(actionObject: actionString);
         }
         public StatefulLexer Action(int actionInt)
         {
-            return Action((object)actionInt);
+            return Action(actionObject: actionInt);
         }
 
         protected override bool ShouldSkipToken(IToken token)

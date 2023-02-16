@@ -1,6 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using System;
-
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value
 {
     class TES4ApiToken : ITES4Reference
@@ -11,19 +8,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value
             this.token = token;
         }
 
-        public object Data => StringValue;
+        public object Constant => StringValue;
 
         public string StringValue => token;
-
-        public bool HasFixedValue => true;
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            if (predicate(this))
-            {
-                return new ITES4CodeFilterable[] { this };
-            }
-            return new ITES4CodeFilterable[] { };
-        }
     }
 }

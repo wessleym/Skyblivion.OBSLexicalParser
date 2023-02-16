@@ -109,7 +109,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                     {
                         //We mark that the target state changed to false ( perhaps it was already false, in which case
                         //this operation is doing nothing
-                        //If the target was not used before, then we just continue, as it"s still not used.
+                        //If the target was not used before, then we just continue, as it's still not used.
                         targetsStateMap.SetIfContainsKey(targetIndex, false);
                     }
 

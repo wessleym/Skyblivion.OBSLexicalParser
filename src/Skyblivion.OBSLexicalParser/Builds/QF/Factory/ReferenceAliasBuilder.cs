@@ -14,9 +14,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         private static IEnumerable<string> GetReferenceAliases(IBuildTarget target, string resultingFragmentName)
         {
             /*
-             * Add ReferenceAlias"es
-             * At some point, we might port the conversion so it doesn"t use the directly injected property,
-             * but instead has a map to aliases and we"ll map accordingly and have references point to aliases instead
+             * Add ReferenceAliases
+             * At some point, we might port the conversion so it doesn't use the directly injected property,
+             * but instead has a map to aliases and we'll map accordingly and have references point to aliases instead
              */
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);

@@ -9,7 +9,7 @@ namespace Dissect.Lexer.TokenStream
      *
      * @author Jakub Lédl <jakubledl@gmail.com>
      */
-    public class ArrayTokenStream : ITokenStream, IEnumerable<IToken>
+    public class ArrayTokenStream : ITokenStream
     {
         protected readonly IList<IToken> tokens;
         public int Position { get; protected set; } = 0;

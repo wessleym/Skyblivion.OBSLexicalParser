@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System.Collections.Generic;
@@ -15,8 +14,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     class TES5MultipleScriptsScope
     {
         private readonly Dictionary<string, TES5GlobalScope> globalScopes;
-        private readonly TES5GlobalVariables globalVariables;
-        public TES5MultipleScriptsScope(IEnumerable<TES5GlobalScope> globalScopes, TES5GlobalVariables globalVariables)
+        private readonly TES5GlobalVariableCollection globalVariables;
+        public TES5MultipleScriptsScope(IEnumerable<TES5GlobalScope> globalScopes, TES5GlobalVariableCollection globalVariables)
         {
             this.globalScopes = globalScopes.ToDictionary(x => x.ScriptHeader.OriginalScriptName.ToLower(), x => x);
             this.globalVariables = globalVariables;

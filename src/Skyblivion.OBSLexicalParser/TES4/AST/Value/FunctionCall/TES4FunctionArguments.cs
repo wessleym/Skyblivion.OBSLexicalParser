@@ -1,16 +1,13 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 {
-    class TES4FunctionArguments : IEnumerable<ITES4StringValue>
+    class TES4FunctionArguments : IEnumerable<ITES4ValueString>
     {
-        private readonly List<ITES4StringValue> values = new List<ITES4StringValue>();
+        private readonly List<ITES4ValueString> values = new List<ITES4ValueString>();
 
-        public IEnumerator<ITES4StringValue> GetEnumerator()
+        public IEnumerator<ITES4ValueString> GetEnumerator()
         {
             return values.GetEnumerator();
         }
@@ -20,35 +17,32 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
             return GetEnumerator();
         }
 
-        public void Add(ITES4StringValue declaration)
+        public void Add(ITES4ValueString declaration)
         {
             this.values.Add(declaration);
         }
 
         public int Count => this.values.Count;
 
-        public ITES4StringValue this[int index] => values[index];
+        public ITES4ValueString this[int index] => values[index];
 
         public void RemoveAt(int index)
         {
             values.RemoveAt(index);
         }
 
-        public ITES4StringValue Pop(int index)
+        public void GetFirstAndRemoveInNew(out ITES4ValueString value, out TES4FunctionArguments revisedArguments)
         {
-            ITES4StringValue toReturn = values[index];
-            RemoveAt(index);
-            return toReturn;
+            const int index = 0;
+            revisedArguments = new TES4FunctionArguments();
+            revisedArguments.values.AddRange(values);
+            revisedArguments.RemoveAt(index);
+            value = values[index];
         }
 
-        public ITES4StringValue? GetOrNull(int i)
+        public ITES4ValueString? GetOrNull(int i)
         {
             return i < values.Count ? values[i] : null;
-        }
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return this.SelectMany(v => v.Filter(predicate)).ToArray();
         }
     }
 }

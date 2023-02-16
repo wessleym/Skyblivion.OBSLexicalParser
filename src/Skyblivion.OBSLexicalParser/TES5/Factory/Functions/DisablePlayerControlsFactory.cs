@@ -17,7 +17,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string functionName = function.FunctionCall.FunctionName;
             /* Emulating just the same disable player control as in Oblivion */
             TES5ObjectCallArguments newArgs = new TES5ObjectCallArguments()
             {
@@ -30,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Bool(true),
                 new TES5Bool(true)
             };
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, functionName, newArgs);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, function, newArgs);
         }
     }
 }

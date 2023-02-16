@@ -2,7 +2,7 @@ using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.AST;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 
         public void RunTask(StreamWriter errorLog, ProgressWriter progressWriter)
         {
-            TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
+            TES5GlobalVariableCollection globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildChunk in this.buildPlan)
             {
                 Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
@@ -78,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         {
                             convertedScript = buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
                         }
-                        catch (EOFOnlyException) { }//Ignore files that are only whitespace or comments.
+                        catch (EOFOnlyException) { }//Ignore files that are empty.
 #if !DEBUG || LOGEXCEPTIONS
                         catch (ConversionException ex) when (ex.Expected)
                         {

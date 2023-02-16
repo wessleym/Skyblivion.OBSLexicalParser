@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         public void WriteLine(string command, IEnumerable<string>? arguments = null)
         {
-            if (arguments == null) { arguments = new string[] { }; }
+            if (arguments == null) { arguments = Array.Empty<string>(); }
             base.WriteLine(command + " " + string.Join("\t", arguments));
         }
 

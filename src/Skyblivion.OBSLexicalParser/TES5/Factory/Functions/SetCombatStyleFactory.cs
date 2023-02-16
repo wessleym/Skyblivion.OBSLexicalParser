@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.Count == 0) { return logUnknownFunctionFactory.CreateLogCall(function); }
             TES5ObjectCall getActorBase = this.objectCallFactory.CreateGetActorBase(calledOn);
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(getActorBase, functionName, newArguments);
+            return this.objectCallFactory.CreateObjectCall(getActorBase, functionName, newArguments, comment: function.Comment);
         }
     }
 }

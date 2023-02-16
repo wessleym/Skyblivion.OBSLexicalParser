@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
             TES5ArithmeticExpression arithmeticExpression = TES5ExpressionFactory.CreateArithmeticExpression(fameReference, TES5ArithmeticExpressionOperator.OPERATOR_ADD, new TES5Integer(((TES4Integer)functionArguments[0]).IntValue));
             fameArguments.Add(arithmeticExpression);
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", fameArguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", fameArguments, comment: function.Comment);
             return newFunction;
         }
     }

@@ -1,6 +1,7 @@
 using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
 using Skyblivion.ESReader.TES4;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
@@ -110,16 +111,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         }
 
         /*
-        * Create the ,,read reference".
+         * Create the "read reference."
          * Read reference is used ( as you might think ) in read contexts.
         */
-        public ITES5Referencer CreateReadReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        public ITES5Referencer CreateReadReference(string referenceName, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope, TES4Comment? comment = null)
         {
             ITES5Referencer rawReference = this.CreateReference(referenceName, globalScope, multipleScriptsScope, localScope);
             if (rawReference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             {
                 //Changed to int implementation.
-                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt");
+                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt", comment: comment);
             }
             else
             {

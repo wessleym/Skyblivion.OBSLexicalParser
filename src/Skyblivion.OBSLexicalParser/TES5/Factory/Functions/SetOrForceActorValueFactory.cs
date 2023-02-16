@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            ITES4StringValue firstArg = functionArguments[0];
+            ITES4ValueString firstArg = functionArguments[0];
             string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
             switch (firstArgStringLower)
@@ -44,24 +44,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         if (!TES5PlayerReference.EqualsPlayer(calledOn.Name))
                         {
-                            //We can"t convert those.. and shouldn"t be any, too.
+                            //We can't convert those.. and shouldn't be any, too.
                             throw new ConversionException("[" + TES4FunctionName + "] Cannot set attributes on non-player");
                         }
 
                         const string functionName = "SetValue";
                         string tes4AttrFirstArg = TES5ReferenceFactory.GetTES4AttrPlusName(firstArgStringLower);
                         calledOn = this.referenceFactory.CreateReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return CreateObjectCall(calledOn, functionName, convertedArguments, function.Comment);
                     }
 
                 case "speed":
                     {
                         const string functionName = "ForceMovementSpeed";
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return CreateObjectCall(calledOn, functionName, convertedArguments, function.Comment);
                     }
 
                 case "fatigue":
@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "security":
                 case "acrobatics":
                 case "mercantile":
-                case "mysticism": //It doesn"t exist in Skyrim - defaulting to Illusion..
+                case "mysticism": //It doesn't exist in Skyrim - defaulting to Illusion..
                 case "blade":
                 case "blunt":
                 case "encumbrance":
@@ -82,15 +82,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistshock":
                     {
                         convertedArguments.Add(new TES5String(ActorValueMap.Map[firstArgStringLower]));
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments);
+                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments, function.Comment);
                     }
 
                 case "aggression":
                     {
-                        ITES4StringValue secondArg = functionArguments[1];
-                        object secondArgObject = secondArg.Data;
+                        ITES4ValueString secondArg = functionArguments[1];
+                        object secondArgObject = secondArg.Constant;
                         Nullable<int> secondArgNullableInt = secondArgObject as Nullable<int>;
                         AST.Value.ITES5Value convertedArgument2;
                         if (secondArgNullableInt != null)
@@ -123,13 +123,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(convertedArgument2);
-                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments);
+                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments, function.Comment);
                     }
 
                 case "confidence":
                     {
-                        ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.Data;
+                        ITES4ValueString secondArg = functionArguments[1];
+                        int secondArgData = (int)secondArg.Constant;
                         float newValue;
                         if (secondArgData == 0)
                         {
@@ -154,15 +154,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(new TES5Float(newValue));
-                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments);
+                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments, function.Comment);
                     }
 
                 default:
                     {
                         convertedArguments.Add(new TES5String(firstArgString));
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments);
+                        return CreateObjectCall(calledOn, TES5FunctionName, convertedArguments, function.Comment);
                     }
             }
         }

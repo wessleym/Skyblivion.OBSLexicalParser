@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -25,8 +26,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4FunctionArguments functionArguments = function.Arguments;
-            string newCalledOnString = functionArguments.Pop(0).StringValue;
+            ITES4ValueString arg0Value;
+            TES4FunctionArguments revisedArguments;
+            function.Arguments.GetFirstAndRemoveInNew(out arg0Value, out revisedArguments);
+            string newCalledOnString = arg0Value.StringValue;
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(newCalledOnString, globalScope, multipleScriptsScope, localScope);
             if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(newCalledOn.TES5Type, TES5BasicType.T_ACTORBASE))
             {
@@ -39,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     throw new ConversionException(newFunctionName + " should be called with an ActorBase.  Instead, it was called with " + newCalledOnString + " (" + newCalledOn.TES5Type.OriginalName + " : " + newCalledOn.TES5Type.NativeType.Name + ").");
                 }
             }
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, this.objectCallArgumentsFactory.CreateArgumentList(revisedArguments, codeScope, globalScope, multipleScriptsScope), comment: function.Comment);
         }
     }
 }

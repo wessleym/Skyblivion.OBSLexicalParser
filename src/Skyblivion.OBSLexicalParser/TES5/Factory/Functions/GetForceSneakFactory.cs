@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             //WTM:  Note:  @INCONSISTENCE:  This is supposed to check if the actor is being forced to sneak.
             //Since Papyrus can't do that, I'm instead checking if the actor is sneaking at all, force or not.
-            return objectCallFactory.CreateObjectCall(calledOn, "IsSneaking");
+            return objectCallFactory.CreateObjectCall(calledOn, "IsSneaking", comment: function.Comment);
         }
     }
 }

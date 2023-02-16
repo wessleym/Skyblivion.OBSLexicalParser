@@ -20,9 +20,8 @@ namespace Skyblivion.OBSLexicalParser.Input
             this.esmAnalyzer = esmAnalyzer;
         }
 
-        public TES4VariableDeclarationList BuildVariableDeclarationList(string sourcePath, string scriptName, TES5FragmentType fragmentType)
+        public IEnumerable<TES4VariableDeclaration> BuildVariableDeclarationList(string sourcePath, string scriptName, TES5FragmentType fragmentType)
         {
-            TES4VariableDeclarationList list = new TES4VariableDeclarationList();
             var scroRecords = TES5ReferenceFactory.GetTypesFromSCRO(esmAnalyzer, scriptName, fragmentType);
             string[] references =
 #if USEFILESINSTEADOFESM
@@ -38,9 +37,8 @@ namespace Skyblivion.OBSLexicalParser.Input
             foreach (var reference in references)
             {
                 var scroReference = scroRecords[reference];
-                list.Add(new TES4VariableDeclaration(reference, TES4Type.T_REF, formID: scroReference.Key, tes5Type: scroReference.Value));
+                yield return new TES4VariableDeclaration(reference, TES4Type.T_REF, formID: scroReference.Key, tes5Type: scroReference.Value);
             }
-            return list;
         }
 
         private static IEnumerable<string> GetReferences(string sourcePath, string scriptName)

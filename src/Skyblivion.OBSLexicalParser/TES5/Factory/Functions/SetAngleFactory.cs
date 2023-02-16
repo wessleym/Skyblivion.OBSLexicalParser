@@ -22,14 +22,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             string xyz = functionArguments[0].StringValue;
-            ITES4StringValue argument1 = functionArguments[1];
+            ITES4ValueString argument1 = functionArguments[1];
             TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments()
             {
                 this.valueFactory.CreateValue(xyz == "x" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope),
                 this.valueFactory.CreateValue(xyz == "y" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope),
                 this.valueFactory.CreateValue(xyz == "z" ? argument1 : new TES4Integer(0), codeScope, globalScope, multipleScriptsScope)
             };
-            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAngle", newArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetAngle", newArguments, comment: function.Comment);
         }
     }
 }

@@ -23,7 +23,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string functionName = function.FunctionCall.FunctionName;
             TES4FunctionArguments functionArguments = function.Arguments;
             if (!functionArguments.Any())
             {
@@ -38,16 +37,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     constantArgumentForNoFunctionArguments.Add(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope));
                 }
 
-                constantArgumentForNoFunctionArguments.Add(new TES5Bool(true)); //Since default in oblivion is ,,skip the OnActivateBlock", this defaults to ,,abDefaultProcessingOnly = true" in Skyrim
-                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, constantArgumentForNoFunctionArguments);
+                constantArgumentForNoFunctionArguments.Add(new TES5Bool(true)); //Since default in oblivion is "skip the OnActivateBlock", this defaults to "abDefaultProcessingOnly = true" in Skyrim
+                return this.objectCallFactory.CreateObjectCall(calledOn, function, constantArgumentForNoFunctionArguments);
             }
 
             TES5ObjectCallArguments constantArgument = new TES5ObjectCallArguments() { this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope) };
-            ITES4StringValue? blockOnActivate = functionArguments.GetOrNull(1);
+            ITES4ValueString? blockOnActivate = functionArguments.GetOrNull(1);
             bool argument1Bool;
             if (blockOnActivate != null)
             {
-                bool blockOnActivateVal = (int)blockOnActivate.Data == 1;
+                bool blockOnActivateVal = (int)blockOnActivate.Constant == 1;
                 argument1Bool = !blockOnActivateVal;
             }
             else
@@ -56,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             constantArgument.Add(new TES5Bool(argument1Bool));
 
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, constantArgument);
+            return this.objectCallFactory.CreateObjectCall(calledOn, function, constantArgument);
         }
     }
 }

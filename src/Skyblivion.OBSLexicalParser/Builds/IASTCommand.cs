@@ -1,9 +1,7 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    interface IASTCommand
+    interface IASTCommand<T>
     {
-        ITES4CodeFilterable Parse(string sourcePath);
+        T Parse(string sourcePath);
     }
 }

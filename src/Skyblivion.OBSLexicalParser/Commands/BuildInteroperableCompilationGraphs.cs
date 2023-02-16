@@ -11,6 +11,7 @@ using Skyblivion.OBSLexicalParser.TES5.Graph;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.Commands
@@ -61,7 +62,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                             {
                                 string scriptName = sourceFile.Substring(0, sourceFile.Length - 4);//remove extension
                                 string source = buildTarget.GetSourceFromPath(scriptName);
-                                ITES4CodeFilterable ast;
+                                IEnumerable<ITES4CodeChunk> ast;
                                 try
                                 {
                                     ast = buildTarget.GetAST(source);
@@ -72,14 +73,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     errorLog.WriteLine(sourceFile + ":  " + ex.Message + Environment.NewLine);
                                     continue;
                                 }*/
-                                List<TES4ObjectProperty> propertiesAccesses = new List<TES4ObjectProperty>();
-                                ast.Filter((data) =>
-                                {
-                                    TES4ObjectProperty? property = data as TES4ObjectProperty;
-                                    if (property == null) { return false; }
-                                    propertiesAccesses.Add(property);
-                                    return true;
-                                });
+                                TES4ObjectProperty[] propertiesAccesses = ast.OfType<TES4ObjectProperty>().ToArray();
                                 Dictionary<string, ITES5Type> preparedProperties = new Dictionary<string, ITES5Type>();
                                 foreach (var property in propertiesAccesses)
                                 {

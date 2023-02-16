@@ -1,36 +1,29 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Block;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST
 {
-    class TES4Script : ITES4CodeFilterable
+    class TES4Script : ITES4CodeChunk, IEnumerable<ITES4CodeChunk>
     {
         public TES4ScriptHeader ScriptHeader { get; }
-        public TES4VariableDeclarationList? VariableDeclarationList { get; }
-        public TES4BlockList? BlockList { get; }
-        public TES4Script(TES4ScriptHeader scriptHeader, TES4VariableDeclarationList? declarationList = null, TES4BlockList? blockList = null)
+        public List<ITES4ScriptHeaderVariableDeclarationOrComment> VariableDeclarationsAndComments { get; }
+        public List<ITES4CodeBlockOrComment> BlockList { get; }
+        public TES4Script(TES4ScriptHeader scriptHeader, List<ITES4ScriptHeaderVariableDeclarationOrComment> variableDeclarationsAndComments, List<ITES4CodeBlockOrComment> blockList)
         {
             this.ScriptHeader = scriptHeader;
-            this.VariableDeclarationList = declarationList;
+            this.VariableDeclarationsAndComments = variableDeclarationsAndComments;
             this.BlockList = blockList;
         }
 
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
         {
-            IEnumerable<ITES4CodeFilterable> filtered = new ITES4CodeFilterable[] { };
-            if (this.VariableDeclarationList != null)
-            {
-                filtered = filtered.Concat(this.VariableDeclarationList.Filter(predicate));
-            }
-            if (this.BlockList != null)
-            {
-                filtered = filtered.Concat(this.BlockList.Filter(predicate));
-            }
-            return filtered.ToArray();
+            return this.VariableDeclarationsAndComments.Concat<ITES4CodeChunk>(BlockList).GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

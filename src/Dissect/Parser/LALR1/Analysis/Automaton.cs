@@ -1,4 +1,5 @@
 using Dissect.Extensions;
+using Dissect.Parser.LALR1.Analysis.KernelSet;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
@@ -16,13 +17,13 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The states of this FSA.
         */
-        public Dictionary<int, State> States { get; protected set; } = new Dictionary<int, State>();
+        public Dictionary<Node, State> States { get; } = new Dictionary<Node, State>();
         /*
         * Returns the transition table for this automaton.
          *
          *  The transition table.
         */
-        public Dictionary<int, Dictionary<string, int>> TransitionTable { get; protected set; } = new Dictionary<int, Dictionary<string, int>>();
+        public Dictionary<Node, Dictionary<string, Node>> TransitionTable { get; } = new Dictionary<Node, Dictionary<string, Node>>();
         /*
         * Adds a new automaton state.
          *
@@ -30,7 +31,7 @@ namespace Dissect.Parser.LALR1.Analysis
         */
         public void AddState(State state)
         {
-            this.States.Add(state.Number, state);
+            this.States.Add(state.Node, state);
         }
 
         /*
@@ -40,30 +41,30 @@ namespace Dissect.Parser.LALR1.Analysis
          *  The symbol that triggers this transition.
          *  The destination state number.
         */
-        public void AddTransition(int origin, string label, int dest)
+        public void AddTransition(Node origin, string label, Node destintation)
         {
-            Dictionary<string, int> transition = TransitionTable.GetOrAdd(origin, () => new Dictionary<string, int>());
-            transition.Add(label, dest);
+            Dictionary<string, Node> transition = TransitionTable.GetOrAdd(origin, () => new Dictionary<string, Node>());
+            transition.Add(label, destintation);
         }
 
         /*
-        * Returns a state by its number.
+        * Returns a state by its node.
          *
-         *  The state number.
+         *  The state node.
          *
          *  The requested state.
         */
-        public State GetState(int number)
+        public State GetState(Node node)
         {
-            return this.States[number];
+            return this.States[node];
         }
 
         /*
-        * Does this automaton have a state identified by number?
+        * Does this automaton have a state identified by node?
         */
-        public bool HasState(int number)
+        public bool HasState(Node node)
         {
-            return this.States.ContainsKey(number);
+            return this.States.ContainsKey(node);
         }
     }
 }

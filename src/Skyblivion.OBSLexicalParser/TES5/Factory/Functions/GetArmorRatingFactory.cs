@@ -1,4 +1,5 @@
 ﻿using Skyblivion.ESReader.Extensions;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
@@ -24,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            globalScope.AddFunction(GetGetArmorRatingOfWornFormFunctionCodeBlock(calledOn, codeScope));
+            globalScope.AddFunction(GetGetArmorRatingOfWornFormFunctionCodeBlock(calledOn, codeScope, function.Comment));
             ITES5ValueCodeChunk? accumulatedStatement = null;
             for (int slotMask = 0x00000004; slotMask <= 0x00000200; slotMask *= 2)//From body to shield
             {
@@ -42,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             return accumulatedStatement;
         }
 
-        private TES5FunctionCodeBlock GetGetArmorRatingOfWornFormFunctionCodeBlock(ITES5Referencer calledOn, TES5CodeScope codeScope)
+        private TES5FunctionCodeBlock GetGetArmorRatingOfWornFormFunctionCodeBlock(ITES5Referencer calledOn, TES5CodeScope codeScope, TES4Comment? comment)
         {
             TES5FunctionCodeBlock functionCodeBlock = new TES5FunctionCodeBlock(new TES5FunctionScope(functionName), TES5CodeScopeFactory.CreateCodeScope(codeScope.LocalScope), TES5BasicType.T_INT, false, false);
             TES5SignatureParameter slotMaskParameter = new TES5SignatureParameter("slotMask", TES5BasicType.T_INT, true);
@@ -52,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             functionCodeBlock.CodeScope.AddVariable(wornFormVariable);
             TES5Reference wornFormVariableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(wornFormVariable);
             functionCodeBlock.AddChunk(TES5VariableAssignationFactory.CreateAssignation(wornFormVariableReference, getWornForm));
-            functionCodeBlock.AddChunk(new TES5Return(objectCallFactory.CreateObjectCall(wornFormVariableReference, "GetArmorRating")));
+            functionCodeBlock.AddChunk(new TES5Return(objectCallFactory.CreateObjectCall(wornFormVariableReference, "GetArmorRating", comment: comment)));
             return functionCodeBlock;
         }
 

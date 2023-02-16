@@ -14,6 +14,7 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Converter
@@ -27,8 +28,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
         }
-        
-        public TES5CodeScope Modify(TES4CodeBlock block, TES5BlockList blockList, TES5FunctionScope blockFunctionScope, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+
+        public TES5CodeScope Modify(TES4CodeBlock block, List<ITES5CodeBlock> blockList, TES5FunctionScope blockFunctionScope, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //https://cs.elderscrolls.com/index.php?title=Begin
             //WTM:  Change:  Added:  I reorganized this method and forced each event to account for the first Oblivion parameter.
@@ -88,7 +89,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                 case "onalarm":
                     {
-                        //@INCONSISTENCE - We don"t account for CrimeType or Criminal.
+                        //@INCONSISTENCE - We don't account for CrimeType or Criminal.
                         codeScope.AddChunk(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Debug, "Trace", new TES5ObjectCallArguments() { new TES5String("This function does not account for OnAlarm's CrimeType or Criminal.") }));
                         ITES5Value isAlarmed = TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsAlarmed"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
                         codeScope = SetUpBranch(blockFunctionScope, codeScope, isAlarmed);
@@ -164,11 +165,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                 case "onhitwith":
                     {
-                        TES4BlockParameterList? parameterList = block.BlockParameterList;
-                        if (parameterList != null)
+                        var firstParameter = block.BlockParameterList.FirstOrDefault();
+                        if (firstParameter != null)
                         {
                             TES5LocalScope localScope = codeScope.LocalScope;
-                            ITES5Referencer hitWithCriteria = this.referenceFactory.CreateReadReference(parameterList.Parameters[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
+                            ITES5Referencer hitWithCriteria = this.referenceFactory.CreateReadReference(firstParameter.BlockParameter, globalScope, multipleScriptsScope, localScope);
                             TES5SignatureParameter akSource = localScope.FunctionScope.GetParameter("akSource");
                             TES5ComparisonExpression hitWithEqualsSource = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(akSource), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, hitWithCriteria);
                             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
@@ -229,7 +230,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
                 case "ontriggeractor":
                     {
-                        TES4BlockParameterList? parameterList = block.BlockParameterList;
                         TES5LocalScope localScope = codeScope.LocalScope;
                         ITES5VariableOrProperty activator = localScope.GetVariableWithMeaning(TES5LocalVariableParameterMeaning.ACTIVATOR);
                         TES5LocalVariable castedToActor = new TES5LocalVariable("akAsActor", TES5BasicType.T_ACTOR);
@@ -241,9 +241,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                         newCodeScope.AddChunk(TES5VariableAssignationFactory.CreateAssignation(referenceToCastedVariable, referenceToNonCastedVariable));
                         TES5CodeScope outerBranchCode = TES5CodeScopeFactory.CreateCodeScopeRoot(blockFunctionScope);
                         outerBranchCode.LocalScope.CopyVariablesFrom(codeScope.LocalScope);
-                        if (parameterList != null)
+                        var firstParameter = block.BlockParameterList.FirstOrDefault();
+                        if (firstParameter != null)
                         {
-                            ITES5Referencer targetActor = this.referenceFactory.CreateReadReference(parameterList.Parameters[0].BlockParameter, globalScope, multipleScriptsScope, localScope);
+                            ITES5Referencer targetActor = this.referenceFactory.CreateReadReference(firstParameter.BlockParameter, globalScope, multipleScriptsScope, localScope);
                             TES5ComparisonExpression interExpression = TES5ExpressionFactory.CreateComparisonExpression(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(activator), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, targetActor);
                             outerBranchCode.AddChunk(new TES5Branch(new TES5SubBranch(interExpression, codeScope)));
                         }
@@ -272,10 +273,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
             }
             if (!accountedForParameter)
             {
-                TES4BlockParameterList? parameterList = block.BlockParameterList;
-                if (parameterList != null && parameterList.Parameters.Any())
+                var firstParameter = block.BlockParameterList.FirstOrDefault();
+                if (firstParameter != null)
                 {
-                    throw new ConversionException("Parameter not accounted for in " + block.BlockType + ":  " + parameterList.Parameters[0].BlockParameter);
+                    throw new ConversionException("Parameter not accounted for in " + block.BlockType + ":  " + firstParameter.BlockParameter);
                 }
             }
             return codeScope;
@@ -292,14 +293,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         }
         private TES5CodeScope SetUpBranch(TES4CodeBlock block, TES5CodeScope codeScope, TES5FunctionScope blockFunctionScope, ITES5VariableOrProperty variable, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4BlockParameterList? parameterList = block.BlockParameterList;
-            if (parameterList == null)
+            var firstParameter = block.BlockParameterList.FirstOrDefault();
+            if (firstParameter == null)
             {
                 return codeScope;
             }
             TES5Reference variableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(variable);
             TES5LocalScope localScope = codeScope.LocalScope;
-            TES4BlockParameter firstParameter = parameterList.Parameters[0];
             ITES5Referencer firstVariableReference = this.referenceFactory.CreateReadReference(firstParameter.BlockParameter, globalScope, multipleScriptsScope, localScope);
             TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(variableReference, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, firstVariableReference);
             return SetUpBranch(blockFunctionScope, codeScope, expression);

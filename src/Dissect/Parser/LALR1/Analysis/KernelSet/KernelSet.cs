@@ -11,7 +11,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
      */
     class KernelSet
     {
-        protected int NextNumber = 0;
+        private int nextNumber = 0;
         protected Node? Root = null;
         /*
         * Inserts a new node in the BST and returns
@@ -23,14 +23,14 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
         *
         *  The state number.
         */
-        public int Insert(IList<decimal[]> kernelArg)
+        public Node Insert(IList<decimal[]> kernelArg)
         {
             decimal[] kernel = HashKernel(kernelArg);
             if (this.Root == null)
             {
-                int n = this.NextNumber++;
+                int n = this.nextNumber++;
                 this.Root = new Node(kernel, n);
-                return n;
+                return this.Root;
             }
 
             Node node = this.Root;
@@ -40,9 +40,9 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                 {
                     if (node.Left == null)
                     {
-                        int n = this.NextNumber++;
+                        int n = this.nextNumber++;
                         node.Left = new Node(kernel, n);
-                        return n;
+                        return node.Left;
                     }
                     else
                     {
@@ -53,9 +53,9 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                 {
                     if (node.Right == null)
                     {
-                        int n = this.NextNumber++;
+                        int n = this.nextNumber++;
                         node.Right = new Node(kernel, n);
-                        return n;
+                        return node.Right;
                     }
                     else
                     {
@@ -64,7 +64,7 @@ namespace Dissect.Parser.LALR1.Analysis.KernelSet
                 }
                 else
                 {
-                    return node.Number;
+                    return node;
                 }
             }
         }

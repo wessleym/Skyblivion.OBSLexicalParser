@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -29,6 +30,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (callable != null) { return this.valueFactory.CreateCodeChunks(callable, codeScope, globalScope, multipleScriptsScope); }
             TES4VariableAssignation? assignation = chunk as TES4VariableAssignation;
             if (assignation != null) { return this.variableAssignationConversionFactory.CreateCodeChunk(assignation, codeScope, globalScope, multipleScriptsScope); }
+            TES4Comment? comment = chunk as TES4Comment;
+            if (comment != null) { return TES5CommentFactory.CreateCodeChunks(comment); }
             //WTM:  Change:  The below code doesn't seem to be reached.  It also returns null, and I don't want this method to return a nullable reference type if not necessary.
             //TES4VariableDeclarationList? declarationList = chunk as TES4VariableDeclarationList;
             //if (declarationList != null) { TES5LocalVariableListFactory.CreateCodeChunk(declarationList, codeScope); return null; }

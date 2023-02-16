@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             bool argumentBool = ((TES4Integer)function.Arguments[0]).IntValue == 1;
             ITES5Value argumentValue = new TES5Bool(argumentBool);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { argumentValue, argumentValue, argumentValue };
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, arguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, arguments, comment: function.Comment);
             return newFunction;
         }
     }

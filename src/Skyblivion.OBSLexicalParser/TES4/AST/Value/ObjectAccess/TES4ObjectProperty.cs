@@ -1,6 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
-using System;
-
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
 {
     class TES4ObjectProperty : ITES4ObjectAccess, ITES4Reference
@@ -13,15 +10,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess
             this.accessField = accessField;
         }
 
-        public object Data => StringValue;
+        public object Constant => StringValue;
 
         public string StringValue => this.parentReference.StringValue + "." + this.accessField.StringValue;
-
-        public bool HasFixedValue => false;
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return predicate(this) ? new ITES4CodeFilterable[] { this } : new ITES4CodeFilterable[] { };
-        }
     }
 }

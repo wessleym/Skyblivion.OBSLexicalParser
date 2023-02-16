@@ -22,7 +22,7 @@ namespace Dissect.Parser.LALR1
         * Constructor.
          *
          *  The grammar.
-         *  If given, the parser doesn"t have to analyze the grammar.
+         *  If given, the parser doesn't have to analyze the grammar.
         */
         public Parser(Grammar grammar, ActionAndGoTo? parseTable = null)
         {
@@ -44,16 +44,17 @@ namespace Dissect.Parser.LALR1
             Stack<int> stateStack = new Stack<int>();
             stateStack.Push(currentState);
             Stack<object> args = new Stack<object>();
-            foreach (CommonToken token in stream)
+            foreach (IToken token in stream)
             {
+                //Sometimes useful for debugging:  (new Analyzer()).Analyze(Grammar).Automaton.States[currentState] (especially .Items[].Rule)
+                string type = token.Type;
                 while (true)
                 {
-                    string type = token.Type;
                     Dictionary<string, int> typeToAction = this.ParseTable.Action[currentState];
                     int action;
                     if (!typeToAction.TryGetValue(type, out action))
                     {// unexpected token
-                        throw new UnexpectedTokenException(token, this.ParseTable.Action[currentState].Select(kvp => kvp.Key).ToArray());
+                        throw new UnexpectedTokenException(token, typeToAction.Select(kvp => kvp.Key).ToArray());
                     }
                     if (action > 0)
                     {
@@ -63,7 +64,7 @@ namespace Dissect.Parser.LALR1
                         stateStack.Push(currentState);
                         break;
                     }
-                    else if(action < 0)
+                    else if (action < 0)
                     {
                         // reduce
                         Rule rule = this.Grammar.GetRule(-action);
@@ -93,15 +94,15 @@ namespace Dissect.Parser.LALR1
                         currentState = this.ParseTable.GoTo[state][rule.Name];
                         stateStack.Push(currentState);
                     }
-                    else 
+                    else
                     {
                         // accept
                         return args.Last();
                     }
                 }
             }
-            //WTM:  Note:  In PHP, this function did not return here, so I'm throwing an exception to complete the function.  I don't think this line is ever invoked
-            throw new InvalidOperationException();
+            //WTM:  Note:  In PHP, this function did not return here, so I'm throwing an exception to complete the method.
+            throw new InvalidOperationException("Ran out of tokens.");
         }
     }
 }

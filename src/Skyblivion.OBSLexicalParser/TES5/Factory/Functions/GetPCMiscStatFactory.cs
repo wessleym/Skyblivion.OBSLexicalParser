@@ -29,11 +29,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             const string functionName = "QueryStat";
             ITES5Referencer newCalledOn = TES5StaticReferenceFactory.Game;
             TES4FunctionArguments functionArguments = function.Arguments;
-            int oldArgValue = (int)functionArguments.Single().Data;
+            int oldArgValue = (int)functionArguments.Single().Constant;
             string newArgValue = statMap[oldArgValue];
             TES4FunctionArguments tes4Arguments = new TES4FunctionArguments() { new TES4String(newArgValue) };
             TES5ObjectCallArguments tes5Arguments = objectCallArgumentsFactory.CreateArgumentList(tes4Arguments, codeScope, globalScope, multipleScriptsScope);
-            return objectCallFactory.CreateObjectCall(newCalledOn, functionName, tes5Arguments);
+            return objectCallFactory.CreateObjectCall(newCalledOn, functionName, tes5Arguments, comment: function.Comment);
         }
     }
 }

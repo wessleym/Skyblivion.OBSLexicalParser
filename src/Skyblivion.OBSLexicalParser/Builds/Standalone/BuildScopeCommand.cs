@@ -1,9 +1,8 @@
 using Skyblivion.OBSLexicalParser.Builds.Service;
 using Skyblivion.OBSLexicalParser.TES4.AST;
-using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -29,16 +28,12 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             return TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(edid, type, TES5TypeFactory.TES4Prefix, false);
         }
 
-        public TES5GlobalScope Build(string scriptPath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope Build(string scriptPath, TES5GlobalVariableCollection globalVariables)
         {
             TES4Script parsedScript = this.standaloneParsingService.ParseOrGetFromCache(scriptPath);
             TES5ScriptHeader scriptHeader = this.CreateHeader(parsedScript);
-            TES4VariableDeclarationList? variableList = parsedScript.VariableDeclarationList;
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
-            if (variableList != null)
-            {
-                propertyFactory.CreateAndAddProperties(variableList, globalScope, globalVariables);
-            }
+            propertyFactory.CreateAndAddProperties(parsedScript.VariableDeclarationsAndComments, globalScope, globalVariables);
             return globalScope;
         }
     }

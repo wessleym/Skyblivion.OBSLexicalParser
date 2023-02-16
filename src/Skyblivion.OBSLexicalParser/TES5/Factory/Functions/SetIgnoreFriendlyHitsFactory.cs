@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             int willIgnore = ((TES4Integer)function.Arguments[0]).IntValue;
             bool ignore = willIgnore != 0;
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5Bool(ignore) };
-            return objectCallFactory.CreateObjectCall(calledOn, "IgnoreFriendlyHits", arguments);
+            return objectCallFactory.CreateObjectCall(calledOn, "IgnoreFriendlyHits", arguments, comment: function.Comment);
         }
     }
 }

@@ -23,14 +23,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
-            ITES4StringValue value = functionArguments[0];
+            ITES4ValueString value = functionArguments[0];
             TES5ObjectCallArguments newArguments = new TES5ObjectCallArguments()
             {
                 calledOn
             };
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(value.StringValue, globalScope, multipleScriptsScope, localScope);
             const string functionName = "IsDetectedBy";
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, newArguments);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, newArguments, comment: function.Comment);
         }
     }
 }

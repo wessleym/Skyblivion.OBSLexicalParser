@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5LocalScope localScope = codeScope.LocalScope;
             int x = 0, y = 0, z = 0;
-            int secondArgumentData = (int)functionArguments[1].Data;
+            int secondArgumentData = (int)functionArguments[1].Constant;
             switch (functionArguments[0].StringValue.ToLower())
             {
                 case "x":
@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Integer(y),
                 new TES5Integer(z)
             };
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope), "Rotate", rotateArguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope), "Rotate", rotateArguments, comment: function.Comment);
             return newFunction;
         }
     }

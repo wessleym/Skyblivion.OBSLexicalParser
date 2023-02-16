@@ -1,18 +1,17 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using Skyblivion.OBSLexicalParser.Utilities;
 using System;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
 {
-    class TES4VariableDeclaration : ITES4CodeChunk//WTM:  Change:  I added ITES4CodeChunk to this class.  It was previously used on TES4VariableDeclarationList.
+    class TES4VariableDeclaration : ITES4ScriptHeaderVariableDeclarationOrComment
     {
         public string VariableName { get; }
         public TES4Type VariableType { get; }
-        public readonly Nullable<int> FormID;//WTM:  Change:  Added
-        public readonly TES5BasicType? TES5Type;//WTM:  Change:  Added
+        public Nullable<int> FormID { get; }//WTM:  Change:  Added
+        public TES5BasicType? TES5Type { get; }//WTM:  Change:  Added
+        public TES4Comment? Comment { get; private set; }
         public TES4VariableDeclaration(string variableName, TES4Type variableType, Nullable<int> formID = null, TES5BasicType? tes5Type = null)
         {
             this.VariableName = variableName;
@@ -21,9 +20,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
             TES5Type = tes5Type;
         }
 
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
+        public void SetComment(TES4Comment comment)
         {
-            return predicate(this) ? new ITES4CodeFilterable[] { this } : new ITES4CodeFilterable[] { };
+            if (Comment != null) { throw new InvalidOperationException(nameof(Comment) + " was already set."); }
+            Comment = comment;
         }
     }
 }

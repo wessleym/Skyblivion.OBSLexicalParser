@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
     {
         private readonly ITES5Type returnType;
         public TES5ObjectCallCustom(ITES5Referencer called, string functionName, ITES5Type returnType, TES5ObjectCallArguments arguments)
-            : base(called, functionName, arguments)
+            : base(called, functionName, arguments, null)
         {
             this.returnType = returnType;
         }

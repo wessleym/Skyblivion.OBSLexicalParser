@@ -9,10 +9,10 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -31,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            ITES4StringValue apiToken = functionArguments[0];
+            ITES4ValueString apiToken = functionArguments[0];
             string cellEditorID = apiToken.StringValue;
             string locationPropertyNameWithoutSuffix = cellEditorID + "Location";
             string locationPropertyNameWithSuffix = TES5Property.AddPropertyNameSuffix(locationPropertyNameWithoutSuffix);
@@ -46,6 +46,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
                 else
                 {
+                    if (function.Comment != null)
+                    {
+                        throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");
+                    }
                     TES5ObjectCall getParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
                     TES5ObjectCall getParentCellName = this.objectCallFactory.CreateObjectCall(getParentCell, "GetName");
                     TES4Record cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellEditorID);
@@ -62,7 +66,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 }
             }
             TES5Reference locationReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(locationProperty);
-            return this.objectCallFactory.CreateObjectCall(calledOn, "IsInLocation", new TES5ObjectCallArguments() { locationReference });
+            return this.objectCallFactory.CreateObjectCall(calledOn, "IsInLocation", new TES5ObjectCallArguments() { locationReference }, comment: function.Comment);
         }
     }
 }

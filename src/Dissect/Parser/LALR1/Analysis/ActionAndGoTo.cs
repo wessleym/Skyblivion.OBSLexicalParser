@@ -1,4 +1,5 @@
 ﻿using Dissect.Extensions;
+using Dissect.Parser.LALR1.Analysis.KernelSet;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
@@ -7,18 +8,18 @@ namespace Dissect.Parser.LALR1.Analysis
     {
         public readonly Dictionary<int, Dictionary<string, int>> Action = new Dictionary<int, Dictionary<string, int>>();
         public readonly Dictionary<int, Dictionary<string, int>> GoTo = new Dictionary<int, Dictionary<string, int>>();
-        private static void Add(Dictionary<int, Dictionary<string, int>> dict, int num, string trigger, int destination)
+        private static void Add(Dictionary<int, Dictionary<string, int>> dict, Node source, string trigger, Node destination)
         {
-            Dictionary<string, int> innerDict = dict.GetOrAdd(num, () => new Dictionary<string, int>());
-            innerDict.Add(trigger, destination);
+            Dictionary<string, int> innerDict = dict.GetOrAdd(source.Number, () => new Dictionary<string, int>());
+            innerDict.Add(trigger, destination.Number);
         }
-        public void AddAction(int num, string trigger, int destination)
+        public void AddAction(Node source, string trigger, Node destination)
         {
-            Add(Action, num, trigger, destination);
+            Add(Action, source, trigger, destination);
         }
-        public void AddGoTo(int num, string trigger, int destination)
+        public void AddGoTo(Node source, string trigger, Node destination)
         {
-            Add(GoTo, num, trigger, destination);
+            Add(GoTo, source, trigger, destination);
         }
     }
 }

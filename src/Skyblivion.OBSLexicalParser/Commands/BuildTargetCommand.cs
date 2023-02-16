@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.Commands
 {
@@ -36,6 +37,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public override void Execute()
         {
             Execute(true);
+        }
+
+        private static void Temp()
+        {
+            System.Text.RegularExpressions.Regex commentRE = new System.Text.RegularExpressions.Regex(";([^\r\n]+)", System.Text.RegularExpressions.RegexOptions.Compiled);
+            var comments = Directory.EnumerateFiles(@"C:\Users\Wess\Documents\Visual Studio 2022\Projects\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParserApp\bin\Debug\net6.0\Data\BuildTargets", "*", SearchOption.AllDirectories).Select(f => new { File = Path.GetFileName(f), Comments = commentRE.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value.Trim()).ToArray() }).Where(x => x.Comments.Any()).ToArray();
+            string allTranspiled = string.Join("\r\n", Directory.EnumerateFiles(@"C:\Users\Wess\Documents\Visual Studio 2022\Projects\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParserApp\bin\Debug\net6.0\Data\Build", "*", SearchOption.AllDirectories).Select(f => File.ReadAllText(f)));
+            var missingComments = comments.Select(x => new { File = x.File, Comments = x.Comments.Where(c => !allTranspiled.Contains(c)).ToArray() }).Where(x=>x.Comments.Any()).ToArray();
         }
 
         public void Execute(string targets, bool writeTranspiledFilesAndCompile, int threadsNumber = DefaultThreads, string? buildPath = null)
@@ -77,14 +86,17 @@ namespace Skyblivion.OBSLexicalParser.Commands
                     task.RunTask(errorLog, progressWriter);
                 }
             }
+            const string generating = "Generating INFO AddTopic Scripts...";
+            progressWriter.Write(generating);
             AddTopicBuilderCommand.GenerateINFOAddTopicScripts(buildTargets.ESMAnalyzer, buildTracker, buildTargets.First(t => t.IsTIF()));
+            progressWriter.ClearByPreviousProgress(generating);
             progressWriter.WriteLast();
         }
 
         private static void WriteTranspiled(BuildTargetAdvancedCollection buildTargets, BuildTracker buildTracker)
         {
             ProgressWriter progressWriter = new ProgressWriter("Writing Transpiled Scripts", buildTargets.Sum(bt => buildTracker.GetBuiltScripts(bt.Name).Count));
-            //WTM:  Change:  Added:  Transpile QF first since some transpilation will be done while writing.
+            //WTM:  Change:  Added:  Write QF first since some transpilation will be done while writing.
             //Types will be inferenced like TES4PublicanBloatedFloatOrmil, and if Standalone gets written first, those files will be incorrect.
             //The below OrderBy statement puts QF first.
             foreach (var buildTarget in buildTargets.OrderBy(bt => !bt.IsQF()))

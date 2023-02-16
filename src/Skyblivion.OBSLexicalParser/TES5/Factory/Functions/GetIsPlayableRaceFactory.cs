@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             */
             //Actor.GetRace().IsPlayable() might work:
             //https://www.creationkit.com/index.php?title=Race_Script
-            return objectCallFactory.CreateObjectCall(objectCallFactory.CreateObjectCall(calledOn, "GetRace"), "IsPlayable");
+            return objectCallFactory.CreateObjectCall(objectCallFactory.CreateObjectCall(calledOn, "GetRace"), "IsPlayable", comment: function.Comment);
         }
     }
 }

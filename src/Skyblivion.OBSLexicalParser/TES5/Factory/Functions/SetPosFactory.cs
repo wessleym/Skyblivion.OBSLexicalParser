@@ -72,7 +72,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 callArguments.Add(argListC);
             }
 
-            return this.objectCallFactory.CreateObjectCall(calledOn, "SetPosition", callArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "SetPosition", callArguments, comment: function.Comment);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES5StaticReference newCalledOn = TES5StaticReferenceFactory.Game;
             TES5ObjectCallArguments arguments = objectCallArgumentsFactory.CreateArgumentList(function.Arguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, "PlayBink", arguments);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, "PlayBink", arguments, comment: function.Comment);
         }
     }
 }

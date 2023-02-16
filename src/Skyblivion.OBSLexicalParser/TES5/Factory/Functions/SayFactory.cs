@@ -67,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //TES5LocalScope localScope = codeScope.LocalScope;
             //ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
             //return this.objectCallFactory.CreateObjectCall(timerReference, "LegacySay", multipleScriptsScope, arguments);
-            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacySay", arguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacySay", arguments, comment: function.Comment);
         }
     }
 }

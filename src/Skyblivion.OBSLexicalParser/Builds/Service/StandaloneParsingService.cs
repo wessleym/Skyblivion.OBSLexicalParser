@@ -1,11 +1,6 @@
-using Dissect.Lexer.TokenStream;
-using Dissect.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
-using System.Collections.Generic;
-using System.IO;
-using System;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
@@ -14,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
      *
      * This class is meant only to be a cache layer for parsing a script
      *
-     * It was created because both BuildScopeCommand and TranspileCommand need the parsed TES4Script and we didn"t
+     * It was created because both BuildScopeCommand and TranspileCommand need the parsed TES4Script and we didn't
      * want to parse twice.
      */
     class StandaloneParsingService : ParsingServiceWithCache<TES4Script>

@@ -17,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //return new TES5Integer(0);//WTM:  Change
-            return objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode");
+            return objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Utility, "IsInMenuMode", comment: function.Comment);
         }
     }
 }

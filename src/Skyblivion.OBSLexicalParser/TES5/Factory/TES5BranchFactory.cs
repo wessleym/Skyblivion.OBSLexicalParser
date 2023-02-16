@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -13,12 +14,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static TES5CodeChunkCollection CreateCodeChunk(TES4Branch chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory, TES5ValueFactory valueFactory)
         {
             TES5SubBranch mainBranch = ConvertSubBranch(chunk.MainBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory, valueFactory);
-            TES4SubBranchList? branchList = chunk.ElseifBranches;
+            List<TES4SubBranch>? branchList = chunk.ElseifBranches;
             TES5SubBranchList? convertedElseIfBranches = null;
             if (branchList != null)
             {
                 convertedElseIfBranches = new TES5SubBranchList();
-                foreach (TES4SubBranch subBranch in branchList.Branches)
+                foreach (TES4SubBranch subBranch in branchList)
                 {
                     convertedElseIfBranches.Add(ConvertSubBranch(subBranch, codeScope, globalScope, multipleScriptsScope, codeChunkFactory, valueFactory));
                 }
@@ -47,16 +48,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private static TES5ElseSubBranch ConvertElseBranch(TES4ElseSubBranch branch, TES5CodeScope outerCodeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5ChainedCodeChunkFactory codeChunkFactory)
         {
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(outerCodeScope.LocalScope);
-            TES4CodeChunks? branchChunks = branch.CodeChunks;
-            if (branchChunks != null)
+            foreach (ITES4CodeChunk codeChunk in branch.CodeChunks.Chunks)
             {
-                foreach (ITES4CodeChunk codeChunk in branchChunks)
+                TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
-                    foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                    {
-                        newCodeScope.AddChunk(newCodeChunk);
-                    }
+                    newCodeScope.AddChunk(newCodeChunk);
                 }
             }
             return new TES5ElseSubBranch(newCodeScope);
@@ -66,16 +63,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             ITES5Value expression = valueFactory.CreateValue(branch.Expression, outerCodeScope, globalScope, multipleScriptsScope);
             TES5CodeScope newCodeScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(outerCodeScope.LocalScope);
-            TES4CodeChunks? branchChunks = branch.CodeChunks;
-            if (branchChunks != null)
+            foreach (ITES4CodeChunk codeChunk in branch.CodeChunks.Chunks)
             {
-                foreach (ITES4CodeChunk codeChunk in branchChunks)
+                TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
+                foreach (ITES5CodeChunk newCodeChunk in codeChunks)
                 {
-                    TES5CodeChunkCollection codeChunks = codeChunkFactory.CreateCodeChunk(codeChunk, newCodeScope, globalScope, multipleScriptsScope);
-                    foreach (ITES5CodeChunk newCodeChunk in codeChunks)
-                    {
-                        newCodeScope.AddChunk(newCodeChunk);
-                    }
+                    newCodeScope.AddChunk(newCodeChunk);
                 }
             }
             return new TES5SubBranch(expression, newCodeScope);

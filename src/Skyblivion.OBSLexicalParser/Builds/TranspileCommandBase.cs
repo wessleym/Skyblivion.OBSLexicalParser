@@ -7,10 +7,11 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    abstract class TranspileCommandBase<T> : ITranspileCommand where T : ITES4CodeFilterable
+    abstract class TranspileCommandBase<T> : ITranspileCommand where T : ITES4CodeChunk
     {
         private readonly ParsingServiceWithCache<T> parserService;
         public TranspileCommandBase(ParsingServiceWithCache<T> parserService)

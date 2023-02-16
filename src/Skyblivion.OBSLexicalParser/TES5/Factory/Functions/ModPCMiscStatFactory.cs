@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 int modAmount = ((TES4Integer)tes4Arguments[1]).IntValue;
                 arguments.Add(new TES5Integer(modAmount));
             }
-            return objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "IncrementStat", arguments);
+            return objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "IncrementStat", arguments, comment: function.Comment);
         }
     }
 }

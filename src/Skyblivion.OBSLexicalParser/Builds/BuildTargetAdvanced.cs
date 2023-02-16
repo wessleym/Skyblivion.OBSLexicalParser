@@ -1,6 +1,6 @@
 using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.AST;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 
 namespace Skyblivion.OBSLexicalParser.Builds
@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return this.transpileCommand.Transpile(sourcePath, outputPath, globalScope, compilingScope);
         }
 
-        public TES5GlobalScope BuildScope(string sourcePath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope BuildScope(string sourcePath, TES5GlobalVariableCollection globalVariables)
         {
             return this.buildScopeCommand.Build(sourcePath, globalVariables);
         }

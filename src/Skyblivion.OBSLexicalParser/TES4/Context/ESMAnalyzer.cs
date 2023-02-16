@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -28,14 +27,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         private TES4Collection ESM { get { if (esmLazy == null) { throw new NullableException(nameof(esmLazy)); } return esmLazy.Value; } }
         private readonly Lazy<Dictionary<string, ITES5Type>> scriptTypesLazy;
         private Dictionary<string, ITES5Type> ScriptTypes => scriptTypesLazy.Value;
-        private readonly Lazy<TES5GlobalVariables> globalVariablesLazy;
-        public TES5GlobalVariables GlobalVariables => globalVariablesLazy.Value;
+        private readonly Lazy<TES5GlobalVariableCollection> globalVariablesLazy;
+        public TES5GlobalVariableCollection GlobalVariables => globalVariablesLazy.Value;
         private readonly Dictionary<string, ITES5Type> edidLowerCache = new Dictionary<string, ITES5Type>();
         private ESMAnalyzer(Func<TES4Collection> tes4CollectionFactory, bool loadLazily)
         {
             esmLazy = new Lazy<TES4Collection>(tes4CollectionFactory);
             scriptTypesLazy = new Lazy<Dictionary<string, ITES5Type>>(GetScriptTypes);
-            globalVariablesLazy = new Lazy<TES5GlobalVariables>(GetGlobalVariables);
+            globalVariablesLazy = new Lazy<TES5GlobalVariableCollection>(GetGlobalVariables);
             if (!loadLazily) { LoadLazyObjects(); }
         }
         private ESMAnalyzer(TES4Collection tes4Collection)
@@ -102,7 +101,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return scriptTypes;
         }
 
-        private TES5GlobalVariables GetGlobalVariables()
+        private TES5GlobalVariableCollection GetGlobalVariables()
         {
             List<TES5GlobalVariable> globalArray = new List<TES5GlobalVariable>();
             IEnumerable<TES4Record> globals = ESM.GetGrupRecords(TES4RecordType.GLOB);
@@ -117,7 +116,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
              * Probably we should extract this from this class and put this into other place
              */
             globalArray.Add(new TES5GlobalVariable("Infamy"));
-            return new TES5GlobalVariables(globalArray);
+            return new TES5GlobalVariableCollection(globalArray);
         }
 
         /*
@@ -283,7 +282,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             TES4Record? record = TryGetRecordByEDIDAndFollowNAME(edid, followName);
             if (record == null)
             {
-                return new TES4Record[] { };
+                return Array.Empty<TES4Record>();
             }
             TES4RecordType recordType = record.RecordType;
             if (recordType == TES4RecordType.SCPT)
@@ -307,7 +306,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         }
 
         /*
-        * @todo REFACTOR, it"s really ugly!
+        * @todo REFACTOR, it's really ugly!
         * @throws ConversionException
         */
         public ITES5Type GetScriptTypeByEDID(string edid)

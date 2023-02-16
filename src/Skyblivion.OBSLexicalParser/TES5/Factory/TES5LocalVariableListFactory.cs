@@ -4,35 +4,38 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
+    //Unused
     static class TES5LocalVariableListFactory
     {
-        public static void CreateCodeChunk(TES4VariableDeclarationList chunk, TES5CodeScope codeScope)
+        private static TES5BasicType GetTES5Type(TES4Type tes4Type)
         {
-            foreach (TES4VariableDeclaration variable in chunk.VariableList)
+            if (tes4Type == TES4Type.T_FLOAT)
             {
-                TES4Type variableType = variable.VariableType;
-                TES5LocalVariable property;
-                if (variableType == TES4Type.T_FLOAT)
-                {
-                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_FLOAT);
-                }
-                else if (variableType == TES4Type.T_INT || variableType == TES4Type.T_SHORT || variableType == TES4Type.T_LONG)
-                {
-                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_INT);
-                }
-                else if (variableType == TES4Type.T_REF)
-                {
-                    //most basic one, if something from inherited class is used, we will set to the inheriting class
-                    property = new TES5LocalVariable(variable.VariableName, TES5BasicType.T_FORM);
-                }
-                else
-                {
-                    throw new ConversionException("Unknown local variable declaration type.");
-                }
-                codeScope.LocalScope.AddVariable(property);
+                return TES5BasicType.T_FLOAT;
+            }
+            if (tes4Type == TES4Type.T_INT || tes4Type == TES4Type.T_SHORT || tes4Type == TES4Type.T_LONG)
+            {
+                return TES5BasicType.T_INT;
+            }
+            if (tes4Type == TES4Type.T_REF)
+            {
+                //most basic one, if something from inherited class is used, we will set to the inheriting class
+                return TES5BasicType.T_FORM;
+            }
+            throw new ConversionException("Unknown local variable declaration type.");
+        }
+
+        public static void CreateCodeChunk(IEnumerable<TES4VariableDeclaration> variableDeclarations, TES5CodeScope codeScope)
+        {
+            foreach (TES4VariableDeclaration variable in variableDeclarations)
+            {
+                TES5BasicType tes5Type = GetTES5Type(variable.VariableType);
+                TES5LocalVariable tes5Variable = new TES5LocalVariable(variable.VariableName, tes5Type);
+                codeScope.LocalScope.AddVariable(tes5Variable);
             }
         }
     }

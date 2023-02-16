@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -14,8 +15,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     {
         public TES5ScriptHeader ScriptHeader { get; }
         public List<TES5Property> Properties { get; } = new List<TES5Property>();
+        private readonly List<ITES5CodeChunk> propertiesAndComments = new List<ITES5CodeChunk>();
         private readonly List<TES5FunctionCodeBlock> functions = new List<TES5FunctionCodeBlock>();
-        public bool QuestHasOnUpdateRegisterForSingleUpdate;
+        public bool QuestHasOnUpdateRegisterForSingleUpdate { get; set; }
         /*
         * TES5GlobalScope constructor.
         */
@@ -25,11 +27,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             QuestHasOnUpdateRegisterForSingleUpdate = false;
         }
 
+        private void AddPropertyOrComment(ITES5CodeChunk propertyOrComment)
+        {
+            propertiesAndComments.Add(propertyOrComment);
+        }
+
         public bool AddPropertyIfNotExists(TES5Property property)
         {
             if (!Properties.Where(p => p.OriginalName == property.OriginalName).Any())
             {
                 this.Properties.Add(property);
+                AddPropertyOrComment(property);
                 return true;
             }
             return false;
@@ -41,6 +49,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             {
                 throw new ConversionException("Property " + property.Name + " was not unique");
             }
+        }
+
+        public void AddComment(TES5Comment comment)
+        {
+            AddPropertyOrComment(comment);
         }
 
         public void AddFunction(TES5FunctionCodeBlock functionCodeBlock)
@@ -56,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
             }
         }
 
-        public IEnumerable<string> Output => Properties.SelectMany(p => p.Output).Concat(functions.SelectMany(o => o.Output));
+        public IEnumerable<string> Output => propertiesAndComments.SelectMany(p => p.Output).Concat(functions.SelectMany(o => o.Output));
 
         private TES5Property? TryGetPropertyByName(string propertyName, bool throwException)
         {

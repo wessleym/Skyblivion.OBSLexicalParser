@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
-using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
@@ -12,17 +13,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
             this.data = data.Trim('"');
         }
 
-        public object Data => StringValue;
+        public object Constant => StringValue;
 
         public string StringValue => this.data;
 
         public TES4Type Type => TES4Type.T_STRING;
-
-        public bool HasFixedValue => true;
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return predicate(this) ? new ITES4CodeFilterable[] { this } : new ITES4CodeFilterable[] { };
-        }
     }
 }

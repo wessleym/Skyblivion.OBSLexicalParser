@@ -4549,7 +4549,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         //Conversion hooks,
         { TES5BasicType.T_TES4TIMERHELPER,
             new TES5InheritanceFunctionSignature[] {
-                new TES5InheritanceFunctionSignature("GetDayOfWeek", new TES5BasicType[] { }, TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT),
                 /*new TES5InheritanceFunctionSignature("GetSecondsPassed", new TES5BasicType[] {
                         TES5BasicType.T_FLOAT
                     }, TES5BasicType.T_FLOAT),*///WTM:  Change:  Deleted

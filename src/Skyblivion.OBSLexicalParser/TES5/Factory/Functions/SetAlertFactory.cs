@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -19,8 +20,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments functionArguments = function.Arguments;
-            int arg0 = (int)functionArguments.Pop(0).Data;
+            ITES4ValueString arg0Value;
+            TES4FunctionArguments revisedArguments;
+            function.Arguments.GetFirstAndRemoveInNew(out arg0Value, out revisedArguments);
+            int arg0 = (int)arg0Value.Constant;
             string functionName;
             switch (arg0)
             {
@@ -39,8 +42,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                         throw new ConversionException("Unknown setAlert value, must be 0 or 1");
                     }
             }
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newArguments);
+            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(revisedArguments, codeScope, globalScope, multipleScriptsScope);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newArguments, comment: function.Comment);
         }
     }
 }

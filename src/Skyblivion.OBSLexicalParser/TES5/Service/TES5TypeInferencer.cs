@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         /*
         * Inference the type by analyzing the object call.
-         * Please note: It is not able to analyze calls to another scripts, but those weren"t used in oblivion anyways
+         * Please note: It is not able to analyze calls to another scripts, but those weren't used in oblivion anyways
         */
         public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
         {
@@ -66,15 +66,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 }
                 else
                 {
-                    //So there"s one , one special case where we actually have to cast a var from one to another even though they are not ,,inheriting" from themselves, because they are primitives.
-                    //Scenario: there"s an T_INT argument, and we feed it with a T_FLOAT variable reference. It won"t work :(
-                    //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there"s a
+                    //So there's one , one special case where we actually have to cast a var from one to another even though they are not "inheriting" from themselves, because they are primitives.
+                    //Scenario: there's an T_INT argument, and we feed it with a T_FLOAT variable reference. It won't work :(
+                    //We need to cast it on call level ( NOT inference it ) to make it work and not break other possible scenarios ( more specifically, when a float would be inferenced to int and there's a
                     //float assigment somewhere in the code )
                     if (argumentTargetType == TES5BasicType.T_INT && argument.TES5Type == TES5BasicType.T_FLOAT)
                     {
                         TES5Castable? argumentCastable = argument as TES5Castable;
                         if (argumentCastable != null)
-                        { //HACKY! When we"ll clean up this interface, it will dissapear :)
+                        { //HACKY! When we clean up this interface, it will dissapear :)
                             argumentCastable.ManualCastTo = argumentTargetType;
                         }
                     }
@@ -108,14 +108,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         private void InferenceWithCustomType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)
         {
             /*
-             * We"re referencing another script - find the script and make it a variable that property will track remotely
+             * We're referencing another script - find the script and make it a variable that property will track remotely
              */
             TES5ScriptHeader scriptHeader = multipleScriptsScope.GetScriptHeaderOfScript(type.OriginalName);
             variable.TrackRemoteScript(scriptHeader);
         }
 
         /*
-        * Try to inference variable"s type with type.
+        * Try to inference variable's type with type.
          * 
          * 
          *  Needed for proxifying the properties to other scripts
@@ -165,7 +165,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 if (firstNameMatch != null) { return TES5TypeFactory.MemberByValue(firstNameMatch, null, esmAnalyzer); }
             }
             */
-            //If it"s not found, we"re forced to scan the ESM to see, how to resolve the ref name to script type
+            //If it's not found, we're forced to scan the ESM to see, how to resolve the ref name to script type
             return this.esmAnalyzer.GetScriptTypeByEDID(edid);
         }
 

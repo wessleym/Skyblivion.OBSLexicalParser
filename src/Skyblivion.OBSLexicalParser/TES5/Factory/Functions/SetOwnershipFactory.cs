@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 args = new TES5ObjectCallArguments() { this.objectCallFactory.CreateGetActorBaseOfPlayer(globalScope) };
             }
 
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, args);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, args, comment: function.Comment);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Dissect.Util
         */
         public static IEnumerable<T> Union<T>(params IEnumerable<T>[] args)
         {
-            IEnumerable<T> rv = new T[] { };
+            IEnumerable<T> rv = Array.Empty<T>();
             foreach(IEnumerable<T> a in args)
             {
                 rv = rv.Concat(a);

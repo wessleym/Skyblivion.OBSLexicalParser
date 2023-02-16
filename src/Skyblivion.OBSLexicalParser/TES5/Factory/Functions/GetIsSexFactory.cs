@@ -21,6 +21,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            if (function.Comment != null)
+            {
+                throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");
+            }
             TES4FunctionArguments functionArguments = function.Arguments;
             if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(calledOn.TES5Type, TES5BasicType.T_ACTOR)) { calledOn = this.objectCallFactory.CreateGetActorBase(calledOn); }
             TES5ObjectCall functionThis = this.objectCallFactory.CreateObjectCall(calledOn, "GetSex");

@@ -25,16 +25,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //this function does not use strings for the names, so i cant really understand what is it.
             //todo refactor
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-            ITES4StringValue firstArg = functionArguments[0];
+            ITES4ValueString firstArg = functionArguments[0];
             convertedArguments.Add(new TES5String(firstArg.StringValue));
             /*
             secondArg = functionArguments.getValue(1);
-    
-        if (secondArg && secondArg.getData() != 0) {
+            if (secondArg && secondArg.getData() != 0) {
                 convertedArguments.add(new TES5Integer(1));
             }*/
             convertedArguments.Add(new TES5Bool(true));
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
         }
     }
 }

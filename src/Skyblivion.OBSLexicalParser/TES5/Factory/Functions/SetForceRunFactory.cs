@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             int afSpeedMult = !run ? 1 : 2;
             const string functionName = "ForceMovementSpeed";
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5Float(afSpeedMult) };
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
         }
     }
 }

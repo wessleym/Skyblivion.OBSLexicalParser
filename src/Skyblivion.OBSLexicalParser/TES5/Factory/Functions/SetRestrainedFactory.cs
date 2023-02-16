@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             int flag = ((TES4Integer)function.Arguments[0]).IntValue;
             bool restrained = flag != 0;
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5Bool(restrained) };
-            return objectCallFactory.CreateObjectCall(calledOn, "SetRestrained", arguments);
+            return objectCallFactory.CreateObjectCall(calledOn, "SetRestrained", arguments, comment: function.Comment);
         }
     }
 }

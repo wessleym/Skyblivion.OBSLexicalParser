@@ -1,13 +1,17 @@
 using Dissect.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Block;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,30 +32,48 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
 
         /*
         *  The script to be converted
-        *  The script"s global scope
-        *  The scope under which we"re converting
+        *  The script's global scope
+        *  The scope under which we're converting
         * 
         * @throws ConversionException
         */
         public TES5Target Convert(TES4Target target, bool isStandalone, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Script script = target.Script;
-            TES4BlockList? parsedBlockList = script.BlockList;
             Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
-            if (parsedBlockList != null)
+            TES5EventCodeBlock? onUpdateBlockOfNonQuestOrAME = null;
+            List<TES5Comment> waitingComments = new List<TES5Comment>();//Collects comments of the upcoming block.
+            Dictionary<string, List<TES5Comment>> blockListComments = new Dictionary<string, List<TES5Comment>>();
+            foreach (ITES4CodeBlockOrComment blockOrComment in script.BlockList)
             {
-                TES5EventCodeBlock? onUpdateBlockOfNonQuestOrAME = null;
-                foreach (TES4CodeBlock block in parsedBlockList.Blocks)
+                TES4CodeBlock? block = blockOrComment as TES4CodeBlock;
+                if (block != null)
                 {
-                    TES5BlockList newBlockList = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateBlockOfNonQuestOrAME);
-                    foreach (ITES5CodeBlock newBlock in newBlockList.Blocks)
+                    List<ITES5CodeBlock> newBlocks = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateBlockOfNonQuestOrAME, waitingComments);
+                    if (newBlocks.Any())
                     {
-                        createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
+                        foreach (ITES5CodeBlock newBlock in newBlocks)
+                        {
+                            createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
+                        }
+                        if (waitingComments.Any())
+                        {
+                            blockListComments.AddNewListIfNotContainsKeyAndAddValueToList(newBlocks[0].BlockName, waitingComments);
+                        }
                     }
+                    waitingComments.Clear();
+                    continue;
                 }
+                TES4Comment? comment = blockOrComment as TES4Comment;
+                if (comment != null)
+                {
+                    waitingComments.Add(TES5CommentFactory.Construct(comment));
+                    continue;
+                }
+                throw new InvalidOperationException("Unhandled " + nameof(blockOrComment) + " type:  " + blockOrComment.GetType().FullName);
             }
 
-            TES5BlockList blockList = new TES5BlockList();
+            List<ITES5CodeBlock> blockList = new List<ITES5CodeBlock>();
             foreach (var createdBlock in createdBlocks)
             {
                 var blockType = createdBlock.Key;
@@ -70,7 +92,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 }
             }
 
-            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList, false), target.OutputPath);
+            ITES5Outputtable[] blocksWithComments = blockList
+                .SelectMany(block =>
+                {
+                    List<ITES5Outputtable> blocks = new List<ITES5Outputtable>();
+                    List<TES5Comment> comments;
+                    if (blockListComments.TryGetValue(block.BlockName, out comments))
+                    {
+                        blocks.AddRange(comments);
+                    }
+                    blocks.Add(block);
+                    return blocks;
+                })
+                .Concat(waitingComments)//Concat remaining comments at the bottom of the file
+                .ToArray();
+            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList, blocksWithComments, false), target.OutputPath);
             return result;
         }
 
@@ -116,7 +152,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 foreach (var function in functions)
                 {
                     yield return function;
-                    TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.BlockName, localScopeArguments, false// hacky.
+                    TES5ObjectCall functionCall = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), function.BlockName, localScopeArguments, inference: false// hacky.
                         );
                     proxyBlock.AddChunk(functionCall);
                 }

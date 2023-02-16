@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -16,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
 
         public void WriteLine(int originalTargetIndex, IEnumerable<int>? mappedTargetIndexes = null)
         {
-            if (mappedTargetIndexes == null) { mappedTargetIndexes = new int[] { }; }
+            if (mappedTargetIndexes == null) { mappedTargetIndexes = Array.Empty<int>(); }
             WriteLine(originalTargetIndex.ToString() + " " + string.Join("\t", mappedTargetIndexes));
         }
 

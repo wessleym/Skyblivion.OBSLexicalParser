@@ -8,25 +8,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     /*
      * Class RenamedFunctionFactory
-     * Converts functions which are a simple ,,just move signature over", but with a rename
+     * Converts functions which are a simple "just move signature over," but with a rename
      */
     class RenamedFunctionFactory : IFunctionFactory
     {
         private readonly string newFunctionName;
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public RenamedFunctionFactory(string newFunctionName, TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly SimpleFunctionTranslationFactory simpleFunctionTranslationFactory;
+        public RenamedFunctionFactory(string newFunctionName, SimpleFunctionTranslationFactory simpleFunctionTranslationFactory)
         {
             this.newFunctionName = newFunctionName;
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.objectCallFactory = objectCallFactory;
+            this.simpleFunctionTranslationFactory = simpleFunctionTranslationFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4FunctionArguments oldArguments = function.Arguments;
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(oldArguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(calledOn, this.newFunctionName, newArguments);
+            return simpleFunctionTranslationFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope, newFunctionName);
         }
     }
 }

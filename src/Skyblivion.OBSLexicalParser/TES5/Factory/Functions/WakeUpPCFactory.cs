@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             //WTM:  Change:  Apparently moving the player wakes up the player.  I want to see if this works.
             var playerRef = TES5ReferenceFactory.CreateReferenceToPlayer(globalScope);
-            return objectCallFactory.CreateObjectCall(playerRef, "MoveTo", new TES5ObjectCallArguments() { playerRef });
+            return objectCallFactory.CreateObjectCall(playerRef, "MoveTo", new TES5ObjectCallArguments() { playerRef }, comment: function.Comment);
         }
     }
 }

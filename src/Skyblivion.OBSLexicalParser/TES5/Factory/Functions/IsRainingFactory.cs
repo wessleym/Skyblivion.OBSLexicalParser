@@ -5,6 +5,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -18,6 +19,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            if (function.Comment != null)
+            {
+                throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");
+            }
             return TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Weather, "GetCurrentWeather"), "GetClassification"), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Integer(2));
         }
     }

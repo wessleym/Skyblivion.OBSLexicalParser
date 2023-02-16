@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection
+namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5GlobalVariables
+    class TES5GlobalVariableCollection
     {
         private readonly Dictionary<string, TES5GlobalVariable> globalVariables;
         /*
         * TES5GlobalVariables constructor.
         */
-        public TES5GlobalVariables(List<TES5GlobalVariable> globalVariables)
+        public TES5GlobalVariableCollection(List<TES5GlobalVariable> globalVariables)
         {
             this.globalVariables = new Dictionary<string, TES5GlobalVariable>(StringComparer.OrdinalIgnoreCase);
             foreach (var globalVariable in globalVariables)
@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection
 
         public bool ContainsName(string globalVariableName)
         {
-            return this.globalVariables.ContainsKey(globalVariableName);
+            return globalVariables.ContainsKey(globalVariableName);
         }
     }
 }

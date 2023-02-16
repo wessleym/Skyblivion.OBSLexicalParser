@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             /*
              * Force start because in oblivion double using AddScriptPackage would actually overwrite the script package, so we mimic this
              */
-            return this.objectCallFactory.CreateObjectCall(reference, "ForceStart", funcArgs);
+            return this.objectCallFactory.CreateObjectCall(reference, "ForceStart", funcArgs, comment: function.Comment);
         }
     }
 }

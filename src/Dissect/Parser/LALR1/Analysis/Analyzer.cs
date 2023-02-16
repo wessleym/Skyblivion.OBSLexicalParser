@@ -1,5 +1,6 @@
 using Dissect.Extensions;
 using Dissect.Parser.LALR1.Analysis.Exceptions;
+using Dissect.Parser.LALR1.Analysis.KernelSet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,7 +102,7 @@ namespace Dissect.Parser.LALR1.Analysis
                                     List<string> newSet = firstSets[c];
                                     if (!newSet.Contains(Grammar.EPSILON))
                                     {
-                                        // if the component doesn"t derive
+                                        // if the component doesn't derive
                                         // epsilon, merge FIRST sets and break
                                         lookahead = Util.Util.Union(lookahead, newSet).ToList();
                                         break;
@@ -146,7 +147,7 @@ namespace Dissect.Parser.LALR1.Analysis
                                 Item newItem;
                                 if (!added.Contains(component))
                                 {
-                                    // if component hasn"t yet been expaned,
+                                    // if component hasn't yet been expaned,
                                     // create new items for it
                                     newItem = new Item(rule, 0);
                                     currentItems.Add(newItem);
@@ -186,11 +187,11 @@ namespace Dissect.Parser.LALR1.Analysis
                         newKernel.Add(new decimal[] { thisItem.Rule.Number, thisItem.DotIndex+ 1 });
                     }
 
-                    int num = kernelSet.Insert(newKernel);
-                    if (automaton.HasState(num))
+                    Node newNode = kernelSet.Insert(newKernel);
+                    if (automaton.HasState(newNode))
                     {// the state already exists
-                        automaton.AddTransition(state.Number, thisComponent, num); // extract the connected items from the target state
-                        State nextState = automaton.GetState(num);
+                        automaton.AddTransition(state.Node, thisComponent, newNode); // extract the connected items from the target state
+                        State nextState = automaton.GetState(newNode);
                         foreach (var thisItem in theseItems)
                         {
                             thisItem.Connect(nextState.Get(thisItem.Rule.Number, thisItem.DotIndex+ 1));
@@ -198,7 +199,7 @@ namespace Dissect.Parser.LALR1.Analysis
                     }
                     else
                     {// new state needs to be created
-                        State newState = new State(num, theseItems.Select(item =>
+                        State newState = new State(newNode, theseItems.Select(item =>
                         {
                             Item newItem = new Item(item.Rule, item.DotIndex+ 1);
                             // connect the two items
@@ -207,7 +208,7 @@ namespace Dissect.Parser.LALR1.Analysis
                         }).ToArray());
                         automaton.AddState(newState);
                         queue.Enqueue(newState);
-                        automaton.AddTransition(state.Number, thisComponent, num);
+                        automaton.AddTransition(state.Node, thisComponent, newNode);
                     }
                 }
             } // pump all the lookahead tokens
@@ -229,7 +230,7 @@ namespace Dissect.Parser.LALR1.Analysis
         {
             int conflictsMode = grammar.ConflictsMode;
             List<Conflict> conflicts = new List<Conflict>();
-            Dictionary<int, Dictionary<string, bool>> errors = new Dictionary<int, Dictionary<string, bool>>();
+            Dictionary<Node, Dictionary<string, bool>> errors = new Dictionary<Node, Dictionary<string, bool>>();
             // initialize the table
             ActionAndGoTo table = new ActionAndGoTo();
             foreach (var kvp in automaton.TransitionTable)
@@ -255,9 +256,9 @@ namespace Dissect.Parser.LALR1.Analysis
 
             foreach (var kvp in automaton.States)
             {
-                var num = kvp.Key;
+                var sourceNode = kvp.Key;
                 var state = kvp.Value;
-                Dictionary<string, int> actionDictionary = table.Action.GetOrAdd(num, ()=>new Dictionary<string, int>());
+                Dictionary<string, int> actionDictionary = table.Action.GetOrAdd(sourceNode.Number, ()=>new Dictionary<string, int>());
 
                 foreach (var item in state.Items)
                 {
@@ -267,7 +268,7 @@ namespace Dissect.Parser.LALR1.Analysis
                         foreach (var token in item.Lookahead)
                         {
                             Dictionary<string, bool>? errorsOfNum;
-                            if (errors.TryGetValue(num, out errorsOfNum) && errorsOfNum.ContainsKey(token))
+                            if (errors.TryGetValue(sourceNode, out errorsOfNum) && errorsOfNum.ContainsKey(token))
                             {
                                 // there was a previous conflict resolved as an error
                                 // entry for this token.
@@ -314,16 +315,16 @@ namespace Dissect.Parser.LALR1.Analysis
                                                 else if (rulePrecedence < tokenPrecedence)
                                                 {
                                                     // if the token precedence is higher, shift
-                                                    // (i.e. don"t modify the table)
+                                                    // (i.e. don't modify the table)
                                                 }
                                                 else
                                                 {
-                                                    // precedences are equal, let"s turn to associativity
+                                                    // precedences are equal, let's turn to associativity
                                                     int assoc = operatorInfo["assoc"];
                                                     if (assoc == Grammar.RIGHT)
                                                     {
                                                         // if right-associative, shift
-                                                        // (i.e. don"t modify the table)
+                                                        // (i.e. don't modify the table)
                                                     }
 
                                                     else if (assoc == Grammar.LEFT)
@@ -340,13 +341,13 @@ namespace Dissect.Parser.LALR1.Analysis
                                                         // and mark this as an explicit error
                                                         // entry
                                                         actionDictionary.Remove(token);
-                                                        errors[num].Add(token, true);
+                                                        errors[sourceNode].Add(token, true);
                                                     }
                                                 }
 
                                                 continue; // resolved the conflict, phew
                                             }
-                                            // we couldn"t calculate the precedence => the conflict was not resolved
+                                            // we couldn't calculate the precedence => the conflict was not resolved
                                             // move along.
                                         }
                                     }
@@ -354,12 +355,12 @@ namespace Dissect.Parser.LALR1.Analysis
                                     // s/r
                                     if ((conflictsMode & Grammar.SHIFT) == Grammar.SHIFT)
                                     {
-                                        conflicts.Add(new Conflict(num, token, item.Rule, Grammar.SHIFT));
+                                        conflicts.Add(new Conflict(sourceNode, token, item.Rule, Grammar.SHIFT));
                                         continue;
                                     }
                                     else
                                     {
-                                        throw new ShiftReduceConflictException(num, item.Rule, token, automaton);
+                                        throw new ShiftReduceConflictException(sourceNode.Number, item.Rule, token, automaton);
                                     }
                                 }
                                 else
@@ -375,7 +376,7 @@ namespace Dissect.Parser.LALR1.Analysis
                                         {
                                             // original rule is longer
                                             Rule[] resolvedRules = new Rule[] { originalRule, newRule };
-                                            conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.LONGER_REDUCE));
+                                            conflicts.Add(new Conflict(sourceNode, token, resolvedRules, Grammar.LONGER_REDUCE));
                                             continue;
                                         }
 
@@ -384,7 +385,7 @@ namespace Dissect.Parser.LALR1.Analysis
                                             // new rule is longer
                                             actionDictionary[token] = -ruleNumber;
                                             Rule[] resolvedRules = new Rule[] { newRule, originalRule };
-                                            conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.LONGER_REDUCE));
+                                            conflicts.Add(new Conflict(sourceNode, token, resolvedRules, Grammar.LONGER_REDUCE));
                                             continue;
                                         }
                                     }
@@ -395,22 +396,22 @@ namespace Dissect.Parser.LALR1.Analysis
                                         {
                                             // original rule was earlier
                                             Rule[] resolvedRules = new Rule[] { originalRule, newRule };
-                                            conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.EARLIER_REDUCE));
+                                            conflicts.Add(new Conflict(sourceNode, token, resolvedRules, Grammar.EARLIER_REDUCE));
                                             continue;
                                         }
                                         else
                                         {
                                             // new rule was earlier
                                             actionDictionary[token] = -ruleNumber;
-                                            //WTM:  Change:  In PHP, this resolvedRules declaration was below the conflicts.Add statement, but this else statement was never reached anyway as far as I can tell.
+                                            //WTM:  Change:  In PHP, this resolvedRules declaration was below the conflicts.Add statement.
                                             Rule[] resolvedRules = new Rule[] { newRule, originalRule };
-                                            conflicts.Add(new Conflict(num, token, resolvedRules, Grammar.EARLIER_REDUCE));
+                                            conflicts.Add(new Conflict(sourceNode, token, resolvedRules, Grammar.EARLIER_REDUCE));
                                             continue;
                                         }
                                     }
 
                                     // everything failed, throw an exception
-                                    throw new ReduceReduceConflictException(num, originalRule, newRule, token, automaton);
+                                    throw new ReduceReduceConflictException(sourceNode.Number, originalRule, newRule, token, automaton);
                                 }
                             }
 
@@ -450,7 +451,7 @@ namespace Dissect.Parser.LALR1.Analysis
                     foreach (Rule rule in ruleArray)
                     {
                         string[] components = rule.Components;
-                        string[] newArray = new string[] { };
+                        string[] newArray = Array.Empty<string>();
                         if (!components.Any())
                         {
                             newArray = new string[] { Grammar.EPSILON };
@@ -463,13 +464,13 @@ namespace Dissect.Parser.LALR1.Analysis
                                 if (rules.ContainsKey(component))
                                 {
                                     // if nonterminal, copy its FIRST set to
-                                    // this rule"s first set
+                                    // this rule's first set
                                     List<string> x = firstSets[component];
                                     if (!x.Contains(Grammar.EPSILON))
                                     {
-                                        // if the component doesn"t derive
+                                        // if the component doesn't derive
                                         // epsilon, merge the first sets and
-                                        // we"re done
+                                        // we're done
                                         newArray = Util.Util.Union(newArray, x).ToArray();
                                         break;
                                     }
@@ -489,7 +490,7 @@ namespace Dissect.Parser.LALR1.Analysis
                                 else
                                 {
                                     // if terminal, simply add it the the FIRST set
-                                    // and we"re done
+                                    // and we're done
                                     newArray = Util.Util.Union(newArray, new string[] { component }).ToArray();
                                     break;
                                 }

@@ -3,11 +3,12 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 using System;
+using System.Collections;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
-    abstract class ParsingService<T> where T : ITES4CodeFilterable
+    abstract class ParsingService<T>
     {
         private readonly Lazy<OBScriptLexer> lexerLazy;
         private readonly Lazy<SyntaxErrorCleanParser> parserLazy;

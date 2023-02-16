@@ -7,6 +7,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {

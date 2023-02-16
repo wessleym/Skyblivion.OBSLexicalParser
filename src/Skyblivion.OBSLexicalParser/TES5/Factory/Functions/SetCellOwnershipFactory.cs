@@ -21,13 +21,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             const string functionName = "SetActorOwner";
             TES5LocalScope localScope = codeScope.LocalScope;
-            ITES4StringValue tes4Cell = function.Arguments[0];
+            ITES4ValueString tes4Cell = function.Arguments[0];
             ITES5Referencer tes5Cell = this.referenceFactory.CreateReference(tes4Cell.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
             {
                 objectCallFactory.CreateGetActorBaseOfPlayer(globalScope)
             };
-            return this.objectCallFactory.CreateObjectCall(tes5Cell, functionName, arguments);
+            return this.objectCallFactory.CreateObjectCall(tes5Cell, functionName, arguments, comment: function.Comment);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Bool(true),//Remove gold.
                 new TES5Bool(payFineThief)//Do or do not send to jail based on payFineThief.
             };
-            return this.objectCallFactory.CreateObjectCall(faction, functionName, argumentList);
+            return this.objectCallFactory.CreateObjectCall(faction, functionName, argumentList, comment: function.Comment);
         }
     }
 }

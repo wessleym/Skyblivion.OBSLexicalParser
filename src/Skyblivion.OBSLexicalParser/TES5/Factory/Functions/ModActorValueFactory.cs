@@ -54,7 +54,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         if (!TES5PlayerReference.EqualsPlayer(calledOn.Name))
                         {
-                            //We can"t convert those.. and shouldn"t be any, too.
+                            //We can't convert those.. and shouldn't be any, too.
                             throw new ConversionException(nameof(ModActorValueFactory) + ":  Cannot set attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);
                         }
 
@@ -64,10 +64,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                          *  Switch out callee with the reference to attr
                          */
                         ITES5Referencer newCalledOn = this.referenceFactory.CreateReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope);
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         ITES5Value addedValue = this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope);
                         convertedArguments.Add(TES5ExpressionFactory.CreateArithmeticExpression(addedValue, TES5ArithmeticExpressionOperator.OPERATOR_ADD, this.referenceFactory.CreateReadReference(tes4AttrFirstArg, globalScope, multipleScriptsScope, localScope)));
-                        return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, convertedArguments, comment: function.Comment);
                     }
 
                 case "fatigue":
@@ -75,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "security":
                 case "acrobatics":
                 case "mercantile":
-                case "mysticism": //It doesn"t exist in Skyrim - defaulting to Illusion..
+                case "mysticism": //It doesn't exist in Skyrim - defaulting to Illusion..
                 case "blade":
                 case "blunt":
                 case "encumbrance":
@@ -89,16 +89,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         const string functionName = "ModActorValue";
                         convertedArguments.Add(new TES5String(ActorValueMap.Map[firstArgStringLower]));
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
 
                 case "aggression":
                     {
                         const string functionName = "ModActorValue";
-                        ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.Data;
+                        ITES4ValueString secondArg = functionArguments[1];
+                        int secondArgData = (int)secondArg.Constant;
                         int newValue;
                         if (secondArgData < -80)
                         {
@@ -132,14 +132,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(new TES5Float(newValue));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
 
                 case "confidence":
                     {
                         const string functionName = "ModActorValue";
-                        ITES4StringValue secondArg = functionArguments[1];
-                        int secondArgData = (int)secondArg.Data;
+                        ITES4ValueString secondArg = functionArguments[1];
+                        int secondArgData = (int)secondArg.Constant;
                         int newValue;
                         if (secondArgData == -100)
                         {
@@ -185,16 +185,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
                         convertedArguments.Add(new TES5String(firstArgString));
                         convertedArguments.Add(new TES5Float(newValue));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
 
                 default:
                     {
                         const string functionName = "ModActorValue";
                         convertedArguments.Add(new TES5String(firstArgString));
-                        ITES4StringValue secondArg = functionArguments[1];
+                        ITES4ValueString secondArg = functionArguments[1];
                         convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
             }
         }

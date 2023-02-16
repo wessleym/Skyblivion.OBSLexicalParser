@@ -34,5 +34,10 @@ namespace Dissect.Extensions
             List<TValue> list = dictionary.AddNewListIfNotContainsKey(key);
             list.Add(valueToAdd);
         }
+        public static void AddNewListIfNotContainsKeyAndAddValueToList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, TKey key, IEnumerable<TValue> valuesToAdd)
+        {
+            List<TValue> list = dictionary.AddNewListIfNotContainsKey(key);
+            list.AddRange(valuesToAdd);
+        }
     }
 }

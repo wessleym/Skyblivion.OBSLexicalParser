@@ -5,7 +5,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -24,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
             TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
             TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             TES4TopicsToTES5GlobalVariableFinder globalVariableFinder = new TES4TopicsToTES5GlobalVariableFinder();
-            TES5GlobalVariables globalVariables = esmAnalyzer.GlobalVariables;
+            TES5GlobalVariableCollection globalVariables = esmAnalyzer.GlobalVariables;
             var builtTIFs = buildTracker.GetBuiltScripts(BuildTargetFactory.TIFName);
             foreach (TES4Record infoRecord in esmAnalyzer.GetRecords().Where(r => r.RecordType == TES4RecordType.INFO))
             {
@@ -38,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                     TES5FunctionCodeBlock fragment0;
                     if (infoTIF != null)
                     {
-                        fragment0 = infoTIF.BlockList.Blocks.OfType<TES5FunctionCodeBlock>().Where(b => b.BlockName == fragment0Name).First();
+                        fragment0 = infoTIF.Blocks.OfType<TES5FunctionCodeBlock>().Where(b => b.BlockName == fragment0Name).First();
                     }
                     else
                     {
@@ -49,8 +48,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         TES5LocalScope localScope = new TES5LocalScope(functionScope);
                         TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScope(localScope);
                         fragment0 = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance, false, true);
-                        TES5BlockList blockList = new TES5BlockList() { fragment0 };
-                        infoTIF = new TES5Script(globalScope, blockList, true);
+                        ITES5CodeBlock[] blocks = new ITES5CodeBlock[] { fragment0 };
+                        infoTIF = new TES5Script(globalScope, blocks, true);
                         string outputPath = tifBuildTarget.GetTranspileToPath(scriptName);
                         TES5Target target = new TES5Target(infoTIF, outputPath);
                         buildTracker.RegisterBuiltScript(tifBuildTarget, target);

@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 TES5Property globalVariableProperty = TES5PropertyFactory.ConstructWithTES5FormID(newGlobalVariable.Item2, TES5BasicType.T_GLOBALVARIABLE, newGlobalVariable.Item2, newGlobalVariable.Item1);
                 globalScope.AddPropertyIfNotExists(globalVariableProperty);
                 TES5Reference globalVariableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(globalVariableProperty);
-                return objectCallFactory.CreateObjectCall(globalVariableReference, "SetValueInt", new TES5ObjectCallArguments() { new TES5Integer(1) });
+                return objectCallFactory.CreateObjectCall(globalVariableReference, "SetValueInt", new TES5ObjectCallArguments() { new TES5Integer(1) }, comment: function.Comment);
             }
             return popCalledRenameFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
         }

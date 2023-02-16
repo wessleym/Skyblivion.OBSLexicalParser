@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
     class TES5FunctionScope
     {
         /*
-        *  This might be the Event"s name, or Function"s name.
+        *  This might be the Event's name, or Function's name.
         */
         public string BlockName { get; private set; }
         private readonly Dictionary<string, TES5SignatureParameter> parameters = new Dictionary<string, TES5SignatureParameter>();

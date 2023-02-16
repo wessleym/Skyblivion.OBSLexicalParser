@@ -46,8 +46,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             StageMap stageMap = StageMapBuilder.Build(target, resultingFragmentName, esmAnalyzer, tes4FormID);
             /*
              * We need script fragment for objective handling for each stage, so when parsing the script fragments,
-             * we"ll be marking them there, and intersecting this with stage.
-             * This will give us an array of stages which don"t have script fragment, but will need it anyways
+             * we'll be marking them there, and intersecting this with stage.
+             * This will give us an array of stages which don't have script fragment, but will need it anyways
              * for objective handling.
              */
             TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
@@ -108,7 +108,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                     }
                 }
 
-                List<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.BlockList.Blocks;
+                IReadOnlyList<ITES5CodeBlock> subfragmentBlocks = subfragmentScript.Blocks;
                 if (subfragmentBlocks.Count != 1)
                 {
                     throw new ConversionException("Wrong QF fragment, actual function count: " + subfragmentBlocks.Count + "..");
@@ -155,8 +155,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
                 this.mappedTargetsLogService.WriteLine(originalTargetIndex, mappedTargetIndexes);
             }
 
-            TES5BlockList resultingBlockList = new TES5BlockList(questStageBlocks.OrderBy(b => b.StageID).ThenBy(b => b.LogIndex).Select(b => b.CodeBlock));
-            TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlockList, true);
+            IReadOnlyList<ITES5CodeBlock> resultingBlocks = questStageBlocks.OrderBy(b => b.StageID).ThenBy(b => b.LogIndex).Select(b => b.CodeBlock).ToArray();
+            TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlocks, true);
             string outputPath = target.GetTranspileToPath(resultingFragmentName);
             return new TES5Target(resultingTree, outputPath);
         }

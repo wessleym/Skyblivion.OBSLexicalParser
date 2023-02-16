@@ -17,29 +17,27 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 
         public object ParseWithFixLogic(ITokenStream stream)
         {
-            //WTM:  Change:  If the script is just a comment, resulting in only an EOF token, parser.ParseWithFixLogic fails.
-            //The below two lines works around that.
             IToken[] firstTwoTokens = stream.Take(2).ToArray();
             if (firstTwoTokens.Length == 1 && firstTwoTokens[0].Type == EOF_TOKEN_TYPE) { throw new EOFOnlyException(); }//File is just a comment.
             try
             {
                 return Parse(stream);
             }
-            catch (UnexpectedTokenException ex) when (ex.Token.Value=="endif")
+            catch (UnexpectedTokenException ex) when (ex.Token.Value == "endif")
             {
                 bool isFixed = false;
                 int nesting = 0;
                 List<IToken> tokens = new List<IToken>();
                 foreach (var token in stream)
                 {
-                    if (token.Type== "BranchStartToken")
+                    if (token.Type == "BranchStartToken")
                     {
                         nesting++;
                         tokens.Add(token);
                     }
                     else
                     {
-                        if (token.Type== "BranchEndToken")
+                        if (token.Type == "BranchEndToken")
                         {
                             nesting--;
                             if (nesting > -1)

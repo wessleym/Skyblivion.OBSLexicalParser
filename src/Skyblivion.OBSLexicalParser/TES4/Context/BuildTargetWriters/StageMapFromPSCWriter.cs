@@ -31,7 +31,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
                 foreach (Match isObjectiveDisplayed in isObjectiveDisplayeds)
                 {
                     int index = int.Parse(isObjectiveDisplayed.Groups[1].Value);
-                    if (index != expectedIndex) { }
                     int value = int.Parse(isObjectiveDisplayed.Groups[2].Value);
                     line.Add(value == 1 ? 0 : 1);
                     expectedIndex++;

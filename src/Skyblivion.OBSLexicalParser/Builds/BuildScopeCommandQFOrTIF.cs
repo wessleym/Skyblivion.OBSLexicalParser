@@ -1,13 +1,13 @@
-﻿using Skyblivion.ESReader.Extensions;
-using Skyblivion.OBSLexicalParser.Input;
+﻿using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES5.AST;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
@@ -27,17 +27,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.fragmentType = fragmentType;
         }
 
-        public TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables)
+        public TES5GlobalScope Build(string sourcePath, TES5GlobalVariableCollection globalVariables)
         {
             string scriptName = Path.GetFileNameWithoutExtension(sourcePath);
-            TES4VariableDeclarationList variableList = fragmentsReferencesBuilder.BuildVariableDeclarationList(sourcePath, scriptName, fragmentType);
+            TES4VariableDeclaration[] variableDeclarations = fragmentsReferencesBuilder.BuildVariableDeclarationList(sourcePath, scriptName, fragmentType).ToArray();
             //Create the header.
             TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, scriptType, scriptNamePrefix, true);
             TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
-            if (variableList != null)
-            {
-                propertyFactory.CreateAndAddProperties(variableList, globalScope, globalVariables);
-            }
+            propertyFactory.CreateAndAddProperties(variableDeclarations, globalScope, globalVariables);
             return globalScope;
         }
     }

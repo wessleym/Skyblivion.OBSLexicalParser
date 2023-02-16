@@ -57,8 +57,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             {
                 ITES4Callable? valueTupleItem1 = tes4ValueTuple.Item1 as ITES4Callable;
                 if (valueTupleItem1 == null) { continue; }
-
                 TES4Function function = valueTupleItem1.Function;
+                object? item2Constant = (tes4ValueTuple.Item2 as ITES4ValueConstant)?.Constant;
+                object GetItem2Data()
+                {
+                    if (item2Constant == null) { throw new InvalidOperationException("Data was not a constant while converting call to "+ function.FunctionCall.FunctionName + "."); }
+                    return item2Constant;
+                }
+
 
                 switch (function.FunctionCall.FunctionName.ToLower())
                 {
@@ -68,7 +74,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             TES5ObjectCall equippedWeaponLeftValue = this.objectCallFactory.CreateObjectCall(this.objectCallFactory.CreateObjectCall(calledOn, "GetEquippedWeapon"), "GetWeaponType");
 
                             int[] targetedWeaponTypes;
-                            switch ((int)tes4ValueTuple.Item2.Data)
+                            switch ((int)GetItem2Data())
                             {
 
                                 case 0:
@@ -125,19 +131,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                 this.CreateCalledOnReferenceOfCalledFunction(valueTupleItem1, codeScope, globalScope, multipleScriptsScope)
                             };
                             TES5ObjectCall getDetectedLeftValue = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReadReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope), "isDetectedBy", inversedArgument);
-                            TES5Integer getDetectedRightValue = new TES5Integer(((int)tes4ValueTuple.Item2.Data == 0) ? 0 : 1);
+                            TES5Integer getDetectedRightValue = new TES5Integer(((int)GetItem2Data() == 0) ? 0 : 1);
                             return TES5ExpressionFactory.CreateComparisonExpression(getDetectedLeftValue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, getDetectedRightValue);
                         }
 
                     case "getdetectionlevel":
                         {
-
-                            if (!tes4ValueTuple.Item2.HasFixedValue)
-                            {
-                                throw new ConversionException("Cannot convert getDetectionLevel calls with dynamic comparision");
-                            }
-
-                            TES5Bool tes5Bool = new TES5Bool(((int)tes4ValueTuple.Item2.Data) == 3); //true only if the compared value was 3
+                            TES5Bool tes5Bool = new TES5Bool((int)GetItem2Data() == 3); //true only if the compared value was 3
 
                             TES5ObjectCallArguments inversedArgument = new TES5ObjectCallArguments()
                             {
@@ -154,13 +154,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                     case "getcurrentaiprocedure":
                         {
-
-                            if (!tes4ValueTuple.Item2.HasFixedValue)
-                            {
-                                throw new ConversionException("Cannot convert getCurrentAIProcedure() calls with dynamic comparision");
-                            }
-
-                            switch ((int)tes4ValueTuple.Item2.Data)
+                            int item2DataInt = (int)GetItem2Data();
+                            switch (item2DataInt)
                             {
                                 case 4:
                                     {
@@ -200,7 +195,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                                     }
                                 default:
                                     {
-                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + ((int)tes4ValueTuple.Item2.Data).ToString());
+                                        throw new ConversionException("Cannot convert GetCurrentAiProcedure - unknown TES4 procedure number arg " + item2DataInt.ToString());
                                     }
                             }
                         }
@@ -209,7 +204,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     case "getknockedstate":
                     case "gettalkedtopc":
                         {
-                            return new TES5Bool(true); //This is so unimportant that i think it"s not worth to find a good alternative and waste time.
+                            return new TES5Bool(true); //This is so unimportant that i think it's not worth to find a good alternative and waste time.
                         }
 
                     case "getsitting":
@@ -217,7 +212,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                             //WARNING: Needs to implement Horse sittings, too.
                             //SEE: http://www.gameskyrim.com/papyrus-isridinghorse-function-t255012.html
                             int goTo;
-                            switch ((int)tes4ValueTuple.Item2.Data)
+                            switch ((int)GetItem2Data())
                             {
                                 case 0:
                                     {
@@ -292,7 +287,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     if (valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {
                         //Perhaps we should allow to try to cast upwards for primitives, .asPrimitive() or similar
-                        //In case we do know at compile time that we"re comparing against zero, then we can assume
+                        //In case we do know at compile time that we're comparing against zero, then we can assume
                         //we can compare against None, which allows us not call GetFormID() on most probably None object
                         TES5Integer tes5SetItem2Integer = (TES5Integer)valueTuple.Item2;
                         if (tes5SetItem2Integer.IntValue == 0)

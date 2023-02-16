@@ -112,7 +112,7 @@ namespace Dissect.Parser
         /*
         * Sets the callback for the current rule.
         */
-        public Grammar Call(Func<object[], object> callback)
+        private Grammar Call(Func<object[], object> callback)
         {
             if (this.currentRule == null)
             {
@@ -122,29 +122,72 @@ namespace Dissect.Parser
             return this;
         }
 
+        private void ThrowIfInvalidArgumentCount(IReadOnlyCollection<object> args, int expected)
+        {
+            if (args.Count != expected) { throw new InvalidOperationException("Expected " + expected + " arguments and received " + args.Count); }
+        }
+
         public Grammar Call<TIn1, TOut>(Func<TIn1, TOut> callback) where TOut : notnull
         {
-            return Call((args) => callback((TIn1)args[0]));
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 1);
+                return callback((TIn1)args[0]);
+            });
         }
 
         public Grammar Call<TIn1, TIn2, TOut>(Func<TIn1, TIn2, TOut> callback) where TOut : notnull
         {
-            return Call((args) => callback((TIn1)args[0], (TIn2)args[1]));
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 2);
+                return callback((TIn1)args[0], (TIn2)args[1]);
+            });
         }
 
         public Grammar Call<TIn1, TIn2, TIn3, TOut>(Func<TIn1, TIn2, TIn3, TOut> callback) where TOut : notnull
         {
-            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2]));
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 3);
+                return callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2]);
+            });
         }
 
         public Grammar Call<TIn1, TIn2, TIn3, TIn4, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TOut> callback) where TOut : notnull
         {
-            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3]));
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 4);
+                return callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3]);
+            });
         }
 
         public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TOut> callback) where TOut : notnull
         {
-            return Call((args) => callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4]));
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 5);
+                return callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4]);
+            });
+        }
+
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TIn6, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TIn6, TOut> callback) where TOut : notnull
+        {
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 6);
+                return callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4], (TIn6)args[5]);
+            });
+        }
+
+        public Grammar Call<TIn1, TIn2, TIn3, TIn4, TIn5, TIn6, TIn7, TOut>(Func<TIn1, TIn2, TIn3, TIn4, TIn5, TIn6, TIn7, TOut> callback) where TOut : notnull
+        {
+            return Call((args) =>
+            {
+                ThrowIfInvalidArgumentCount(args, 7);
+                return callback((TIn1)args[0], (TIn2)args[1], (TIn3)args[2], (TIn4)args[3], (TIn5)args[4], (TIn6)args[5], (TIn7)args[6]);
+            });
         }
 
         public Rule? GetRuleNullable(int number)

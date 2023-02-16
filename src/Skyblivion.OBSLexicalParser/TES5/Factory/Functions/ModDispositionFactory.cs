@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES4FunctionArguments functionArguments = function.Arguments;
             //Faction Reactions are Per-Faction not per-Actor, so we just simulate what would potentially happen in Skyrim
             var argument1 = functionArguments[1];
-            Nullable<int> argument1NullableInt = argument1.Data as Nullable<int>;
+            Nullable<int> argument1NullableInt = argument1.Constant as Nullable<int>;
             if (argument1NullableInt != null && argument1NullableInt.Value == -100)
             {
                 const string functionName = "StartCombat";

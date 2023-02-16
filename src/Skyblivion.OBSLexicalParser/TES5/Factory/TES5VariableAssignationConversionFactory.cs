@@ -9,6 +9,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
@@ -28,17 +29,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.typeInferencer = typeInferencer;
         }
 
-        public TES5CodeChunkCollection CreateCodeChunk(TES4VariableAssignation chunk, TES5CodeScope codeScope,  TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5CodeChunkCollection CreateCodeChunk(TES4VariableAssignation variableAssignation, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5CodeChunkCollection codeChunkCollection = new TES5CodeChunkCollection();
-            string referenceName = chunk.Reference.StringValue;
+            string referenceName = variableAssignation.Reference.StringValue;
             ITES5Referencer reference = this.referenceFactory.CreateReference(referenceName, globalScope, multipleScriptsScope, codeScope.LocalScope);
-            ITES5Value value = this.valueFactory.CreateValue(chunk.Value, codeScope, globalScope, multipleScriptsScope);
+            ITES5Value value = this.valueFactory.CreateValue(variableAssignation.Value, codeScope, globalScope, multipleScriptsScope);
             if (reference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             { //if the reference is in reality a global variable, we will need to convert it by creating a Reference.SetValue(value); call
                 //Object call creation
                 TES5ObjectCallArguments objectCallArguments = new TES5ObjectCallArguments() { value };
-                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", objectCallArguments);
+                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", objectCallArguments, comment: variableAssignation.Comment);
                 codeChunkCollection.Add(objectCall);
             }
             else
@@ -54,13 +55,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
                 }
 
-                TES5VariableAssignation assignation = TES5VariableAssignationFactory.CreateAssignation(reference, value);
+                TES5Comment? comment = variableAssignation.Comment != null ? TES5CommentFactory.Construct(variableAssignation.Comment) : null;
+                TES5VariableAssignation assignation = TES5VariableAssignationFactory.CreateAssignation(reference, value, comment: comment);
                 this.typeInferencer.InferenceObjectByAssignation(reference, value);
                 codeChunkCollection.Add(assignation);
                 //post analysis.
                 //Todo - rethink the prefix here
                 ITES5Referencer? referencerValue = value as ITES5Referencer;
-                if (referencerValue!=null && referencerValue.Name == TES5Property.AddPropertyNameSuffix(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST))
+                if (referencerValue != null && referencerValue.Name == TES5Property.AddPropertyNameSuffix(TES5ReferenceFactory.MESSAGEBOX_VARIABLE_CONST))
                 {
                     /*
                      * Create block:

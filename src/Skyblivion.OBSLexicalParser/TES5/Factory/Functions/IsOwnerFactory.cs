@@ -22,6 +22,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            if (function.Comment != null)
+            {
+                throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");
+            }
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             string arg0String = functionArguments[0].StringValue;

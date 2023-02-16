@@ -1,4 +1,5 @@
 using Dissect.Extensions;
+using Dissect.Parser.LALR1.Analysis.KernelSet;
 using System.Collections.Generic;
 
 namespace Dissect.Parser.LALR1.Analysis
@@ -18,18 +19,18 @@ namespace Dissect.Parser.LALR1.Analysis
         public List<Item> Items { get; protected set; } = new List<Item>();
         protected readonly Dictionary<int, Dictionary<int, Item>> ItemMap = new Dictionary<int, Dictionary<int, Item>>();
         /*
-        * Returns the number identifying this state.
+        * Returns the node identifying this state.
         */
-        public int Number { get; protected set; }
+        public Node Node { get; protected set; }
         /*
         * Constructor.
          *
          *  The number identifying this state.
          *  The initial items of this state.
         */
-        public State(int number, Item[] items)
+        public State(Node node, Item[] items)
         {
-            this.Number = number;
+            this.Node = node;
             foreach (var item in items)
             {
                 this.Add(item);

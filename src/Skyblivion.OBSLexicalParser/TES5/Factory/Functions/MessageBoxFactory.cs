@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -39,10 +40,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (functionArguments.Count == 1)
             {
                 TES5StaticReference calledOnRef = TES5StaticReferenceFactory.Debug;
-                return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+                return this.objectCallFactory.CreateObjectCall(calledOnRef, "MessageBox", this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope), comment: function.Comment);
             }
             else
             {
+                if (function.Comment != null)
+                {
+                    throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");
+                }
                 string[] stringArguments = functionArguments.Select(v => v.StringValue).ToArray();
                 string edid = messageBoxData.GetEDID(stringArguments);
                 IEnumerable<string> messageArguments = (new string[] { edid }).Concat(functionArguments.Select(a => a.StringValue));

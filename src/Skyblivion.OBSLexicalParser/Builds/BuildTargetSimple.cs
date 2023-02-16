@@ -1,4 +1,5 @@
 ﻿using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
@@ -6,9 +7,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
     {
         private readonly BuildTarget buildTarget;
         private readonly ICompileCommand compileCommand;
-        private readonly IASTCommand astCommand;
+        private readonly IASTCommand<IEnumerable<ITES4CodeChunk>> astCommand;
         public string Name => buildTarget.Name;
-        public BuildTargetSimple(BuildTarget buildTarget, ICompileCommand compileCommand, IASTCommand astCommand)
+        public BuildTargetSimple(BuildTarget buildTarget, ICompileCommand compileCommand, IASTCommand<IEnumerable<ITES4CodeChunk>> astCommand)
         {
             this.buildTarget = buildTarget;
             this.compileCommand = compileCommand;
@@ -20,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.compileCommand.Compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
         }
 
-        public ITES4CodeFilterable GetAST(string sourcePath)
+        public IEnumerable<ITES4CodeChunk> GetAST(string sourcePath)
         {
             return this.astCommand.Parse(sourcePath);
         }

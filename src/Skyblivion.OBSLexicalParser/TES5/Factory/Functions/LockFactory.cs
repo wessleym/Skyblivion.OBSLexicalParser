@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             if (functionArguments.Any())
             {
-                int oblivionLockLevel = (int)functionArguments[0].Data;
+                int oblivionLockLevel = (int)functionArguments[0].Constant;
                 int skyrimLockLevel;
                 if (oblivionLockLevel == 0) { skyrimLockLevel = 1; }
                 else if (oblivionLockLevel > 0 && oblivionLockLevel < 99) { skyrimLockLevel = oblivionLockLevel; }
@@ -37,13 +37,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 };
                 codeChunks.Add(this.objectCallFactory.CreateObjectCall(calledOn, "SetLockLevel", setLockLevelArguments));
             }
-            ITES4StringValue? lockAsOwnerBool = functionArguments.GetOrNull(1);
+            ITES4ValueString? lockAsOwnerBool = functionArguments.GetOrNull(1);
             TES5ObjectCallArguments lockArguments = new TES5ObjectCallArguments()
             {
                 new TES5Bool(true),//abLock
-                new TES5Bool(lockAsOwnerBool != null && (int)lockAsOwnerBool.Data == 1)//abAsOwner
+                new TES5Bool(lockAsOwnerBool != null && (int)lockAsOwnerBool.Constant == 1)//abAsOwner
             };
-            codeChunks.Add(this.objectCallFactory.CreateObjectCall(calledOn, "Lock", lockArguments));
+            codeChunks.Add(this.objectCallFactory.CreateObjectCall(calledOn, "Lock", lockArguments, comment: function.Comment));
             return codeChunks;
         }
     }

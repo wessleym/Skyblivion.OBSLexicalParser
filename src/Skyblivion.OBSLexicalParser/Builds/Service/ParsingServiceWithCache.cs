@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
-    abstract class ParsingServiceWithCache<T> : ParsingService<T> where T : ITES4CodeFilterable
+    abstract class ParsingServiceWithCache<T> : ParsingService<T> where T : ITES4CodeChunk
     {
         private readonly Dictionary<string, T> parsingCache = new Dictionary<string, T>();
         private readonly SyntaxErrorCleanParser parser;

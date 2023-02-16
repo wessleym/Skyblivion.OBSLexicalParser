@@ -1,30 +1,29 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
-    class TES4CodeChunks : ITES4CodeFilterable, IEnumerable<ITES4CodeChunk>
+    class TES4CodeChunks : ITES4CodeChunk
     {
-        private readonly List<ITES4CodeChunk> codeChunks = new List<ITES4CodeChunk>();
+        public List<ITES4CodeChunk> Chunks { get; }
+        public TES4CodeChunks()
+        {
+            Chunks = new List<ITES4CodeChunk>();
+        }
+
         public void Add(ITES4CodeChunk chunk)
         {
-            this.codeChunks.Add(chunk);
+            Chunks.Add(chunk);
         }
 
-        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        public void AddRange(TES4CodeChunks chunks)
         {
-            return codeChunks.GetEnumerator();
-        }
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            Chunks.AddRange(chunks.Chunks);
         }
 
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
+        public bool AreAllComments()
         {
-            return this.codeChunks.SelectMany(c => c.Filter(predicate)).ToArray();
+            return Chunks.All(c => c is TES4Comment);
         }
     }
 }

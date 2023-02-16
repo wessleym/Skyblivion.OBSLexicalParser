@@ -6,9 +6,17 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
-    class TES5CodeChunkCollection : IEnumerable<ITES5CodeChunk>, ITES5ValueCodeChunk//ITES5ValueCodeChunk is needed for SetLevelFactory.
+    class TES5CodeChunkCollection : IEnumerable<ITES5CodeChunk>, ITES5ValueCodeChunk
     {
-        private readonly List<ITES5CodeChunk> values = new List<ITES5CodeChunk>();
+        private readonly List<ITES5CodeChunk> values;
+        public TES5CodeChunkCollection(IEnumerable<ITES5CodeChunk> chunks)
+        {
+            values = new List<ITES5CodeChunk>(chunks);
+        }
+        public TES5CodeChunkCollection()
+            : this(Enumerable.Empty<ITES5CodeChunk>())
+        { }
+
         public void Add(ITES5CodeChunk chunk)
         {
             values.Add(chunk);

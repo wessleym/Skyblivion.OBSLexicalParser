@@ -7,7 +7,7 @@ namespace Dissect.Extensions
         public static IEnumerable<T> Pop<T>(this Stack<T> stack, int count)
         {
             int popped = 0;
-            while(popped<count)
+            while (popped < count)
             {
                 yield return stack.Pop();
                 popped++;

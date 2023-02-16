@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             list = new List<TES5InheritanceItem>(items);
         }
         public TES5InheritanceItemCollection()
-            : this(new TES5InheritanceItem[] { })
+            : this(Array.Empty<TES5InheritanceItem>())
         { }
 
         public void Add(TES5InheritanceItem item)

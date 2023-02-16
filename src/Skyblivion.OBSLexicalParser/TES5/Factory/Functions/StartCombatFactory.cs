@@ -29,9 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             */
             TES5ObjectCall isDeadCall = this.objectCallFactory.CreateObjectCall(calledOn, "IsDead");
             TES5ComparisonExpression isNotDead = TES5ExpressionFactory.CreateComparisonExpression(isDeadCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false));
-            TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-            TES5ObjectCall startCombatCall = this.objectCallFactory.CreateObjectCall(calledOn, "StartCombat", newArguments);
+            TES5ObjectCall startCombatCall = this.objectCallFactory.CreateObjectCall(calledOn, function, "StartCombat", objectCallArgumentsFactory, codeScope, globalScope, multipleScriptsScope);
             TES5Branch ifNotDeadStartCombat = TES5BranchFactory.CreateSimpleBranch(isNotDead, codeScope.LocalScope);
             ifNotDeadStartCombat.MainBranch.CodeScope.AddChunk(startCombatCall);
             return ifNotDeadStartCombat;

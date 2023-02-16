@@ -140,7 +140,7 @@ namespace Dissect.Parser.LALR1.Analysis
         }
 
         /*
-        * Returns all components that haven"t been recognized
+        * Returns all components that haven't been recognized
          * so far.
          *
          *  The unrecognized components.

@@ -1,7 +1,7 @@
 #define INCLUDE_LEXER_FIXES
 using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
-using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Lexers
@@ -50,33 +50,38 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
 @"setquestobject|setrestrained|setrigidbodymass|setscale|setsceneiscomplex|setshowquestitems|setstage|setunconscious|setweather|showbirthsignmenu|showclassmenu|showdialogsubtitles|showenchantment|showmap|showracemenu|showspellmaking|sme|startcombat|startconversation|startquest|stopcombatalarmonactor|stopcombat|scaonactor|stoplook|stopmagiceffectvisuals|stopmagicshadervisuals|stopwaiting|sms|stopquest|sw|trapupdate|triggerhitshader|unequipitem|unlock|wait|wakeuppc|yield)"
 , RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private void AddCommentsRecognition()
+        private const string crlfRegex = @"^[\r\n]+[ \t\r\n]*";//CRLF needs to absorb any whitespace that comes after it.  Otherwise, the parser may not know how to handle the whitespace.
+        private void AddCommentsRecognition(bool skipCRLF = true)
         {
+            List<string> skip = new List<string>() { "WSP", "WSPOneLine"/*, "Comment", ""*/, "to ", "(", ")", "," };
+            if (skipCRLF) { skip.Add("CRLF"); }
             this
-            .Regex("Comment", @"^;.*")
+            .RegexIgnoreCase("CommentInitialization", @"^;").Action("CommentScope")
+            //WTM:  Change:  Process comments.  Don't ignore them.
             .Token("(")
             .Token(")")
             .Token(",")
-            .Token("TimerDescending") //idk what this is.
-            .Skip("WSP", "WSPEOL", "Comment", "", "to ", "(", ")", ",", "TimerDescending", "NotNeededTrash");
+            .Skip(skip.ToArray())
+            ;
         }
 
         protected void BuildObscriptLexer()
         {
             //Global scope.
-            this.State("globalScope");
-            this.Regex("WSP", @"^[ \r\n\t]+");
+            this.State("globalScope")
+                .Regex("WSPOneLine", @"^[ \t]+")
+                .Regex("CRLF", crlfRegex);//See arenascript.txt lines 26-28.  It has "\r\n \r\n", which was lexed to CRLF+CRLF.  Without the middle space, this would have just become CRLF.  I added [ \t\r\n]* to absorb trailing whitespace.
             this.RegexIgnoreCase("ScriptHeaderToken", "^(scn|scriptName)")
                 .Action("ScriptHeaderScope");
             this.RegexIgnoreCase("VariableDeclarationType", @"^(ref|short|long|float|int)")
                 .Action("VariableDeclarationScope");
             this.Token("BlockStart", "Begin", true)//WTM:  Change:  this.regexIgnoreCase("BlockStart", @"^Begin")
                 .Action("BlockStartNameScope");
-            this.AddCommentsRecognition();
+            this.AddCommentsRecognition(skipCRLF: false);
 
             this.State("ExpressionScope")
-                .Regex("WSP", @"^[ \t]+")
-                .Regex("NWL", @"^[\r\n]+").Action("BlockScope")
+                .Regex("WSPOneLine", @"^[ \t]+")
+                .Regex("CRLF", crlfRegex).Action("BlockScope")
                 .Regex("FunctionCallToken", FUNCTION_REGEX).Action("FunctionScope")
                 .RegexIgnoreCase("Boolean", @"^(true|false)")
                 .Regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
@@ -95,8 +100,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .Token("<")
                 .Token("!=")
                 .Token("&&")
-                .Token("||")
-                .Skip("NWL");
+                .Token("||");
 
             this.AddCommentsRecognition();
 
@@ -119,11 +123,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .Regex("ReferenceToken", @"^[A-Za-z][A-Za-z0-9]*")//WTM:  Change:  regexIgnoreCase("ReferenceToken", @"^[a-z][a-zA-Z0-9]*")
                 .Token("TokenDelimiter", ".");//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"^\.")
 
-            this.AddCommentsRecognition();
+            this.AddCommentsRecognition(skipCRLF: false);
 
             this.State("FunctionScope")
-                .Regex("WSP", @"^[ \t]+")
-                .Regex("NWL", @"^[\r\n]+").Action("BlockScope")
+                .Regex("WSPOneLine", @"^[ \t]+")
+                .Regex("CRLF", crlfRegex).Action("BlockScope")
                 .Token("ReturnToken", "return", true)//WTM:  Change:  .regexIgnoreCase("ReturnToken", @"^return")
                 .Regex("Float", @"^(-)?([0-9]*)\.[0-9]+")//WTM:  Change:  regexIgnoreCase
                 .Regex("Integer", @"^(-)?(0|[1-9][0-9]*)")//WTM:  Change:  regexIgnoreCase
@@ -145,7 +149,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .Token("&&").Action(POP_STATE)
                 .Token("||").Action(POP_STATE);
 
-
             this.AddCommentsRecognition();
 
 
@@ -154,26 +157,25 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .Token("TokenDelimiter", ".")//WTM:  Change:  .regexIgnoreCase("TokenDelimiter", @"\.")
                 .Token("To ").Action("ExpressionScope")
                 .Token("to ").Action("ExpressionScope")
-                .Regex("WSP", @"^[ \t]+")
-                .Regex("NWL", @"^[\r\n]+").Action(POP_STATE);
+                .Regex("WSPOneLine", @"^[ \t]+")
+                .Regex("CRLF", crlfRegex).Action(POP_STATE);
             this.AddCommentsRecognition();
 
             this.State("BlockEndScope")
-                .Regex("WSP", @"^[ \t]+")
-                //.regexIgnoreCase("NotNeededTrash",@"^([a-zA-Z0-9_-]+)") I kinda forgot why it is here..
-                .Regex("WSPEOL", @"^[\r\n]+").Action("globalScope");
+                .Regex("WSPOneLine", @"^[ \t]+")
+                .Regex("CRLF", crlfRegex).Action("globalScope");
             this.AddCommentsRecognition();
 
             this.State("BlockStartNameScope")
-                .Regex("WSP", @"^[ \t]+")
+                .Regex("WSPOneLine", @"^[ \t]+")
                 .Regex("BlockType", @"^([a-zA-Z0-9_-]+)")//WTM:  Change:  .regexIgnoreCase
                 .Action("BlockStartParameterScope");
             this.AddCommentsRecognition();
 
             this.State("BlockStartParameterScope")
-                .Regex("WSP", @"^[ \t]+")
+                .Regex("WSPOneLine", @"^[ \t]+")
                 .Regex("BlockParameterToken", @"[a-zA-Z0-9_-]+")//WTM:  Change:  .regexIgnoreCase
-                .Regex("WSPEOL", @"^[\r\n]+").Action("BlockScope");
+                .Regex("CRLF", crlfRegex).Action("BlockScope");
             this.AddCommentsRecognition();
 
             this.State("ScriptHeaderScope")
@@ -187,6 +189,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Lexers
                 .Regex("VariableName", @"^([a-zA-Z0-9_-]+)")//WTM:  Change:  .regexIgnoreCase
                 .Action(POP_STATE);
             this.AddCommentsRecognition();
+
+            this.State("CommentScope")
+                .Regex("CommentText", ".*")
+                .Action(POP_STATE);
         }
 
         public ArrayTokenStream LexWithFixes(string str)

@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //WTM:  Change:  Added:
             TES5ObjectCall actorTypeNPCObjectCall = objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Keyword, "GetKeyword", new TES5ObjectCallArguments() { new TES5String("ActorTypeNPC") });//GetKeyword is an SKSE function
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { actorTypeNPCObjectCall };
-            return objectCallFactory.CreateObjectCall(calledOn, "HasKeyword", arguments);
+            return objectCallFactory.CreateObjectCall(calledOn, "HasKeyword", arguments, comment: function.Comment);
         }
     }
 }

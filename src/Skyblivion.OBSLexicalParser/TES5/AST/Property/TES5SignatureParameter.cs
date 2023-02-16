@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             TES5Type = type;
             declarationType = type;
             this.hasFixedDeclaration = hasFixedDeclaration;
-            if (meanings == null) { meanings = new TES5LocalVariableParameterMeaning[] { }; }
+            if (meanings == null) { meanings = Array.Empty<TES5LocalVariableParameterMeaning>(); }
             this.Meanings = meanings;
         }
 

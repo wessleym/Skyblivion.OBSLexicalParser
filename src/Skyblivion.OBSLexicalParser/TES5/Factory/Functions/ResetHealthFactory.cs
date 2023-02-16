@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //Healing to full hp?
             const string functionName = "RestoreActorValue";
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String("Health"), new TES5Integer(9999) };
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
         }
     }
 }

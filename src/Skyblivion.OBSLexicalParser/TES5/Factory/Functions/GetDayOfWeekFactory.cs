@@ -21,10 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            string functionName = function.FunctionCall.FunctionName;
-            TES4FunctionArguments functionArguments = function.Arguments;
             ITES5Referencer newCalledOn = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName, this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope));
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, function, objectCallArgumentsFactory, codeScope, globalScope, multipleScriptsScope);
         }
     }
 }

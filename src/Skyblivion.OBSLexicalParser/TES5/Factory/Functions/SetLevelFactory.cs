@@ -22,8 +22,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //SKSE has Game.SetPlayerLevel(int level), but Oblivion calls this function on non-player actors.
             //Since we can't call SetLevel directly, we are instead modifying actor values.
             TES4FunctionArguments tes4Arguments = function.Arguments;
-            int newLevel = (int)tes4Arguments[0].Data;
-            bool levelToPC = tes4Arguments.Count > 1 ? (int)tes4Arguments[1].Data == 1 : false;//When false, newLevel should be evaluated absolutely.  When true, newLevel should be evaluated relative to the current level.
+            int newLevel = (int)tes4Arguments[0].Constant;
+            bool levelToPC = tes4Arguments.Count > 1 ? (int)tes4Arguments[1].Constant == 1 : false;//When false, newLevel should be evaluated absolutely.  When true, newLevel should be evaluated relative to the current level.
             string newFunctionName = !levelToPC ? "SetActorValue" : "ModActorValue";
             int attributeLevel = newLevel, skillLevel = newLevel;
             const int minAttributeValue = 25, minSkillLevel = 10;
@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             string[] attributes = new string[] { "Health", "Magicka", "Stamina" };
-            codeChunks.AddRange(attributes.Select(a => objectCallFactory.CreateObjectCall(calledOn, newFunctionName, new TES5ObjectCallArguments() { new TES5String(a), new TES5Float(attributeLevel) })));
+            codeChunks.AddRange(attributes.Select(a => objectCallFactory.CreateObjectCall(calledOn, newFunctionName, new TES5ObjectCallArguments() { new TES5String(a), new TES5Float(attributeLevel) }, comment: function.Comment)));
             string[] skills = new string[] { "OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak", "Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting" };
             codeChunks.AddRange(skills.Select(s => objectCallFactory.CreateObjectCall(calledOn, newFunctionName, new TES5ObjectCallArguments() { new TES5String(s), new TES5Float(skillLevel) })));
             return codeChunks;

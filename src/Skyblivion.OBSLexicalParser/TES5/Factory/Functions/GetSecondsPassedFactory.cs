@@ -46,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 getSecondsPassedLocalFunction.AddChunk(branch);
                 return getSecondsPassedLocalFunction;
             });*/
-            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName);
+            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
         }
     }
 }

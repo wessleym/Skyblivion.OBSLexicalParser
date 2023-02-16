@@ -1,9 +1,7 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using System;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
@@ -25,8 +23,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
         {
             get
             {
-                decimal leftValue = Convert.ToDecimal(this.LeftValue.Data);
-                decimal rightValue = Convert.ToDecimal(this.RightValue.Data);
+                decimal leftValue = Convert.ToDecimal(((ITES4ValueConstant)this.LeftValue).Constant);
+                decimal rightValue = Convert.ToDecimal(((ITES4ValueConstant)this.RightValue).Constant);
                 if (op == TES4ArithmeticExpressionOperator.OPERATOR_ADD)
                 {
                     return leftValue + rightValue;
@@ -45,13 +43,6 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
                 }
                 throw new ConversionException("Unknown TES4BinaryExpressionOperator");
             }
-        }
-
-        public bool HasFixedValue => this.LeftValue.HasFixedValue && this.RightValue.HasFixedValue;
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return this.LeftValue.Filter(predicate).Concat(this.RightValue.Filter(predicate)).ToArray();
         }
     }
 }

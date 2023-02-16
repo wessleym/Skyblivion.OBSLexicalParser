@@ -8,24 +8,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     /*
      * Class DefaultFunctionFactory
-     * Converts functions which are a simple ,,just move signature over", as in - we don"t do any changes to the function call
+     * Converts functions which are a simple "just move signature over," as in we don't do any changes to the function call
      */
     class DefaultFunctionFactory : IFunctionFactory
     {
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        private readonly TES5ObjectCallArgumentsFactory objectCallArgumentsFactory;
-        public DefaultFunctionFactory(TES5ObjectCallFactory objectCallFactory, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory)
+        private readonly SimpleFunctionTranslationFactory simpleFunctionTranslationFactory;
+        public DefaultFunctionFactory(SimpleFunctionTranslationFactory simpleFunctionTranslationFactory)
         {
-            this.objectCallArgumentsFactory = objectCallArgumentsFactory;
-            this.objectCallFactory = objectCallFactory;
+            this.simpleFunctionTranslationFactory = simpleFunctionTranslationFactory;
         }
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            string functionName = function.FunctionCall.FunctionName;
-            TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, newArguments);
+            string oldAndNewFunctionName = function.FunctionCall.FunctionName;
+            return simpleFunctionTranslationFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope, oldAndNewFunctionName);
         }
     }
 }

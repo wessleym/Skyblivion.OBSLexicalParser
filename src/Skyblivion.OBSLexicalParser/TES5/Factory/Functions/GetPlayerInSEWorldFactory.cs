@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             ITES5Referencer seWorldLocationReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(seWorldLocationProperty);
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { seWorldLocationReference };
-            TES5ObjectCall isInLocation = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "IsInLocation", arguments);
+            TES5ObjectCall isInLocation = this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope), "IsInLocation", arguments, comment: function.Comment);
             return isInLocation;
         }
     }

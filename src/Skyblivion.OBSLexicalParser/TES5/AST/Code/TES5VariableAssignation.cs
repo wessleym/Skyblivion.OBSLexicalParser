@@ -14,10 +14,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
     {
         public ITES5Value Reference { get; }
         private readonly ITES5Value value;
-        public TES5VariableAssignation(ITES5Value reference, ITES5Value value)
+        private readonly TES5Comment? comment;
+        public TES5VariableAssignation(ITES5Value reference, ITES5Value value, TES5Comment? comment)
         {
             this.Reference = reference;
             this.value = value;
+            this.comment = comment;
             //If value is going to be casted but actually can't be casted, throw an exception.
             if (ReferenceAndValueDifferentTypesAndValueIsNonNone() && !ReferenceIsIntAndValueExtendsForm() &&
                 //Oblivion stores boolean-like values in short ints.  Exclude such cases.
@@ -63,7 +65,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
                         valueOutput += " as " + this.Reference.TES5Type.Output.Single();
                     }
                 }
-                yield return referenceOutput + " = " + valueOutput;
+                string commentString = comment != null ? " " + comment.Output.Single() : "";
+                yield return referenceOutput + " = " + valueOutput + commentString;
             }
         }
 

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static ITES5Primitive CreateValue(ITES4Primitive value)
         {
             TES4Type valueType = value.Type;
-            object valueData = value.Data;
+            object valueData = value.Constant;
             if (valueType == TES4Type.T_INT)
             {
                 return new TES5Integer((int)valueData);

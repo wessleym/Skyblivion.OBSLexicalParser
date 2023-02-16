@@ -1,4 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 
 namespace Skyblivion.OBSLexicalParser.Builds
@@ -12,11 +12,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
          * it is in ( as in - global scopes are built in a different way for Standalone, different for TIF, etc. )
          *
          * Global variables are passed so that when parsing variable declarations list ( i.e. ref XXX from Obscript ),
-         * we"re able to tell from the start if property is a GlobalVariable or not
+         * we're able to tell from the start if property is a GlobalVariable or not
          *
          * 
          *  Defined global variables used within the scope
         */
-        TES5GlobalScope Build(string sourcePath, TES5GlobalVariables globalVariables);
+        TES5GlobalScope Build(string sourcePath, TES5GlobalVariableCollection globalVariables);
     }
 }

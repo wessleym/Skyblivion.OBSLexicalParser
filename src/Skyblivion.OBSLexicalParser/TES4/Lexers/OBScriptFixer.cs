@@ -527,7 +527,7 @@ Float NewScale");
             {
                 str = str.Replace("PlayerRef.AddItem Gold001 300", "Player.AddItem Gold001 300");
             }
-            return str;
+            return str.Trim() + "\r\n";
         }
 
         private static string MatchSourceFiles(string str)//WTM:  Added:  meant to make files modified source files from Monocleus

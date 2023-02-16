@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 force = new TES5Bool(((TES4Integer)functionArguments[1]).IntValue == 1);
             }
             arguments.Add(force);
-            return this.objectCallFactory.CreateObjectCall(newCalledOn, "ForceActive", arguments);
+            return this.objectCallFactory.CreateObjectCall(newCalledOn, "ForceActive", arguments, comment: function.Comment);
         }
     }
 }

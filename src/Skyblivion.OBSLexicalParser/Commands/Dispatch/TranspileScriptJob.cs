@@ -1,7 +1,6 @@
 using Skyblivion.OBSLexicalParser.Builds;
-using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             string[] scripts = this.buildTargets.GetScriptsToCompile(this.scriptName);
             //BuildSourceFilesCollection partitionedScripts = this.buildTargets.GetSourceFiles(scripts);
-            TES5GlobalVariables globalVariables = this.esmAnalyzer.GlobalVariables;
+            TES5GlobalVariableCollection globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildTarget in this.buildTargets)
             {
                 Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();

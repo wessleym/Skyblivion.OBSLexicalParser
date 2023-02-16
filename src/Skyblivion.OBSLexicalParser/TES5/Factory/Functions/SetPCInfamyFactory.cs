@@ -27,8 +27,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments();
-            ITES4StringValue argument0 = functionArguments[0];
-            Nullable<int> argument0Int = argument0.Data as Nullable<int>;
+            ITES4ValueString argument0 = functionArguments[0];
+            Nullable<int> argument0Int = argument0.Constant as Nullable<int>;
             ITES5Value newArgument;
             if (argument0Int != null)
             {
@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 newArgument= this.valueFactory.CreateValue(argument0, codeScope, globalScope, multipleScriptsScope);
             }
             fameArguments.Add(newArgument);
-            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", fameArguments);
+            TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(this.referenceFactory.CreateReference("Infamy", globalScope, multipleScriptsScope, localScope), "SetValue", fameArguments, comment: function.Comment);
             return newFunction;
         }
     }

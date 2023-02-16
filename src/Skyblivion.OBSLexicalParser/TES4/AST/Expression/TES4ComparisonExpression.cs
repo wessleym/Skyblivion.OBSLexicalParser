@@ -1,8 +1,6 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using System;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
@@ -24,17 +22,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
         {
             get
             {
-                decimal left = Convert.ToDecimal(this.LeftValue.Data);
-                decimal right = Convert.ToDecimal(this.RightValue.Data);
+                decimal left = Convert.ToDecimal(((ITES4ValueConstant)this.LeftValue).Constant);
+                decimal right = Convert.ToDecimal(((ITES4ValueConstant)this.RightValue).Constant);
                 return arithmeticExpressionOperator.Evaluate(left, right);
             }
-        }
-
-        public bool HasFixedValue => this.LeftValue.HasFixedValue && this.RightValue.HasFixedValue;
-
-        public ITES4CodeFilterable[] Filter(Func<ITES4CodeFilterable, bool> predicate)
-        {
-            return this.LeftValue.Filter(predicate).Concat(this.RightValue.Filter(predicate)).ToArray();
         }
     }
 }

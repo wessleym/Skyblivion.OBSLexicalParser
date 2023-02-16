@@ -21,7 +21,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES5FunctionScope fragmentLocalScope = TES5FragmentFunctionScopeFactory.CreateFromFragmentType(fragmentName, fragmentType);
             TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(fragmentLocalScope, TES5CodeScopeFactory.CreateCodeScopeRoot(fragmentLocalScope), TES5VoidType.Instance, false, fragmentType == TES5FragmentType.T_QF || fragmentType == TES5FragmentType.T_TIF);
-            foreach (var codeChunk in chunks)
+            foreach (var codeChunk in chunks.Chunks)
             {
                 TES5CodeChunkCollection codeChunks = this.codeChunkFactory.CreateCodeChunk(codeChunk, function.CodeScope, globalScope, multipleScriptsScope);
                 foreach (var newCodeChunk in codeChunks)
@@ -41,8 +41,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public TES5Target Convert(TES5FragmentType fragmentType, TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5FunctionCodeBlock fragment = CreateFragment(fragmentType, 0, globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
-            TES5BlockList blockList = new TES5BlockList() { fragment };
-            TES5Script script = new TES5Script(globalScope, blockList, true);
+            ITES5CodeBlock[] blocks = new ITES5CodeBlock[] { fragment };
+            TES5Script script = new TES5Script(globalScope, blocks, true);
             TES5Target target = new TES5Target(script, fragmentTarget.OutputPath);
             return target;
         }

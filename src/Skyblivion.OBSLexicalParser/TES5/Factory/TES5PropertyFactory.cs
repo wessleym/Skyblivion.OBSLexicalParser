@@ -1,10 +1,12 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Types;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-using Skyblivion.OBSLexicalParser.TES5.AST.Property.Collection;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -40,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         /*
         * Create an pre-defined property from a ref VariableDeclaration
         */
-        private TES5Property CreatePropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariables globalVariables)
+        private TES5Property CreatePropertyFromReference(TES4VariableDeclaration declaration, TES5GlobalVariableCollection globalVariables)
         {
             string variableName = declaration.VariableName;
             Nullable<int> tes4FormID = null;
@@ -66,7 +68,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return ConstructWithTES4FormID(variableName, type, variableName, tes4FormID);
         }
 
-        private TES5Property CreateProperty(TES4VariableDeclaration variable, TES5GlobalVariables globalVariables)
+        private TES5Property CreateProperty(TES4VariableDeclaration variable, TES5GlobalVariableCollection globalVariables)
         {
             string variableName = variable.VariableName;
             TES4Type variableType = variable.VariableType;
@@ -90,7 +92,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new ConversionException("Double definition of variable named " + variableName + " with different types ( " + existingType + " and " + newType + " )");
         }
 
-        public TES5Property CreateAndAddProperty(TES4VariableDeclaration variable, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        private TES5Property CreateAndAddProperty(TES4VariableDeclaration variable, TES5GlobalScope globalScope, TES5GlobalVariableCollection globalVariables)
         {
             TES5Property property = CreateProperty(variable, globalVariables);
             TES5Property? existingPropertyWithDifferentType = globalScope.Properties.Where(p => p.Name.Equals(property.Name, StringComparison.OrdinalIgnoreCase) && p.TES5DeclaredType != property.TES5DeclaredType).FirstOrDefault();
@@ -102,29 +104,53 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return property;
         }
 
+        private void CreateAndAddComment(TES4Comment comment, TES5GlobalScope globalScope)
+        {
+            globalScope.AddComment(TES5CommentFactory.Construct(comment));
+        }
+
         /*
         * @throws ConversionException
         */
-        public void CreateAndAddProperties(TES4VariableDeclarationList variableList, TES5GlobalScope globalScope, TES5GlobalVariables globalVariables)
+        public void CreateAndAddProperties(IEnumerable<ITES4ScriptHeaderVariableDeclarationOrComment> variablesAndComments, TES5GlobalScope globalScope, TES5GlobalVariableCollection globalVariables)
         {
-            Dictionary<string, TES4VariableDeclaration> alreadyDefinedVariables = new Dictionary<string, TES4VariableDeclaration>();
-            foreach (TES4VariableDeclaration variable in variableList.VariableList)
+            Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>> alreadyDefinedVariables = new Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>>();
+            foreach (ITES4ScriptHeaderVariableDeclarationOrComment variableOrComment in variablesAndComments)
             {
-                string variableName = variable.VariableName;
-                string variableNameLower = variableName.ToLower();
-                TES4Type variableType = variable.VariableType;
-                TES4VariableDeclaration? alreadyDefinedVariable;
-                if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
+                TES4VariableDeclaration? variable = variableOrComment as TES4VariableDeclaration;
+                if (variable != null)
                 {
-                    if (variableType == alreadyDefinedVariable.VariableType)
+                    string variableName = variable.VariableName;
+                    string variableNameLower = variableName.ToLower();
+                    TES4Type variableType = variable.VariableType;
+                    Tuple<TES4VariableDeclaration, TES5Property>? alreadyDefinedVariable;
+                    TES5Comment? variableComment = variable.Comment != null ? TES5CommentFactory.Construct(variable.Comment) : null;
+                    if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
                     {
-                        continue; //Same variable defined twice, smack the original script developer and fallthrough silently.
+                        TES4Type alreadyDefinedVariableType = alreadyDefinedVariable.Item1.VariableType;
+                        if (variableType == alreadyDefinedVariableType)
+                        {
+                            if (variableComment != null)
+                            {
+                                alreadyDefinedVariable.Item2.AddComment(variableComment);
+                            }
+                            continue; //Same variable defined twice, smack the original script developer and fallthrough silently.
+                        }
+                        throw GetDuplicatePropertyException(variableName, alreadyDefinedVariableType.Name, variable.VariableType.Name);
                     }
-                    throw GetDuplicatePropertyException(variableName, alreadyDefinedVariable.VariableType.Name, variable.VariableType.Name);
-                }
 
-                CreateAndAddProperty(variable, globalScope, globalVariables);
-                alreadyDefinedVariables.Add(variableNameLower, variable);
+                    TES5Property property = CreateAndAddProperty(variable, globalScope, globalVariables);
+                    alreadyDefinedVariables.Add(variableNameLower, new Tuple<TES4VariableDeclaration, TES5Property>(variable, property));
+                    if (variableComment != null) { property.AddComment(variableComment); }
+                    continue;
+                }
+                TES4Comment? comment = variableOrComment as TES4Comment;
+                if (comment != null)
+                {
+                    CreateAndAddComment(comment, globalScope);
+                    continue;
+                }
+                throw new InvalidOperationException("Unhandled " + nameof(variableOrComment) + " type:  " + variableOrComment.GetType().FullName);
             }
         }
     }

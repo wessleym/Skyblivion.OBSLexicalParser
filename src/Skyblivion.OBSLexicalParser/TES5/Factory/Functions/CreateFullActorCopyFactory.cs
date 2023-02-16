@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 new TES5Bool(true)
             };
             return this.objectCallFactory.CreateObjectCall(newCalledOn, functionName,                 //this.objectCallArgumentsFactory.createArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope)//WTM:  Change:  Previously, the above arguments variable was not used.  It probably should be.
-                arguments);
+                arguments, comment: function.Comment);
         }
     }
 }

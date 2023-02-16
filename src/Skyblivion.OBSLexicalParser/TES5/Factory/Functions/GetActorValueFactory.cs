@@ -29,7 +29,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             const string functionName = "GetActorValue";
             TES4FunctionArguments functionArguments = function.Arguments;
             //@TODO - This should be fixed on expression-parsing level, with agression and confidence checks adjusted accordingly. There are no retail uses, so im not doing this for now ;)
-            ITES4StringValue firstArg = functionArguments[0];
+            ITES4ValueString firstArg = functionArguments[0];
             string firstArgString = firstArg.StringValue;
             string firstArgStringLower = firstArgString.ToLower();
             switch (firstArgStringLower)
@@ -48,9 +48,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                             if (calledOn.TES5Type.NativeType == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
                             {
                                 TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
-                                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                             }
-                            //We can"t convert those.. and shouldn"t be any, too.
+                            //We can't convert those.. and shouldn't be any, too.
                             throw new ConversionException(nameof(GetActorValueFactory)+":  Cannot get attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);
                         }
 
@@ -66,7 +66,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "security":
                 case "acrobatics":
                 case "mercantile":
-                case "mysticism": //It doesn"t exist in Skyrim - defaulting to Illusion..
+                case "mysticism": //It doesn't exist in Skyrim - defaulting to Illusion..
                 case "blade":
                 case "blunt":
                 case "encumbrance":
@@ -79,13 +79,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 case "resistshock":
                     {
                         TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(ActorValueMap.Map[firstArgStringLower]) };
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
 
                 default:
                     {
                         TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5String(firstArgString) };
-                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments);
+                        return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
                     }
             }
         }
