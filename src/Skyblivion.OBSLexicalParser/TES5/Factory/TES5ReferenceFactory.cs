@@ -120,7 +120,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             if (rawReference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
             {
                 //Changed to int implementation.
-                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValueInt", comment: comment);
+                return this.objectCallFactory.CreateObjectCall(rawReference, "GetValue", comment: comment);
             }
             else
             {

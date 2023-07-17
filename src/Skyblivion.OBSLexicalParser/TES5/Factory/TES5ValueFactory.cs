@@ -14,7 +14,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;

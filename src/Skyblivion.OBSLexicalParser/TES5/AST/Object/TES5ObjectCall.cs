@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
-    class TES5ObjectCall : ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
+    class TES5ObjectCall : TES5Castable, ITES5Referencer, ITES5ObjectAccess, ITES5ValueCodeChunk
     {
         public ITES5Referencer AccessedObject { get; }
         public string FunctionName { get; }
@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                 string accessedObject = this.AccessedObject.Output.Single();
                 string arguments = this.Arguments.Output.Single();
                 string commentOutput = comment != null ? " " + comment.Output.Single() : "";
-                yield return accessedObject + "." + this.FunctionName + "(" + arguments + ")" + commentOutput;
+                yield return accessedObject + "." + this.FunctionName + "(" + arguments + ")" + ManualCastToOutput + commentOutput;
             }
         }
 
