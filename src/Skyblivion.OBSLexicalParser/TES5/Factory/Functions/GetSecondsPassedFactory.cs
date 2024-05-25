@@ -3,28 +3,29 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetSecondsPassedFactory : IFunctionFactory
     {
-        private readonly TES5ObjectCallFactory objectCallFactory;
-        public GetSecondsPassedFactory(TES5ObjectCallFactory objectCallFactory)
+        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
+        public GetSecondsPassedFactory(LogUnknownFunctionFactory logUnknownFunctionFactory)
         {
-            this.objectCallFactory = objectCallFactory;
+            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
-        /*public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            //First Attempt:
+            /*
             TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
             ITES5Referencer localTimeReference = this.referenceFactory.CreateGSPLocalTimerReadReference(globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments() { calledOn };
-            return this.objectCallFactory.CreateObjectCall(timerReference, "getSecondsPassed", multipleScriptsScope, methodArguments);
-        }*/
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
-        {
-            const string newFunctionName = "GetSecondsPassed";
+            return this.objectCallFactory.CreateObjectCall(timerReference, "getSecondsPassed", multipleScriptsScope, methodArguments);*/
+            //const string newFunctionName = "GetSecondsPassed";
+            //Second Attempt:
             /*TES5BasicType returnType = TES5BasicType.T_FLOAT;
             globalScope.AddFunctionIfNotExists(newFunctionName, () =>
             {
@@ -46,7 +47,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 getSecondsPassedLocalFunction.AddChunk(branch);
                 return getSecondsPassedLocalFunction;
             });*/
-            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
+            //Third attempt:
+            //return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
+            return logUnknownFunctionFactory.CreateReplacement(function, new TES5Integer(1000), codeScope);
         }
     }
 }

@@ -417,8 +417,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("GetRelationshipRank", new TES5BasicType[] {
                                 TES5BasicType.T_ACTOR
                             }, TES5BasicType.T_INT),
-                new TES5InheritanceFunctionSignature("GetRestrained", new TES5BasicType[] {
-                            }, TES5BasicType.T_BOOL),
                 new TES5InheritanceFunctionSignature("GetSitState", new TES5BasicType[] {
                             }, TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("GetSleepState", new TES5BasicType[] {
@@ -511,8 +509,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("IsSneaking", new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
                 new TES5InheritanceFunctionSignature("IsSprinting", new TES5BasicType[] {
-                            }, TES5BasicType.T_BOOL),
-                new TES5InheritanceFunctionSignature("IsTorchOut" ,new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
                 new TES5InheritanceFunctionSignature("IsTrespassing", new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
@@ -871,7 +867,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("OBStartConversation", new TES5BasicType[] {
                                 TES5BasicType.T_ACTOR,
                                 TES5BasicType.T_TOPIC
-                            }, TES5VoidType.Instance)//WTM:  Note:  I think Aerisarn was going to add this.  But since it isn't ready, I'm commenting this for now.*/
+                            }, TES5VoidType.Instance),//WTM:  Note:  I think Aerisarn was going to add this.  But since it isn't ready, I'm commenting this for now.
+                new TES5InheritanceFunctionSignature("GetRestrained", new TES5BasicType[] {
+                            }, TES5BasicType.T_BOOL),//WTM:  Note:  This function was added to our Actor.psc file as "native," but the SKSE plugin does not implement it.
+                new TES5InheritanceFunctionSignature("IsTorchOut" ,new TES5BasicType[] {
+                            }, TES5BasicType.T_BOOL),//WTM:  Note:  This function was added to our Actor.psc file as "native," but the SKSE plugin does not implement it.*/
             }
         },
         { TES5BasicType.T_ACTORBASE,
@@ -1749,9 +1749,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_INT
                             }, TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("TempClone", new TES5BasicType[] {
-                            }, TES5BasicType.T_FORM),
-                new TES5InheritanceFunctionSignature("GetSecondsPassed", new TES5BasicType[] {
-                            }, TES5BasicType.T_FLOAT)//WTM:  Change:  Added
+                            }, TES5BasicType.T_FORM)
             }
         },
         /*{ "FormType",

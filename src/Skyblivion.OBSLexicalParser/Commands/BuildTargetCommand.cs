@@ -39,14 +39,6 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Execute(true);
         }
 
-        private static void Temp()
-        {
-            System.Text.RegularExpressions.Regex commentRE = new System.Text.RegularExpressions.Regex(";([^\r\n]+)", System.Text.RegularExpressions.RegexOptions.Compiled);
-            var comments = Directory.EnumerateFiles(@"C:\Users\Wess\Documents\Visual Studio 2022\Projects\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParserApp\bin\Debug\net6.0\Data\BuildTargets", "*", SearchOption.AllDirectories).Select(f => new { File = Path.GetFileName(f), Comments = commentRE.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value.Trim()).ToArray() }).Where(x => x.Comments.Any()).ToArray();
-            string allTranspiled = string.Join("\r\n", Directory.EnumerateFiles(@"C:\Users\Wess\Documents\Visual Studio 2022\Projects\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParserApp\bin\Debug\net6.0\Data\Build", "*", SearchOption.AllDirectories).Select(f => File.ReadAllText(f)));
-            var missingComments = comments.Select(x => new { File = x.File, Comments = x.Comments.Where(c => !allTranspiled.Contains(c)).ToArray() }).Where(x=>x.Comments.Any()).ToArray();
-        }
-
         public void Execute(string targets, bool writeTranspiledFilesAndCompile, int threadsNumber = DefaultThreads, string? buildPath = null)
         {
             if (!PreExecutionChecks(true, true, true, true)) { return; }

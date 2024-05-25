@@ -759,7 +759,7 @@ int Property Motion_ThinBoxIntertia = 6 AutoReadOnly
 int Property Motion_Character = 7 AutoReadOnly
 
 
-; SKSE64 additions built 2019-11-21 05:06:53.443000 UTC
+; SKSE 64 additions built 2020-07-29 17:24:48.495000 UTC
 
 ; Container-only functions
 int Function GetNumItems() native
@@ -832,8 +832,6 @@ Form[] Function GetContainerForms() native
 
 ; Returns all of the aliases holding this reference
 ReferenceAlias[] Function GetReferenceAliases() native
-
-float Function ObGetSecondsPassed() native
 
 ; Checks if Legacy gamebryo animation is playing
 bool Function IsAnimPlaying() native

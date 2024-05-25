@@ -241,7 +241,7 @@ Event OnStoryTrespass(ObjectReference akVictim, ObjectReference akTrespasser, \
 	Location akLocation, int aiCrime)
 EndEvent
 
-; SKSE64 additions built 2019-11-21 05:06:53.443000 UTC
+; SKSE 64 additions built 2020-07-29 17:24:48.495000 UTC
 
 ; returns the quest with the specified editor id
 Quest Function GetQuest(string editorId) global native

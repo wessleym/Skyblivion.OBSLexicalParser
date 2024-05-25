@@ -32,5 +32,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 #endif
             return codeChunks;
         }
+
+        public ITES5ValueCodeChunk CreateReplacement(TES4Function function, ITES5ValueCodeChunk replacement, TES5CodeScope codeScope)
+        {
+            codeScope.AddChunk(CreateLogCall(function, reason: "This call has been replaced with " + string.Join(", ", replacement.Output) + " below."));
+            return replacement;
+        }
     }
 }

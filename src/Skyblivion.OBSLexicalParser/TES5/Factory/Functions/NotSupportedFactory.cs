@@ -10,7 +10,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class NotSupportedFactory : IFunctionFactory
     {
+        public NotSupportedFactory() { }
+
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            throw GetConversionException(function);
+        }
+
+        private static ConversionException GetConversionException(TES4Function function)
         {
             string functionName = function.FunctionCall.FunctionName;
             string? reason =

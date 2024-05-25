@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
@@ -16,8 +17,12 @@ namespace Skyblivion.OBSLexicalParser.DI
             SimpleFunctionTranslationFactory simpleFunctionTranslationFactory = new SimpleFunctionTranslationFactory(objectCallFactory, objectCallArgumentsFactory);
             DefaultFunctionFactory defaultFunctionFactory = new DefaultFunctionFactory(simpleFunctionTranslationFactory);
             LogUnknownFunctionFactory logUnknownFunctionFactory = new LogUnknownFunctionFactory(objectCallFactory);
+            LogUnknownFunctionWithReplacementFactory logUnknownFunctionWithFalseFactory = new LogUnknownFunctionWithReplacementFactory(logUnknownFunctionFactory, new TES5Bool(false));
+            LogUnknownFunctionWithReplacementFactory logUnknownFunctionWithFloat0Factory = new LogUnknownFunctionWithReplacementFactory(logUnknownFunctionFactory, new TES5Float(0));
+            NotSupportedFactory notSupportedFactory = new NotSupportedFactory();
             FillerFactory fillerFactory = new FillerFactory();
             CellToLocationFinder cellToLocationFinder = new CellToLocationFinder();
+            GetSecondsPassedFactory getSecondsPassedFactory = new GetSecondsPassedFactory(logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("addachievement", fillerFactory);
             valueFactory.AddFunctionFactory("additem", new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory));
@@ -48,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("evaluatepackage", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("forceactorvalue", new ForceActorValueFactory(valueFactory, objectCallFactory, referenceFactory));
             valueFactory.AddFunctionFactory("forcecloseobliviongate", logUnknownFunctionFactory);
-            valueFactory.AddFunctionFactory("forceflee", /*defaultFunctionFactory*/new NotSupportedFactory());
+            valueFactory.AddFunctionFactory("forceflee", /*defaultFunctionFactory*//*notSupportedFactory*/logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("forceweather", new ForceWeatherFactory(objectCallFactory, referenceFactory));
             valueFactory.AddFunctionFactory("getactionref", new GetActionRefFactory());
             valueFactory.AddFunctionFactory("getactorvalue", new GetActorValueFactory(referenceFactory, objectCallFactory));
@@ -90,7 +95,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getiscurrentweather", new GetIsCurrentWeatherFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getisid", new GetIsIdFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getisplayablerace", new GetIsPlayableRaceFactory(objectCallFactory));
-            valueFactory.AddFunctionFactory("getisplayerbirthsign", new NotSupportedFactory());
+            valueFactory.AddFunctionFactory("getisplayerbirthsign", notSupportedFactory);
             valueFactory.AddFunctionFactory("getisrace", new GetIsRaceFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getisreference", new GetIsReferenceFactory(referenceFactory));
             valueFactory.AddFunctionFactory("getissex", new GetIsSexFactory(objectCallFactory));
@@ -115,22 +120,22 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getpos", new GetPosFactory(objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getquestrunning", new PopCalledRenameFunctionFactory("IsRunning", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getrandompercent", new GetRandomPercentFactory(objectCallFactory));
-            valueFactory.AddFunctionFactory("getrestrained", defaultFunctionFactory);
-            valueFactory.AddFunctionFactory("getsecondspassed", new GetSecondsPassedFactory(objectCallFactory));
+            valueFactory.AddFunctionFactory("getrestrained", logUnknownFunctionWithFalseFactory/*defaultFunctionFactory*/);
+            valueFactory.AddFunctionFactory("getsecondspassed", getSecondsPassedFactory);
             valueFactory.AddFunctionFactory("getself", new GetSelfFactory());
             valueFactory.AddFunctionFactory("getshouldattack", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("getsleeping", new RenamedFunctionFactory("GetSleepState", simpleFunctionTranslationFactory));
             valueFactory.AddFunctionFactory("getstagedone", new PopCalledRenameFunctionFactory("GetStageDone", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getstage", new PopCalledRenameFunctionFactory("GetStage", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("getstartingangle", /*defaultFunctionFactory*/new NotSupportedFactory());
-            valueFactory.AddFunctionFactory("getstartingpos", /*defaultFunctionFactory*/new NotSupportedFactory());
+            valueFactory.AddFunctionFactory("getstartingangle", /*defaultFunctionFactory*//*notSupportedFactory*/logUnknownFunctionWithFloat0Factory);
+            valueFactory.AddFunctionFactory("getstartingpos", /*defaultFunctionFactory*//*notSupportedFactory*/logUnknownFunctionWithFloat0Factory);
             valueFactory.AddFunctionFactory("gettalkedtopc", new ReturnTrueFactory());
             valueFactory.AddFunctionFactory("getweaponanimtype", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("gotojail", new GoToJailFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("hasmagiceffect", new HasMagicEffectFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("hasvampirefed", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("isactionref", new IsActionRefFactory(referenceFactory));
-            valueFactory.AddFunctionFactory("isactorusingatorch", new RenamedFunctionFactory("IsTorchOut", simpleFunctionTranslationFactory));
+            valueFactory.AddFunctionFactory("isactorusingatorch", logUnknownFunctionWithFalseFactory/*new RenamedFunctionFactory("IsTorchOut", simpleFunctionTranslationFactory)*/);
             valueFactory.AddFunctionFactory("isactor", new IsActorFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("isanimplaying", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("isessential", defaultFunctionFactory);
@@ -285,7 +290,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("pme", logUnknownFunctionFactory);//WTM:  Note:  PlayMagicEffectVisuals
             valueFactory.AddFunctionFactory("pms", logUnknownFunctionFactory);//WTM:  Note:  PlayMagicShaderVisuals
             valueFactory.AddFunctionFactory("pcb", fillerFactory);//WTM:  Note:  PurgeCellBuffers
-            valueFactory.AddFunctionFactory("scripteffectelapsedseconds", new GetSecondsPassedFactory(objectCallFactory));
+            valueFactory.AddFunctionFactory("scripteffectelapsedseconds", getSecondsPassedFactory);
             valueFactory.AddFunctionFactory("saa", new SetActorAlphaFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("setav", new SetActorValueFactory(valueFactory, objectCallFactory, referenceFactory));
             valueFactory.AddFunctionFactory("sme", logUnknownFunctionFactory);//WTM:  Note:  StopMagicEffectVisuals

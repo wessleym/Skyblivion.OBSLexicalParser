@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             }
             else
             {
-                return logUnknownFunctionFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+                return logUnknownFunctionFactory.CreateLogCall(function);
             }
         }
     }
