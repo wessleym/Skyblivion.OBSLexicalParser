@@ -8,12 +8,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class Build
     {
-        public static readonly string DEFAULT_BUILD_PATH = DataDirectory.GetBuildPath();
+        public static readonly string DEFAULT_BUILD_PATH = DataDirectory.BuildPath;
         private readonly string buildPath;
         public Build(string buildPath)
         {
             this.buildPath = buildPath;
         }
+        public Build() : this(DEFAULT_BUILD_PATH) { }
 
         public string CombineWithBuildPath(string additionalPath)
         {
@@ -66,14 +67,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             if (deleteFiles)
             {
                 Console.WriteLine("Deleting Files from " + directory + "...");
-                foreach (string file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
-                {
-                    File.Delete(file);
-                }
-                foreach (string dir in Directory.EnumerateDirectories(directory, "*", SearchOption.AllDirectories))
-                {
-                    Directory.Delete(dir);
-                }
+                Directory.Delete(directory, true);
                 return true;
             }
             return false;

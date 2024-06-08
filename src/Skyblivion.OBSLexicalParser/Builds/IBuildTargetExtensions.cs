@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public static string GetRootBuildTargetPath(this IBuildTarget buildTarget)
         {
-            return Path.Combine(DataDirectory.GetBuildTargetsPath(), buildTarget.Name) + Path.DirectorySeparatorChar;
+            return Path.Combine(DataDirectory.BuildTargetsPath, buildTarget.Name) + Path.DirectorySeparatorChar;
         }
 
         public static string GetSourcePath(this IBuildTarget buildTarget)
@@ -140,7 +140,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public static bool CanBuildAndWarnIfNot(this IEnumerable<IBuildTarget> buildTargets)
         {
             if (buildTargets.CanBuild()) { return true; }
-            Console.WriteLine(DataDirectory.GetBuildPath() + " had old files.  Clear them manually, or use " + BuildFileDeleteCommand.FriendlyNameConst + ".");
+            Console.WriteLine(DataDirectory.BuildPath + " had old files.  Clear them manually, or use " + BuildFileDeleteCommand.FriendlyNameConst + ".");
             return false;
         }
 

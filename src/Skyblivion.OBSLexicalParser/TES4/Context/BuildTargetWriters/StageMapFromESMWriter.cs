@@ -13,9 +13,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
     {
         public static void Write()
         {
-            BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build(DataDirectory.GetBuildPath()));
+            BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build());
             string sourcePath = qfBuildTarget.GetSourcePath();
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromESM(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
+            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromESM(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
             IEnumerable<TES4Record> qusts = collection.GetGrupRecords(TES4RecordType.QUST);
             foreach (TES4Record qust in qusts)
             {

@@ -39,8 +39,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public void Execute(string targets)
         {
             if (!PreExecutionChecks(true, true, false, false)) { return; }
-            Directory.CreateDirectory(DataDirectory.GetGraphDirectoryPath());
-            Build build = new Build(Build.DEFAULT_BUILD_PATH); //This argument might well not be important in this case
+            Directory.CreateDirectory(DataDirectory.GraphDirectoryPath);
+            Build build = new Build();
             BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
             BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
             ProgressWriter? progressWriter = null;

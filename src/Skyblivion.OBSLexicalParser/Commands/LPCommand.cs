@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             if (requireESM)
             {
-                string esmPath = DataDirectory.GetESMDefaultFilePath();
+                string esmPath = DataDirectory.ESMDefaultFilePath;
                 if (!File.Exists(esmPath))
                 {
                     Console.WriteLine("Please add " + esmPath);
@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
             if (requireBuildTargets)
             {
-                string buildTargetsPath = DataDirectory.GetBuildTargetsPath();
+                string buildTargetsPath = DataDirectory.BuildTargetsPath;
                 if (!Directory.Exists(buildTargetsPath))
                 {
                     Console.WriteLine("Please add " + buildTargetsPath + " with all of its contents.");
@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
             if (requireGraph)
             {
-                string graphPath = DataDirectory.GetGraphDirectoryPath();
+                string graphPath = DataDirectory.GraphDirectoryPath;
                 if (!Directory.Exists(graphPath))
                 {
                     Console.WriteLine("Please add " + graphPath + " by running " + BuildInteroperableCompilationGraphs.FriendlyNameConst + ".");
@@ -50,14 +50,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
             if (requireCompiler)
             {
-                string compilerPath = DataDirectory.GetCompilerDirectoryPath();
+                string compilerPath = DataDirectory.CompilerDirectoryPath;
                 if (!Directory.Exists(compilerPath))
                 {
                     Console.WriteLine("Please add compiler binaries to " + compilerPath + ".");
                     return false;
                 }
             }
-            Directory.CreateDirectory(DataDirectory.GetBuildPath());
+            Directory.CreateDirectory(DataDirectory.BuildPath);
             return true;
         }
     }

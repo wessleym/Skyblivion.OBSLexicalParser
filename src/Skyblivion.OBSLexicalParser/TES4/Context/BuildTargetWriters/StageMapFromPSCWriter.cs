@@ -60,14 +60,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 
         public static void Write()
         {
-            BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build(DataDirectory.GetBuildPath()));
+            BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build());
             string transpiledPath = qfBuildTarget.GetTranspiledPath();
             string sourcePath = qfBuildTarget.GetSourcePath();
             foreach (string pscPath in Directory.EnumerateFiles(transpiledPath, "*.psc"))
             {
                 Write(sourcePath, pscPath);
             }
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromPSCFiles(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
+            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromPSCFiles(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
             IEnumerable<TES4Record> qustRecords = collection.GetGrupRecords(TES4RecordType.QUST);
             foreach (TES4Record qust in qustRecords)
             {

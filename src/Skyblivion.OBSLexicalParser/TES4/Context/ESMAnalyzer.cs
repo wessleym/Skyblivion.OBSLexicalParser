@@ -53,7 +53,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
 
         private static TES4Collection GetESM()
         {
-            return TES4CollectionFactory.Create(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
+            return TES4CollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
         }
 
         private Dictionary<string, ITES5Type> GetScriptTypes()

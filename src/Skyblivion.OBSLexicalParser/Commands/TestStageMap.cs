@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public override void Execute()
         {
             if (!PreExecutionChecks(false, true, false, false)) { return; }
-            Build build = new Build(Build.DEFAULT_BUILD_PATH);
+            Build build = new Build();
             BuildTarget buildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, build);
             bool preprocessed;
             Dictionary<int, List<int>> originalStageMap = StageMapFromMAPBuilder.BuildStageMapDictionary(buildTarget, "QF_FGC01Rats_01035713", out preprocessed);

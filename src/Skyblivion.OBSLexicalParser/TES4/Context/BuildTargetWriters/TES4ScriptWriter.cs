@@ -13,8 +13,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
     {
         public static void Write()
         {
-            TES4Collection collection = TES4CollectionFactory.CreateForScriptExporting(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);
-            string buildTargetsPath = DataDirectory.GetBuildTargetsPath();
+            TES4Collection collection = TES4CollectionFactory.CreateForScriptExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            string buildTargetsPath = DataDirectory.BuildTargetsPath;
             Write(collection, buildTargetsPath, "Standalone", "", false, null, true, TES4RecordType.SCPT);
             Write(collection, buildTargetsPath, "TIF", TES5ReferenceFactory.tif_Prefix, true, null, false, TES4RecordType.INFO);
             WriteWithIndexes(collection, buildTargetsPath, "QF", TES5ReferenceFactory.qf_Prefix, TES4RecordType.QUST);

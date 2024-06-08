@@ -22,10 +22,15 @@ namespace Skyblivion.OBSLexicalParser.Utilities
                 string destinationPath = destinationDirectory + fileName;
                 File.Copy(path, destinationPath, overwrite);
             }
+        }
+
+        public static void CopyDirectoryFilesRecursive(string sourceDirectory, string destinationDirectory, bool overwrite)
+        {
+            CopyDirectoryFiles(sourceDirectory, destinationDirectory, overwrite);
             foreach (string sourceSubDirectoryPath in Directory.EnumerateDirectories(sourceDirectory))
             {
                 string destinationSubDirectoryPath = Path.Combine(destinationDirectory, Path.GetFileName(sourceSubDirectoryPath)) + Path.DirectorySeparatorChar;
-                CopyDirectoryFiles(sourceSubDirectoryPath + Path.DirectorySeparatorChar, destinationSubDirectoryPath, overwrite);
+                CopyDirectoryFilesRecursive(sourceSubDirectoryPath + Path.DirectorySeparatorChar, destinationSubDirectoryPath, overwrite);
             }
         }
 

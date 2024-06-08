@@ -19,11 +19,11 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
         {
             string dependenciesPath = build.GetDependenciesPath();
             string workspacePath = build.GetWorkspacePath();
-            FileWriter.CopyDirectoryFiles(dependenciesPath, workspacePath, false);
+            FileWriter.CopyDirectoryFilesRecursive(dependenciesPath, workspacePath, false);
             progressWriter.IncrementAndWrite();
             foreach (var buildTarget in buildTargets)
             {
-                FileWriter.CopyDirectoryFiles(buildTarget.GetTranspiledPath(), workspacePath, false);
+                FileWriter.CopyDirectoryFilesRecursive(buildTarget.GetTranspiledPath(), workspacePath, false);
                 progressWriter.IncrementAndWrite();
                 //WTM:  Change:  I'm now using one dependencies folder instead of three.
                 //FileTransfer.CopyDirectoryFiles(buildTarget.GetDependenciesPath(), workspacePath, true);//WTM:  Note:  Dependencies often (or possibly always) overwrite each other.

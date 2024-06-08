@@ -7,7 +7,6 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
@@ -16,11 +15,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
     {
         public static void Write()
         {
-            string buildPath = DataDirectory.GetBuildPath();
-            Build build = new Build(buildPath);
+            Build build = new Build();
             BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, build);
             BuildTarget tifBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.TIFName, build);
-            TES4Collection collection = TES4CollectionFactory.Create(DataDirectory.GetESMDirectoryPath(), DataDirectory.TES4GameFileName);//Needs the "full" collection for SCRO lookups.
+            TES4Collection collection = TES4CollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);//Needs the "full" collection for SCRO lookups.
             using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(collection))
             {
                 foreach (TES4Record record in collection.Where(r => r.RecordType == TES4RecordType.INFO))

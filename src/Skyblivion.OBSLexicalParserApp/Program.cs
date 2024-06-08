@@ -4,7 +4,7 @@ namespace Skyblivion.OBSLexicalParserApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             AllCommandsRunner.Run();
         }

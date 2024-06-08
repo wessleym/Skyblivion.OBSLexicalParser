@@ -1,4 +1,5 @@
 ﻿using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             new BuildTargetCommand(),
             new TestStageMap(),
             new FindFillerCommand(),
-            new BuildFileDeleteCommand()
+            new BuildFileDeleteCommand(),
+            new BuildModifiedScriptsCommand()
         };
 
         public static void Run()

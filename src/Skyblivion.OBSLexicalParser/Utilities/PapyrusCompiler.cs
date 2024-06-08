@@ -35,19 +35,26 @@ namespace Skyblivion.OBSLexicalParser.Utilities
             }
         }
 
-        public static void Run(string sourcePath, string importPath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
+        public static void Run(string sourceDirectoryOrFilePath, string importPath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
         {
+            //https://ck.uesp.net/wiki/Papyrus_Compiler_Reference
             //PapyrusCompiler seems to require that paths don't start with . and that only forward slashes are used.
-            sourcePath = sourcePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
+            bool file = sourceDirectoryOrFilePath.EndsWith(".psc", StringComparison.OrdinalIgnoreCase);
+            sourceDirectoryOrFilePath = sourceDirectoryOrFilePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             importPath = importPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             outputPath = outputPath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
             standardOutputFilePath = standardOutputFilePath.Trim('.', Path.DirectorySeparatorChar).Replace("\\", "/");
-            string compilerDirectory = DataDirectory.GetCompilerDirectoryPath();
+            string compilerDirectory = DataDirectory.CompilerDirectoryPath;
             string compilerPath = compilerDirectory + "PapyrusCompiler.exe";
             string flagsPath = compilerDirectory.Replace("\\", "/") + "TESV_Papyrus_Flags.flg";
             bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             string fileName = (isWindows ? "\"" : "") + "." + Path.DirectorySeparatorChar + compilerPath + (isWindows ? "\"" : "");
-            string arguments = "\"" + sourcePath + "\" -f=\"" + flagsPath + "\" -i=\"" + importPath + "\" -o=\"" + outputPath + "\" -a";
+            string arguments =
+                "\"" + sourceDirectoryOrFilePath + "\"" +
+                " -flags=\"" + flagsPath + "\"" +
+                " -import=\"" + importPath + "\"" +
+                " -output=\"" + outputPath + "\"" +
+                (!file ? " -all" : "");
             Console.WriteLine("Executing PapyrusCompiler.exe:  " + fileName + " " + arguments);
             ProcessStart(fileName, arguments, standardOutputFilePath, standardErrorFilePath);
             Console.WriteLine("PapyrusCompiler.exe Complete");
