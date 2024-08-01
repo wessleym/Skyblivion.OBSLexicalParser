@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 object? item2Constant = (tes4ValueTuple.Item2 as ITES4ValueConstant)?.Constant;
                 object GetItem2Data()
                 {
-                    if (item2Constant == null) { throw new InvalidOperationException("Data was not a constant while converting call to "+ function.FunctionCall.FunctionName + "."); }
+                    if (item2Constant == null) { throw new InvalidOperationException("Data was not a constant while converting call to " + function.FunctionCall.FunctionName + "."); }
                     return item2Constant;
                 }
 
@@ -319,8 +319,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 {
                     if (valueTuple.Item1.TES5Type.NativeType == TES5BasicType.T_QUEST && valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {
-                        TES5ObjectCall getStage = this.objectCallFactory.CreateObjectCall((ITES5Referencer)valueTuple.Item1, "GetStage");
-                        return TES5ExpressionFactory.CreateComparisonExpression(getStage, newOp, valueTuple.Item2);
+                        TES5ObjectCall getCurrentStageID = this.objectCallFactory.CreateObjectCall((ITES5Referencer)valueTuple.Item1, "GetCurrentStageID");
+                        return TES5ExpressionFactory.CreateComparisonExpression(getCurrentStageID, newOp, valueTuple.Item2);
                     }
                     if (valueTuple.Item1.TES5Type == TES5BasicType.T_BOOL && valueTuple.Item2.TES5Type == TES5BasicType.T_INT)
                     {

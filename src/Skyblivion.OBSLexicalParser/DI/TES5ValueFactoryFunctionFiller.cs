@@ -125,8 +125,8 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getself", new GetSelfFactory());
             valueFactory.AddFunctionFactory("getshouldattack", new ReturnFalseFactory());
             valueFactory.AddFunctionFactory("getsleeping", new RenamedFunctionFactory("GetSleepState", simpleFunctionTranslationFactory));
-            valueFactory.AddFunctionFactory("getstagedone", new PopCalledRenameFunctionFactory("GetStageDone", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
-            valueFactory.AddFunctionFactory("getstage", new PopCalledRenameFunctionFactory("GetStage", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("getstagedone", new PopCalledRenameFunctionFactory("IsStageDone", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("getstage", new PopCalledRenameFunctionFactory("GetCurrentStageID", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getstartingangle", /*defaultFunctionFactory*//*notSupportedFactory*/logUnknownFunctionWithFloat0Factory);
             valueFactory.AddFunctionFactory("getstartingpos", /*defaultFunctionFactory*//*notSupportedFactory*/logUnknownFunctionWithFloat0Factory);
             valueFactory.AddFunctionFactory("gettalkedtopc", new ReturnTrueFactory());
@@ -249,7 +249,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("setscale", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("setsceneiscomplex", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("setshowquestitems", logUnknownFunctionFactory);
-            valueFactory.AddFunctionFactory("setstage", new PopCalledRenameFunctionFactory("SetStage", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("setstage", new PopCalledRenameFunctionFactory("SetCurrentStageID", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("setunconscious", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("setweather", new SetWeatherFactory(objectCallFactory, objectCallArgumentsFactory, referenceFactory));
             valueFactory.AddFunctionFactory("showbirthsignmenu", logUnknownFunctionFactory);
