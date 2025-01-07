@@ -26,7 +26,7 @@ Please place the following files:
 The scripts copied from our Git repository/Skyblivion.OBSLexicalParserApp/ModifiedScripts_Input
 
 {skseSourcePath}
-The SKSE source for which the files should be compiled
+The SKSE source for which the files should be compiled (for example, from skse64_X.7z\skse64_X\Data\Scripts\Source)
 """);
             Console.WriteLine("Please any key to continue.");
             Console.ReadKey(true);
@@ -50,9 +50,9 @@ The SKSE source for which the files should be compiled
             foreach (string inputPath in Directory.EnumerateFiles(inputsPath, "*.psc", SearchOption.AllDirectories))
             {
                 string fileName = Path.GetFileName(inputPath);
-                string directoryName = Path.GetFileName(Path.GetDirectoryName(inputPath));
+                string directoryName = Path.GetFileName(Path.GetDirectoryName(inputPath))!;
                 string inputContents = File.ReadAllText(inputPath);
-                bool amendment = directoryName == "Amendments";
+                bool amendment = directoryName == "Amendments";//This system is no longer used since all of our scripts are now originals.
                 string preprocessedFilePath = preprocessedPath + fileName;
                 string importFilePath = importPath + fileName;
                 if (amendment)

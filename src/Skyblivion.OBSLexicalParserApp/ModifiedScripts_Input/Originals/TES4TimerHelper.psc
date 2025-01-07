@@ -37,44 +37,44 @@ bool property started = false auto
 
 Int function GetPassedGameDays() global
 
-	Float GameTime = utility.GetCurrentGameTime()
-	Float GameDaysPassed = math.Floor(GameTime) as Float
-	return GameDaysPassed as Int
+    Float GameTime = utility.GetCurrentGameTime()
+    Float GameDaysPassed = math.Floor(GameTime) as Float
+    return GameDaysPassed as Int
 endFunction
 
 Int function GetDayOfWeek()
 
-	Int GameDaysPassed = TES4TimerHelper.GetPassedGameDays()
-	return GameDaysPassed % 7
+    Int GameDaysPassed = TES4TimerHelper.GetPassedGameDays()
+    return GameDaysPassed % 7
 endFunction
 
 function Rotate(ObjectReference MyObject, Float LocalX, Float LocalY, Float LocalZ)
 
-	Float AngleX = LocalX * math.Cos(LocalZ) + LocalY * math.Sin(LocalZ)
-	Float AngleY = LocalY * math.Cos(LocalZ) - LocalX * math.Sin(LocalZ)
-	MyObject.SetAngle(AngleX, AngleY, LocalZ)
+    Float AngleX = LocalX * math.Cos(LocalZ) + LocalY * math.Sin(LocalZ)
+    Float AngleY = LocalY * math.Cos(LocalZ) - LocalX * math.Sin(LocalZ)
+    MyObject.SetAngle(AngleX, AngleY, LocalZ)
 endFunction
 
 Int function getCrimeGold()
 
-	Int index = 0
-	Int crimeGold = 0
-	while index < CrimeFactions.length
-		crimeGold += CrimeFactions[index].getCrimeGold()
-	endWhile
-	return crimeGold
+    Int index = 0
+    Int crimeGold = 0
+    while index < CrimeFactions.length
+        crimeGold += CrimeFactions[index].getCrimeGold()
+    endWhile
+    return crimeGold
 endFunction
 
 Float function legacySay(ObjectReference speaker, Topic speakingTopic, Actor speakAs, Bool speakInHead)
-	string speakingTopic_s = d2h(speakingTopic.GetFormID())
-	if (speakAs == None)
-		Debug.Trace(speaker + " Say " + speakingTopic_s)
-		speaker.Say(speakingTopic, None, speakInHead)
-	else
-		ConsoleUtil.SetSelectedReference(speaker)
-		string speakAs_s = d2h(speakAs.GetFormID())
-		Debug.Trace(speaker + " SayTo " + speakAs_s + " " + speakingTopic_s)
-		ConsoleUtil.ExecuteCommand("SayTo " + speakAs_s + " " + speakingTopic_s)
-	endif
-	return 15.0
+    string speakingTopic_s = d2h(speakingTopic.GetFormID())
+    if (speakAs == None)
+        Debug.Trace(speaker + " Say " + speakingTopic_s)
+        speaker.Say(speakingTopic, None, speakInHead)
+    else
+        ConsoleUtil.SetSelectedReference(speaker)
+        string speakAs_s = d2h(speakAs.GetFormID())
+        Debug.Trace(speaker + " SayTo " + speakAs_s + " " + speakingTopic_s)
+        ConsoleUtil.ExecuteCommand("SayTo " + speakAs_s + " " + speakingTopic_s)
+    endif
+    return 15.0
 endFunction

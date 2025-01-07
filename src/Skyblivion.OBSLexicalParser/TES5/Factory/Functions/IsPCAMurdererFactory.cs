@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -16,7 +17,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, "LegacyIsPCAMurderer", comment: function.Comment);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4GameUtility), "LegacyIsPCAMurderer", comment: function.Comment, inference: false);
         }
     }
 }

@@ -110,7 +110,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             { TES5BasicType.T_INPUT, new TES5InheritanceItemCollection() },
             { TES5BasicType.T_SKSE, new TES5InheritanceItemCollection() },
             { TES5BasicType.T_STRINGUTIL, new TES5InheritanceItemCollection() },
-            { TES5BasicType.T_UI, new TES5InheritanceItemCollection() }
+            { TES5BasicType.T_UI, new TES5InheritanceItemCollection() },
+            { TES5BasicType.T_TES4GameUtility, new TES5InheritanceItemCollection() }
         };
         private static readonly TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
@@ -2172,13 +2173,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_BOOL,
                                 TES5BasicType.T_BOOL
                             }, TES5BasicType.T_BOOL),
-                //WTM:  Note:  These methods actually seem to exist natively in Skyrim, but in my tests, they don't work reliably.
-                //I seemed to only be able to call ModAmountSoldStolen once.  After that, I couldn't get it to have any affect on the stored value.
-                /*new TES5InheritanceFunctionSignature("GetAmountSoldStolen", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),
-                new TES5InheritanceFunctionSignature("ModAmountSoldStolen", new TES5BasicType[] {
-                                TES5BasicType.T_INT
-                            }, TES5VoidType.Instance),*/
                 new TES5InheritanceFunctionSignature("LegacyGetAmountSoldStolen", new TES5BasicType[] {
                             }, TES5BasicType.T_INT),//WTM:  Change:  Added via Skyblivion.dll
                 new TES5InheritanceFunctionSignature("LegacyModAmountSoldStolen", new TES5BasicType[] {
@@ -2187,10 +2181,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 /*new TES5InheritanceFunctionSignature("IsPCAMurderer", new TES5BasicType[] {
                             }, TES5BasicType.T_INT),*/
                 new TES5InheritanceFunctionSignature("LegacyIsPCAMurderer", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),//WTM:  Change:  Added via Skyblivion.dll (experimenting)
-                new TES5InheritanceFunctionSignature("EssentialDeathReload", new TES5BasicType[] {//WTM:  Change:  Added via Skyblivion.dll (experimenting)
-                                TES5BasicType.T_STRING
-                            }, TES5VoidType.Instance)
+                            }, TES5BasicType.T_INT)//WTM:  Change:  Added via Skyblivion.dll (experimenting)
             }
         },
         { TES5BasicType.T_HEADPART,
@@ -2853,8 +2844,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("IsOffLimits", new TES5BasicType[] {
                             }, TES5BasicType.T_BOOL),
-                new TES5InheritanceFunctionSignature("isAnimPlaying", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("OnUpdate", new TES5BasicType[] {
                             }, TES5VoidType.Instance),//WTM:  Change:  Added
                 new TES5InheritanceFunctionSignature("GotoState", new TES5BasicType[] {
@@ -2863,29 +2852,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("SetDisplayName", new TES5BasicType[]
                             {
                                 TES5BasicType.T_STRING
-                            }, TES5VoidType.Instance),//WTM:  Change:  Added.  SKSE.
-                new TES5InheritanceFunctionSignature("ContainsItem", new TES5BasicType[]
-                            {
-                                TES5BasicType.T_FORM
-                            }, TES5BasicType.T_BOOL),//WTM:  Change:  Added.  See modified ObjectReference.psc.
-                new TES5InheritanceFunctionSignature("LegacyStartConversation", new TES5BasicType[]
-                            {
-                                TES5BasicType.T_ACTOR,
-                                TES5BasicType.T_TOPIC
-                            }, TES5VoidType.Instance),//WTM:  Change:  Added.  See modified ObjectReference.psc.
-                new TES5InheritanceFunctionSignature("LegacySay", new TES5BasicType[] {
-                        TES5BasicType.T_TOPIC,
-                        TES5BasicType.T_BOOL
-                    }, TES5BasicType.T_FLOAT),
-                new TES5InheritanceFunctionSignature("LegacySayTo", new TES5BasicType[] {
-                        TES5BasicType.T_ACTOR,
-                        TES5BasicType.T_TOPIC,
-                        TES5BasicType.T_BOOL
-                    }, TES5BasicType.T_FLOAT),
-                new TES5InheritanceFunctionSignature("LegacyGetDestroyed", new TES5BasicType[] {
-                            }, TES5BasicType.T_INT),
-                new TES5InheritanceFunctionSignature("LegacyGetActionRef", new TES5BasicType[] {
-                            }, TES5BasicType.T_OBJECTREFERENCE)
+                            }, TES5VoidType.Instance)//WTM:  Change:  Added.  SKSE.
             }
         },
         { TES5BasicType.T_OUTFIT,
@@ -4544,7 +4511,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             new TES5InheritanceFunctionSignature[] {
             }
         },
-        //Conversion hooks,
+        //SKSE plugin:
         { TES5BasicType.T_TES4TIMERHELPER,
             new TES5InheritanceFunctionSignature[] {
                 new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT),
@@ -4563,6 +4530,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             new TES5InheritanceFunctionSignature[] {
 
             }
+        },
+        { TES5BasicType.T_TES4GameUtility,
+            [
+                new TES5InheritanceFunctionSignature("LegacyGetAmountSoldStolen", [], TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("LegacyIsPCAMurderer", [], TES5BasicType.T_BOOL)
+            ]
+        },
+        { TES5BasicType.T_TES4ObjectReferenceUtility,
+            [
+                new TES5InheritanceFunctionSignature("ContainsItem", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_FORM], TES5BasicType.T_BOOL),
+                new TES5InheritanceFunctionSignature("IsAnimPlaying", [TES5BasicType.T_OBJECTREFERENCE], TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("LegacyGetDestroyed", [TES5BasicType.T_OBJECTREFERENCE], TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("LegacySay", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_TOPIC, TES5BasicType.T_BOOL], TES5BasicType.T_FLOAT),
+                new TES5InheritanceFunctionSignature("LegacySayTo", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_ACTOR, TES5BasicType.T_TOPIC, TES5BasicType.T_BOOL], TES5BasicType.T_FLOAT)
+            ]
         }
         };
 

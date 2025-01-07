@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
+            TES5ObjectCallArguments arguments = [calledOn];
 
             //if (calledOn.TES5Type != TES5BasicType.T_OBJECTREFERENCE)
             //{
@@ -67,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             //TES5LocalScope localScope = codeScope.LocalScope;
             //ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
             //return this.objectCallFactory.CreateObjectCall(timerReference, "LegacySay", multipleScriptsScope, arguments);
-            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacySay", arguments, comment: function.Comment);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4ObjectReferenceUtility), "LegacySay", arguments, comment: function.Comment, inference: false);
         }
     }
 }

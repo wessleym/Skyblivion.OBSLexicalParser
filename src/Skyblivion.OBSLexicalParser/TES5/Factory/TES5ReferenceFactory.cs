@@ -10,7 +10,6 @@ using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -23,7 +22,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static readonly Regex ReferenceAndPropertyNameRegex = new Regex(@"([0-9A-Za-z]+)\.([0-9A-Za-z]+)", RegexOptions.Compiled);
         private const string tContainerName = "tContainer";
         private const string tTimerName = "tTimer";
-        private const string tGSPLocalTimerName = "tGSPLocalTimer";
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
         public const string qf_Prefix = "qf_";
@@ -41,8 +39,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
             { tContainerName, TES5BasicType.T_TES4CONTAINER },//Data container
             { tTimerName, TES5BasicType.T_TES4TIMERHELPER },//Timer functions
-            { tGSPLocalTimerName, TES5BasicType.T_FLOAT },//used for get seconds passed logical conversion
-            { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction, WE HAVE BETTER CRIME SYSTEM IN CYRODIIL DAWG
+            { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction
             { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
             { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
         };
@@ -136,11 +133,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer CreateTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             return CreateReadReference(tTimerName, globalScope, multipleScriptsScope, localScope);
-        }
-
-        public ITES5Referencer CreateGSPLocalTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
-        {
-            return CreateReadReference(tGSPLocalTimerName, globalScope, multipleScriptsScope, localScope);
         }
 
         public ITES5Referencer CreateCyrodiilCrimeFactionReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)

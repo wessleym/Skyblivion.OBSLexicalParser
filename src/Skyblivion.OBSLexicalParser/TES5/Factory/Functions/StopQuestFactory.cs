@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -40,7 +41,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             };
             if (questName == "FGInterimConversation" || questName == "ArenaIC" || questName == "ArenaICGrandChampion" || questName == "ArenaAggression" || questName == "ArenaAnnouncer" || questName == "ArenaDisqualification" || questName == "Arena")
             {
-                codeChunks.Add(this.objectCallFactory.CreateObjectCall(newCalledOn, "PrepareForReinitializing", new TES5ObjectCallArguments()));
+                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4QuestUtility), "PrepareForReinitializing", [newCalledOn], inference: false);
+                codeChunks.Add(objectCall);
             }
             return codeChunks;
         }

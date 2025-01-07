@@ -7,7 +7,7 @@ namespace Dissect.Extensions
     {
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> addValueFactory, out bool containedKey)
         {
-            TValue value;
+            TValue? value;
             if (dictionary.TryGetValue(key, out value))
             {
                 containedKey = true;

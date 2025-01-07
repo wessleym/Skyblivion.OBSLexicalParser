@@ -96,7 +96,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 .SelectMany(block =>
                 {
                     List<ITES5Outputtable> blocks = new List<ITES5Outputtable>();
-                    List<TES5Comment> comments;
+                    List<TES5Comment>? comments;
                     if (blockListComments.TryGetValue(block.BlockName, out comments))
                     {
                         blocks.AddRange(comments);

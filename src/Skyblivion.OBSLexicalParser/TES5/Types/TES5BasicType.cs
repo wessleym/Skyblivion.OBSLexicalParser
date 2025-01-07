@@ -122,6 +122,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE = new TES5BasicType("SKSE"),
             T_STRINGUTIL = new TES5BasicType("StringUtil"),
             T_UI = new TES5BasicType("UI"),
+            T_TES4GameUtility = new TES5BasicType("TES4GameUtility", allowInference: false),
+            T_TES4ObjectReferenceUtility = new TES5BasicType("TES4ObjectReferenceUtility", allowInference: false),
+            T_TES4QuestUtility = new TES5BasicType("TES4QuestUtility", allowInference: false),
             T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName, allowInference: false),
             T_TES4CONTAINER = new TES5BasicType(TES4ContainerName, allowInference: false),
             T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Change:  Added:  SKSE

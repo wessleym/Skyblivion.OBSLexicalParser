@@ -75,7 +75,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getdayofweek", new GetDayOfWeekFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdeadcount", new PopCalledRenameActorBaseFunctionFactory("GetDeadCount", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdead", new RenamedFunctionFactory("IsDead", simpleFunctionTranslationFactory));
-            valueFactory.AddFunctionFactory("getdestroyed", new RenamedFunctionFactory("LegacyGetDestroyed", simpleFunctionTranslationFactory));
+            valueFactory.AddFunctionFactory("getdestroyed", new GetDestroyedFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getdetected", new GetDetectedFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getdisabled", new RenamedFunctionFactory("IsDisabled", simpleFunctionTranslationFactory));
             valueFactory.AddFunctionFactory("getdisposition", new GetDispositionFactory(objectCallFactory));
@@ -137,7 +137,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("isactionref", new IsActionRefFactory(referenceFactory));
             valueFactory.AddFunctionFactory("isactorusingatorch", logUnknownFunctionWithFalseFactory/*new RenamedFunctionFactory("IsTorchOut", simpleFunctionTranslationFactory)*/);
             valueFactory.AddFunctionFactory("isactor", new IsActorFactory(objectCallFactory));
-            valueFactory.AddFunctionFactory("isanimplaying", defaultFunctionFactory);
+            valueFactory.AddFunctionFactory("isanimplaying", new IsAnimPlayingFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("isessential", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("isguard", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("isidleplaying", new ReturnTrueFactory());

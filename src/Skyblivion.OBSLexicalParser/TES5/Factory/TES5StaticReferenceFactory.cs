@@ -1,5 +1,5 @@
-﻿using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+﻿using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -8,6 +8,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private static TES5StaticReference Create(string name)
         {
             return new TES5StaticReference(name);
+        }
+        public static TES5StaticReference Create(TES5BasicType tes5BasicType)
+        {
+            return new TES5StaticReference(tes5BasicType.Name, overrideType: tes5BasicType);
         }
 
         public static TES5StaticReference Debug => Create("Debug");

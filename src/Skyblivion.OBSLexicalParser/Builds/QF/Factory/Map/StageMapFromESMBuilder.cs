@@ -106,7 +106,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                 Dictionary<int, bool> innerDictionary = new Dictionary<int, bool>();
                 for (int i = 0; i <= maxTargetIndex; i++)
                 {
-                    Func<int, bool>[] currentList;
+                    Func<int, bool>[]? currentList;
                     bool result;
                     if (!simplifiedTargetFuncs.TryGetValue(i, out currentList)) { result = true; }
                     else

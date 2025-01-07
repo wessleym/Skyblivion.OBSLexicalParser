@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             //Simple implementation without looking.
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
+            TES5ObjectCallArguments arguments = [calledOn];
             //if (calledOn.TES5Type != TES5BasicType.T_OBJECTREFERENCE)
             //{
             //    TES5Castable calledOnCastable = calledOn as TES5Reference;
@@ -49,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
             //TES5LocalScope localScope = codeScope.LocalScope;
             //ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
-            return this.objectCallFactory.CreateObjectCall(calledOn, "LegacySayTo", arguments, comment: function.Comment);
+            return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4ObjectReferenceUtility), "LegacySayTo", arguments, comment: function.Comment, inference: false);
         }
     }
 }

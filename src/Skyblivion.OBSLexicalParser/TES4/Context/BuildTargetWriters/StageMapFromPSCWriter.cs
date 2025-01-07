@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
                     line.Add(value == 1 ? 0 : 1);
                     expectedIndex++;
                 }
-                List<int> existingLine;
+                List<int>? existingLine;
                 if (stageMap.TryGetValue(stageID, out existingLine))
                 {
                     if (!existingLine.SequenceEqual(line)) { throw new InvalidOperationException(nameof(existingLine) + " did not match " + nameof(line) + ":\r\n" + nameof(existingLine) + ":  " + string.Join(" ", existingLine) + "\r\n"+nameof(line)+":  " + string.Join(" ", line)); }

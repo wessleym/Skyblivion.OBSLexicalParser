@@ -2,7 +2,6 @@ using Skyblivion.OBSLexicalParser.Builds;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {

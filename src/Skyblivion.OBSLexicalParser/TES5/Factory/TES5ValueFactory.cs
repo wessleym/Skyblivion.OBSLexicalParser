@@ -356,7 +356,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         //I think GetItemCount returns 0 for all Containers that have ObjectReference scripts before they are opened:
         //https://forums.nexusmods.com/index.php?/topic/7174696-huge-mystery-with-getitemcount/#entry65389511
         //Once the player opens the Container once, then GetItemCount starts returning the correct count.
-        //This does not seem to apply to ObjectRefence, so I've excluded it below.
+        //This does not seem to apply to ObjectReference, so I've excluded it below.
         private TES5ComparisonExpression? ConvertGetItemCountCallToContainsItemCall(ITES5Value leftValue, TES5ComparisonExpressionOperator op, ITES5Value rightValue)
         {
             if (rightValue.TES5Type == TES5BasicType.T_INT)
@@ -418,7 +418,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         }
                         if (canConvert)
                         {
-                            TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(value1ObjectCall.AccessedObject, "ContainsItem", value1ObjectCall.Arguments);
+                            TES5ObjectCallArguments newArguments = [value1ObjectCall.AccessedObject, .. value1ObjectCall.Arguments];
+                            TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4ObjectReferenceUtility), "ContainsItem", arguments: newArguments, inference: false);
                             TES5ComparisonExpression comparisonExpression = TES5ExpressionFactory.CreateComparisonExpression(newObjectCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(!negate));
                             return comparisonExpression;
                         }
