@@ -1,4 +1,4 @@
-ScriptName TES4GameUtility
+ScriptName SKYBGameUtility
 
 ; Gets the amount PC gathered from sold stolen items
 Int Function LegacyGetAmountSoldStolen() Global Native

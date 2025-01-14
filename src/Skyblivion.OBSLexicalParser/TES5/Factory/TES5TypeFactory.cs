@@ -5,8 +5,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     static class TES5TypeFactory
     {
-        public const string TES4Prefix = "TES4";
-        public const string TES4_Prefix = "TES4_";
+        public const string
+            TES4Prefix = "TES4",
+            TES4_Prefix = "TES4_",
+            SKYBPrefix = "SKYB";
 
         private static ITES5Type? MemberByValue(string typeName)
         {

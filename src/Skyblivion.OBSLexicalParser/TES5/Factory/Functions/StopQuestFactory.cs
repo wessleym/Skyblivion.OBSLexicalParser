@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             };
             if (questName == "FGInterimConversation" || questName == "ArenaIC" || questName == "ArenaICGrandChampion" || questName == "ArenaAggression" || questName == "ArenaAnnouncer" || questName == "ArenaDisqualification" || questName == "Arena")
             {
-                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4QuestUtility), "PrepareForReinitializing", [newCalledOn], inference: false);
+                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBQuestUtility), "PrepareForReinitializing", [newCalledOn], inference: false);
                 codeChunks.Add(objectCall);
             }
             return codeChunks;

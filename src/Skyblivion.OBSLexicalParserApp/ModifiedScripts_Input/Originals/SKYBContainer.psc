@@ -5,7 +5,7 @@ Compiled : 2017-07-13 01:15:27
 User     : jenkins
 Computer : vps409760
 /;
-scriptName TES4Container extends Quest
+scriptName SKYBContainer extends Quest
 
 ;-- Properties --------------------------------------
 Bool property isMurderer_p = false auto

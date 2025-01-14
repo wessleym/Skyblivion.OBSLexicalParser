@@ -1,4 +1,4 @@
-scriptname TES4SkillUtility Hidden
+scriptname SKYBSkillUtility Hidden
 
 ;int mode:
 ;0 = XP

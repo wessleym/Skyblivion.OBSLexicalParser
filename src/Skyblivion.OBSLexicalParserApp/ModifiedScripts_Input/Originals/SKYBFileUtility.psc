@@ -1,3 +1,3 @@
-ScriptName TES4FileUtility
+ScriptName SKYBFileUtility
 
 String[] Function FilesInFolder(String directoryPath, String extension) Global Native

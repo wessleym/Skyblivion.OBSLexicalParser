@@ -21,7 +21,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public const string MESSAGEBOX_VARIABLE_CONST = TES5TypeFactory.TES4Prefix + "_MESSAGEBOX_RESULT";
         public static readonly Regex ReferenceAndPropertyNameRegex = new Regex(@"([0-9A-Za-z]+)\.([0-9A-Za-z]+)", RegexOptions.Compiled);
         private const string tContainerName = "tContainer";
-        private const string tTimerName = "tTimer";
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
         public const string qf_Prefix = "qf_";
@@ -37,8 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
             { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
             { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
-            { tContainerName, TES5BasicType.T_TES4CONTAINER },//Data container
-            { tTimerName, TES5BasicType.T_TES4TIMERHELPER },//Timer functions
+            { tContainerName, TES5BasicType.T_SKYBCONTAINER },//Data container
             { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction
             { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
             { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
@@ -128,11 +126,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer CreateContainerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             return CreateReadReference(tContainerName, globalScope, multipleScriptsScope, localScope);
-        }
-
-        public ITES5Referencer CreateTimerReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
-        {
-            return CreateReadReference(tTimerName, globalScope, multipleScriptsScope, localScope);
         }
 
         public ITES5Referencer CreateCyrodiilCrimeFactionReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)

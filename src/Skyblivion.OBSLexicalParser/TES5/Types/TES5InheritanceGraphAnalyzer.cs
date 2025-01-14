@@ -63,8 +63,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     { TES5BasicType.T_PROJECTILE },
                     { TES5BasicType.T_ENCHANTMENT },
                     { TES5BasicType.T_QUEST, new TES5InheritanceItemCollection(){
-                        TES5BasicType.T_TES4TIMERHELPER,
-                        TES5BasicType.T_TES4CONTAINER
+                        TES5BasicType.T_SKYBTIMERHELPER,
+                        TES5BasicType.T_SKYBCONTAINER
                     } },
                     { TES5BasicType.T_ENCOUNTERZONE },
                     { TES5BasicType.T_RACE },
@@ -111,7 +111,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             { TES5BasicType.T_SKSE, new TES5InheritanceItemCollection() },
             { TES5BasicType.T_STRINGUTIL, new TES5InheritanceItemCollection() },
             { TES5BasicType.T_UI, new TES5InheritanceItemCollection() },
-            { TES5BasicType.T_TES4GameUtility, new TES5InheritanceItemCollection() }
+            { TES5BasicType.T_SKYBGameUtility, new TES5InheritanceItemCollection() }
         };
         private static readonly TES5InheritanceItem inheritanceAsItem = new TES5InheritanceItem(null, inheritance);
 
@@ -4512,34 +4512,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             }
         },
         //SKSE plugin:
-        { TES5BasicType.T_TES4TIMERHELPER,
+        { TES5BasicType.T_SKYBTIMERHELPER,
             new TES5InheritanceFunctionSignature[] {
-                new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT)
                 /*new TES5InheritanceFunctionSignature("GetSecondsPassed", new TES5BasicType[] {
                         TES5BasicType.T_FLOAT
                     }, TES5BasicType.T_FLOAT),*///WTM:  Change:  Deleted
-                new TES5InheritanceFunctionSignature("Rotate", new TES5BasicType[] {
-                        TES5BasicType.T_OBJECTREFERENCE,
-                        TES5BasicType.T_FLOAT,
-                        TES5BasicType.T_FLOAT,
-                        TES5BasicType.T_FLOAT
-                    }, TES5VoidType.Instance)
             }
         },
-        { TES5BasicType.T_TES4CONTAINER,
-            new TES5InheritanceFunctionSignature[] {
-
-            }
-        },
-        { TES5BasicType.T_TES4GameUtility,
+        { TES5BasicType.T_SKYBGameUtility,
             [
                 new TES5InheritanceFunctionSignature("LegacyGetAmountSoldStolen", [], TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("LegacyIsPCAMurderer", [], TES5BasicType.T_BOOL)
             ]
         },
-        { TES5BasicType.T_TES4ObjectReferenceUtility,
+        { TES5BasicType.T_SKYBObjectReferenceUtility,
             [
                 new TES5InheritanceFunctionSignature("ContainsItem", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_FORM], TES5BasicType.T_BOOL),
+                //new TES5InheritanceFunctionSignature("LegacyRotate", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_FLOAT, TES5BasicType.T_FLOAT, TES5BasicType.T_FLOAT], TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("IsAnimPlaying", [TES5BasicType.T_OBJECTREFERENCE], TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("LegacyGetDestroyed", [TES5BasicType.T_OBJECTREFERENCE], TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("LegacySay", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_TOPIC, TES5BasicType.T_BOOL], TES5BasicType.T_FLOAT),

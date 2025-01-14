@@ -72,7 +72,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getcurrentaipackage", new RenamedFunctionFactory("GetCurrentPackage", simpleFunctionTranslationFactory));
             valueFactory.AddFunctionFactory("getcurrentaiprocedure", defaultFunctionFactory);
             valueFactory.AddFunctionFactory("getcurrenttime", new GetCurrentTimeFactory(referenceFactory));
-            valueFactory.AddFunctionFactory("getdayofweek", new GetDayOfWeekFactory(referenceFactory, objectCallFactory, objectCallArgumentsFactory));
+            valueFactory.AddFunctionFactory("getdayofweek", new GetDayOfWeekFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getdeadcount", new PopCalledRenameActorBaseFunctionFactory("GetDeadCount", referenceFactory, objectCallFactory, objectCallArgumentsFactory));
             valueFactory.AddFunctionFactory("getdead", new RenamedFunctionFactory("IsDead", simpleFunctionTranslationFactory));
             valueFactory.AddFunctionFactory("getdestroyed", new GetDestroyedFactory(objectCallFactory));

@@ -419,7 +419,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         if (canConvert)
                         {
                             TES5ObjectCallArguments newArguments = [value1ObjectCall.AccessedObject, .. value1ObjectCall.Arguments];
-                            TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_TES4ObjectReferenceUtility), "ContainsItem", arguments: newArguments, inference: false);
+                            TES5ObjectCall newObjectCall = objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBObjectReferenceUtility), "ContainsItem", arguments: newArguments, inference: false);
                             TES5ComparisonExpression comparisonExpression = TES5ExpressionFactory.CreateComparisonExpression(newObjectCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(!negate));
                             return comparisonExpression;
                         }

@@ -11,9 +11,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             List<TES5GlobalScope> globalScopes = new List<TES5GlobalScope>()
             {
-                new TES5GlobalScope(TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(TES5BasicType.TES4TimerHelperName, TES5BasicType.T_QUEST, "", false))
+                new TES5GlobalScope(TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(TES5BasicType.SKYBTimerHelperName, TES5BasicType.T_QUEST, "", false))
             };
-            TES5GlobalScope globalScope = new TES5GlobalScope(TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(TES5BasicType.TES4ContainerName, TES5BasicType.T_QUEST, "", false));
+            TES5GlobalScope globalScope = new TES5GlobalScope(TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(TES5BasicType.SKYBContainerName, TES5BasicType.T_QUEST, "", false));
             globalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormID("isInJail", TES5BasicType.T_BOOL, "isInJail"));
             globalScope.AddProperty(TES5PropertyFactory.ConstructWithoutFormID("isMurderer", TES5BasicType.T_BOOL, "isMurderer"));
             globalScopes.Add(globalScope);

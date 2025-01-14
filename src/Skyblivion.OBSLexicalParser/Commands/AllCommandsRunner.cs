@@ -1,5 +1,4 @@
 ﻿using Skyblivion.OBSLexicalParser.Data;
-using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -29,8 +29,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         TES5BasicType ITES5Type.NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
 
-        public const string TES4ContainerName = TES5TypeFactory.TES4Prefix + "Container";
-        public const string TES4TimerHelperName = TES5TypeFactory.TES4Prefix + "TimerHelper";
+        public const string SKYBContainerName = TES5TypeFactory.SKYBPrefix + "Container";
+        public const string SKYBTimerHelperName = TES5TypeFactory.SKYBPrefix + "TimerHelper";
         public static readonly TES5BasicType
             T_ACTIVEMAGICEFFECT = new TES5BasicType("ActiveMagicEffect"),
             T_ALIAS = new TES5BasicType("Alias"),
@@ -122,11 +122,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE = new TES5BasicType("SKSE"),
             T_STRINGUTIL = new TES5BasicType("StringUtil"),
             T_UI = new TES5BasicType("UI"),
-            T_TES4GameUtility = new TES5BasicType("TES4GameUtility", allowInference: false),
-            T_TES4ObjectReferenceUtility = new TES5BasicType("TES4ObjectReferenceUtility", allowInference: false),
-            T_TES4QuestUtility = new TES5BasicType("TES4QuestUtility", allowInference: false),
-            T_TES4TIMERHELPER = new TES5BasicType(TES4TimerHelperName, allowInference: false),
-            T_TES4CONTAINER = new TES5BasicType(TES4ContainerName, allowInference: false),
+            T_SKYBGameUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "GameUtility", allowInference: false),
+            T_SKYBObjectReferenceUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "ObjectReferenceUtility", allowInference: false),
+            T_SKYBQuestUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "QuestUtility", allowInference: false),
+            T_SKYBTIMERHELPER = new TES5BasicType(SKYBTimerHelperName, allowInference: false),
+            T_SKYBCONTAINER = new TES5BasicType(SKYBContainerName, allowInference: false),
             T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Change:  Added:  SKSE
             T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Change:  Added:  SKSE
             ;
@@ -223,8 +223,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE,
             T_STRINGUTIL,
             T_UI,
-            T_TES4TIMERHELPER,
-            T_TES4CONTAINER,
+            T_SKYBTIMERHELPER,
+            T_SKYBCONTAINER,
             T_ART,
             T_SOUNDDESCRIPTOR
         };

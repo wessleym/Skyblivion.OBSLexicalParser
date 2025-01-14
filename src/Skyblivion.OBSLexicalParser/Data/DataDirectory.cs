@@ -30,5 +30,6 @@ namespace Skyblivion.OBSLexicalParser.Data
         public static readonly string ModifiedScriptsPreprocessedDirectoryPath = ModifiedScriptsDirectoryPathBase + "Preprocessed" + Path.DirectorySeparatorChar;
         public static readonly string ModifiedScriptsSKSESourceDirectoryPath = ModifiedScriptsDirectoryPathBase + "SKSESource" + Path.DirectorySeparatorChar;
         public static readonly string ModifiedScriptsImportDirectoryPath = ModifiedScriptsDirectoryPathBase + "Import" + Path.DirectorySeparatorChar;
+        public static readonly string ModifiedScriptsImportGeneratedDirectoryPath = ModifiedScriptsDirectoryPathBase + "ImportGenerated" + Path.DirectorySeparatorChar;
     }
 }

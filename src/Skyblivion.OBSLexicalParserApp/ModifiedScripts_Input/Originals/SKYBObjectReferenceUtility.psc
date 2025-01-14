@@ -1,4 +1,6 @@
-ScriptName TES4ObjectReferenceUtility
+ScriptName SKYBObjectReferenceUtility
+
+Import Math
 
 Bool Function ContainsItem(ObjectReference objectRef, Form soughtObject) Global
 Int numItems = objectRef.GetNumItems()
@@ -10,6 +12,12 @@ EndIf
 i += 1
 EndWhile
 Return False
+EndFunction
+
+Function LegacyRotate(ObjectReference objectRef, Float x, Float y, Float z) Global
+    Float angleX = x * math.Cos(z) + y * math.Sin(z)
+    Float angleY = x * math.Cos(z) - x * math.Sin(z)
+    objectRef.SetAngle(angleX, angleY, z)
 EndFunction
 
 ; Checks if Legacy gamebryo animation is playing

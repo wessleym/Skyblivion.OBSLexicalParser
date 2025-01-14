@@ -56,7 +56,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             get
             {
-                bool includePrefix = this.Value != TES5BasicType.TES4TimerHelperName && this.Value != TES5BasicType.TES4ContainerName;//no time to refactor now, later.
+                bool includePrefix = this.Value != TES5BasicType.SKYBTimerHelperName && this.Value != TES5BasicType.SKYBContainerName;//no time to refactor now, later.
                 yield return (includePrefix ? this.prefix : "") + this.Value;
             }
         }

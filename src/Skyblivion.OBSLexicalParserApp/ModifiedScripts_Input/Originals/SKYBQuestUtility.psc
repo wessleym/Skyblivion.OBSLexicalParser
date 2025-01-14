@@ -1,3 +1,3 @@
-ScriptName TES4QuestUtility
+ScriptName SKYBQuestUtility
 
 Bool Function PrepareForReinitializing(Quest quest) Global Native
