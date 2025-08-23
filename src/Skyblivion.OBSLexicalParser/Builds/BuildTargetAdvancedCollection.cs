@@ -1,5 +1,6 @@
 using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
 using System.Collections;
@@ -10,14 +11,16 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     class BuildTargetAdvancedCollection : IEnumerable<BuildTargetAdvanced>, IDisposable
     {
-        public readonly BuildLogServiceCollection buildLogServices;
-        public readonly ESMAnalyzer ESMAnalyzer;
+        public BuildLogServiceCollection BuildLogServices { get; }
+        public TES5ScriptHeaderFactory ScriptHeaderFactory { get; }
+        public ESMAnalyzer ESMAnalyzer { get; }
         private readonly Lazy<TES5ScriptDependencyGraph> dependencyGraph;
         private readonly Dictionary<string, BuildTargetAdvanced> buildTargets;
-        public BuildTargetAdvancedCollection(BuildLogServiceCollection buildLogServices, ESMAnalyzer esmAnalyzer)
+        public BuildTargetAdvancedCollection(BuildLogServiceCollection buildLogServices, TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer)
         {
-            this.buildLogServices = buildLogServices;
-            this.ESMAnalyzer = esmAnalyzer;
+            BuildLogServices = buildLogServices;
+            ScriptHeaderFactory = scriptHeaderFactory;
+            ESMAnalyzer = esmAnalyzer;
             buildTargets = new Dictionary<string, BuildTargetAdvanced>();
             dependencyGraph = new Lazy<TES5ScriptDependencyGraph>(() => this.ReadGraph());
         }
@@ -66,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public void Dispose()
         {
-            buildLogServices.Dispose();
+            BuildLogServices.Dispose();
             ESMAnalyzer.Dispose();
         }
     }

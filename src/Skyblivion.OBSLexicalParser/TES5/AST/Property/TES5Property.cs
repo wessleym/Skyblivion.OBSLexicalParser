@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5Property : ITES5VariableOrProperty, ITES5CodeChunk
+    class TES5Property : ITES5VariableOrProperty, ITES5CodeChunk, ITES5OutputtableSingle
     {
         private const string PROPERTY_SUFFIX = "_p";
         public string OriginalName { get; }
@@ -19,6 +19,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
         private readonly ITES5Type originalPropertyType;
         public string? ReferenceEDID { get; }
         public bool IsPlayerRef { get; }
+        public bool Conditional { get; }
         private TES5ScriptHeader? trackedScript;
         public Nullable<int> TES4FormID { get; }
         private readonly Nullable<int> tes5FormID;
@@ -30,6 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.AllowNameTransformation = !this.IsPlayerRef;
             this.Name = AllowNameTransformation ? AddPropertyNameSuffix(PapyrusCompiler.FixReferenceName(name)) : name;
             this.propertyType = propertyType;
+            this.Conditional = propertyType == TES5BasicType.T_BOOL || propertyType == TES5BasicType.T_INT || propertyType == TES5BasicType.T_FLOAT;//https://ck.uesp.net/wiki/GetVMQuestVariable
             originalPropertyType = propertyType;
             this.ReferenceEDID = referenceEDID;
             this.TES4FormID = tes4FormID;
@@ -46,28 +48,30 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             }
         }
 
-        public IEnumerable<string> Output
+        public string GetOutput(Nullable<int> propertyNameMaxLength, bool allowConditionalProperties)
         {
-            get
-            {
-                string propertyTypeName = this.TES5Type.Output.Single();
-                //Todo - Actually differentiate between properties which need and do not need to be conditional
-                string output = propertyTypeName + " Property " + this.Name + " Auto Conditional";
-                if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
-                {//If type has not been changed
-                    if (TES4FormID != null)
-                    {
-                        output += ";TES4FormID:" + TES4FormID.Value.ToString() + ";";
-                    }
-                    if (tes5FormID != null)
-                    {
-                        output += ";TES5FormID:" + tes5FormID.Value.ToString() + ";";
-                    }
+            string propertyTypeName = this.TES5Type.OutputSingle;
+            //Todo - Actually differentiate between properties which need and do not need to be conditional
+            string propertyName = propertyNameMaxLength != null ? this.Name.PadRight(propertyNameMaxLength.Value) : Name;
+            string output = propertyTypeName + " Property " + propertyName + " Auto" + (allowConditionalProperties && Conditional ? " Conditional" : "");
+            /*if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(this.TES5Type, originalPropertyType))
+            {//If type has not been changed
+                if (TES4FormID != null)
+                {
+                    output += ";TES4FormID:" + TES4FormID.Value.ToString() + ";";
                 }
-                output += string.Join("", comments.Select(c => " " + c.Output.Single()));
-                yield return output;
-            }
+                if (tes5FormID != null)
+                {
+                    output += ";TES5FormID:" + tes5FormID.Value.ToString() + ";";
+                }
+            }*/
+            output += string.Join("", comments.Select(c => " " + c.OutputSingle));
+            return output;
         }
+
+        public string OutputSingle => GetOutput(null, true);
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public void Rename(string newNameWithoutSuffix)
         {

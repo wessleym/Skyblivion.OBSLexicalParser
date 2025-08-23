@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
                 {
                     return leftValue - rightValue;
                 }
-                throw new ConversionException("Unknown TES4BinaryExpressionOperator");
+                throw new ConversionException("Unknown " + typeof(TES4ArithmeticExpressionOperator).FullName);
             }
         }
     }

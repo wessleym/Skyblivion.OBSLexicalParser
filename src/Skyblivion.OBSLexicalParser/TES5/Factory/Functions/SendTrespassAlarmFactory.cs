@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //WTM:  Note:  This always uses the player to send the tresspass alarm.  This might mean the player ultimately sends the trespass alarm for the player.
             //Oblivion doesn't seem to have a sender, only a trespasser.

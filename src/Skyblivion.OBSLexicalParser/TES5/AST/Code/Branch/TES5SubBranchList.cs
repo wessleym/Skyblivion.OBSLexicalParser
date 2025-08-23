@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 
         public IEnumerable<string> GetElseIfOutput()
         {
-            return this.branchList.SelectMany(branch => branch.GetOutput("ElseIf"));
+            return this.branchList.SelectMany(branch => new string[] { "" }.Concat(branch.GetOutput("ElseIf")));
         }
     }
 }

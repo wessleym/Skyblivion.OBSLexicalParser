@@ -40,7 +40,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         //Previously, RegisterForSingleUpdate was being called multiple times in OnUpdate because of how CombineRepeatedEventCodeBlockNames splits multiple OnUpdate methods into separate functions.
                         //See TES4tutorialscript.psc for an example.
                         globalScope.QuestHasOnUpdateRegisterForSingleUpdate = true;
-                        branch.MainBranch.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope));
+                        branch.MainBranch.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(branch.MainBranch.CodeScope, globalScope));
                     }
                     branch.MainBranch.CodeScope.AddChunk(new TES5Return());
                     eventCodeBlock.AddChunk(branch);

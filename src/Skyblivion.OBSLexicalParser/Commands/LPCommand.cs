@@ -9,17 +9,18 @@ namespace Skyblivion.OBSLexicalParser.Commands
         public string CommandName { get; }
         public string FriendlyName { get; }
         public string? Description { get; }
-        protected LPCommandInput Input = new LPCommandInput();
+        protected LPCommandInput Input { get; }
         protected LPCommand(string commandName, string friendlyName, string? description)
         {
             CommandName = commandName;
             FriendlyName = friendlyName;
             Description = description;
+            Input = new LPCommandInput();
         }
 
         public abstract void Execute();
 
-        protected bool PreExecutionChecks(bool requireESM, bool requireBuildTargets, bool requireGraph, bool requireCompiler)
+        protected static bool PreExecutionChecks(bool requireESM, bool requireBuildTargets, bool requireGraph, bool requireCompiler)
         {
             if (requireESM)
             {

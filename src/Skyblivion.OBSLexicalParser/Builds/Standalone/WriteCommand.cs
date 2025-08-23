@@ -1,4 +1,4 @@
-using Skyblivion.OBSLexicalParser.Commands;
+using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {

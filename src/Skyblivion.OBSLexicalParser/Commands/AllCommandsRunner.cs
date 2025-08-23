@@ -12,15 +12,17 @@ namespace Skyblivion.OBSLexicalParser.Commands
         {
             new BuildInteroperableCompilationGraphs(),
             new BuildTargetCommand(),
+            new BuildWithComparisonCommand(),
             new TestStageMap(),
             new FindFillerCommand(),
             new BuildFileDeleteCommand(),
-            new BuildModifiedScriptsCommand()
+            new BuildModifiedScriptsCommand(),
+            new BuildSourceScriptsFolderCommand()
         };
 
         public static void Run()
         {
-            string dataPath = "Data" + Path.DirectorySeparatorChar;
+            string dataPath = DataDirectory.Path;
             Console.WriteLine("Ensure you've placed all relevant data files in a Data folder in the same directory as this executable:");
             Console.WriteLine("    " + dataPath + "Build" + Path.DirectorySeparatorChar);
             Console.WriteLine("    " + dataPath + "BuildTargets" + Path.DirectorySeparatorChar);

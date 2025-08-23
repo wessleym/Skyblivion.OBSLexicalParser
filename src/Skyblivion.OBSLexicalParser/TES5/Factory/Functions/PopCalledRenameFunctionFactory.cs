@@ -1,6 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -25,12 +23,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            ITES4ValueString arg0Value;
-            TES4FunctionArguments revisedArguments;
-            function.Arguments.GetFirstAndRemoveInNew(out arg0Value, out revisedArguments);
+            var (arg0Value, revisedArguments) = function.Arguments.GetFirstAndRemoveInNew();
             ITES5Referencer newCalledOn = this.referenceFactory.CreateReadReference(arg0Value.StringValue, globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(revisedArguments, codeScope, globalScope, multipleScriptsScope);
             /*if (this.newFunctionName.Equals("SetStage", System.StringComparison.OrdinalIgnoreCase))//Useful for logging when stages get set
@@ -38,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 return new TES5CodeChunkCollection()
                 {
                     this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, newArguments),
-                    this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Debug, "MessageBox", new TES5ObjectCallArguments() { new TES5String("Setting "+newCalledOn.Name+" -> " + string.Join(", ", newArguments.Select(a=>a.Output.Single().Replace("\"", "q")))) })
+                    this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Debug, "MessageBox", new TES5ObjectCallArguments() { new TES5String("Setting "+newCalledOn.Name+" -> " + string.Join(", ", newArguments.Select(a=>a.OutputSingle.Replace("\"", "q")))) })
                 };
             }*/
             return this.objectCallFactory.CreateObjectCall(newCalledOn, this.newFunctionName, newArguments, comment: function.Comment);

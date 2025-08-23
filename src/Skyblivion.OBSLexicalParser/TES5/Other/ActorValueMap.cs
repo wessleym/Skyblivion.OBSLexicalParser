@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Other
 {
     public static class ActorValueMap
     {
-        public static readonly Dictionary<string, string> Map = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "fatigue", "Stamina" },
             { "armorer", "Smithing" },
@@ -23,5 +24,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Other
             { "resistpoison", "PoisonResist" },
             { "resistshock", "ElectricResist" }
         };
+
+        public static string GetRevisedName(string actorValueName)
+        {
+            string? mappedArgument;
+            return map.TryGetValue(actorValueName, out mappedArgument) ? mappedArgument : actorValueName;
+        }
     }
 }

@@ -2,9 +2,7 @@
 {
     class TES5ArrayType : TES5BasicType//WTM:  Change:  Added
     {
-        private TES5ArrayType(TES5BasicType elementType)
-            : base(elementType.Name + "[]")
-        { }
+        private TES5ArrayType(TES5BasicType elementType) : base(elementType.Name + "[]") { }
 
         public static readonly TES5ArrayType
             ArrayBool = new TES5ArrayType(T_BOOL),

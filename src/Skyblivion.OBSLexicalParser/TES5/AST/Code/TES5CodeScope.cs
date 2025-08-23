@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
      * TES5CodeScope describes scope for given chunks of code. It consists of its variable local scope and chunks that
      * are put inside this code scope.
      */
-    class TES5CodeScope : ITES5Outputtable
+    class TES5CodeScope : ITES5ScopeWithVariablesAddable, ITES5Outputtable
     {
         public TES5CodeChunkCollection CodeChunks { get; }
         public TES5LocalScope LocalScope { get; }
@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
             this.CodeChunks.AddRange(chunks);
         }
 
-        public void AddVariable(TES5LocalVariable localVariable)
+        public void AddVariable(ITES5LocalVariable localVariable)
         {
             this.LocalScope.AddVariable(localVariable);
         }

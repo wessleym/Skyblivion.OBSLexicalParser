@@ -12,11 +12,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
     class BuildScopeCommand : IBuildScopeCommand
     {
         private readonly StandaloneParsingService standaloneParsingService;
+        private readonly TES5ScriptHeaderFactory scriptHeaderFactory;
         private readonly ESMAnalyzer esmAnalyzer;
         private readonly TES5PropertyFactory propertyFactory;
-        public BuildScopeCommand(StandaloneParsingService standaloneParsingService, ESMAnalyzer esmAnalyzer, TES5PropertyFactory propertyFactory)
+        public BuildScopeCommand(StandaloneParsingService standaloneParsingService, TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer, TES5PropertyFactory propertyFactory)
         {
             this.standaloneParsingService = standaloneParsingService;
+            this.scriptHeaderFactory = scriptHeaderFactory;
             this.esmAnalyzer = esmAnalyzer;
             this.propertyFactory = propertyFactory;
         }
@@ -25,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
         {
             string edid = script.ScriptHeader.ScriptName;
             ITES5Type type = this.esmAnalyzer.GetScriptTypeByScriptNameFromCache(edid);
-            return TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(edid, type, TES5TypeFactory.TES4Prefix, false);
+            return scriptHeaderFactory.GetFromCacheOrConstructByBasicType(edid, type, TES5TypeFactory.TES4Prefix, false);
         }
 
         public TES5GlobalScope Build(string scriptPath, TES5GlobalVariableCollection globalVariables)

@@ -18,11 +18,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             const string functionName = "SetCombatStyle";
             TES4FunctionArguments functionArguments = function.Arguments;
-            if (functionArguments.Count == 0) { return logUnknownFunctionFactory.CreateLogCall(function); }
+            if (functionArguments.Count == 0) { return logUnknownFunctionFactory.CreateLogCall(calledOn, function, globalScope); }
             TES5ObjectCall getActorBase = this.objectCallFactory.CreateGetActorBase(calledOn);
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(functionArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(getActorBase, functionName, newArguments, comment: function.Comment);

@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments tes4Arguments = function.Arguments;
             int statInt = ((TES4Integer)tes4Arguments[0]).IntValue;
@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             else
             {
                 //Oblivion contains many calls to statInt = 19 (Artifacts Found)
-                return logUnknownFunctionFactory.CreateLogCall(function);
+                return logUnknownFunctionFactory.CreateLogCall(calledOn, function, globalScope);
             }
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
             arguments.Add(new TES5String(statName));

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
 
         public bool Equals(T? left, TBase? right)
         {
-            if (object.ReferenceEquals(left, right)) { return true; }
+            if (ReferenceEquals(left, right)) { return true; }
             if (left is null || right is null) { return (left is null) == (right is null); }
             return equalsFunc(left, right);
         }

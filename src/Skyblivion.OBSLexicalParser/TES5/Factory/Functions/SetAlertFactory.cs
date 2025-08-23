@@ -1,6 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -18,11 +16,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            ITES4ValueString arg0Value;
-            TES4FunctionArguments revisedArguments;
-            function.Arguments.GetFirstAndRemoveInNew(out arg0Value, out revisedArguments);
+            var (arg0Value, revisedArguments) = function.Arguments.GetFirstAndRemoveInNew();
             int arg0 = (int)arg0Value.Constant;
             string functionName;
             switch (arg0)

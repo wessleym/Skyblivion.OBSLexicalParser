@@ -6,9 +6,11 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Input.AddArgument(new LPCommandArgument("targets", "The build targets", BuildTargetFactory.DefaultNames));
         }
 
-        public void Execute(LPCommandInput input)
+        public static void Execute(LPCommandInput input)
         {
             string targets = input.GetArgumentValue("targets");
             Execute(targets);
@@ -36,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
             Execute(BuildTargetFactory.DefaultNames);
         }
 
-        public void Execute(string targets)
+        public static void Execute(string targets)
         {
             if (!PreExecutionChecks(true, true, false, false)) { return; }
             Directory.CreateDirectory(DataDirectory.GraphDirectoryPath);
@@ -46,7 +48,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             ProgressWriter? progressWriter = null;
             Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
-            using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load())
+            TES5ScriptHeaderFactory scriptHeaderFactory = new TES5ScriptHeaderFactory();
+            using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(scriptHeaderFactory))
             {
                 progressWriter = new ProgressWriter("Building Interoperable Compilation Graph", buildTargets.GetTotalSourceFiles());
                 BuildSourceFilesCollection<BuildTargetSimple> sourceFiles = buildTargetsSimple.GetSourceFiles();

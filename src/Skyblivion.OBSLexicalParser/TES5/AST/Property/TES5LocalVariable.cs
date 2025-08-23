@@ -1,11 +1,10 @@
-using Skyblivion.OBSLexicalParser.TES5.Context;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
-    class TES5LocalVariable : ITES5VariableOrProperty
+    class TES5LocalVariable : ITES5LocalVariable, ITES5OutputtableSingle
     {
         public string Name { get; }
         public ITES5Type TES5Type { get; set; }
@@ -30,6 +29,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             throw new ConversionException("Local variables cannot track remote scripts.");
         }
 
-        public IEnumerable<string> Output => new string[] { this.TES5Type.Value + " " + this.Name };
+        public string TypeAndName => this.TES5Type.Value + " " + this.Name;
+
+        public string OutputSingle => TypeAndName;
+
+        public IEnumerable<string> Output => [OutputSingle];
     }
 }

@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             { 7, "Locations Discovered" }
         };
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             const string functionName = "QueryStat";
             ITES5Referencer newCalledOn = TES5StaticReferenceFactory.Game;

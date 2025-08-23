@@ -50,13 +50,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 if (block != null)
                 {
                     List<ITES5CodeBlock> newBlocks = this.blockFactory.CreateBlock(block, globalScope, multipleScriptsScope, ref onUpdateBlockOfNonQuestOrAME, waitingComments);
-                    if (newBlocks.Any())
+                    if (newBlocks.Count > 0)
                     {
                         foreach (ITES5CodeBlock newBlock in newBlocks)
                         {
                             createdBlocks.AddNewListIfNotContainsKeyAndAddValueToList(newBlock.BlockName, newBlock);
                         }
-                        if (waitingComments.Any())
+                        if (waitingComments.Count > 0)
                         {
                             blockListComments.AddNewListIfNotContainsKeyAndAddValueToList(newBlocks[0].BlockName, waitingComments);
                         }
@@ -113,7 +113,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         private IEnumerable<TES5CodeBlock> CombineRepeatedEventCodeBlockNames(List<ITES5CodeBlock> blocks, string blockType, bool isStandalone, TES5GlobalScope globalScope)
         {
             ITES5CodeBlock[] nonEvents = blocks.Where(b => !(b is TES5EventCodeBlock)).ToArray();
-            if (nonEvents.Any())
+            if (nonEvents.Length > 0)
             {
                 throw new ConversionException("Some non-event code blocks were present in " + nameof(CombineRepeatedEventCodeBlockNames) + ":  " + string.Join("; ", nonEvents.Select(b => b.GetType().FullName)));
             }
@@ -141,7 +141,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 }
             }
 
-            if (functions.Any())
+            if (functions.Count > 0)
             {
                 //Create the proxy block.
                 ITES5CodeBlock lastBlock = blocks.Last();

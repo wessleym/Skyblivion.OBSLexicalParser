@@ -11,8 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Graph
         public Dictionary<string, List<string>> UsageGraph = new Dictionary<string, List<string>>();
         public static readonly string ErrorLogPath = DataDirectory.GetGraphPath("graph_error_log.txt");
         public static readonly string DebugLogPath = DataDirectory.GetGraphPath("graph_debug_log.txt");
-        private TES5ScriptDependencyGraph()//XmlSerializer requires a parameterless constructor.
-        { }
+        private TES5ScriptDependencyGraph() { }//XmlSerializer requires a parameterless constructor.
 
         public TES5ScriptDependencyGraph(Dictionary<string, List<string>> graph, Dictionary<string, List<string>> usageGraph)
             : this()

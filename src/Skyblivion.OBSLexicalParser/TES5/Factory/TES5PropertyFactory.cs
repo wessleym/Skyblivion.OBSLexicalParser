@@ -104,7 +104,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return property;
         }
 
-        private void CreateAndAddComment(TES4Comment comment, TES5GlobalScope globalScope)
+        private static void CreateAndAddComment(TES4Comment comment, TES5GlobalScope globalScope)
         {
             globalScope.AddComment(TES5CommentFactory.Construct(comment));
         }

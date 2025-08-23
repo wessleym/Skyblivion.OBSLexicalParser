@@ -13,7 +13,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.StringValue = str;
         }
 
-        public IEnumerable<string> Output => new string[] { this.StringValue };
+        public string OutputSingle => this.StringValue;
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public ITES5Type TES5Type => TES5BasicType.T_STRING;
     }

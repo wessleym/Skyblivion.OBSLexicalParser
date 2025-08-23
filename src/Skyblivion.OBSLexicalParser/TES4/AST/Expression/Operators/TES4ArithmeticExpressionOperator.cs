@@ -4,9 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
 {
     class TES4ArithmeticExpressionOperator : TES4ExpressionOperator
     {
-        private TES4ArithmeticExpressionOperator(string name)
-            : base(name)
-        { }
+        private TES4ArithmeticExpressionOperator(string name) : base(name) { }
 
         public static readonly TES4ArithmeticExpressionOperator
             OPERATOR_ADD = new TES4ArithmeticExpressionOperator("+"),

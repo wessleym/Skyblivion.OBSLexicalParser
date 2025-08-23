@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
-    class TES5Branch : ITES5ValueCodeChunk//WTM:  Note:  This class needs ITES5ValueCodeChunk instead of just ITES5CodeChunk for SetForceSteakFactory.
+    class TES5Branch : ITES5CodeChunk
     {
         public TES5SubBranch MainBranch { get; }
         public TES5SubBranchList? ElseIfBranches { get; }
@@ -21,21 +19,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
         {
             get
             {
-                IEnumerable<string> lines = this.MainBranch.GetOutput("If");
+                IEnumerable<string> lines = new string[] { "" }.Concat(this.MainBranch.GetOutput("If"));
                 if (this.ElseIfBranches != null)
                 {
                     lines = lines.Concat(ElseIfBranches.GetElseIfOutput());
                 }
                 if (this.ElseBranch != null)
                 {
-                    lines = lines.Concat(this.ElseBranch.Output());
+                    lines = lines.Concat(new string[] { "" }).Concat(this.ElseBranch.Output);
                 }
                 lines = lines.Concat(new string[] { "EndIf" });
                 return lines;
             }
         }
-
-        //WTM:  Note:  This is needed because I needed to implement ITES5ValueCodeChunk which requires this.
-        public ITES5Type TES5Type => throw new NotImplementedException();
     }
 }

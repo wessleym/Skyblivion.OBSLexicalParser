@@ -1,11 +1,9 @@
-﻿using Skyblivion.ESReader.Extensions;
-using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
+using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
@@ -44,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
         private static IEnumerable<string> GetReferenceAliases(ESMAnalyzer esmAnalyzer, int tes4FormID)
         {
-            TES4Record qust = esmAnalyzer.GetRecordByFormID(tes4FormID);
+            ESRecord qust = esmAnalyzer.GetRecordByFormID(tes4FormID);
             return ESMAnalyzer.GetReferenceAliases(qust);
         }
 

@@ -26,23 +26,25 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall
 
         public ITES4ValueString this[int index] => values[index];
 
-        public void RemoveAt(int index)
-        {
-            values.RemoveAt(index);
-        }
-
-        public void GetFirstAndRemoveInNew(out ITES4ValueString value, out TES4FunctionArguments revisedArguments)
-        {
-            const int index = 0;
-            revisedArguments = new TES4FunctionArguments();
-            revisedArguments.values.AddRange(values);
-            revisedArguments.RemoveAt(index);
-            value = values[index];
-        }
-
         public ITES4ValueString? GetOrNull(int i)
         {
             return i < values.Count ? values[i] : null;
+        }
+
+        public TES4FunctionArguments RemoveInNew(int index)
+        {
+            TES4FunctionArguments revised = new TES4FunctionArguments();
+            revised.values.AddRange(values);
+            revised.values.RemoveAt(index);
+            return revised;
+        }
+
+        public (ITES4ValueString Value, TES4FunctionArguments RevisedArguments) GetFirstAndRemoveInNew()
+        {
+            const int index = 0;
+            ITES4ValueString value = values[index];
+            TES4FunctionArguments revised = RemoveInNew(index);
+            return (value, revised);
         }
     }
 }

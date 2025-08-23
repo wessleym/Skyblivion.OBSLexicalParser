@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallArgumentsFactory = objectCallArgumentsFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //@INCONSISTENCE @TODO: Entering an interior Cell and then exiting to an exterior will reset Fast Travel to the enabled state.
             return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Game, function, objectCallArgumentsFactory, codeScope, globalScope, multipleScriptsScope);

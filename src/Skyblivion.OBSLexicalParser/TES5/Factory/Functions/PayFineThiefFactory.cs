@@ -2,8 +2,6 @@
 {
     class PayFineThiefFactory : PayFineOrPayFineThiefFactory
     {
-        public PayFineThiefFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory)
-            : base(objectCallFactory, referenceFactory, true)
-        { }
+        public PayFineThiefFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory) : base(objectCallFactory, referenceFactory, true) { }
     }
 }

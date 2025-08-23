@@ -1,4 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.Utilities;
@@ -13,43 +13,43 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
     {
         public static void Write()
         {
-            TES4Collection collection = TES4CollectionFactory.CreateForScriptExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            ESCollection collection = ESCollectionFactory.CreateForScriptExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
             string buildTargetsPath = DataDirectory.BuildTargetsPath;
             Write(collection, buildTargetsPath, "Standalone", "", false, null, true, TES4RecordType.SCPT);
-            Write(collection, buildTargetsPath, "TIF", TES5ReferenceFactory.tif_Prefix, true, null, false, TES4RecordType.INFO);
-            WriteWithIndexes(collection, buildTargetsPath, "QF", TES5ReferenceFactory.qf_Prefix, TES4RecordType.QUST);
+            Write(collection, buildTargetsPath, "TIF", TES5ReferenceFactory.tif_Prefix, true, null, false, ESRecordType.INFO);
+            WriteWithIndexes(collection, buildTargetsPath, "QF", TES5ReferenceFactory.qf_Prefix, ESRecordType.QUST);
         }
 
-        private static void Write(TES4Collection collection, string buildTargetsPath, string scriptFolderName, TES4RecordType recordType, Action<TES4Record, string> writeRecord)
+        private static void Write(ESCollection collection, string buildTargetsPath, string scriptFolderName, ESRecordType recordType, Action<ESRecord, string> writeRecord)
         {
             string directory = buildTargetsPath + scriptFolderName + Path.DirectorySeparatorChar + "Source" + Path.DirectorySeparatorChar;
             Directory.CreateDirectory(directory);
             var records =
-                recordType == TES4RecordType.INFO ? collection.Where(r => r.RecordType == recordType) :
+                recordType == ESRecordType.INFO ? collection.Where(r => r.RecordType == recordType) :
                 collection.GetGrupRecords(recordType);
-            foreach (TES4Record record in records)
+            foreach (ESRecord record in records)
             {
                 writeRecord(record, directory);
             }
         }
 
-        private static void Write(TES4Collection collection, string buildTargetsPath, string scriptFolderName, string scriptNamePrefix, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex, bool allowFixScriptName, TES4RecordType recordType)
+        private static void Write(ESCollection collection, string buildTargetsPath, string scriptFolderName, string scriptNamePrefix, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex, bool allowFixScriptName, ESRecordType recordType)
         {
             Write(collection, buildTargetsPath, scriptFolderName, recordType, (record, directory) =>
             {
                 string[] sctxs = record.GetSubrecordsStrings("SCTX").ToArray();
-                if (sctxs.Any())
+                if (sctxs.Length > 0)
                 {
                     if (sctxs.Length > 1) { throw new InvalidOperationException(nameof(sctxs) + ".Length > 1"); }
 #if !NEWBT
                     if (recordType == TES4RecordType.SCPT && !ShouldWriteScript(record.GetEditorID())) { return; }
 #endif
-                    Write(directory, scriptNamePrefix, record, includeFormID, stageIndexAndLogIndex, allowFixScriptName, TES4Record.ReplaceSCTXSpecialCharacters(sctxs[0]));
+                    Write(directory, scriptNamePrefix, record, includeFormID, stageIndexAndLogIndex, allowFixScriptName, ESRecord.ReplaceSCTXSpecialCharacters(sctxs[0]));
                 }
             });
         }
 
-        private static void WriteWithIndexes(TES4Collection collection, string buildTargetsPath, string scriptFolderName, string scriptNamePrefix, TES4RecordType recordType)
+        private static void WriteWithIndexes(ESCollection collection, string buildTargetsPath, string scriptFolderName, string scriptNamePrefix, ESRecordType recordType)
         {
             Write(collection, buildTargetsPath, scriptFolderName, recordType, (record, directory) =>
             {
@@ -61,7 +61,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             });
         }
 
-        private static string FixScriptName(TES4Record record, string contents)
+        private static string FixScriptName(ESRecord record, string contents)
         {
             string scriptEditorID = record.GetEditorID();
             Regex soughtScriptName = new Regex("((S|s)cript(N|n)ame|scn)( +|\t)([A-Za-z0-9_]+)( |\t)?(\r\n|$)");
@@ -85,15 +85,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             return contents;
         }
 
-        private static void Write(string directory, string scriptNamePrefix, TES4Record record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex, bool allowFixScriptName, string contents)
+        private static void Write(string directory, string scriptNamePrefix, ESRecord record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex, bool allowFixScriptName, string contents)
         {
             string path = GetPath(directory, scriptNamePrefix, record, includeFormID, stageIndexAndLogIndex);
             if (allowFixScriptName) { contents = FixScriptName(record, contents); }
             contents += scriptNamePrefix != "" ? "\r\n" : "";//only for non-Standalone; allows compilation to complete
-            FileWriter.WriteAllTextOrThrowIfExists(path, contents);
+            FileSystemEntryUtility.WriteAllTextOrThrowIfExists(path, contents);
         }
 
-        private static string GetPath(string directory, string scriptNamePrefix, TES4Record record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex)
+        private static string GetPath(string directory, string scriptNamePrefix, ESRecord record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex)
         {
             string fileNameNoExt = BuildTargetsWriter.GetFileNameNoExt(scriptNamePrefix, record, includeFormID, stageIndexAndLogIndex);
             string path = directory + fileNameNoExt + ".txt";

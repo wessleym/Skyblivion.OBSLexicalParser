@@ -1,5 +1,5 @@
+using Skyblivion.ESReader;
 using Skyblivion.ESReader.Extensions;
-using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -23,44 +23,46 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
      */
     class ESMAnalyzer : IDisposable
     {
-        private Lazy<TES4Collection>? esmLazy = null;
-        private TES4Collection ESM { get { if (esmLazy == null) { throw new NullableException(nameof(esmLazy)); } return esmLazy.Value; } }
+        private readonly TES5ScriptHeaderFactory scriptHeaderFactory;
+        private Lazy<ESCollection>? esmLazy = null;
+        private ESCollection ESM { get { if (esmLazy == null) { throw new NullableException(nameof(esmLazy)); } return esmLazy.Value; } }
         private readonly Lazy<Dictionary<string, ITES5Type>> scriptTypesLazy;
         private Dictionary<string, ITES5Type> ScriptTypes => scriptTypesLazy.Value;
         private readonly Lazy<TES5GlobalVariableCollection> globalVariablesLazy;
         public TES5GlobalVariableCollection GlobalVariables => globalVariablesLazy.Value;
         private readonly Dictionary<string, ITES5Type> edidLowerCache = new Dictionary<string, ITES5Type>();
-        private ESMAnalyzer(Func<TES4Collection> tes4CollectionFactory, bool loadLazily)
+        private ESMAnalyzer(TES5ScriptHeaderFactory scriptHeaderFactory, Func<ESCollection> tes4CollectionFactory, bool loadLazily)
         {
-            esmLazy = new Lazy<TES4Collection>(tes4CollectionFactory);
+            this.scriptHeaderFactory = scriptHeaderFactory;
+            esmLazy = new Lazy<ESCollection>(tes4CollectionFactory);
             scriptTypesLazy = new Lazy<Dictionary<string, ITES5Type>>(GetScriptTypes);
             globalVariablesLazy = new Lazy<TES5GlobalVariableCollection>(GetGlobalVariables);
             if (!loadLazily) { LoadLazyObjects(); }
         }
-        private ESMAnalyzer(TES4Collection tes4Collection)
-            : this(() => tes4Collection, false) { }
-        private ESMAnalyzer(bool loadLazily)
-            : this(() => GetESM(), loadLazily) { }
+        private ESMAnalyzer(TES5ScriptHeaderFactory scriptHeaderFactory, ESCollection tes4Collection)
+            : this(scriptHeaderFactory, () => tes4Collection, false) { }
+        private ESMAnalyzer(TES5ScriptHeaderFactory scriptHeaderFactory, bool loadLazily)
+            : this(scriptHeaderFactory, () => GetESM(), loadLazily) { }
 
-        public static ESMAnalyzer Load()
+        public static ESMAnalyzer Load(TES5ScriptHeaderFactory scriptHeaderFactory)
         {
-            return new ESMAnalyzer(false);
+            return new ESMAnalyzer(scriptHeaderFactory, false);
         }
-        public static ESMAnalyzer Load(TES4Collection tes4Collection)
+        public static ESMAnalyzer Load(TES5ScriptHeaderFactory scriptHeaderFactory, ESCollection tes4Collection)
         {
-            return new ESMAnalyzer(tes4Collection);
+            return new ESMAnalyzer(scriptHeaderFactory, tes4Collection);
         }
 
-        private static TES4Collection GetESM()
+        private static ESCollection GetESM()
         {
-            return TES4CollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            return ESCollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
         }
 
         private Dictionary<string, ITES5Type> GetScriptTypes()
         {
             Dictionary<string, ITES5Type> scriptTypes = new Dictionary<string, ITES5Type>();
-            IEnumerable<TES4Record> scpts = ESM.GetGrupRecords(TES4RecordType.SCPT);
-            foreach (TES4Record scpt in scpts)
+            IEnumerable<ESRecord> scpts = ESM.GetGrupRecords(TES4RecordType.SCPT);
+            foreach (ESRecord scpt in scpts)
             {
                 string schr = scpt.GetSubrecord("SCHR").ToString();
                 string edid = scpt.GetSubrecord("EDID").ToStringTrim();
@@ -104,8 +106,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         private TES5GlobalVariableCollection GetGlobalVariables()
         {
             List<TES5GlobalVariable> globalArray = new List<TES5GlobalVariable>();
-            IEnumerable<TES4Record> globals = ESM.GetGrupRecords(TES4RecordType.GLOB);
-            foreach (TES4Record global in globals)
+            IEnumerable<ESRecord> globals = ESM.GetGrupRecords(ESRecordType.GLOB);
+            foreach (ESRecord global in globals)
             {
                 string edid = global.GetSubrecord("EDID").ToStringTrim();
                 globalArray.Add(new TES5GlobalVariable(edid));
@@ -129,16 +131,16 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             _ = GlobalVariables;
         }
 
-        public TES4Record? TryGetRecordByEDIDInTES4Collection(string edid)
+        public ESRecord? TryGetRecordByEDIDInTES4Collection(string edid)
         {
             return ESM.TryGetRecordByEDID(edid);
         }
-        public TES4Record GetRecordByEDIDInTES4Collection(string edid)
+        public ESRecord GetRecordByEDIDInTES4Collection(string edid)
         {
             return ESM.GetRecordByEDID(edid);
         }
 
-        public TES4Record GetRecordByFormID(int formID)
+        public ESRecord GetRecordByFormID(int formID)
         {
             return ESM.GetRecordByFormID(formID);
         }
@@ -153,12 +155,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return ESM.GetEDIDByFormID(formID);
         }
 
-        public TES4Record[] GetRecordsBySCRI(int formID)
+        public ESRecord[] GetRecordsBySCRI(int formID)
         {
             return ESM.GetRecordsBySCRI(formID);
         }
 
-        public IEnumerable<TES4Record> GetRecords()
+        public IEnumerable<ESRecord> GetRecords()
         {
             return ESM;
         }
@@ -168,7 +170,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         private TES5BasicType? TryGetTypeByEDID(string edid, bool throwException)
         {
-            TES4Record? record = TryGetRecordByEDIDInTES4Collection(edid);
+            ESRecord? record = TryGetRecordByEDIDInTES4Collection(edid);
             if (record == null)
             {
                 //WTM:  Change:  Special Cases:
@@ -193,7 +195,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return TryGetTypeByEDID(edid, true)!;
         }
 
-        private static TES5BasicType? GetCommonBaseTES5Type(IReadOnlyList<TES4Record> tes4Records)
+        private static TES5BasicType? GetCommonBaseTES5Type(IReadOnlyList<ESRecord> tes4Records)
         {
             if (!tes4Records.Any()) { return null; }
             TES5BasicType[] tes5Types = tes4Records.Select(r =>
@@ -205,7 +207,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return commonBaseType;
         }
 
-        private static ITES5Type? GetTypeByRecords(IReadOnlyList<TES4Record> tes4Records, string? scriptName)
+        private static ITES5Type? GetTypeByRecords(IReadOnlyList<ESRecord> tes4Records, string? scriptName)
         {
             TES5BasicType? commonBaseType = GetCommonBaseTES5Type(tes4Records);
             if (commonBaseType == null) { return null; }
@@ -224,7 +226,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         public ITES5Type? GetTypeByEDIDWithFollow(string edid, bool followName, bool useScriptTypeCache = true)
         {
             string? scriptName;
-            TES4Record[] records = TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(edid, followName, out scriptName);
+            ESRecord[] records = TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(edid, followName, out scriptName);
             if (useScriptTypeCache && scriptName != null) { return GetScriptTypeByScriptNameFromCache(scriptName); }
             return GetTypeByRecords(records, scriptName);
         }
@@ -247,9 +249,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             return GetScriptTypeByScriptNameFromCache(scriptName).NativeType;
         }
 
-        private TES4Record? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName, bool throwException)
+        private ESRecord? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName, bool throwException)
         {
-            TES4Record? record = TryGetRecordByEDIDInTES4Collection(edid);
+            ESRecord? record = TryGetRecordByEDIDInTES4Collection(edid);
             if (record == null)
             {
                 if (throwException)
@@ -258,8 +260,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 }
                 return null;
             }
-            TES4RecordType recordType = record.RecordType;
-            if (followName && (recordType == TES4RecordType.REFR || recordType == TES4RecordType.ACRE || recordType == TES4RecordType.ACHR))
+            ESRecordType recordType = record.RecordType;
+            if (followName && (recordType == ESRecordType.REFR || recordType == TES4RecordType.ACRE || recordType == ESRecordType.ACHR))
             {
                 //Resolve the reference
                 int baseFormid = record.GetSubrecordAsFormID("NAME");
@@ -267,29 +269,29 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             }
             return record;
         }
-        public TES4Record GetRecordByEDIDAndFollowNAME(string edid)
+        public ESRecord GetRecordByEDIDAndFollowNAME(string edid)
         {
             return TryGetRecordByEDIDAndFollowNAME(edid, true, true)!;
         }
-        public TES4Record? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName)
+        public ESRecord? TryGetRecordByEDIDAndFollowNAME(string edid, bool followName)
         {
             return TryGetRecordByEDIDAndFollowNAME(edid, followName, false);
         }
 
-        private TES4Record[] TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(string edid, bool followName, out string? scriptEDID)
+        private ESRecord[] TryGetRecordsByEDIDFollowNAMEAndLookUpSCRIIfNeeded(string edid, bool followName, out string? scriptEDID)
         {
             scriptEDID = null;
-            TES4Record? record = TryGetRecordByEDIDAndFollowNAME(edid, followName);
+            ESRecord? record = TryGetRecordByEDIDAndFollowNAME(edid, followName);
             if (record == null)
             {
-                return Array.Empty<TES4Record>();
+                return Array.Empty<ESRecord>();
             }
-            TES4RecordType recordType = record.RecordType;
+            ESRecordType recordType = record.RecordType;
             if (recordType == TES4RecordType.SCPT)
             {
                 //Resolve the reference
-                TES4Record[] recordsBySCRI = GetRecordsBySCRI(record.FormID);
-                if (recordsBySCRI.Any())
+                ESRecord[] recordsBySCRI = GetRecordsBySCRI(record.FormID);
+                if (recordsBySCRI.Length > 0)
                 {
                     return recordsBySCRI;
                 }
@@ -302,7 +304,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                     scriptEDID = GetEDIDByFormID(scri.Value);
                 }
             }
-            return new TES4Record[] { record };
+            return new ESRecord[] { record };
         }
 
         /*
@@ -314,7 +316,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             string edidLower = edid.ToLower();
             ITES5Type? value;
             if (this.edidLowerCache.TryGetValue(edidLower, out value)) { return value; }
-            TES4Record attachedNameRecord = GetRecordByEDIDAndFollowNAME(edid);
+            ESRecord attachedNameRecord = GetRecordByEDIDAndFollowNAME(edid);
 
             Nullable<int> scriptFormid = attachedNameRecord.TryGetSubrecordAsFormID("SCRI");
             if (scriptFormid == null)
@@ -323,14 +325,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
             }
 
             string scriptRecordEDID = GetEDIDByFormID(scriptFormid.Value);
-            TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType), TES5TypeFactory.TES4Prefix, false);
+            TES5ScriptHeader scriptHeader = scriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType), TES5TypeFactory.TES4Prefix, false);
             this.edidLowerCache.Add(edidLower, scriptHeader.ScriptType);
             return scriptHeader.ScriptType;
         }
 
-        public IEnumerable<KeyValuePair<string, KeyValuePair<int, TES5BasicType>>> GetTypesFromSCROEnumerable(TES4Record scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex)
+        public IEnumerable<KeyValuePair<string, KeyValuePair<int, TES5BasicType>>> GetTypesFromSCROEnumerable(ESRecord scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex)
         {
-            TES4SubrecordData[] scroRecords = scriptTES4Record.GetSCRORecords(stageIndexAndLogIndex).ToArray();
+            SubrecordData[] scroRecords = scriptTES4Record.GetSCRORecords(stageIndexAndLogIndex).ToArray();
             HashSet<int> foundFormIDs = new HashSet<int>();
             return scroRecords
                 .Select(r => r.FirstFourBytesToInt())
@@ -347,7 +349,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                     }
                     else
                     {
-                        TES4Record record = GetRecordByFormID(formID);
+                        ESRecord record = GetRecordByFormID(formID);
                         edid = record.GetSubrecord("EDID").ToStringTrim();
                         /*
                         if (record.RecordType == TES4RecordType.CREA || record.RecordType == TES4RecordType.NPC_)
@@ -382,7 +384,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                 });
         }
 
-        public Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(TES4Record scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex)
+        public Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(ESRecord scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex)
         {
             return GetTypesFromSCROEnumerable(scriptTES4Record, stageIndexAndLogIndex).ToDictionary(kvp => kvp.Key, kvp => kvp.Value,
                     StringComparer.OrdinalIgnoreCase//WTM:  Note:  required since cases aren't consistent (e.g., MS40HalLiurzCourtyardMark vs. MS40HalliurzCourtyardMark--notice second L)
@@ -391,11 +393,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
 
         public Dictionary<string, KeyValuePair<int, TES5BasicType>> GetTypesFromSCRO(int scriptTES4FormID, StageIndexAndLogIndex? stageIndexAndLogIndex)
         {
-            TES4Record scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
+            ESRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
             return GetTypesFromSCRO(scriptTES4Record, stageIndexAndLogIndex);
         }
 
-        private Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(TES4Record scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex, string propertyName, bool throwException)
+        private Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(ESRecord scriptTES4Record, StageIndexAndLogIndex? stageIndexAndLogIndex, string propertyName, bool throwException)
         {
             var types = GetTypesFromSCRO(scriptTES4Record, stageIndexAndLogIndex);
             KeyValuePair<int, TES5BasicType> type;
@@ -411,18 +413,18 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         }
         public Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(string scriptEDID, string propertyName)
         {
-            TES4Record scriptTES4Record = GetRecordByEDIDInTES4Collection(scriptEDID);
+            ESRecord scriptTES4Record = GetRecordByEDIDInTES4Collection(scriptEDID);
             return GetTypeFromSCRO(scriptTES4Record, null, propertyName, !(scriptTES4Record.FormID == 211721 && propertyName == "test"));//WTM:  Note:  Special Case:  property not found in SCRO records
         }
         public Nullable<KeyValuePair<int, TES5BasicType>> GetTypeFromSCRO(int scriptTES4FormID, StageIndexAndLogIndex? stageIndexAndLogIndex, string propertyName)
         {
-            TES4Record scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
+            ESRecord scriptTES4Record = GetRecordByFormID(scriptTES4FormID);
             return GetTypeFromSCRO(scriptTES4Record, stageIndexAndLogIndex, propertyName, !(scriptTES4FormID == 73629 && stageIndexAndLogIndex != null && stageIndexAndLogIndex.StageIndex == 150 && stageIndexAndLogIndex.LogIndex == 0 && propertyName == "SE02FIN"));//WTM:  Note:  Special Case:  property not found in SCRO records
         }
 
-        public static IEnumerable<string> GetReferenceAliases(TES4Record qust)
+        public static IEnumerable<string> GetReferenceAliases(ESRecord qust)
         {
-            IEnumerable<TES4SubrecordData> qstas = qust.GetSubrecords("QSTA");
+            IEnumerable<SubrecordData> qstas = qust.GetSubrecords("QSTA");
             return qstas.Select(qsta => qust.ExpandBytesIntoFormID(qsta)).Distinct().Select(formID => "Alias_" + formID.ToString("X8"));
         }
 

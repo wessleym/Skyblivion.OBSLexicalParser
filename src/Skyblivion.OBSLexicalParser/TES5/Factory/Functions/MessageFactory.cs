@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES4ValueString arg0 = functionArguments[0];
@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             {
                 //Pack the printf syntax
                 //TODO - Perhaps we can use sprintf?
-                functionArguments.RemoveAt(0);
+                functionArguments = functionArguments.RemoveInNew(0);
                 if (!(arg0 is TES4String))
                 { //hacky
                     throw new ConversionException("Cannot transform printf like syntax to concat on string loaded dynamically");
@@ -84,16 +84,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 Stack<ITES5Value> variablesStack = new Stack<ITES5Value>(variablesArray.Select(kvp => kvp).Reverse());
                 if (startWithVariable)
                 {
-                    if (variablesStack.Any())
+                    if (variablesStack.Count > 0)
                     {
                         combinedValues.Add(variablesStack.Pop());
                     }
                 }
 
-                while (stringsStack.Any())
+                while (stringsStack.Count > 0)
                 {
                     combinedValues.Add(stringsStack.Pop());
-                    if (variablesStack.Any())
+                    if (variablesStack.Count > 0)
                     {
                         combinedValues.Add(variablesStack.Pop());
                     }

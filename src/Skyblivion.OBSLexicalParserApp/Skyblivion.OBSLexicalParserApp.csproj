@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ModifiedScripts_Input\Amendments\" />
+  </ItemGroup>
+
 </Project>

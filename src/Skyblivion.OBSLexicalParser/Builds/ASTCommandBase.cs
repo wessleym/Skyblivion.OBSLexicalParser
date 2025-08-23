@@ -7,9 +7,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     abstract class ASTCommandBase : ParsingService<IEnumerable<ITES4CodeChunk>>, IASTCommand<IEnumerable<ITES4CodeChunk>>
     {
-        public ASTCommandBase()
-            : base()
-        { }
+        public ASTCommandBase() : base() { }
 
         protected abstract TES4ObscriptCodeGrammar GetGrammar();
 

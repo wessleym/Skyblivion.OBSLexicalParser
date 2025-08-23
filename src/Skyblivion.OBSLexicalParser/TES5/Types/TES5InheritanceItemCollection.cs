@@ -12,9 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             list = new List<TES5InheritanceItem>(items);
         }
-        public TES5InheritanceItemCollection()
-            : this(Array.Empty<TES5InheritanceItem>())
-        { }
+        public TES5InheritanceItemCollection() : this(Array.Empty<TES5InheritanceItem>()) { }
 
         public void Add(TES5InheritanceItem item)
         {
@@ -40,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         {
             return GetEnumerator();
         }
-        
+
         public TES5InheritanceItemCollection ItemsWithoutSubItems => new TES5InheritanceItemCollection(list.Where(i => !i.AnyItems));
     }
 }

@@ -1,6 +1,4 @@
-using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
-using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -13,8 +11,6 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
@@ -23,11 +19,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
     {
         private readonly MappedTargetsLogService mappedTargetsLogService;
         private readonly ObjectiveHandlingFactory objectiveHandlingFactory;
+        private readonly TES5ScriptHeaderFactory scriptHeaderFactory;
         private readonly ESMAnalyzer esmAnalyzer;
-        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory, ESMAnalyzer esmAnalyzer)
+        public QFFragmentFactory(MappedTargetsLogService mappedTargetsLogService, ObjectiveHandlingFactory objectiveHandlingFactory, TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer)
         {
             this.mappedTargetsLogService = mappedTargetsLogService;
             this.objectiveHandlingFactory = objectiveHandlingFactory;
+            this.scriptHeaderFactory = scriptHeaderFactory;
             this.esmAnalyzer = esmAnalyzer;
         }
 
@@ -50,7 +48,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
              * This will give us an array of stages which don't have script fragment, but will need it anyways
              * for objective handling.
              */
-            TES5ScriptHeader resultingScriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
+            TES5ScriptHeader resultingScriptHeader = scriptHeaderFactory.GetFromCacheOrConstructByBasicType(resultingFragmentName, TES5BasicType.T_QUEST, TES5TypeFactory.TES4_Prefix, true);
             TES5GlobalScope resultingGlobalScope = new TES5GlobalScope(resultingScriptHeader);
             string[] referenceAliases = ReferenceAliasBuilder.Build(target, resultingFragmentName, esmAnalyzer, tes4FormID).ToArray();
             foreach (string propertyName in referenceAliases)

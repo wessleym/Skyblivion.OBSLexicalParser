@@ -1,4 +1,4 @@
-using Skyblivion.ESReader.TES4;
+using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.Context;
@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.esmAnalyzer = esmAnalyzer;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4FunctionArguments functionArguments = function.Arguments;
             ITES4ValueString apiToken = functionArguments[0];
@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     }
                     TES5ObjectCall getParentCell = this.objectCallFactory.CreateObjectCall(calledOn, "GetParentCell");
                     TES5ObjectCall getParentCellName = this.objectCallFactory.CreateObjectCall(getParentCell, "GetName");
-                    TES4Record cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellEditorID);
+                    ESRecord cellRecord = this.esmAnalyzer.GetRecordByEDIDInTES4Collection(cellEditorID);
                     string? cellNameWithSpaces = cellRecord.TryGetSubrecordTrim("FULL");
                     if (cellNameWithSpaces == null || cellNameWithSpaces.IndexOf("Dummy", StringComparison.OrdinalIgnoreCase) != -1) { cellNameWithSpaces = cellEditorID; }
                     TES5String cellNameTES5String = new TES5String(cellNameWithSpaces);

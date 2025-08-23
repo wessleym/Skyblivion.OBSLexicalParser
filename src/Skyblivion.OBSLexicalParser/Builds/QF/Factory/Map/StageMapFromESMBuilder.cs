@@ -1,5 +1,5 @@
-﻿using Skyblivion.ESReader.Extensions;
-using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
+using Skyblivion.ESReader.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
 {
     static class StageMapFromESMBuilder
     {
-        public static string BuildString(TES4Record qust)
+        public static string BuildString(ESRecord qust)
         {
             const string indx = "INDX", qsta = "QSTA", ctda = "CTDA";
             var subrecords = qust.GetSubrecords(new string[] { indx, qsta, ctda });
@@ -128,7 +128,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
                     for (int i = 0; i <= maxTargetIndex; i++)
                     {
                         bool cell;
-                        contents.Append(rowDictionary.TryGetValue(i, out cell) && cell ? "1" : "0").Append(" ");
+                        contents.Append(rowDictionary.TryGetValue(i, out cell) && cell ? "1" : "0").Append(' ');
                     }
                 }
                 contents.AppendLine();
@@ -136,7 +136,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
             return contents.ToString();
         }
 
-        public static StageMap BuildStageMap(TES4Record qust)
+        public static StageMap BuildStageMap(ESRecord qust)
         {
             string contentsString = BuildString(qust);
             var stageMapDictionary = StageMapDictionaryBuilder.Build(contentsString.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));

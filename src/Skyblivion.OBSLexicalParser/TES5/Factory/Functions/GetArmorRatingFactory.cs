@@ -1,7 +1,6 @@
 ﻿using Skyblivion.ESReader.Extensions;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
@@ -23,10 +22,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             globalScope.AddFunction(GetGetArmorRatingOfWornFormFunctionCodeBlock(calledOn, codeScope, function.Comment));
-            ITES5ValueCodeChunk? accumulatedStatement = null;
+            ITES5Value? accumulatedStatement = null;
             for (int slotMask = 0x00000004; slotMask <= 0x00000200; slotMask *= 2)//From body to shield
             {
                 TES5ObjectCallCustom objectCall = GetGetArmorRatingOfWornFormObjectCall(globalScope, slotMask);
@@ -45,14 +44,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         private TES5FunctionCodeBlock GetGetArmorRatingOfWornFormFunctionCodeBlock(ITES5Referencer calledOn, TES5CodeScope codeScope, TES4Comment? comment)
         {
-            TES5FunctionCodeBlock functionCodeBlock = new TES5FunctionCodeBlock(new TES5FunctionScope(functionName), TES5CodeScopeFactory.CreateCodeScope(codeScope.LocalScope), TES5BasicType.T_INT, false, false);
+            TES5FunctionScope functionScope = new TES5FunctionScope(functionName);
+            TES5FunctionCodeBlock functionCodeBlock = new TES5FunctionCodeBlock(functionScope, TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope), TES5BasicType.T_INT, false, false);
             TES5SignatureParameter slotMaskParameter = new TES5SignatureParameter("slotMask", TES5BasicType.T_INT, true);
             functionCodeBlock.FunctionScope.AddParameter(slotMaskParameter);
-            TES5ObjectCall getWornForm = GetGetWornFormObjectCall(calledOn, TES5ReferenceFactory.CreateReferenceToVariableOrProperty(slotMaskParameter));
-            TES5LocalVariable wornFormVariable = new TES5LocalVariable("wornForm", TES5BasicType.T_ARMOR);
-            functionCodeBlock.CodeScope.AddVariable(wornFormVariable);
-            TES5Reference wornFormVariableReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(wornFormVariable);
-            functionCodeBlock.AddChunk(TES5VariableAssignationFactory.CreateAssignation(wornFormVariableReference, getWornForm));
+            TES5ObjectCall getWornFormObjectCall = GetGetWornFormObjectCall(calledOn, TES5ReferenceFactory.CreateReferenceToVariableOrProperty(slotMaskParameter));
+            TES5Reference wornFormVariableReference = TES5LocalVariableFactory.CreateWithInitialization(TES5BasicType.T_ARMOR, "wornForm", getWornFormObjectCall, functionCodeBlock.CodeScope);
             functionCodeBlock.AddChunk(new TES5Return(objectCallFactory.CreateObjectCall(wornFormVariableReference, "GetArmorRating", comment: comment)));
             return functionCodeBlock;
         }
@@ -62,9 +59,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             return objectCallFactory.CreateObjectCall(calledOn, "GetWornForm", new TES5ObjectCallArguments() { slotMask });
         }
 
-        private TES5ObjectCallCustom GetGetArmorRatingOfWornFormObjectCall(TES5GlobalScope globalScope, int slotMask)
+        private static TES5ObjectCallCustom GetGetArmorRatingOfWornFormObjectCall(TES5GlobalScope globalScope, int slotMask)
         {
-            return objectCallFactory.CreateObjectCallCustom(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), functionName, TES5BasicType.T_INT, new TES5ObjectCallArguments() { new TES5Integer(slotMask) });
+            return TES5ObjectCallFactory.CreateObjectCallCustom(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), functionName, TES5BasicType.T_INT, new TES5ObjectCallArguments() { new TES5Integer(slotMask) });
         }
     }
 }

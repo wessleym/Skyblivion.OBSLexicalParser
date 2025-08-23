@@ -3,6 +3,8 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -18,16 +20,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             //This has to be a write-action reference, not a read reference!
             ITES5Referencer fameReference = this.referenceFactory.CreateReference("Fame", globalScope, multipleScriptsScope, localScope);
-            TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments()
-            {
-                this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope)
-            };
+            var setValueArgument = this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope);
+            TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments() { setValueArgument };
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(fameReference, "SetValue", fameArguments, comment: function.Comment);
             return newFunction;
         }

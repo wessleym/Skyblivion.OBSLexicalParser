@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using System;
@@ -25,7 +26,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public string Value => Name;
 
-        public IEnumerable<string> Output => new string[] { Name };
+        public string OutputSingle => Name;
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         TES5BasicType ITES5Type.NativeType { get => this; set => throw new ConversionException("Cannot set native type on basic type - wrong logic."); }
 
@@ -127,6 +130,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKYBQuestUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "QuestUtility", allowInference: false),
             T_SKYBTIMERHELPER = new TES5BasicType(SKYBTimerHelperName, allowInference: false),
             T_SKYBCONTAINER = new TES5BasicType(SKYBContainerName, allowInference: false),
+            T_TES4DISPOSITIONUTIL = new TES5BasicType(TES5TypeFactory.TES4Prefix + "DispositionUtil", allowInference: false),
             T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Change:  Added:  SKSE
             T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Change:  Added:  SKSE
             ;

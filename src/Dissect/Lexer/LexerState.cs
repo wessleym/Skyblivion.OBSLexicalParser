@@ -8,6 +8,6 @@ namespace Dissect.Lexer
     {
         public readonly Dictionary<string, object> Actions = new Dictionary<string, object>();
         public readonly Dictionary<string, IRecognizer> Recognizers = new Dictionary<string, IRecognizer>();
-        public string[] SkipTokens = new string[] { };
+        public string[] SkipTokens = [];
     }
 }

@@ -1,4 +1,5 @@
 using Skyblivion.ESReader.Extensions;
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
@@ -20,13 +21,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ReferenceFactory referenceFactory;
         private readonly TES5ValueFactory valueFactory;
-        private readonly TES5TypeInferencer typeInferencer;
-        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5TypeInferencer typeInferencer)
+        public TES5VariableAssignationConversionFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory)
         {
             this.objectCallFactory = objectCallFactory;
             this.referenceFactory = referenceFactory;
             this.valueFactory = valueFactory;
-            this.typeInferencer = typeInferencer;
+        }
+
+        private TES5ObjectCall CreateGlobalVariableSetValueOrMod(TES4VariableAssignation variableAssignation, ITES5Referencer reference, ITES5Value value)
+        {
+            TES5ArithmeticExpression? arithmeticExpression = value as TES5ArithmeticExpression;
+            if (arithmeticExpression != null)
+            {
+                TES5ObjectCall? leftObjectCall = arithmeticExpression.LeftValue as TES5ObjectCall;
+                if (leftObjectCall != null && leftObjectCall.AccessedObject.TES5Type == TES5BasicType.T_GLOBALVARIABLE && reference.Name == leftObjectCall.AccessedObject.Name && leftObjectCall.FunctionName == "GetValue")
+                {
+                    return this.objectCallFactory.CreateObjectCall(reference, "Mod", new TES5ObjectCallArguments() { arithmeticExpression.RightValue }, comment: variableAssignation.Comment);
+                }
+            }
+            return this.objectCallFactory.CreateObjectCall(reference, "SetValue", new TES5ObjectCallArguments() { value }, comment: variableAssignation.Comment);
         }
 
         public TES5CodeChunkCollection CreateCodeChunk(TES4VariableAssignation variableAssignation, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
@@ -36,11 +49,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES5Referencer reference = this.referenceFactory.CreateReference(referenceName, globalScope, multipleScriptsScope, codeScope.LocalScope);
             ITES5Value value = this.valueFactory.CreateValue(variableAssignation.Value, codeScope, globalScope, multipleScriptsScope);
             if (reference.TES5Type == TES5BasicType.T_GLOBALVARIABLE)
-            { //if the reference is in reality a global variable, we will need to convert it by creating a Reference.SetValue(value); call
-                //Object call creation
-                TES5ObjectCallArguments objectCallArguments = new TES5ObjectCallArguments() { value };
-                TES5ObjectCall objectCall = this.objectCallFactory.CreateObjectCall(reference, "SetValue", objectCallArguments, comment: variableAssignation.Comment);
-                codeChunkCollection.Add(objectCall);
+            {
+                codeChunkCollection.Add(CreateGlobalVariableSetValueOrMod(variableAssignation, reference, value));
             }
             else
             {
@@ -57,7 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                 TES5Comment? comment = variableAssignation.Comment != null ? TES5CommentFactory.Construct(variableAssignation.Comment) : null;
                 TES5VariableAssignation assignation = TES5VariableAssignationFactory.CreateAssignation(reference, value, comment: comment);
-                this.typeInferencer.InferenceObjectByAssignation(reference, value);
+                TES5TypeInferencer.InferenceObjectByAssignation(reference, value);
                 codeChunkCollection.Add(assignation);
                 //post analysis.
                 //Todo - rethink the prefix here

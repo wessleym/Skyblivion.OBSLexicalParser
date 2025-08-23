@@ -1,9 +1,5 @@
 using Skyblivion.OBSLexicalParser.Builds;
-using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
-using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.Service;
-using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +9,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     public class TestStageMap : LPCommand
     {
-        public TestStageMap()
-            : base("skyblivion:testStageMap", "Test Stage Map", null)
-        { }
+        public TestStageMap() : base("skyblivion:testStageMap", "Test Stage Map", null) { }
 
         public override void Execute()
         {
@@ -32,7 +26,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
                 var originalTargetIndex = kvp.Key;
                 var mappedTargetIndexes = kvp.Value;
                 output.AppendLine();
-                output.Append(originalTargetIndex+" - "+string.Join(" ", mappedTargetIndexes));
+                output.Append(originalTargetIndex + " - " + string.Join(" ", mappedTargetIndexes));
             }
 
             string outputString = output.ToString();

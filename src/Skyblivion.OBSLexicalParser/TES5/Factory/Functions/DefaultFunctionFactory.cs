@@ -18,7 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.simpleFunctionTranslationFactory = simpleFunctionTranslationFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             string oldAndNewFunctionName = function.FunctionCall.FunctionName;
             return simpleFunctionTranslationFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope, oldAndNewFunctionName);

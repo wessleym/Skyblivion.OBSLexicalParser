@@ -1,4 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
@@ -18,17 +18,17 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {
     static class AddTopicBuilderCommand
     {
-        public static void GenerateINFOAddTopicScripts(ESMAnalyzer esmAnalyzer, BuildTracker buildTracker, IBuildTarget tifBuildTarget)
+        public static void GenerateINFOAddTopicScripts(TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer, BuildTracker buildTracker, IBuildTarget tifBuildTarget)
         {
             TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
             TES5ObjectCallFactory objectCallFactory = new TES5ObjectCallFactory(typeInferencer);
             TES4TopicsToTES5GlobalVariableFinder globalVariableFinder = new TES4TopicsToTES5GlobalVariableFinder();
             TES5GlobalVariableCollection globalVariables = esmAnalyzer.GlobalVariables;
             var builtTIFs = buildTracker.GetBuiltScripts(BuildTargetFactory.TIFName);
-            foreach (TES4Record infoRecord in esmAnalyzer.GetRecords().Where(r => r.RecordType == TES4RecordType.INFO))
+            foreach (ESRecord infoRecord in esmAnalyzer.GetRecords().Where(r => r.RecordType == ESRecordType.INFO))
             {
-                TES4SubrecordData[] names = infoRecord.GetSubrecords("NAME").ToArray();
-                if (names.Any())
+                SubrecordData[] names = infoRecord.GetSubrecords("NAME").ToArray();
+                if (names.Length > 0)
                 {
                     string fragment0Name = TES5FragmentFactory.GetFragmentName(0);
                     string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString("x8");
@@ -41,7 +41,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                     }
                     else
                     {
-                        TES5ScriptHeader scriptHeader = TES5ScriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, TES5TypeFactory.TES4_Prefix, true);
+                        TES5ScriptHeader scriptHeader = scriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptName, TES5BasicType.T_TOPICINFO, TES5TypeFactory.TES4_Prefix, true);
                         TES5GlobalScope globalScope = new TES5GlobalScope(scriptHeader);
                         TES5FunctionScope functionScope = new TES5FunctionScope(fragment0Name);
                         functionScope.AddParameter(new TES5SignatureParameter("akSpeakerRef", TES5BasicType.T_OBJECTREFERENCE, true));
@@ -54,10 +54,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         TES5Target target = new TES5Target(infoTIF, outputPath);
                         buildTracker.RegisterBuiltScript(tifBuildTarget, target);
                     }
-                    foreach (TES4SubrecordData name in names)
+                    foreach (var name in names)
                     {
                         int formID = infoRecord.ExpandBytesIntoFormID(name);
-                        TES4Record addedTopic = esmAnalyzer.GetRecordByFormID(formID);
+                        ESRecord addedTopic = esmAnalyzer.GetRecordByFormID(formID);
                         Tuple<int, string>? globalVariable = globalVariableFinder.GetGlobalVariableNullable(addedTopic.FormID);
                         string globalVariableEditorID = globalVariable != null ? globalVariable.Item2 : globalVariableFinder.GetGlobalVariableEditorID(addedTopic.GetEditorID());
                         Nullable<int> globalVariableTES5FormID = globalVariable != null ? globalVariable.Item1 : (Nullable<int>)null;

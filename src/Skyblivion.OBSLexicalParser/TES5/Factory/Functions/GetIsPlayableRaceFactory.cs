@@ -1,12 +1,7 @@
-﻿using Skyblivion.ESReader.Extensions;
-using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES5.AST;
+﻿using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -18,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.objectCallFactory = objectCallFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //WTM:  Note:  I'd prefer a single method call obviously, but this is the best solution I can imagine.
             //https://www.creationkit.com/index.php?title=GetIsPlayableRace

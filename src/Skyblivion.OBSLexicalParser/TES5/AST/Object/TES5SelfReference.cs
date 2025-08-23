@@ -12,7 +12,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.scriptAsVariable = scriptAsVariable;
         }
 
-        public IEnumerable<string> Output => new string[] { "self" + ManualCastToOutput };
+        public string OutputSingle => "self" + ManualCastToOutput;
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public string Name => "self";
 

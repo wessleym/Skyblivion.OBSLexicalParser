@@ -65,7 +65,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         public IEnumerable<string> GetParametersOutput()
         {
             //WTM:  Changed TES5Type to TES5DeclaredType
-            return this.parameters.Values.Select(v => v.TES5DeclaredType.Output.Single() + " " + v.Name);
+            return this.parameters.Values.Select(v => v.OutputSingle);
         }
 
         public TES5SignatureParameter? TryGetParameterByMeaning(TES5LocalVariableParameterMeaning meaning)

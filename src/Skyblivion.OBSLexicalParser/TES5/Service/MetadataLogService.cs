@@ -7,9 +7,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 {
     class MetadataLogService : BuildLogService
     {
-        public MetadataLogService(Build build)
-            : base(GetPath(build), false)
-        { }
+        public MetadataLogService(Build build) : base(GetPath(build), false) { }
 
         public void WriteLine(string command, IEnumerable<string>? arguments = null)
         {

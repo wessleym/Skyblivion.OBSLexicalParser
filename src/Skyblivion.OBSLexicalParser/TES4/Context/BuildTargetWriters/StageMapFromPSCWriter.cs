@@ -1,4 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -15,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
     static class StageMapFromPSCWriter
     {
         private readonly static Regex fragmentRE = new Regex(@"Function Fragment_([0-9]+)(_[0-9]+)?\(\)\r\n(.*?)\r\nEndFunction", RegexOptions.Compiled | RegexOptions.Singleline);
-        private readonly static Regex isObjectiveDisplayedRE = new Regex(@"If \(\(__temp\.IsObjectiveDisplayed\(([0-9]+)\) == (0|1)\)\)", RegexOptions.Compiled);
+        private readonly static Regex isObjectiveDisplayedRE = new Regex(@"If \(\([A-Za-z0-9_]+\.IsObjectiveDisplayed\(([0-9]+)\) == (0|1)\)\)", RegexOptions.Compiled);
         public static Dictionary<int, List<int>> BuildStageMapDictionaryFromFile(string pscPath)
         {
             Dictionary<int, List<int>> stageMap = new Dictionary<int, List<int>>();
@@ -55,7 +55,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             else { newFileNameNoExt = fileNameNoExt.Replace(TES5TypeFactory.TES4_Prefix, "").ToLower(); }
             string mapPath = sourcePath + newFileNameNoExt + ".map2";
             string mapContents = string.Join("\r\n", BuildStageMapDictionaryFromFile(pscPath).Select(l => l.Key + " - " + string.Join(" ", l.Value)));
-            FileWriter.WriteAllTextOrThrowIfExists(mapPath, mapContents);
+            FileSystemEntryUtility.WriteAllTextOrThrowIfExists(mapPath, mapContents);
         }
 
         public static void Write()
@@ -67,12 +67,12 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             {
                 Write(sourcePath, pscPath);
             }
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromPSCFiles(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
-            IEnumerable<TES4Record> qustRecords = collection.GetGrupRecords(TES4RecordType.QUST);
-            foreach (TES4Record qust in qustRecords)
+            ESCollection collection = ESCollectionFactory.CreateForQUSTStageMapExportingFromPSCFiles(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            IEnumerable<ESRecord> qustRecords = collection.GetGrupRecords(ESRecordType.QUST);
+            foreach (ESRecord qust in qustRecords)
             {
                 string path = sourcePath + BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.qf_Prefix, qust, true, null) + ".map2";
-                FileWriter.WriteAllTextIfNotExists(path, "");
+                FileSystemEntryUtility.WriteAllTextIfNotExists(path, "");
             }
         }
     }

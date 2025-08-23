@@ -9,17 +9,16 @@ namespace Skyblivion.OBSLexicalParser.Commands
 {
     internal class BuildModifiedScriptsCommand : LPCommand
     {
-        public BuildModifiedScriptsCommand()
-            : base("skyblivion:parser:buildModifiedScripts", "Build Modified Scripts", "Build standard scripts modified by Skyblivion Team")
-        { }
+        public BuildModifiedScriptsCommand() : base("skyblivion:parser:buildModifiedScripts", "Build Modified Scripts", "Build standard scripts modified by Skyblivion Team") { }
 
         public override void Execute()
         {
             if (!PreExecutionChecks(false, false, false, true)) { return; }
-            string inputsPath = DataDirectory.ModifiedScriptsInputsDirectoryPath;
-            string preprocessedPath = DataDirectory.ModifiedScriptsPreprocessedDirectoryPath;
-            string skseSourcePath = DataDirectory.ModifiedScriptsSKSESourceDirectoryPath;
-            string importGeneratedPath = DataDirectory.ModifiedScriptsImportGeneratedDirectoryPath;
+            string modifiedScriptsDirectoryPathBase = DataDirectory.ModifiedScriptsDirectoryPathBase;
+            string inputsPath = modifiedScriptsDirectoryPathBase + "Inputs" + Path.DirectorySeparatorChar;
+            string preprocessedPath = modifiedScriptsDirectoryPathBase + "Preprocessed" + Path.DirectorySeparatorChar;
+            string skseSourcePath = modifiedScriptsDirectoryPathBase + "SKSESource" + Path.DirectorySeparatorChar;
+            string importGeneratedPath = modifiedScriptsDirectoryPathBase + "ImportGenerated" + Path.DirectorySeparatorChar;
             Console.WriteLine($"""
 Please place the following files:
 
@@ -42,13 +41,12 @@ The SKSE source for which the files should be compiled (for example, from skse64
                     return;
                 }
             }
-            string outputsDirectoryPath = DataDirectory.ModifiedScriptsOutputsDirectoryPath;
+            string outputsDirectoryPath = modifiedScriptsDirectoryPathBase + "Outputs" + Path.DirectorySeparatorChar;
             foreach (string directoryPath in new string[] { preprocessedPath, importGeneratedPath, outputsDirectoryPath })
             {
-                try { Directory.Delete(directoryPath, true); } catch (DirectoryNotFoundException) { }
-                Directory.CreateDirectory(preprocessedPath);
+                FileSystemEntryUtility.CreateDirectoryEmpty(directoryPath);
             }
-            FileWriter.CopyDirectoryFiles(skseSourcePath, importGeneratedPath, false);
+            FileSystemEntryUtility.CopyDirectoryFiles(skseSourcePath, importGeneratedPath, false, progressWriterLabel: "Copying SKSE Source to Import Generated Folder");
             foreach (string inputPath in Directory.EnumerateFiles(inputsPath, "*.psc", SearchOption.AllDirectories))
             {
                 string fileName = Path.GetFileName(inputPath);
@@ -65,8 +63,8 @@ The SKSE source for which the files should be compiled (for example, from skse64
                 }
                 else
                 {
-                    FileWriter.WriteAllTextOrThrowIfExists(preprocessedFilePath, inputContents);
-                    FileWriter.WriteAllTextOrThrowIfExists(importFilePath, inputContents);
+                    FileSystemEntryUtility.WriteAllTextOrThrowIfExists(preprocessedFilePath, inputContents);
+                    FileSystemEntryUtility.WriteAllTextOrThrowIfExists(importFilePath, inputContents);
                 }
             }
             //I am copying all dependent files I've witnessed as being needed. Without them, compilation gives errors.
@@ -83,34 +81,25 @@ The SKSE source for which the files should be compiled (for example, from skse64
                     (
                     fileNameNoExt == "Location" ||//Special Edition
                     fileNameNoExt == "Scene" //VR
-                    ))
-                { }
+                    )) { }
             }
             IEnumerable<string>? importFilePaths = null;
             try
             {
-                importFilePaths = Directory.EnumerateFiles(DataDirectory.ModifiedScriptsImportDirectoryPath);
+                importFilePaths = Directory.EnumerateFiles(modifiedScriptsDirectoryPathBase + "Import" + Path.DirectorySeparatorChar);
             }
             catch (DirectoryNotFoundException) { }
             if (importFilePaths != null)
             {
+                string importGeneratedFolderPath = modifiedScriptsDirectoryPathBase + "ImportGenerated" + Path.DirectorySeparatorChar;
                 foreach (string importPath in importFilePaths)
                 {
-                    string importGeneratedFilePath = DataDirectory.ModifiedScriptsImportGeneratedDirectoryPath + Path.GetFileName(importPath);
+                    string importGeneratedFilePath = importGeneratedFolderPath + Path.GetFileName(importPath);
                     try { File.Copy(importPath, importGeneratedFilePath, false); }
                     catch (IOException) { }
                 }
             }
-            string outputDirectoryBase = DataDirectory.ModifiedScriptsDirectoryPathBase;
-            string outputPath = outputDirectoryBase + "Output.txt";
-            string errorPath = outputDirectoryBase + "Error.txt";
-            File.Delete(outputPath);
-            File.Delete(errorPath);
-            PapyrusCompiler.Run(preprocessedPath, importGeneratedPath, outputsDirectoryPath, outputPath, errorPath);
-            if (File.ReadAllText(errorPath) != "")
-            {
-                Console.WriteLine(errorPath + " contained errors. Please check this file.");
-            }
+            PapyrusCompiler.Run(preprocessedPath, importGeneratedPath, outputsDirectoryPath, modifiedScriptsDirectoryPathBase);
         }
     }
 }

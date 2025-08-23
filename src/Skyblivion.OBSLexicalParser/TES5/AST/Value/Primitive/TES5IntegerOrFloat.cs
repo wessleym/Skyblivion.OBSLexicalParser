@@ -7,7 +7,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
     {
         protected TES5IntegerOrFloat() { }
         public abstract ITES5Type TES5Type { get; }
-        public abstract IEnumerable<string> Output { get; }
+        public abstract string OutputSingle { get; }
+        public IEnumerable<string> Output => [OutputSingle];
         public abstract int ConvertedIntValue { get; }
     }
 }

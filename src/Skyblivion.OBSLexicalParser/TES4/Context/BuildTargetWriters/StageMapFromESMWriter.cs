@@ -1,4 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.Data;
@@ -15,15 +15,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
         {
             BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build());
             string sourcePath = qfBuildTarget.GetSourcePath();
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTStageMapExportingFromESM(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
-            IEnumerable<TES4Record> qusts = collection.GetGrupRecords(TES4RecordType.QUST);
-            foreach (TES4Record qust in qusts)
+            ESCollection collection = ESCollectionFactory.CreateForQUSTStageMapExportingFromESM(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            IEnumerable<ESRecord> qusts = collection.GetGrupRecords(ESRecordType.QUST);
+            foreach (ESRecord qust in qusts)
             {
                 string fileNameNoExt = BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.qf_Prefix, qust, true, null);
                 string fileName = fileNameNoExt + ".map";
                 string mapFilePath = sourcePath + Path.DirectorySeparatorChar + fileName;
                 string contentsString = StageMapFromESMBuilder.BuildString(qust);
-                FileWriter.WriteAllTextOrThrowIfExists(mapFilePath, contentsString);
+                FileSystemEntryUtility.WriteAllTextOrThrowIfExists(mapFilePath, contentsString);
             }
         }
     }

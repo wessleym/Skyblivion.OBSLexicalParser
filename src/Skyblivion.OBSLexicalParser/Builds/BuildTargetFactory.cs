@@ -4,6 +4,7 @@ using Skyblivion.OBSLexicalParser.DI;
 using Skyblivion.OBSLexicalParser.Input;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using System;
@@ -33,12 +34,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
         public static BuildTargetAdvancedCollection GetCollection(Build build, IEnumerable<BuildTargetSimple> buildTargets)
         {
             BuildLogServiceCollection buildLogServices = BuildLogServiceCollection.DeleteAndStartNewFiles(build);
-            ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load();
+            TES5ScriptHeaderFactory scriptHeaderFactory = new TES5ScriptHeaderFactory();
+            ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(scriptHeaderFactory);
             TES5TypeInferencer typeInferencer = new TES5TypeInferencer(esmAnalyzer);
-            BuildTargetAdvancedCollection collection = new BuildTargetAdvancedCollection(buildLogServices, esmAnalyzer);
+            BuildTargetAdvancedCollection collection = new BuildTargetAdvancedCollection(buildLogServices, scriptHeaderFactory, esmAnalyzer);
             foreach (var target in buildTargets)
             {
-                collection.Add(ConstructAdvanced(target, buildLogServices, esmAnalyzer, typeInferencer));
+                collection.Add(ConstructAdvanced(target, buildLogServices, scriptHeaderFactory, esmAnalyzer, typeInferencer));
             }
             return collection;
         }
@@ -105,20 +107,20 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
         }
 
-        public static BuildTargetAdvanced ConstructAdvanced(BuildTargetSimple buildTarget, BuildLogServiceCollection buildLogServices, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
+        public static BuildTargetAdvanced ConstructAdvanced(BuildTargetSimple buildTarget, BuildLogServiceCollection buildLogServices, TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer, TES5TypeInferencer typeInferencer)
         {
             switch (buildTarget.Name)
             {
                 case StandaloneName:
                     {
                         StandaloneParsingService standaloneParsingService = new StandaloneParsingService(new SyntaxErrorCleanParser(new TES4OBScriptGrammar()));
-                        return new BuildTargetAdvanced(buildTarget, new Standalone.TranspileCommand(standaloneParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new Standalone.BuildScopeCommand(standaloneParsingService, esmAnalyzer, new TES5PropertyFactory(esmAnalyzer)), new Standalone.WriteCommand());
+                        return new BuildTargetAdvanced(buildTarget, new Standalone.TranspileCommand(standaloneParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new Standalone.BuildScopeCommand(standaloneParsingService, scriptHeaderFactory, esmAnalyzer, new TES5PropertyFactory(esmAnalyzer)), new Standalone.WriteCommand());
                     }
 
                 case TIFName:
                     {
                         FragmentsParsingService fragmentsParsingService = new FragmentsParsingService(new SyntaxErrorCleanParser(new TES4ObscriptCodeGrammar()));
-                        return new BuildTargetAdvanced(buildTarget, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer)), new TIF.WriteCommand());
+                        return new BuildTargetAdvanced(buildTarget, new TIF.TranspileCommand(fragmentsParsingService, buildLogServices.MetadataLogService, esmAnalyzer), new TIF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer), scriptHeaderFactory), new TIF.WriteCommand());
                     }
 
                 case PFName:
@@ -135,14 +137,14 @@ namespace Skyblivion.OBSLexicalParser.Builds
                         TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, esmAnalyzer);
                         TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
                         TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, buildLogServices.MetadataLogService, esmAnalyzer);
-                        TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory, typeInferencer);
+                        TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory);
                         TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory);
                         TES5ChainedCodeChunkFactory chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);
                         TES5FragmentFactory fragmentFactory = new TES5FragmentFactory(chainedCodeChunkFactory);
                         ObjectiveHandlingFactory objectiveHandlingFactory = new ObjectiveHandlingFactory(objectCallFactory);
-                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory, esmAnalyzer);
+                        QFFragmentFactory qfFragmentFactory = new QFFragmentFactory(buildLogServices.MappedTargetsLogService, objectiveHandlingFactory, scriptHeaderFactory, esmAnalyzer);
                         QF.WriteCommand writeCommand = new QF.WriteCommand(qfFragmentFactory);
-                        return new BuildTargetAdvanced(buildTarget, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer)), writeCommand);
+                        return new BuildTargetAdvanced(buildTarget, new QF.TranspileCommand(fragmentsParsingService, fragmentFactory), new QF.BuildScopeCommand(new TES5PropertyFactory(esmAnalyzer), new FragmentsReferencesBuilder(esmAnalyzer), scriptHeaderFactory), writeCommand);
                     }
 
                 default:

@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     {
         public GetContainerFactory() { }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //TODO: This function is nonexistent in Papyrus and most likely should be deleted
             TES5SignatureParameter? containerParameter = codeScope.TryGetFunctionParameterByMeaning(TES5LocalVariableParameterMeaning.CONTAINER);

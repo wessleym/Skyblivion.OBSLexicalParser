@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Skyblivion.OBSLexicalParser.Commands
+namespace Skyblivion.OBSLexicalParser.Utilities
 {
     class ProgressWriter
     {
@@ -33,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.Commands
 
         private void WritePercent()
         {
-            int newPercent = (int)Math.Floor(((float)current / total) * 100);
+            int newPercent = (int)Math.Floor((float)current / total * 100);
             if (newPercent != percent)
             {
                 percent = newPercent;
@@ -41,10 +42,14 @@ namespace Skyblivion.OBSLexicalParser.Commands
             }
         }
 
+        public void IncrementAndWrite(int incrementCount)
+        {
+            current += incrementCount;
+            WritePercent();
+        }
         public void IncrementAndWrite()
         {
-            current++;
-            WritePercent();
+            IncrementAndWrite(1);
         }
 
         public void ModifyTotalAndWrite(int totalAddend)
@@ -58,6 +63,25 @@ namespace Skyblivion.OBSLexicalParser.Commands
             stopwatch.Stop();
             Write("Complete (" + stopwatch.ElapsedMilliseconds + " ms)");
             Console.WriteLine();
+        }
+
+        public static void Within(string label, int total, Action<ProgressWriter> action)
+        {
+            ProgressWriter progressWriter = new ProgressWriter(label, total);
+            action(progressWriter);
+            progressWriter.WriteLast();
+        }
+
+        public static void Loop<T>(string label, IReadOnlyCollection<T> items, Action<T> action)
+        {
+            Within(label, items.Count, pw =>
+            {
+                foreach (var item in items)
+                {
+                    action(item);
+                    pw.IncrementAndWrite();
+                }
+            });
         }
     }
 }

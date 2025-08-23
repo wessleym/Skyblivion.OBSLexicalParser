@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
@@ -52,14 +53,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public string Value { get; }
 
-        public IEnumerable<string> Output
+        public string OutputSingle
         {
             get
             {
                 bool includePrefix = this.Value != TES5BasicType.SKYBTimerHelperName && this.Value != TES5BasicType.SKYBContainerName;//no time to refactor now, later.
-                yield return (includePrefix ? this.prefix : "") + this.Value;
+                return (includePrefix ? this.prefix : "") + this.Value;
             }
         }
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public bool IsPrimitive => this.NativeType.IsPrimitive;
 

@@ -3,22 +3,17 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    class BuildTargetSimple : IBuildTarget
+    class BuildTargetSimple : IBuildTarget, IBuildTargetForCompiler
     {
         private readonly BuildTarget buildTarget;
-        private readonly ICompileCommand compileCommand;
+        public ICompileCommand CompileCommand { get; }
         private readonly IASTCommand<IEnumerable<ITES4CodeChunk>> astCommand;
         public string Name => buildTarget.Name;
         public BuildTargetSimple(BuildTarget buildTarget, ICompileCommand compileCommand, IASTCommand<IEnumerable<ITES4CodeChunk>> astCommand)
         {
             this.buildTarget = buildTarget;
-            this.compileCommand = compileCommand;
+            this.CompileCommand = compileCommand;
             this.astCommand = astCommand;
-        }
-
-        public void Compile(string sourcePath, string workspacePath, string outputPath, string standardOutputFilePath, string standardErrorFilePath)
-        {
-            this.compileCommand.Compile(sourcePath, workspacePath, outputPath, standardOutputFilePath, standardErrorFilePath);
         }
 
         public IEnumerable<ITES4CodeChunk> GetAST(string sourcePath)

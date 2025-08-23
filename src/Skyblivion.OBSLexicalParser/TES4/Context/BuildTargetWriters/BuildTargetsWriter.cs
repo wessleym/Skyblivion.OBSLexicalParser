@@ -1,6 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿using Skyblivion.ESReader;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
@@ -13,26 +11,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             QFReferenceAliasesFileWriter.Write();
             ReferencesFileWriter.Write();
             StageMapFromESMWriter.Write();
-       }
+        }
 
-        public static string GetFileNameNoExt(string prefix, TES4Record record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex)
+        public static string GetFileNameNoExt(string prefix, ESRecord record, bool includeFormID, StageIndexAndLogIndex? stageIndexAndLogIndex)
         {
             string? editorID = record.TryGetEditorID();
             string editorID_formID = (editorID != null ? editorID : "").ToLower() + (includeFormID ? "_" + (record.FormID + 0x01000000).ToString("x").PadLeft(8, '0') : "");
             string indexPlusFileNumber = stageIndexAndLogIndex != null ? "_" + stageIndexAndLogIndex.StageIndex.ToString() + "_" + stageIndexAndLogIndex.LogIndex.ToString() : "";
             return prefix + editorID_formID + indexPlusFileNumber;
-        }
-
-        //This removes certain text so these files can be more easily compared with previous build targets.
-        private static void RemoveTextForComparisons()
-        {
-            Regex nextFragmentIndexRE = new Regex(";NEXT FRAGMENT INDEX [0-9]+", RegexOptions.Compiled);
-            foreach (string path in Directory.EnumerateFiles(@"C:\Users\Wess\Documents\Visual Studio 2019\Projects\Skyblivion.OBSLexicalParser\Skyblivion.OBSLexicalParserApp\bin\Debug\net5.0\Data\Build\Transpiled\", "*.*", SearchOption.AllDirectories))
-            {
-                string contents = File.ReadAllText(path);
-                contents = nextFragmentIndexRE.Replace(contents, "");
-                File.WriteAllText(path, contents);
-            }
         }
     }
 }

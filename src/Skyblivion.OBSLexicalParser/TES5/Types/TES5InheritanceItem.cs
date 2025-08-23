@@ -13,9 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             this.ParentType = parentType;
             this.Items = new TES5InheritanceItemCollection(items);
         }
-        public TES5InheritanceItem(TES5BasicType parentType)
-            : this(parentType, Array.Empty<TES5InheritanceItem>())
-        { }
+        public TES5InheritanceItem(TES5BasicType parentType) : this(parentType, Array.Empty<TES5InheritanceItem>()) { }
 
         public bool AnyItems => Items.Any();
         public TES5InheritanceItemCollection ItemsWithoutSubItems => Items.ItemsWithoutSubItems;

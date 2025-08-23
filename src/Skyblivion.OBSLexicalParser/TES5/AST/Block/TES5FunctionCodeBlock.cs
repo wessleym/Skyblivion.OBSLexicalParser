@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
@@ -45,13 +46,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
                 if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN FRAGMENT " + this.FunctionScope.BlockName; }
                 yield return GetReturnType() + "Function " + this.FunctionScope.BlockName + "(" + string.Join(", ", this.FunctionScope.GetParametersOutput()) + ")";
                 if (isQuestFragmentOrTopicFragment) { yield return ";BEGIN CODE"; }
-                foreach (string o in this.CodeScope.Output) { yield return TES5Script.Indent + o; }
+                foreach (string o in this.CodeScope.Output.Where((o, i) => TES5Script.AvoidEmptyStart(o, i))) { yield return isQuestFragmentOrTopicFragment ? o : TES5Script.WithIndent(o); }
                 if (isQuestFragmentOrTopicFragment) { yield return ";END CODE"; }
                 yield return "EndFunction";
                 if (isQuestFragmentOrTopicFragment)
                 {
                     yield return ";END FRAGMENT";
-                    yield return "";
                 }
             }
         }

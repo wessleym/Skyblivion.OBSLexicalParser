@@ -6,6 +6,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,15 +17,12 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
     {
         private readonly BuildTracker buildTracker;
         private readonly List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan;
+        private readonly TES5ScriptHeaderFactory scriptHeaderFactory;
         private readonly ESMAnalyzer esmAnalyzer;
-        /*
-        * No injection is done here because of multithreaded enviroment which messes it up.
-        * Maybe at some point we will have a proper DI into the jobs.
-        * TranspileChunkJob constructor.
-        */
-        public TranspileChunkJob(BuildTracker buildTracker, List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan, ESMAnalyzer esmAnalyzer)
+        public TranspileChunkJob(BuildTracker buildTracker, List<Dictionary<BuildTargetAdvanced, List<string>>> buildPlan, TES5ScriptHeaderFactory scriptHeaderFactory, ESMAnalyzer esmAnalyzer)
         {
             this.buildPlan = buildPlan;
+            this.scriptHeaderFactory = scriptHeaderFactory;
             this.buildTracker = buildTracker;
             this.esmAnalyzer = esmAnalyzer;
         }
@@ -52,7 +50,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                 }
 
                 //Add the static global scopes which are added by complimenting scripts..
-                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.CreateGlobalScopes();
+                List<TES5GlobalScope> staticGlobalScopes = TES5StaticGlobalScopesFactory.CreateGlobalScopes(scriptHeaderFactory);
                 //WTM:  Change:  In the PHP, scriptsScopes is used as a dictionary above but as a list below.  I have added the "GlobalScope"+n key to ameliorate this.
                 int globalScopeIndex = 0;
                 foreach (var staticGlobalScope in staticGlobalScopes)

@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.ReferencesTo = referencesTo;
         }
 
-        public IEnumerable<string> Output
+        public string OutputSingle
         {
             get
             {
@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                 //If yes, then use that one
                 if (ManualCastTo != null)
                 {
-                    return new string[] { ReferencesTo.Name + ManualCastToOutput };
+                    return ReferencesTo.Name + ManualCastToOutput;
                 }
                 else
                 {
@@ -31,16 +31,21 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
                     //the type at will and change the function's signature
                     if (!ReferencesTo.TES5DeclaredType.Equals(ReferencesTo.TES5Type))
                     {
-                        return new string[] { "(" + ReferencesTo.Name + " as " + ReferencesTo.TES5Type.Value + ")" };
+                        //These parentheses are required since some other code might call
+                        //(obj as Other).Invoke()
+                        //which, without parentheses, becomes
+                        //obj as Other.Invoke()
+                        return "(" + ReferencesTo.Name + " as " + ReferencesTo.TES5Type.Value + ")";
                     }
                     else
                     {
-                        return new string[] { ReferencesTo.Name };
+                        return ReferencesTo.Name;
                     }
-
                 }
             }
         }
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public string Name => this.ReferencesTo.Name;
 

@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             globalVariableFinder = new TES4TopicsToTES5GlobalVariableFinder();
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             ITES5Referencer topic = referenceFactory.CreateReference(function.Arguments[0].StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope);
             TES5Property property = (TES5Property)topic.ReferencesTo!;

@@ -2,8 +2,6 @@
 {
     class ConversionTypeMismatchException : ConversionException
     {
-        public ConversionTypeMismatchException(string message, bool expected = false)
-            : base(message, expected: expected)
-        { }
+        public ConversionTypeMismatchException(string message, bool expected = false) : base(message, expected: expected) { }
     }
 }

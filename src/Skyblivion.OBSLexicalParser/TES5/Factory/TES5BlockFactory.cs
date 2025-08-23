@@ -293,7 +293,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             string blockType = block.BlockType;
             string newBlockType = MapBlockType(blockType);
             TES4CodeChunks? chunks = block.Chunks;
-            if (chunks != null && chunks.Chunks.Any())
+            if (chunks != null && chunks.Chunks.Count > 0)
             {
                 TES5FunctionScope blockFunctionScope = TES5FunctionScopeFactory.CreateFromBlockType(newBlockType);
                 bool onUpdateOfNonQuestOrAME = newBlockType == "OnUpdate" && globalScope.ScriptHeader.ScriptType.NativeType != TES5BasicType.T_QUEST && globalScope.ScriptHeader.ScriptType.NativeType != TES5BasicType.T_ACTIVEMAGICEFFECT;
@@ -327,11 +327,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 }
                 TES5CodeScope newScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(targetCodeScope.LocalScope);
                 TES5CodeScope convertedCodeScope = this.ConvertTES4CodeChunksToTES5CodeScope(chunks, newScope, globalScope, multipleScriptsScope);
+                if (newScope.CodeChunks.Any)
+                {///Adds Debug.Trace calls from <see cref="Functions.LogUnknownFunctionFactory"/> in 11 files
+                    convertedCodeScope.CodeChunks.InsertRange(0, newScope.CodeChunks);
+                }
                 TES5CodeScope modifiedCodeScope = this.changesPass.Modify(block, blockList, blockFunctionScope, convertedCodeScope, globalScope, multipleScriptsScope);
                 targetEventBlock.CodeScope.LocalScope.CopyVariablesFrom(modifiedCodeScope.LocalScope);
-                if (onUpdateOfNonQuestOrAME && waitingComments.Any())
+                if (onUpdateOfNonQuestOrAME && waitingComments.Count > 0)
                 {
-                    //In this special case, this places the comment closer to the original code than the what the calling method will be able to do.  It also preserves a comment in DAAzuraStatueScript and one in SESylScript that would otherwise be lost.
+                    //In this special case, this places the comment closer to the original code than what the calling method will be able to do.  It also preserves a comment in DAAzuraStatueScript and one in SESylScript that would otherwise be lost.
                     targetEventBlock.CodeScope.AddChunks(waitingComments);
                     waitingComments.Clear();
                 }

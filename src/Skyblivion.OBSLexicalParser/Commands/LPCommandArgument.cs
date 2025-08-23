@@ -2,8 +2,6 @@
 {
     public class LPCommandArgument : LPCommandArgumentOrOption
     {
-        public LPCommandArgument(string name, string description, string? defaultValue = null)
-            : base(name, description, defaultValue)
-        { }
+        public LPCommandArgument(string name, string description, string? defaultValue = null) : base(name, description, defaultValue) { }
     }
 }

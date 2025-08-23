@@ -1,6 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 {
@@ -13,11 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.scriptHeader = scriptHeader;
         }
 
-        public string PropertyNameWithSuffix => "self";
-
         public string Name => "self";
-
-        public IEnumerable<string> Output => new string[] { PropertyNameWithSuffix };
 
         public ITES5Type TES5Type
         {
@@ -35,10 +30,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
 
         public string ReferenceEDID => this.scriptHeader.EDID;
 
-
         public void TrackRemoteScript(TES5ScriptHeader scriptHeader)
         {
-            throw new ConversionException("Cannot track TES5ScriptAsVariable as it tracks already.");
+            throw new ConversionException("Cannot track " + nameof(TES5ScriptAsVariable) + " as it tracks already.");
         }
     }
 }

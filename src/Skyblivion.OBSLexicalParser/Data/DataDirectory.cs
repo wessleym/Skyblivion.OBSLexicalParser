@@ -1,35 +1,31 @@
-﻿using System.IO;
-
-namespace Skyblivion.OBSLexicalParser.Data
+﻿namespace Skyblivion.OBSLexicalParser.Data
 {
     static class DataDirectory
     {
-        private static readonly string path = "Data" + Path.DirectorySeparatorChar;
+        public static readonly string Path = "Data" + System.IO.Path.DirectorySeparatorChar;
         public const string TES4GameFileName = "Oblivion.esm";
 
-        public static readonly string ESMDirectoryPath = path;
+        public static readonly string ESMDirectoryPath = Path;
 
         public static readonly string ESMDefaultFilePath = ESMDirectoryPath + TES4GameFileName;
 
-        public static readonly string GraphDirectoryPath = path + "Graph" + Path.DirectorySeparatorChar;
+        public static readonly string GraphDirectoryPath = Path + "Graph" + System.IO.Path.DirectorySeparatorChar;
 
         public static string GetGraphPath(string fileName)
         {
             return GraphDirectoryPath + fileName;
         }
 
-        public static readonly string BuildPath = path + "Build" + Path.DirectorySeparatorChar;
+        public static readonly string BuildPath = Path + "Build" + System.IO.Path.DirectorySeparatorChar;
 
-        public static readonly string BuildTargetsPath = path + "BuildTargets" + Path.DirectorySeparatorChar;
+        public static readonly string BuildSourceScriptsFolderDirectoryPathBase = Path + "BuildSourceScriptsFolder" + System.IO.Path.DirectorySeparatorChar;
 
-        public static readonly string CompilerDirectoryPath = path + "Compiler" + Path.DirectorySeparatorChar;
+        public static readonly string BuildTargetsPath = Path + "BuildTargets" + System.IO.Path.DirectorySeparatorChar;
 
-        public static readonly string ModifiedScriptsDirectoryPathBase = path + "ModifiedScripts" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsInputsDirectoryPath = ModifiedScriptsDirectoryPathBase + "Inputs" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsOutputsDirectoryPath = ModifiedScriptsDirectoryPathBase + "Outputs" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsPreprocessedDirectoryPath = ModifiedScriptsDirectoryPathBase + "Preprocessed" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsSKSESourceDirectoryPath = ModifiedScriptsDirectoryPathBase + "SKSESource" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsImportDirectoryPath = ModifiedScriptsDirectoryPathBase + "Import" + Path.DirectorySeparatorChar;
-        public static readonly string ModifiedScriptsImportGeneratedDirectoryPath = ModifiedScriptsDirectoryPathBase + "ImportGenerated" + Path.DirectorySeparatorChar;
+        public static readonly string CompilerDirectoryPath = Path + "Compiler" + System.IO.Path.DirectorySeparatorChar;
+
+        public static readonly string ComparisonDirectoryPath = Path + "Comparison" + System.IO.Path.DirectorySeparatorChar;
+
+        public static readonly string ModifiedScriptsDirectoryPathBase = Path + "ModifiedScripts" + System.IO.Path.DirectorySeparatorChar;
     }
 }

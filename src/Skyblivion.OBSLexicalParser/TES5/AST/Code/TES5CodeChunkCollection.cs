@@ -6,16 +6,14 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 {
-    class TES5CodeChunkCollection : IEnumerable<ITES5CodeChunk>, ITES5ValueCodeChunk
+    class TES5CodeChunkCollection : IEnumerable<ITES5CodeChunk>, ITES5CodeChunk
     {
         private readonly List<ITES5CodeChunk> values;
         public TES5CodeChunkCollection(IEnumerable<ITES5CodeChunk> chunks)
         {
             values = new List<ITES5CodeChunk>(chunks);
         }
-        public TES5CodeChunkCollection()
-            : this(Enumerable.Empty<ITES5CodeChunk>())
-        { }
+        public TES5CodeChunkCollection() : this(Enumerable.Empty<ITES5CodeChunk>()) { }
 
         public void Add(ITES5CodeChunk chunk)
         {
@@ -24,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
 
         public void AddRange(IEnumerable<ITES5CodeChunk> chunks)
         {
-            foreach(ITES5CodeChunk chunk in chunks)
+            foreach (ITES5CodeChunk chunk in chunks)
             {
                 Add(chunk);
             }
@@ -34,6 +32,18 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Code
         {
             values.Insert(index, chunk);
         }
+
+        public void InsertRange(int startingIndex, IEnumerable<ITES5CodeChunk> chunks)
+        {
+            int index = startingIndex;
+            foreach (ITES5CodeChunk chunk in chunks)
+            {
+                Insert(index, chunk);
+                index++;
+            }
+        }
+
+        public bool Any => values.Count > 0;
 
         public void Clear()//WTM:  Change:  Added for TES5BlockFactory.CreateBlock
         {

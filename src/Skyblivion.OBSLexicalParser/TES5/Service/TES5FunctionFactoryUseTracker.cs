@@ -16,11 +16,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
 
         public static void WriteTableOfUnknownFunctions()
         {
-            Type fillerFactoryType = typeof(FillerFactory);
             Type logUnknownFunctionFactoryType = typeof(LogUnknownFunctionFactory);
-            Type returnFalseFactory = typeof(ReturnFalseFactory);
-            Type returnTrueFactory = typeof(ReturnTrueFactory);
-            Type[] soughtTypes = new Type[] { fillerFactoryType, logUnknownFunctionFactoryType, returnFalseFactory, returnTrueFactory };
+            Type[] soughtTypes = new Type[] { logUnknownFunctionFactoryType };
             int column1 = dictionary.Select(kvp => kvp.Key.Item1.Length).Max();
             int column2 = ("Invocation Count").Length;
             Console.WriteLine(("Function Name").PadRight(column1) + ("Invocation Count").PadLeft(column2));

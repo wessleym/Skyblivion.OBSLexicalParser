@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.TES5.Types;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
@@ -11,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
             this.IntValue = integer;
         }
 
-        public override IEnumerable<string> Output => new string[] { this.IntValue.ToString() };
+        public override string OutputSingle => this.IntValue.ToString();
 
         public override ITES5Type TES5Type => TES5BasicType.T_INT;
 

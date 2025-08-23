@@ -1,8 +1,8 @@
 using Dissect.Extensions;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
-using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.AST;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;

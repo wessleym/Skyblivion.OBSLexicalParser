@@ -9,7 +9,6 @@ using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -36,16 +35,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             return CreateObjectCall(callable, functionForNameAndComments.FunctionCall.FunctionName, arguments: arguments, comment: functionForNameAndComments.Comment);
         }
-        public TES5ObjectCall CreateObjectCall(ITES5Referencer callable, TES4Function function, string newFunctionName, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5ObjectCall CreateObjectCall(ITES5Referencer callable, TES4Function functionForArgumentsAndComments, string newFunctionName, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            return CreateObjectCall(callable, newFunctionName, arguments: objectCallArgumentsFactory.CreateArgumentList(function.Arguments, codeScope, globalScope, multipleScriptsScope), comment: function.Comment);
+            return CreateObjectCall(callable, newFunctionName, arguments: objectCallArgumentsFactory.CreateArgumentList(functionForArgumentsAndComments.Arguments, codeScope, globalScope, multipleScriptsScope), comment: functionForArgumentsAndComments.Comment);
         }
         public TES5ObjectCall CreateObjectCall(ITES5Referencer callable, TES4Function function, TES5ObjectCallArgumentsFactory objectCallArgumentsFactory, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             return CreateObjectCall(callable, function, function.FunctionCall.FunctionName, objectCallArgumentsFactory, codeScope, globalScope, multipleScriptsScope);
         }
 
-        public TES5ObjectCallCustom CreateObjectCallCustom(ITES5Referencer callable, string functionName, ITES5Type returnType, TES5ObjectCallArguments? arguments = null)
+        public static TES5ObjectCallCustom CreateObjectCallCustom(ITES5Referencer callable, string functionName, ITES5Type returnType, TES5ObjectCallArguments? arguments = null)
         {
             if (arguments == null) { arguments = new TES5ObjectCallArguments(); }
             return new TES5ObjectCallCustom(callable, functionName, returnType, arguments);
@@ -61,25 +60,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateGetActorBase(TES5ReferenceFactory.CreateReferenceToPlayer(globalScope));
         }
 
-        public TES5ObjectCall CreateRegisterForSingleUpdate(TES5GlobalScope globalScope)
+        public TES5ObjectCall CreateRegisterForSingleUpdate(TES5CodeScope codeScope, TES5GlobalScope globalScope)
         {
-            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments();
-            if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
+            TES5Property? questDelayTimeProperty;
+            Nullable<float> timerInterval = globalScope.GetTimerIntervalIfNoQuestDelayTime(out questDelayTimeProperty);
+            TES5Reference argument = timerInterval != null ?
+                TES5ReferenceFactory.CreateTimerInterval(codeScope, timerInterval.Value) :
+                TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty!);
+            TES5ObjectCallArguments arguments = new TES5ObjectCallArguments()
             {
-                TES5Property? questDelayTimeProperty = globalScope.Properties.Where(p => p.OriginalName.Equals("fquestdelaytime", StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
-                if (questDelayTimeProperty != null)
-                {
-                    arguments.Add(TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty));
-                }
-                else
-                {
-                    arguments.Add(new TES5Float(5));
-                }
-            }
-            else
-            {
-                arguments.Add(new TES5Float(0.4f));
-            }
+                argument
+            };
             return CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "RegisterForSingleUpdate", arguments);
         }
 

@@ -34,7 +34,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             foreach (TES4VariableDeclaration variable in variableDeclarations)
             {
                 TES5BasicType tes5Type = GetTES5Type(variable.VariableType);
-                TES5LocalVariable tes5Variable = new TES5LocalVariable(variable.VariableName, tes5Type);
+                TES5LocalVariable tes5Variable = TES5LocalVariableFactory.Create(tes5Type, variable.VariableName);
                 codeScope.LocalScope.AddVariable(tes5Variable);
             }
         }

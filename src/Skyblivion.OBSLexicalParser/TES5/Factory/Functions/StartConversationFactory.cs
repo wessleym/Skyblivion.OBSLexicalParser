@@ -14,7 +14,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             this.logUnknownFunctionFactory = logUnknownFunctionFactory;
         }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             /*string firstArg = function.Arguments[0].StringValue;
             string md5 = TES5TypeFactory.TES4Prefix + "SCENE_" + PHPFunction.MD5(calledOn.ReferencesTo.ReferenceEDID + firstArg).Substring(0, 16);
@@ -36,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             /*TES4FunctionArguments oldArguments = function.Arguments;
             TES5ObjectCallArguments newArguments = this.objectCallArgumentsFactory.CreateArgumentList(oldArguments, codeScope, globalScope, multipleScriptsScope);
             return this.objectCallFactory.CreateObjectCall(calledOn, "LegacyStartConversation", newArguments);*/
-            return logUnknownFunctionFactory.CreateLogCall(function);
+            return logUnknownFunctionFactory.CreateLogCall(calledOn, function, globalScope);
         }
     }
 }

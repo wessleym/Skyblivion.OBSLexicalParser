@@ -4,9 +4,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators
 {
     class TES4LogicalExpressionOperator : TES4ExpressionOperator
     {
-        private TES4LogicalExpressionOperator(string name)
-            : base(name)
-        { }
+        private TES4LogicalExpressionOperator(string name) : base(name) { }
 
         public static readonly TES4LogicalExpressionOperator
             OPERATOR_OR = new TES4LogicalExpressionOperator("||"),

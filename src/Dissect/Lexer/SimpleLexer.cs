@@ -14,7 +14,7 @@ namespace Dissect.Lexer
      */
     public class SimpleLexer : AbstractLexer
     {
-        protected string[] SkipTokens = new string[] { };
+        protected string[] SkipTokens = [];
         protected readonly Dictionary<string, IRecognizer> Recognizers = new Dictionary<string, IRecognizer>();
         /*
         * Adds a new token definition. If given only one argument,

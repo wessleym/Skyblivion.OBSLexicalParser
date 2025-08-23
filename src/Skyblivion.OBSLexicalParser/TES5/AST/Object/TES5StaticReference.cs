@@ -14,7 +14,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.overrideType = overrideType;
         }
 
-        public IEnumerable<string> Output => new string[] { this.Name };
+        public string OutputSingle => this.Name;
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public ITES5Type TES5Type => overrideType ?? TES5BasicType.GetFirstCaseInsensitive(this.Name);
 

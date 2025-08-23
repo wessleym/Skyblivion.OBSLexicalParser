@@ -1,4 +1,4 @@
-﻿using Skyblivion.ESReader.TES4;
+﻿using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Data;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 {
     static class QFReferenceAliasesFileWriter
     {
-        public static void Write(string sourcePath, TES4Record qust)
+        public static void Write(string sourcePath, ESRecord qust)
         {
             string[] aliases = ESMAnalyzer.GetReferenceAliases(qust).ToArray();
             string fileNameNoExt = BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.qf_Prefix, qust, true, null);
@@ -20,16 +20,16 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
                 + "\r\n"
 #endif
                 ;
-            FileWriter.WriteAllTextOrThrowIfExists(aliasesPath, aliasesContents);
+            FileSystemEntryUtility.WriteAllTextOrThrowIfExists(aliasesPath, aliasesContents);
         }
 
         public static void Write()
         {
-            TES4Collection collection = TES4CollectionFactory.CreateForQUSTReferenceAliasExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
+            ESCollection collection = ESCollectionFactory.CreateForQUSTReferenceAliasExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
             BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, new Build());
             string sourcePath = qfBuildTarget.GetSourcePath();
-            IEnumerable<TES4Record> qustRecords = collection.GetGrupRecords(TES4RecordType.QUST);
-            foreach (TES4Record qust in qustRecords)
+            IEnumerable<ESRecord> qustRecords = collection.GetGrupRecords(ESRecordType.QUST);
+            foreach (ESRecord qust in qustRecords)
             {
                 Write(sourcePath, qust);
             }

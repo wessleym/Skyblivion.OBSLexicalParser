@@ -5,7 +5,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Converter;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
-using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF
 {

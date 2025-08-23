@@ -6,9 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
 {
     class FragmentsParsingService : ParsingServiceWithCache<TES4CodeChunks>
     {
-        public FragmentsParsingService(SyntaxErrorCleanParser parser)
-            : base(parser)
-        { }
+        public FragmentsParsingService(SyntaxErrorCleanParser parser) : base(parser) { }
 
         protected override OBScriptLexer GetLexer()
         {

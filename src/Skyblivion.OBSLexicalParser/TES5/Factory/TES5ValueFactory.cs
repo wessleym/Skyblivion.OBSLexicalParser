@@ -5,7 +5,6 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.Context;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
@@ -40,6 +39,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             string key = functionName.ToLower();
             this.functionFactories.Add(key, factory);
+        }
+        public void AddFunctionFactory(IEnumerable<string> functionNames, IFunctionFactory factory)
+        {
+            foreach (string functionName in functionNames)
+            {
+                this.functionFactories.Add(functionName, factory);
+            }
         }
         private ITES5Value ConvertComparisonExpression(ITES4BinaryExpression expression, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
@@ -114,7 +120,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
                             expressions.RemoveAt(0);
 
-                            while (expressions.Any())
+                            while (expressions.Count > 0)
                             {
                                 resultExpression = TES5ExpressionFactory.CreateLogicalExpression(resultExpression, TES5LogicalExpressionOperator.OPERATOR_OR, expressions.Last());
                                 expressions.RemoveAt(expressions.Count - 1);
@@ -309,7 +315,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     TES5IntegerOrFloat tes5SetItem2Number = tes5set.Item2 as TES5IntegerOrFloat;
                     if (tes5SetItem2Number != null && tes5SetItem2Number.ConvertedIntValue == 0)
                     {
-                        return TES5ExpressionFactory.createArithmeticExpression(tes5set.Item1, newOp, new TES5None());
+                        return TES5ExpressionFactory.createArithmeticExpression(tes,5set.Item1, newOp, new TES5None());
                     }
 #else
                     throw new ConversionException("Type was void.");//This shouldn't happen anymore.
@@ -483,13 +489,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             ITES4Reference? reference = value as ITES4Reference;
             if (reference != null) { return this.referenceFactory.CreateReadReference(reference.StringValue, globalScope, multipleScriptsScope, codeScope.LocalScope); }
             ITES4Callable? callable = value as ITES4Callable;
-            if (callable != null) { return this.CreateCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
+            if (callable != null) { return (ITES5Value)this.CreateCodeChunk(callable, codeScope, globalScope, multipleScriptsScope); }
             ITES4BinaryExpression? expression = value as ITES4BinaryExpression;
             if (expression != null) { return this.ConvertExpression(expression, codeScope, globalScope, multipleScriptsScope); }
             throw new ConversionException("Unknown ITES4Value: " + value.GetType().FullName);
         }
 
-        public ITES5ValueCodeChunk CreateCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk CreateCodeChunk(ITES4Callable chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Function function = chunk.Function;
             ITES5Referencer calledOnReference = this.CreateCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
@@ -501,7 +507,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
             TES5FunctionFactoryUseTracker.Add(functionKey, factory, globalScope.ScriptHeader.OriginalScriptName);
-            ITES5ValueCodeChunk codeChunk = factory.ConvertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
+            ITES5CodeChunk codeChunk = factory.ConvertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
             return codeChunk;
         }
 

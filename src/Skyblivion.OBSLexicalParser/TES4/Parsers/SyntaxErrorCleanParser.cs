@@ -11,9 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
 {
     class SyntaxErrorCleanParser : Dissect.Parser.LALR1.Parser
     {
-        public SyntaxErrorCleanParser(Grammar grammar, ActionAndGoTo? parseTable = null)
-            : base(grammar, parseTable)
-        { }
+        public SyntaxErrorCleanParser(Grammar grammar, ActionAndGoTo? parseTable = null) : base(grammar, parseTable) { }
 
         public object ParseWithFixLogic(ITokenStream stream)
         {

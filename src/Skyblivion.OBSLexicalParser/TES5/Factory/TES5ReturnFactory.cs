@@ -12,12 +12,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             this.objectCallFactory = objectCallFactory;
         }
 
-        public TES5CodeChunkCollection CreateCodeChunkCollection(TES5FunctionScope functionScope, TES5GlobalScope globalScope)
+        public TES5CodeChunkCollection CreateCodeChunkCollection(TES5CodeScope codeScope, TES5GlobalScope globalScope)
         {
             TES5CodeChunkCollection collection = new TES5CodeChunkCollection();
-            if (functionScope.BlockName == "OnUpdate")
+            if (codeScope.LocalScope.FunctionScope.BlockName == "OnUpdate")
             {
-                TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(globalScope);
+                TES5ObjectCall function = this.objectCallFactory.CreateRegisterForSingleUpdate(codeScope, globalScope);
                 collection.Add(function);
             }
             collection.Add(new TES5Return());

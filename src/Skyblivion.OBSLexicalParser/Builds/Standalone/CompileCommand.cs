@@ -1,5 +1,4 @@
 namespace Skyblivion.OBSLexicalParser.Builds.Standalone
 {
-    class CompileCommand : CompileCommandBase
-    { }
+    class CompileCommand : CompileCommandBase { }
 }

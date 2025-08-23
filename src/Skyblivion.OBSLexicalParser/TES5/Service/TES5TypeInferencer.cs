@@ -1,4 +1,5 @@
 using Skyblivion.ESReader.Extensions;
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -8,6 +9,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Service
 {
@@ -23,36 +25,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             //otherScriptsLower = Directory.EnumerateFiles(this.otherScriptsFolder).Select(path => Path.GetFileNameWithoutExtension(path).ToLower()).ToArray();
         }
 
-        /*
-        * Inference the type by analyzing the object call.
-         * Please note: It is not able to analyze calls to another scripts, but those weren't used in oblivion anyways
-        */
-        public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
-        {
-            this.InferenceTypeOfCalledObject(objectCall);
-            this.InferenceTypeOfMethodArguments(objectCall);
-        }
-
-        private void InferenceTypeOfMethodArguments(TES5ObjectCall objectCall)
+        private static void InferenceTypeOfCalledObject(TES5ObjectCall objectCall, TES5InheritanceFunctionWithCalledOn function)
         {
             /*
-             * Inference the arguments
+             * Check if we have something to inference inside the code, not some static class or method call return
              */
-            int argumentIndex = 0;
-            foreach (ITES5Value argument in objectCall.Arguments)
+            if (objectCall.AccessedObject.ReferencesTo == null) { return; }
+            ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.NativeType;
+            //this is not "exactly" nice solution, but its enough. For now.
+            TES5BasicType inferenceType = function.CalledOn;
+            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(inferencableType, inferenceType))
             {
-                InferenceTypeOfMethodArgument(objectCall, argument, argumentIndex);
-                argumentIndex++;
+                return; //We already have the good type.
             }
+            InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType);
         }
 
-        private void InferenceTypeOfMethodArgument(TES5ObjectCall objectCall, ITES5Value argument, int argumentIndex)
+        private static void InferenceTypeOfMethodArgument(TES5ObjectCall objectCall, ITES5Value argument, int argumentIndex, TES5InheritanceFunctionSignature function)
         {
-            ITES5Type calledOnType = objectCall.AccessedObject.TES5Type.NativeType;
-            /*
-            * Get the argument type according to TES5Inheritance graph.
-            */
-            TES5BasicType argumentTargetType = TES5InheritanceGraphAnalyzer.FindTypeByMethodParameter(calledOnType.NativeType, objectCall.FunctionName, argumentIndex);
+            if (argumentIndex > function.Arguments.Length - 1)
+            {
+                throw new InvalidOperationException(function.Name + " does not have an argument at index " + argumentIndex);
+            }
+            TES5BasicType argumentTargetType = function.Arguments[argumentIndex];
             if (argument.TES5Type != argumentTargetType)
             {
                 /*
@@ -62,7 +57,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
                 if (referencerArgument != null && TES5InheritanceGraphAnalyzer.IsExtending(argumentTargetType, argument.TES5Type.NativeType))
                 { //HACKY!
                     if (referencerArgument.ReferencesTo == null) { throw new NullableException(nameof(referencerArgument.ReferencesTo)); }
-                    this.InferenceType(referencerArgument.ReferencesTo, argumentTargetType);
+                    InferenceType(referencerArgument.ReferencesTo, argumentTargetType);
                 }
                 else
                 {
@@ -89,23 +84,36 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             }
         }
 
-        private void InferenceTypeOfCalledObject(TES5ObjectCall objectCall)
+        private static void InferenceTypeOfMethodArguments(TES5ObjectCall objectCall, TES5InheritanceFunctionSignature function)
         {
             /*
-             * Check if we have something to inference inside the code, not some static class or method call return
+             * Inference the arguments
              */
-            if (objectCall.AccessedObject.ReferencesTo == null) { return; }
-            ITES5Type inferencableType = objectCall.AccessedObject.TES5Type.NativeType;
-            //this is not "exactly" nice solution, but its enough. For now.
-            TES5BasicType inferenceType = TES5InheritanceGraphAnalyzer.FindTypeByMethod(objectCall, esmAnalyzer);
-            if (TES5InheritanceGraphAnalyzer.IsTypeOrExtendsType(inferencableType, inferenceType))
+            int argumentIndex = 0;
+            foreach (ITES5Value argument in objectCall.Arguments)
             {
-                return; //We already have the good type.
+                InferenceTypeOfMethodArgument(objectCall, argument, argumentIndex, function);
+                argumentIndex++;
             }
-            this.InferenceType(objectCall.AccessedObject.ReferencesTo, inferenceType);
         }
 
-        private void InferenceWithCustomType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)
+        /*
+        * Inference the type by analyzing the object call.
+         * Please note: It is not able to analyze calls to another scripts, but those weren't used in oblivion anyways
+        */
+        public void InferenceObjectByMethodCall(TES5ObjectCall objectCall)
+        {
+            TES5InheritanceFunctionWithCalledOn function = TES5InheritanceGraphAnalyzer.FindFunction(objectCall, esmAnalyzer);
+            InferenceTypeOfCalledObject(objectCall, function);
+            InferenceTypeOfMethodArguments(objectCall, function);
+            if (!objectCall.FunctionName.Equals(function.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("The found function name (" + function.Name + ") did not match the original function name (" + objectCall.FunctionName + ").");
+            }
+            objectCall.FunctionName = function.Name;
+        }
+
+        private static void InferenceWithCustomType(ITES5VariableOrProperty variable, ITES5Type type, TES5MultipleScriptsScope multipleScriptsScope)
         {
             /*
              * We're referencing another script - find the script and make it a variable that property will track remotely
@@ -122,7 +130,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
          *  - Will return true if inferencing succeeded, false otherwise.
          * @throws ConversionTypeMismatchException
         */
-        private void InferenceType(ITES5VariableOrProperty variable, TES5BasicType type)
+        private static void InferenceType(ITES5VariableOrProperty variable, TES5BasicType type)
         {
             if (!TES5InheritanceGraphAnalyzer.IsTypeOrExtendsTypeOrIsNumberType(type, variable.TES5Type.NativeType, false))
             {
@@ -179,15 +187,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
             if (variable.TES5Type.AllowInference)
             {
                 ITES5Type type = this.GetScriptTypeByReferenceEdid(variable);
-                this.InferenceWithCustomType(variable, type, multipleScriptsScope);
+                InferenceWithCustomType(variable, type, multipleScriptsScope);
             }
         }
 
-        public void InferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value)
+        public static void InferenceObjectByAssignation(ITES5Referencer reference, ITES5Value value)
         {
             if (reference.ReferencesTo != null && !reference.TES5Type.IsPrimitive)
             {
-                this.InferenceType(reference.ReferencesTo, value.TES5Type.NativeType);
+                InferenceType(reference.ReferencesTo, value.TES5Type.NativeType);
             }
         }
     }

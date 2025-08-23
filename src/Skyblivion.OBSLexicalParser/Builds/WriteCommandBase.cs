@@ -1,5 +1,5 @@
-﻿using Skyblivion.OBSLexicalParser.Commands;
-using Skyblivion.OBSLexicalParser.TES5.AST;
+﻿using Skyblivion.OBSLexicalParser.TES5.AST;
+using Skyblivion.OBSLexicalParser.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

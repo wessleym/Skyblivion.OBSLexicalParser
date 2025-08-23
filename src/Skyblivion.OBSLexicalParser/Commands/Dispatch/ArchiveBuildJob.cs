@@ -35,7 +35,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             //WTM:  Change:  buildTarget.getBuildPath() is not a valid method.
             string sourcePath = null;//buildTarget.getBuildPath()
             string destinationPath = buildTarget.GetArchivedBuildPath(archivedBuild);
-            FileWriter.CopyDirectoryFilesRecursive(sourcePath, destinationPath, false);
+            FileSystemEntryUtility.CopyDirectoryFilesRecursive(sourcePath, destinationPath, false);
             Process.Start("clean.sh", this.buildTarget);
         }
     }

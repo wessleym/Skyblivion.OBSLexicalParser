@@ -25,9 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 this.Start("Code+");
             }
         }
-        public TES4ObscriptCodeGrammar()
-            : this(true)
-        { }
+        public TES4ObscriptCodeGrammar() : this(true) { }
 
         protected void CreateObscriptCodeParsingTree()
         {
@@ -43,9 +41,9 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                     chunks.Add(code);
                     return chunks;
                 });
-            
+
             __invoke("Code").Is("Branch").Is("SetValue(OptionalComment)", "CRLF").Is("FunctionCallAndArguments(OptionalComment)", "CRLF").Is("ObjectCall(OptionalComment)", "CRLF").Is("LocalVariableDeclaration+").Is("Return").Is("Comment");
-            
+
             __invoke("LocalVariableDeclaration+")
                 .Is("LocalVariableDeclaration+", "LocalVariableDeclaration").Call((List<TES4VariableDeclaration> list, TES4VariableDeclaration variableDeclaration) =>
                 {
@@ -90,7 +88,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 {
                     return new TES4ElseSubBranch(new TES4CodeChunks());
                 });
-            
+
             __invoke("BranchStart")
                 .Is("BranchStartLine", "Code+").Call((TES4SubBranch subBranch, TES4CodeChunks code) =>
                 {

@@ -1,7 +1,8 @@
 ﻿using Dissect.Extensions;
-using Skyblivion.ESReader.TES4;
+using Skyblivion.ESReader;
 using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Data;
+using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.Utilities;
@@ -18,16 +19,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             Build build = new Build();
             BuildTarget qfBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.QFName, build);
             BuildTarget tifBuildTarget = BuildTargetFactory.Construct(BuildTargetFactory.TIFName, build);
-            TES4Collection collection = TES4CollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);//Needs the "full" collection for SCRO lookups.
-            using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(collection))
+            ESCollection collection = ESCollectionFactory.Create(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);//Needs the "full" collection for SCRO lookups.
+            TES5ScriptHeaderFactory scriptHeaderFactory = new TES5ScriptHeaderFactory();
+            using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(scriptHeaderFactory, collection))
             {
-                foreach (TES4Record record in collection.Where(r => r.RecordType == TES4RecordType.INFO))
+                foreach (ESRecord record in collection.Where(r => r.RecordType == ESRecordType.INFO))
                 {
                     var scroRecords = esmAnalyzer.GetTypesFromSCROEnumerable(record, null);
                     string[] aliases = scroRecords.Select(r => r.Key).ToArray();
                     Write(qfBuildTarget, tifBuildTarget, record, null, aliases);
                 }
-                foreach (TES4Record record in collection.GetGrupRecords(TES4RecordType.QUST))
+                foreach (ESRecord record in collection.GetGrupRecords(ESRecordType.QUST))
                 {
                     Dictionary<StageIndexAndLogIndex, List<string>> aliasesDictionary = new Dictionary<StageIndexAndLogIndex, List<string>>();
                     foreach (var subrecord in record.GetSubrecordsWithStageIndexAndLogIndex("SCRO"))
@@ -44,7 +46,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             }
         }
 
-        private static void Write(IBuildTarget qfBuildTarget, IBuildTarget tifBuildTarget, TES4Record record, StageIndexAndLogIndex? stageIndexAndLogIndex, IReadOnlyList<string> aliases)
+        private static void Write(IBuildTarget qfBuildTarget, IBuildTarget tifBuildTarget, ESRecord record, StageIndexAndLogIndex? stageIndexAndLogIndex, IReadOnlyList<string> aliases)
         {
             if (!aliases.Any()) { return; }
 #if !NEWBT
@@ -65,13 +67,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
                 + (playerRefFound && aliases.Any() ? "\r\n" : "") + "\r\n\r\n"
 #endif
                 ;
-            FileWriter.WriteAllTextOrThrowIfExists(aliasesPath, contents);
+            FileSystemEntryUtility.WriteAllTextOrThrowIfExists(aliasesPath, contents);
         }
 
-        private static void GetBuildTargetAndPrefix(IBuildTarget qfBuildTarget, IBuildTarget tifBuildTarget, TES4Record record, out IBuildTarget buildTarget, out string prefix)
+        private static void GetBuildTargetAndPrefix(IBuildTarget qfBuildTarget, IBuildTarget tifBuildTarget, ESRecord record, out IBuildTarget buildTarget, out string prefix)
         {
-            if (record.RecordType == TES4RecordType.QUST) { buildTarget = qfBuildTarget; prefix = TES5ReferenceFactory.qf_Prefix; }
-            else if (record.RecordType == TES4RecordType.INFO) { buildTarget = tifBuildTarget; prefix = TES5ReferenceFactory.tif_Prefix; }
+            if (record.RecordType == ESRecordType.QUST) { buildTarget = qfBuildTarget; prefix = TES5ReferenceFactory.qf_Prefix; }
+            else if (record.RecordType == ESRecordType.INFO) { buildTarget = tifBuildTarget; prefix = TES5ReferenceFactory.tif_Prefix; }
             else { throw new InvalidOperationException("Invalid record type:  " + record.RecordType.Name); }
         }
     }

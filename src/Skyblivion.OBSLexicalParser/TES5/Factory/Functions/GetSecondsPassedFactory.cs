@@ -1,21 +1,17 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetSecondsPassedFactory : IFunctionFactory
     {
-        private readonly LogUnknownFunctionFactory logUnknownFunctionFactory;
-        public GetSecondsPassedFactory(LogUnknownFunctionFactory logUnknownFunctionFactory)
-        {
-            this.logUnknownFunctionFactory = logUnknownFunctionFactory;
-        }
+        public GetSecondsPassedFactory() { }
 
-        public ITES5ValueCodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //First Attempt:
             /*
@@ -49,7 +45,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             });*/
             //Third attempt:
             //return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
-            return logUnknownFunctionFactory.CreateReplacement(function, new TES5Integer(1000), codeScope);
+            //Fourth attempt:
+            //return logUnknownFunctionFactory.CreateReplacement(calledOn, function, new TES5Integer(1000), codeScope, globalScope);
+            //Fifth attempt:
+            TES5Property? questDelayTimeProperty;
+            Nullable<float> timerInterval = globalScope.GetTimerIntervalIfNoQuestDelayTime(out questDelayTimeProperty);
+            if (timerInterval != null)
+            {
+                return TES5ReferenceFactory.CreateTimerInterval(codeScope, timerInterval.Value);
+            }
+            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty!);
         }
     }
 }

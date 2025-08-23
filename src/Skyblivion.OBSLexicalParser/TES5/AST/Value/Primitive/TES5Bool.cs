@@ -5,13 +5,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
 {
     class TES5Bool : ITES5Primitive
     {
-        private readonly bool b;
-        public TES5Bool(bool b)
+        public bool Value { get; }
+        public bool AllowSimplification { get; }
+        public TES5Bool(bool b, bool allowSimplification = true)
         {
-            this.b = b;
+            this.Value = b;
+            AllowSimplification = allowSimplification;
         }
 
-        public IEnumerable<string> Output => new string[] { b ? "True" : "False" };
+        public string OutputSingle => Value ? "True" : "False";
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public ITES5Type TES5Type => TES5BasicType.T_BOOL;
     }

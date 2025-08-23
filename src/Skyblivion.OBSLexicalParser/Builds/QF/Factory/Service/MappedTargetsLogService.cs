@@ -6,9 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Service
 {
     class MappedTargetsLogService : BuildLogService
     {
-        public MappedTargetsLogService(Build build)
-            : base(GetPath(build), false)
-        { }
+        public MappedTargetsLogService(Build build) : base(GetPath(build), false) { }
 
         public void WriteScriptName(string scriptName)
         {

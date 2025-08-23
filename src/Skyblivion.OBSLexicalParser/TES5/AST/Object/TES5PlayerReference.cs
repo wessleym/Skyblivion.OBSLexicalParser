@@ -7,11 +7,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
 {
     class TES5PlayerReference : ITES5Referencer
     {
+        public TES5PlayerReference() { }
+
         private const string playerName = "player";
 
         public const string PlayerRefName = "PlayerRef";
 
-        public IEnumerable<string> Output => new string[] { PlayerRefName };
+        public string OutputSingle => PlayerRefName;
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public string Name => playerName;
 
@@ -26,6 +30,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
         public static bool EqualsPlayer(string name)
         {
             return name.Equals(playerName, StringComparison.OrdinalIgnoreCase);
+        }
+        public static bool EqualsPlayer(ITES5Referencer referencer)
+        {
+            return EqualsPlayer(referencer.Name);
         }
     }
 }

@@ -2,7 +2,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Types
 {
-    interface ITES5Type : ITES5Outputtable
+    interface ITES5Type : ITES5Outputtable, ITES5OutputtableSingle
     {
         //Get native type on which this type is based
         //If this type is native, it will return itself.

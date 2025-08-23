@@ -1,17 +1,20 @@
+using Skyblivion.ESReader;
 using Skyblivion.ESReader.Extensions;
 using Skyblivion.ESReader.PHP;
-using Skyblivion.ESReader.TES4;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Context;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
@@ -25,22 +28,29 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
         public const string qf_Prefix = "qf_";
         public const string tif_Prefix = "tif_";
+        //The below are not valid Actor Value names in Skyrim, so we are using GlobalVariables instead. https://ck.uesp.net/wiki/Actor_Value
+        private static readonly string[] globalVariableActorValueNames = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"];
         //Those are used to hook in the internal Skyblivion systems.
-        private readonly static Dictionary<string, ITES5Type> specialConversions = new Dictionary<string, ITES5Type>()
+        private readonly static Dictionary<string, ITES5Type> specialConversions;
+        static TES5ReferenceFactory()
         {
-            { TES4Attr + "Strength",  TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Intelligence", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Willpower", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Agility", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Speed", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Endurance", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Personality", TES5BasicType.T_GLOBALVARIABLE },
-            { TES4Attr + "Luck", TES5BasicType.T_GLOBALVARIABLE },
-            { tContainerName, TES5BasicType.T_SKYBCONTAINER },//Data container
-            { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction
-            { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
-            { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
-        };
+            specialConversions = new Dictionary<string, ITES5Type>()
+            {
+                { tContainerName, TES5BasicType.T_SKYBCONTAINER },//Data container
+                { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction
+                { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
+                { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
+            };
+            foreach (string valueName in globalVariableActorValueNames)
+            {
+                specialConversions.Add(TES4Attr + valueName, TES5BasicType.T_GLOBALVARIABLE);
+            }
+        }
+        public static bool IsGlobalVariableActorValueName(string name)
+        {
+            return globalVariableActorValueNames.Contains(name, StringComparer.OrdinalIgnoreCase);
+        }
+
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ObjectPropertyFactory objectPropertyFactory;
         private readonly ESMAnalyzer esmAnalyzer;
@@ -164,6 +174,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             }
         }
 
+        private ITES5VariableOrProperty GetOrAddPropertyByOriginalName(string referenceName, TES5BasicType? typeForNewProperty, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            ITES5VariableOrProperty? property = globalScope.TryGetPropertyByOriginalName(referenceName); //todo rethink how to unify the prefix searching
+            if (property == null)
+            {
+                Nullable<int> tes4FormID = null;
+                ITES5Type propertyType =
+                    typeForNewProperty != null ? typeForNewProperty :
+                    GetPropertyTypeAndFormID(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
+                TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.ConstructWithTES4FormID(referenceName, propertyType, referenceName, tes4FormID);
+                globalScope.AddProperty(propertyToAddToGlobalScope);
+                property = propertyToAddToGlobalScope;
+            }
+            return property;
+        }
+
         /*
         * Create a generic-purpose reference.
         */
@@ -181,20 +207,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                 return propertyReference;
             }
 
-            ITES5VariableOrProperty? property = localScope.TryGetVariable(referenceName);
+            ITES5VariableOrProperty? property = localScope.TryGetVariableOrParameter(referenceName);
             if (property == null)
             {
-                property = globalScope.TryGetPropertyByOriginalName(referenceName); //todo rethink how to unify the prefix searching
-                if (property == null)
-                {
-                    Nullable<int> tes4FormID = null;
-                    ITES5Type propertyType =
-                        typeForNewProperty != null ? typeForNewProperty :
-                        GetPropertyTypeAndFormID(referenceName, tes4ReferenceNameForType, globalScope, multipleScriptsScope, out tes4FormID);
-                    TES5Property propertyToAddToGlobalScope = TES5PropertyFactory.ConstructWithTES4FormID(referenceName, propertyType, referenceName, tes4FormID);
-                    globalScope.AddProperty(propertyToAddToGlobalScope);
-                    property = propertyToAddToGlobalScope;
-                }
+                property = GetOrAddPropertyByOriginalName(referenceName, typeForNewProperty, tes4ReferenceNameForType, globalScope, multipleScriptsScope);
             }
 
             return CreateReferenceToVariableOrProperty(property);
@@ -250,6 +266,28 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private static TES5FragmentType? GetFragmentType(string edidOrFileNameNoExt)
         {
             return edidOrFileNameNoExt.StartsWith(qf_Prefix) ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith(tif_Prefix) ? TES5FragmentType.T_TIF : null;
+        }
+
+        public static TES5Reference CreateTimerInterval(TES5CodeScope codeScope, float interval)
+        {
+            const string timerIntervalName = "timerInterval";
+            var parentScope = codeScope.LocalScope.GetUltimateParentScope();
+            var timerIntervalVariable = parentScope.TryGetVariable(timerIntervalName);
+            var tes5FloatInterval = new TES5Float(interval);
+            if (timerIntervalVariable == null)
+            {
+                return TES5LocalVariableFactory.CreateWithInitialization(TES5BasicType.T_FLOAT, timerIntervalName, tes5FloatInterval, parentScope);
+            }
+            var initialization = timerIntervalVariable as TES5LocalVariableInitialization;
+            if (initialization == null)
+            {
+                throw new InvalidOperationException(timerIntervalName + " should always be set via " + typeof(TES5LocalVariableInitialization).FullName + ".");
+            }
+            if (!initialization.ValueEquals(tes5FloatInterval))
+            {
+                throw new InvalidOperationException("A new " + timerIntervalName + " value was set.");
+            }
+            return CreateReferenceToVariableOrProperty(timerIntervalVariable);
         }
     }
 }

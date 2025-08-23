@@ -1,7 +1,7 @@
-using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.Utilities;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {

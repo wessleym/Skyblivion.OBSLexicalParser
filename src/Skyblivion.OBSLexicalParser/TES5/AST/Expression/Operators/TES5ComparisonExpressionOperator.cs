@@ -9,7 +9,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators
 
         public TES5ComparisonExpressionOperator Flip()
         {
-            if (this == OPERATOR_EQUAL || this == OPERATOR_NOT_EQUAL) { return this; }
+            if (this == OPERATOR_EQUAL) { return OPERATOR_NOT_EQUAL; }
+            if (this == OPERATOR_NOT_EQUAL) { return OPERATOR_EQUAL; }
             if (this == OPERATOR_GREATER) { return OPERATOR_LESS_OR_EQUAL; }
             if (this == OPERATOR_GREATER_OR_EQUAL) { return OPERATOR_LESS; }
             if (this == OPERATOR_LESS) { return OPERATOR_GREATER_OR_EQUAL; }

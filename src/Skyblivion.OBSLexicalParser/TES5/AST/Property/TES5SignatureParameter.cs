@@ -12,7 +12,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
      * a "meaning" ( a generic marker one can use to get a variable
      * it doesn't know name for ) and predefined declaration type
      */
-    class TES5SignatureParameter : ITES5VariableOrProperty
+    class TES5SignatureParameter : ITES5VariableOrProperty, ITES5Outputtable, ITES5OutputtableSingle
     {
         public string Name { get; }
         public ITES5Type TES5Type { get; set; }
@@ -59,5 +59,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             throw new ConversionException("Local variables cannot track remote scripts.");
         }
 
-        public IEnumerable<string> Output => new string[] { this.TES5DeclaredType.Value + " " + this.Name };    }
+        public string OutputSingle => this.TES5DeclaredType.Value + " " + this.Name;
+
+        public IEnumerable<string> Output => [OutputSingle];
+    }
 }

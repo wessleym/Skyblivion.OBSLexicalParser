@@ -14,9 +14,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
      */
     class StandaloneParsingService : ParsingServiceWithCache<TES4Script>
     {
-        public StandaloneParsingService(SyntaxErrorCleanParser parser)
-            : base(parser)
-        { }
+        public StandaloneParsingService(SyntaxErrorCleanParser parser) : base(parser) { }
 
         protected override OBScriptLexer GetLexer()
         {

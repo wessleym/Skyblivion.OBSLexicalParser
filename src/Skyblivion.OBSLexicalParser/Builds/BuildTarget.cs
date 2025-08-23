@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds
 {
-    class BuildTarget : IBuildTarget
+    class BuildTarget : IBuildTarget, ITranspiledPathSource
     {
         public string Name { get; }
         private readonly string filePrefix;

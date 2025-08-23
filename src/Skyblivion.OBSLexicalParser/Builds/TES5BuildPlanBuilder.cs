@@ -1,6 +1,5 @@
 using Dissect.Extensions;
 using Skyblivion.ESReader.Extensions;
-using Skyblivion.OBSLexicalParser.Commands;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.graph = graph;
         }
 
-        public Dictionary<int, List<Dictionary<TBuildTarget, List<string>>>> CreateBuildPlan<TBuildTarget>(BuildSourceFilesCollection<TBuildTarget> scripts, int threads = BuildTargetCommand.DefaultThreads) where TBuildTarget : IBuildTarget
+        public Dictionary<int, List<Dictionary<TBuildTarget, List<string>>>> CreateBuildPlan<TBuildTarget>(BuildSourceFilesCollection<TBuildTarget> scripts, int threads = BuildTargetExecutor.DefaultThreads) where TBuildTarget : IBuildTarget
         {
             Dictionary<string, string> codeScripts = new Dictionary<string, string>();
             /*

@@ -1,6 +1,7 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
 using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -16,14 +17,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5ComparisonExpression(left, op, right);
         }
 
-        public static TES5TrueBooleanExpression CreateTrueBooleanExpression(ITES5Value valueToBeTrue)
+        public static TES5ComparisonExpression CreateTrueBooleanExpression(ITES5Value valueToBeTrue)
         {
-            return new TES5TrueBooleanExpression(valueToBeTrue);
-        }
-
-        public static TES5BoolCastedExpression CreateBoolCastedExpression(ITES5Value value)
-        {
-            return new TES5BoolCastedExpression(value);
+            return new TES5ComparisonExpression(valueToBeTrue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
         }
 
         public static TES5ArithmeticExpression CreateArithmeticExpression(ITES5Value left, TES5ArithmeticExpressionOperator op, ITES5Value right)

@@ -25,7 +25,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4Branch? branch = chunk as TES4Branch;
             if (branch != null) { return TES5BranchFactory.CreateCodeChunk(branch, codeScope, globalScope, multipleScriptsScope, this, valueFactory); }
             TES4Return? returnChunk = chunk as TES4Return;
-            if (returnChunk != null) { return this.returnFactory.CreateCodeChunkCollection(codeScope.LocalScope.FunctionScope, globalScope); }
+            if (returnChunk != null) { return this.returnFactory.CreateCodeChunkCollection(codeScope, globalScope); }
             ITES4Callable? callable = chunk as ITES4Callable;
             if (callable != null) { return this.valueFactory.CreateCodeChunks(callable, codeScope, globalScope, multipleScriptsScope); }
             TES4VariableAssignation? assignation = chunk as TES4VariableAssignation;

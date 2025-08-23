@@ -15,14 +15,16 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.property = property;
         }
 
-        public IEnumerable<string> Output
+        public string OutputSingle
         {
             get
             {
-                string referenceOutput = this.AccessedObject.Output.Single();
-                yield return referenceOutput + "." + this.property.Name + ManualCastToOutput;
+                string referenceOutput = this.AccessedObject.OutputSingle;
+                return referenceOutput + "." + this.property.Name + ManualCastToOutput;
             }
         }
+
+        public IEnumerable<string> Output => [OutputSingle];
 
         public ITES5Type TES5Type => this.property.TES5Type;
 
