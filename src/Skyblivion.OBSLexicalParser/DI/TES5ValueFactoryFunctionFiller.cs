@@ -79,7 +79,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             valueFactory.AddFunctionFactory("getdestroyed", new GetDestroyedFactory(objectCallFactory));
             valueFactory.AddFunctionFactory("getdetected", new GetDetectedFactory(referenceFactory, valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getdisabled", new RenamedFunctionFactory("IsDisabled", simpleFunctionTranslationFactory));
-            valueFactory.AddFunctionFactory("getdisposition", new GetDispositionFactory(objectCallFactory));
+            valueFactory.AddFunctionFactory("getdisposition", new GetDispositionFactory(objectCallFactory, logUnknownFunctionFactory));
             valueFactory.AddFunctionFactory("getdistance", new GetDistanceFactory(referenceFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("getequipped", new RenamedFunctionFactory("IsEquipped", simpleFunctionTranslationFactory));
             valueFactory.AddFunctionFactory("getfactionrank", defaultFunctionFactory);

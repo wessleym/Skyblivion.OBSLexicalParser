@@ -1,4 +1,3 @@
-using Dissect.Lexer;
 using Dissect.Lexer.TokenStream;
 
 namespace Dissect.Parser

@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.Types;
@@ -19,14 +20,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             this.comment = comment;
         }
 
-        public string OutputSingle 
+        public string OutputSingle
         {
             get
             {
-                string accessedObject = this.AccessedObject.OutputSingle;
                 string arguments = this.Arguments.OutputSingle;
                 string commentOutput = comment != null ? " " + comment.OutputSingle : "";
-                return accessedObject + "." + this.FunctionName + "(" + arguments + ")" + ManualCastToOutput + commentOutput;
+                return (this.AccessedObject is not TES5SelfReference ? this.AccessedObject.OutputSingle + "." : "") + this.FunctionName + "(" + arguments + ")" + ManualCastToOutput + commentOutput;
             }
         }
 

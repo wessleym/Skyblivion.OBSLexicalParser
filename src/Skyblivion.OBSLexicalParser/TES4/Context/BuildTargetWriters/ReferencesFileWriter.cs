@@ -72,8 +72,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 
         private static void GetBuildTargetAndPrefix(IBuildTarget qfBuildTarget, IBuildTarget tifBuildTarget, ESRecord record, out IBuildTarget buildTarget, out string prefix)
         {
-            if (record.RecordType == ESRecordType.QUST) { buildTarget = qfBuildTarget; prefix = TES5ReferenceFactory.qf_Prefix; }
-            else if (record.RecordType == ESRecordType.INFO) { buildTarget = tifBuildTarget; prefix = TES5ReferenceFactory.tif_Prefix; }
+            if (record.RecordType == ESRecordType.QUST) { buildTarget = qfBuildTarget; prefix = TES5ReferenceFactory.QF_Prefix; }
+            else if (record.RecordType == ESRecordType.INFO) { buildTarget = tifBuildTarget; prefix = TES5ReferenceFactory.TIF_Prefix; }
             else { throw new InvalidOperationException("Invalid record type:  " + record.RecordType.Name); }
         }
     }

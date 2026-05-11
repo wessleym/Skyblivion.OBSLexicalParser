@@ -2,6 +2,8 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration
 {

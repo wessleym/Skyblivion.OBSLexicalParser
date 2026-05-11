@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;LOGEXCEPTIONS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LOGEXCEPTIONS;PRESERVECASES</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;PRESERVECASES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

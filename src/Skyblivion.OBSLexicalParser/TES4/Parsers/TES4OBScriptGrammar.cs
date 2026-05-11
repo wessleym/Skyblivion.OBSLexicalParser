@@ -27,7 +27,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                     return new TES4Script(header, variableDeclarationsOrComments, blockList);
                 })
 #if NEWBT
-                .Is("ScriptHeader").Call((TES4ScriptHeader header) =>//WTM:  Change:  I added this section to allow for a few more scripts to parsed (scripts that are just a header).
+                .Is("ScriptHeader").Call((TES4ScriptHeader header) =>//WTM:  Change:  I added this section to allow for a few more scripts to be parsed (scripts that are just a header).
                 {
                     return new TES4Script(header, null, null);
                 })
@@ -69,7 +69,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             __invoke("VariableDeclaration")
                 .Is("VariableDeclarationType", "VariableName").Call((CommonToken variableDeclarationType, CommonToken variableName) =>
                 {
-                    return new TES4VariableDeclaration(variableName.Value, TES4Type.GetFirst(variableDeclarationType.Value.ToLower()));
+                    return new TES4VariableDeclaration(variableName.Value, TES4Type.GetFirst(variableDeclarationType.Value));
                 });
 
             __invoke("Block+")

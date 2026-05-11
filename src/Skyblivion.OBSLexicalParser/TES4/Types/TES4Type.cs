@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.Types
@@ -30,7 +31,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Types
 
         public static TES4Type GetFirst(string name)
         {
-            return all.Where(t => t.Name == name).First();
+            return all.Where(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).First();
         }
     }
 }

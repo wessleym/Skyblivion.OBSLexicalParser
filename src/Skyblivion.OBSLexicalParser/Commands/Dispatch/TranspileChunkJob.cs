@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             TES5GlobalVariableCollection globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildChunk in this.buildPlan)
             {
-                Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
+                Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>(StringComparer.OrdinalIgnoreCase);
                 /*
                  * First, build the scripts global scopes
                  */

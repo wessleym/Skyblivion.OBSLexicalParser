@@ -13,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
         public static void Write(string sourcePath, ESRecord qust)
         {
             string[] aliases = ESMAnalyzer.GetReferenceAliases(qust).ToArray();
-            string fileNameNoExt = BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.qf_Prefix, qust, true, null);
+            string fileNameNoExt = BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.QF_Prefix, qust, true, null);
             string aliasesPath = sourcePath + fileNameNoExt + ".aliases";
             string aliasesContents = string.Join("\r\n", aliases)
 #if !NEWBT

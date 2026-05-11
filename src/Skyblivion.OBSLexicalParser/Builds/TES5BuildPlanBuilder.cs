@@ -17,19 +17,23 @@ namespace Skyblivion.OBSLexicalParser.Builds
 
         public Dictionary<int, List<Dictionary<TBuildTarget, List<string>>>> CreateBuildPlan<TBuildTarget>(BuildSourceFilesCollection<TBuildTarget> scripts, int threads = BuildTargetExecutor.DefaultThreads) where TBuildTarget : IBuildTarget
         {
-            Dictionary<string, string> codeScripts = new Dictionary<string, string>();
+            Dictionary<string, string> codeScripts = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             /*
              * Mapping script names to build names
              */
-            Dictionary<string, TBuildTarget> scriptToBuild = new Dictionary<string, TBuildTarget>();
+            Dictionary<string, TBuildTarget> scriptToBuild = new Dictionary<string, TBuildTarget>(StringComparer.OrdinalIgnoreCase);
             foreach (var kvp in scripts)
             {
                 TBuildTarget buildTarget = kvp.Key;
                 string[] buildScripts = kvp.Value;
                 foreach (var script in buildScripts)
                 {
-                    string scriptName = script.Substring(0, script.Length-4);
-                    string scriptNameKey = scriptName.ToLower();
+                    string scriptName = script.Substring(0, script.Length - 4);
+                    string scriptNameKey = scriptName
+#if !PRESERVECASES
+                        .ToLower()
+#endif
+                        ;
                     codeScripts.Add(scriptNameKey, scriptName);
                     scriptToBuild.Add(scriptNameKey, buildTarget);
                 }
@@ -41,7 +45,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             /*
              * Prepare chunks of scripts and push lone scripts into a different array
              */
-            while (codeScripts.Any())
+            while (codeScripts.Count > 0)
             {
                 var currentScript = codeScripts.First().Key;
                 string[] preparedChunk = this.graph.GetScriptsToCompile(currentScript);
@@ -53,7 +57,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
                     Dictionary<TBuildTarget, List<string>> preparedMappedChunk = new Dictionary<TBuildTarget, List<string>>();
                     foreach (string chunkScript in preparedChunk)
                     {
-                        string chunkScriptKey = chunkScript.ToLower();
+                        string chunkScriptKey = chunkScript
+#if !PRESERVECASES
+                            .ToLower()
+#endif
+                            ;
                         codeScripts.Remove(chunkScriptKey);
                         preparedMappedChunk.AddNewListIfNotContainsKeyAndAddValueToList(scriptToBuild[chunkScriptKey], chunkScript);
                     }
@@ -64,7 +72,11 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 {
                     string nonpairedChunkScript = preparedChunk[0];
                     nonpairedScripts.Add(nonpairedChunkScript);
-                    string nonpairedChunkScriptKey = nonpairedChunkScript.ToLower();
+                    string nonpairedChunkScriptKey = nonpairedChunkScript
+#if !PRESERVECASES
+                        .ToLower()
+#endif
+                        ;
                     codeScripts.Remove(nonpairedChunkScriptKey);
                 }
 
@@ -100,7 +112,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
 
             //Evening the buckets
-            int biggestBucket = threadBucketsSizes.Max(kvp=>kvp.Value);
+            int biggestBucket = threadBucketsSizes.Max(kvp => kvp.Value);
             foreach (var kvp in threadBuckets)
             {
                 var bucketKey = kvp.Key;
@@ -111,7 +123,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 {
                     foreach (var nonpairedScript in nonpairedScripts)
                     {
-                        TBuildTarget chunkScriptBuild = scriptToBuild[nonpairedScript.ToLower()];
+                        TBuildTarget chunkScriptBuild = scriptToBuild[nonpairedScript];
                         eveningChunk.GetOrAddNewIfNotContainsKey(chunkScriptBuild).Add(nonpairedScript);
                     }
 
@@ -125,7 +137,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
                 string[] sliceOfNonpairedScripts = nonpairedScripts.Take(neededScripts).ToArray();
                 foreach (var sliceOfNonpairedScript in sliceOfNonpairedScripts)
                 {
-                    TBuildTarget chunkScriptBuild = scriptToBuild[sliceOfNonpairedScript.ToLower()];
+                    TBuildTarget chunkScriptBuild = scriptToBuild[sliceOfNonpairedScript];
                     eveningChunk.GetOrAddNewIfNotContainsKey(chunkScriptBuild).Add(sliceOfNonpairedScript);
                 }
 
@@ -139,7 +151,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             foreach (var nonpairedScript in nonpairedScripts)
             {
                 Dictionary<TBuildTarget, List<string>> singleScriptChunk = new Dictionary<TBuildTarget, List<string>>();
-                TBuildTarget chunkScriptBuild = scriptToBuild[nonpairedScript.ToLower()];
+                TBuildTarget chunkScriptBuild = scriptToBuild[nonpairedScript];
                 singleScriptChunk.AddNewListIfNotContainsKey(chunkScriptBuild);
                 restChunks.AddNewListIfNotContainsKey(restChunkBucket);
 

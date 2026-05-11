@@ -1,16 +1,10 @@
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
-using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression;
-using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
-using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 {
@@ -42,7 +36,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
 
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
-        public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, List<int> stageMap)
+        public List<ITES5CodeChunk> GenerateObjectiveHandling(ITES5CodeBlock codeBlock, TES5GlobalScope globalScope, IReadOnlyCollection<int> stageMap)
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1822 // Mark members as static
         {

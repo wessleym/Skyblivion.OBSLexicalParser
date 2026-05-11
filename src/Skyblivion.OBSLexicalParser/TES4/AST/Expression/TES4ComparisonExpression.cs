@@ -4,19 +4,11 @@ using System;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
-    class TES4ComparisonExpression : ITES4BinaryExpression
+    class TES4ComparisonExpression : TES4BinaryExpression<TES4ComparisonExpressionOperator>
     {
-        public ITES4Value LeftValue { get; }
-        private readonly TES4ComparisonExpressionOperator arithmeticExpressionOperator;
-        public ITES4Value RightValue { get; }
         public TES4ComparisonExpression(ITES4Value leftValue, TES4ComparisonExpressionOperator op, ITES4Value rightValue)
-        {
-            this.LeftValue = leftValue;
-            this.arithmeticExpressionOperator = op;
-            this.RightValue = rightValue;
-        }
-
-        public TES4ExpressionOperator Operator => this.arithmeticExpressionOperator;
+            : base(leftValue, op, rightValue)
+        { }
 
         public object Data
         {
@@ -24,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
             {
                 decimal left = Convert.ToDecimal(((ITES4ValueConstant)this.LeftValue).Constant);
                 decimal right = Convert.ToDecimal(((ITES4ValueConstant)this.RightValue).Constant);
-                return arithmeticExpressionOperator.Evaluate(left, right);
+                return Operator.Evaluate(left, right);
             }
         }
     }

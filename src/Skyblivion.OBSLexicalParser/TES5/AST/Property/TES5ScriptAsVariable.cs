@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
@@ -12,7 +13,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             this.scriptHeader = scriptHeader;
         }
 
-        public string Name => "self";
+        public string Name => TES5SelfReference.Self;
 
         public ITES5Type TES5Type
         {

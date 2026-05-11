@@ -1,4 +1,4 @@
-ScriptName TES4DispositionUtil
+ScriptName SKYBDispositionUtil
 
 ; =============================================================================
 ; GetDisposition
@@ -34,9 +34,13 @@ int function SetDisposition(Actor npc, int value) global
     value = 100
   endif
 
+Debug.Trace("SetDisposition is about to set variable01 to " + value)
+
   npc.SetActorValue("variable01", value)
 
   int newValue = GetDisposition(npc)
+
+Debug.Trace("GetDisposition returned " + newValue)
 
   if newValue != value
     Debug.Trace("TES4 WARNING: Disposition not what expected. Expected: " + value + ", Actual: " + newValue)
@@ -90,5 +94,9 @@ endFunction
 ; =============================================================================
 
 int function ModDisposition(Actor npc, int amount) global
-  return SetDisposition(npc, GetDisposition(npc) + amount)
+  int currentDisposition = GetDisposition(npc)
+  int newDisposition = currentDisposition + amount
+  Debug.Trace("Current Disposition: "+currentDisposition)
+  Debug.Trace("Calling SetDisposition("+newDisposition+")")
+  return SetDisposition(npc, newDisposition)
 endFunction

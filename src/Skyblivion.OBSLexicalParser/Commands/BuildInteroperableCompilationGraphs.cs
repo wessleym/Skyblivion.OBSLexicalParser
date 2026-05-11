@@ -11,6 +11,7 @@ using Skyblivion.OBSLexicalParser.TES5.Factory;
 using Skyblivion.OBSLexicalParser.TES5.Graph;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -46,8 +47,8 @@ namespace Skyblivion.OBSLexicalParser.Commands
             BuildTarget[] buildTargets = BuildTargetFactory.ParseCollection(targets, build);
             BuildTargetSimple[] buildTargetsSimple = BuildTargetFactory.GetCollection(buildTargets);
             ProgressWriter? progressWriter = null;
-            Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>();
-            Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dependencyGraph = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, List<string>> usageGraph = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
             TES5ScriptHeaderFactory scriptHeaderFactory = new TES5ScriptHeaderFactory();
             using (ESMAnalyzer esmAnalyzer = ESMAnalyzer.Load(scriptHeaderFactory))
             {
@@ -76,26 +77,22 @@ namespace Skyblivion.OBSLexicalParser.Commands
                                     errorLog.WriteLine(sourceFile + ":  " + ex.Message + Environment.NewLine);
                                     continue;
                                 }*/
-                                TES4ObjectProperty[] propertiesAccesses = ast.OfType<TES4ObjectProperty>().ToArray();
-                                Dictionary<string, ITES5Type> preparedProperties = new Dictionary<string, ITES5Type>();
+                                TES4ObjectProperty[] propertiesAccesses = GetInnerChunks(ast).OfType<TES4ObjectProperty>().ToArray();
+                                Dictionary<string, ITES5Type> preparedProperties = new Dictionary<string, ITES5Type>(StringComparer.OrdinalIgnoreCase);
                                 foreach (var property in propertiesAccesses)
                                 {
                                     Match match = TES5ReferenceFactory.ReferenceAndPropertyNameRegex.Match(property.StringValue);
                                     string propertyName = match.Groups[1].Value;
-                                    string propertyKeyName = propertyName.ToLower();
-                                    preparedProperties.AddIfNotContainsKey(propertyKeyName, () => esmAnalyzer.GetScriptTypeByEDID(propertyName));
+                                    preparedProperties.AddIfNotContainsKey(propertyName, () => esmAnalyzer.GetScriptTypeByEDID(propertyName));
                                 }
 
                                 debugLog.WriteLine(scriptName + " - " + preparedProperties.Count + " prepared");
-                                string lowerScriptType = scriptName.ToLower();
                                 foreach (var kvp2 in preparedProperties)
                                 {
                                     var preparedPropertyKey = kvp2.Key;
                                     string propertyTypeName = preparedProperties[preparedPropertyKey].OriginalName;
-                                    //Only keys are lowercased.
-                                    string lowerPropertyType = propertyTypeName.ToLower();
-                                    dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerPropertyType, lowerScriptType);
-                                    usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(lowerScriptType, lowerPropertyType);
+                                    dependencyGraph.AddNewListIfNotContainsKeyAndAddValueToList(propertyTypeName, scriptName);
+                                    usageGraph.AddNewListIfNotContainsKeyAndAddValueToList(scriptName, propertyTypeName);
                                     debugLog.WriteLine("Registering a dependency from " + scriptName + " to " + propertyTypeName);
                                 }
 
@@ -109,6 +106,26 @@ namespace Skyblivion.OBSLexicalParser.Commands
             TES5ScriptDependencyGraph graph = new TES5ScriptDependencyGraph(dependencyGraph, usageGraph);
             buildTargets.WriteGraph(graph);
             progressWriter.WriteLast();
+        }
+
+        private static IEnumerable<ITES4CodeChunk> GetInnerChunks(IEnumerable<ITES4CodeChunk> codeChunks)
+        {
+            foreach (ITES4CodeChunk chunk in codeChunks)
+            {
+                if (chunk != codeChunks)
+                {
+                    IEnumerable<ITES4CodeChunk>? innerChunks = chunk as IEnumerable<ITES4CodeChunk>;
+                    if (innerChunks != null)
+                    {
+                        foreach (var innerChunk in GetInnerChunks(innerChunks))
+                        {
+                            yield return innerChunk;
+                        }
+                        continue;
+                    }
+                }
+                yield return chunk;
+            }
         }
     }
 }

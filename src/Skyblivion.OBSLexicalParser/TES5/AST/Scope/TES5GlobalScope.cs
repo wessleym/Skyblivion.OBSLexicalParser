@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
@@ -112,12 +111,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Scope
         {
             if (this.Properties.Count > 0)
             {
-                string propertyNameLower = propertyName.ToLower();
-                string propertyNameLowerWithSuffix = TES5Property.AddPropertyNameSuffix(propertyNameLower, false);
+                string propertyNameWithSuffix = TES5Property.AddPropertyNameSuffix(propertyName, false);
                 foreach (var property in this.Properties)
                 {
-                    string currentPropertyNameLower = property.Name.ToLower();
-                    if (propertyNameLower == currentPropertyNameLower || propertyNameLowerWithSuffix == currentPropertyNameLower)
+                    string currentPropertyName = property.Name;
+                    if (propertyName.Equals(currentPropertyName, StringComparison.OrdinalIgnoreCase) || propertyNameWithSuffix.Equals(currentPropertyName, StringComparison.OrdinalIgnoreCase))
                     {
                         //Token found.
                         return property;

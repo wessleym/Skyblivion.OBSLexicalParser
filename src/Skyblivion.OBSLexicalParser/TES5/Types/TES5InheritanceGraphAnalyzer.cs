@@ -3872,8 +3872,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("LegacySayTo", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_ACTOR, TES5BasicType.T_TOPIC, TES5BasicType.T_BOOL], TES5BasicType.T_FLOAT)
             ]
         },
-        { TES5BasicType.T_TES4DISPOSITIONUTIL,
+        { TES5BasicType.T_SKYBDISPOSITIONUTIL,
             [
+                new TES5InheritanceFunctionSignature("GetDisposition", [TES5BasicType.T_ACTOR], TES5BasicType.T_INT),
                 new TES5InheritanceFunctionSignature("ModDisposition", [TES5BasicType.T_ACTOR, TES5BasicType.T_INT], TES5BasicType.T_INT)
             ]
         }
@@ -4312,6 +4313,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         public static TES5InheritanceFunctionWithCalledOn FindFunction(TES5ObjectCall objectCall, ESMAnalyzer esmAnalyzer)
         {
             TES5InheritanceFunctionWithCalledOn[] functions = GetFunctions(objectCall.FunctionName).ToArray();
+            if (functions.Length == 0)
+            {
+                throw new ConversionException("No functions were found with the name " + objectCall.FunctionName);
+            }
             return ReviseCalledOnType(objectCall, functions, esmAnalyzer);
         }
     }

@@ -16,8 +16,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             ESCollection collection = ESCollectionFactory.CreateForScriptExporting(DataDirectory.ESMDirectoryPath, DataDirectory.TES4GameFileName);
             string buildTargetsPath = DataDirectory.BuildTargetsPath;
             Write(collection, buildTargetsPath, "Standalone", "", false, null, true, TES4RecordType.SCPT);
-            Write(collection, buildTargetsPath, "TIF", TES5ReferenceFactory.tif_Prefix, true, null, false, ESRecordType.INFO);
-            WriteWithIndexes(collection, buildTargetsPath, "QF", TES5ReferenceFactory.qf_Prefix, ESRecordType.QUST);
+            Write(collection, buildTargetsPath, "TIF", TES5ReferenceFactory.TIF_Prefix, true, null, false, ESRecordType.INFO);
+            WriteWithIndexes(collection, buildTargetsPath, "QF", TES5ReferenceFactory.QF_Prefix, ESRecordType.QUST);
         }
 
         private static void Write(ESCollection collection, string buildTargetsPath, string scriptFolderName, ESRecordType recordType, Action<ESRecord, string> writeRecord)
@@ -101,10 +101,10 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
         }
 
 #if !NEWBT
-        private static readonly string[] commentOnlyScripts = new string[] { "daperyitedoortotamrielscript", "darkscaleseffectscript", "demominotaur", "genericlorescript", "kmktest", "kurttestbookscript", "millonaumbranoxscript", "se03dempuzzletempscript", "se09ceremonydummyspellscript", "se10orderpriesttemplatescript", "se11bquestscript", "se36questscript", "se40scrollspelleffectscript", "sealasonscript", "serelmynaresurrectspellscript", "sprigscript", "streetlightscript", "testtest" };
+        private static readonly string[] commentOnlyScripts = new string[] { "DAPeryiteDoorToTamrielSCRIPT", "DarkScalesEffectScript", "DemoMinotaur", "GenericLoreScript", "kmktest", "KurtTestBookScript", "MillonaUmbranoxScript", "SE03DemPuzzleTempSCRIPT", "SE09CeremonyDummySpellScript", "SE10OrderPriestTemplateSCRIPT", "SE11bQuestScript", "SE36QuestScript", "SE40ScrollSpellEffectScript", "SEAlasonScript", "SERelmynaResurrectSpellScript", "sprigscript", "streetlightscript", "testtest" };
         private static bool ShouldWriteScript(string editorID)
         {
-            return !commentOnlyScripts.Contains(editorID.ToLower());
+            return !commentOnlyScripts.Contains(editorID, StringComparer.OrdinalIgnoreCase);
         }
 #endif
     }

@@ -1,8 +1,6 @@
-using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using Skyblivion.OBSLexicalParser.Utilities;
-using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST
 {

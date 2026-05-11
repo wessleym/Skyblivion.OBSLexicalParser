@@ -7,16 +7,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
     class TES5SelfReference : TES5Castable, ITES5Referencer
     {
         private readonly TES5ScriptAsVariable scriptAsVariable;
+        public const string Self = "self";
         public TES5SelfReference(TES5ScriptAsVariable scriptAsVariable)
         {
             this.scriptAsVariable = scriptAsVariable;
         }
 
-        public string OutputSingle => "self" + ManualCastToOutput;
+        public string OutputSingle => Self + ManualCastToOutput;
 
         public IEnumerable<string> Output => [OutputSingle];
 
-        public string Name => "self";
+        public string Name => Self;
 
         public ITES5VariableOrProperty ReferencesTo => this.scriptAsVariable;
 

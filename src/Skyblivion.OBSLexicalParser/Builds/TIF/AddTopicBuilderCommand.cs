@@ -32,7 +32,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                 {
                     string fragment0Name = TES5FragmentFactory.GetFragmentName(0);
                     string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString("x8");
-                    string scriptName = TES5ReferenceFactory.tif_Prefix + "_" + nameTES5FormIDHex;
+                    string scriptName = TES5ReferenceFactory.TIF_Prefix + "_" + nameTES5FormIDHex;
                     TES5Script? infoTIF = builtTIFs.Where(s => s.Key == scriptName).Select(s => s.Value.Script).FirstOrDefault();
                     TES5FunctionCodeBlock fragment0;
                     if (infoTIF != null)
@@ -64,7 +64,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         TES5Property topicAddedProperty = TES5PropertyFactory.ConstructWithTES5FormID(globalVariableEditorID, TES5BasicType.T_GLOBALVARIABLE, globalVariableEditorID, globalVariableTES5FormID);
                         infoTIF.GlobalScope.AddPropertyIfNotExists(topicAddedProperty);
                         TES5Reference topicAddedReference = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(topicAddedProperty);
-                        fragment0.AddChunk(objectCallFactory.CreateObjectCall(topicAddedReference, "SetValueInt", new TES5ObjectCallArguments() { new TES5Integer(1) }));
+                        fragment0.AddChunk(objectCallFactory.CreateObjectCall(topicAddedReference, "SetValue", new TES5ObjectCallArguments() { new TES5Integer(1) }));
                     }
                 }
             }

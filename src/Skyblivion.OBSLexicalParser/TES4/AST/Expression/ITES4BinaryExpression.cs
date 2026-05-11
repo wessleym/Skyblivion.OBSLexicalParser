@@ -1,9 +1,10 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Expression
 {
-    interface ITES4BinaryExpression : ITES4Value
+    interface ITES4BinaryExpression : ITES4Value, ITES4CodeChunkContainer
     {
         ITES4Value LeftValue { get; }
         TES4ExpressionOperator Operator { get; }

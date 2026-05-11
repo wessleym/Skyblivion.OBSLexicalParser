@@ -1,9 +1,7 @@
 ﻿using Dissect.Lexer.TokenStream;
-using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Lexers;
 using Skyblivion.OBSLexicalParser.TES4.Parsers;
 using System;
-using System.Collections;
 using System.IO;
 
 namespace Skyblivion.OBSLexicalParser.Builds.Service
@@ -26,7 +24,8 @@ namespace Skyblivion.OBSLexicalParser.Builds.Service
             string sourceText = File.ReadAllText(scriptPath);
             ArrayTokenStream tokens = lexer.LexWithFixes(sourceText);
             SyntaxErrorCleanParser parser = this.parserLazy.Value;
-            T result = (T)parser.ParseWithFixLogic(tokens);
+            object parsed = parser.ParseWithFixLogic(tokens);
+            T result = (T)parsed;
             return result;
         }
     }

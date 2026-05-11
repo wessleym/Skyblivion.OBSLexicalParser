@@ -13,7 +13,7 @@ namespace Dissect.Parser.LALR1.Analysis
      *
      * @author Jakub Lédl <jakubledl@gmail.com>
      */
-    class Analyzer
+    static class Analyzer
     {
         /*
         * Performs a grammar analysis.
@@ -22,10 +22,10 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The result ofthe analysis.
         */
-        public AnalysisResult Analyze(Grammar grammar)
+        public static AnalysisResult Analyze(Grammar grammar)
         {
-            Automaton automaton = this.BuildAutomaton(grammar);
-            var builtTable = this.BuildParseTable(automaton, grammar);
+            Automaton automaton = BuildAutomaton(grammar);
+            var builtTable = BuildParseTable(automaton, grammar);
             var parseTable = builtTable.Item1;
             var conflicts = builtTable.Item2;
             return new AnalysisResult(parseTable, automaton, conflicts);
@@ -38,7 +38,7 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The resulting automaton.
         */
-        protected Automaton BuildAutomaton(Grammar grammar)
+        private static Automaton BuildAutomaton(Grammar grammar)
         {
             // the eventual automaton
             Automaton automaton = new Automaton();
@@ -49,7 +49,7 @@ namespace Dissect.Parser.LALR1.Analysis
             // rules grouped by their name
             var groupedRules = grammar.GroupedRules;
             // FIRST sets of nonterminals
-            Dictionary<string, List<string>> firstSets = this.CalculateFirstSets(groupedRules);
+            Dictionary<string, List<string>> firstSets = CalculateFirstSets(groupedRules);
             // keeps a list of tokens that need to be pumped
             // through the automaton
             List<Tuple<Item, List<string>>> pumpings = new List<Tuple<Item, List<string>>>();
@@ -63,7 +63,7 @@ namespace Dissect.Parser.LALR1.Analysis
             pumpings.Add(new Tuple<Item, List<string>>(initialItem, new List<string>() { Dissect.Parser.Parser.EOF_TOKEN_TYPE }));
             queue.Enqueue(state);
             automaton.AddState(state);
-            while (queue.Any())
+            while (queue.Count > 0)
             {
                 state = queue.Dequeue();
                 // items of this state are grouped by
@@ -128,7 +128,7 @@ namespace Dissect.Parser.LALR1.Analysis
                             // only store the pumped tokens if there
                             // actually is an unrecognized part
                             bool pump = true;
-                            if (!lookahead.Any())
+                            if (lookahead.Count == 0)
                             {
                                 connect = true;
                                 pump = false;
@@ -226,7 +226,7 @@ namespace Dissect.Parser.LALR1.Analysis
          *
          *  The parse table.
         */
-        protected Tuple<ActionAndGoTo, List<Conflict>> BuildParseTable(Automaton automaton, Grammar grammar)
+        private static Tuple<ActionAndGoTo, List<Conflict>> BuildParseTable(Automaton automaton, Grammar grammar)
         {
             int conflictsMode = grammar.ConflictsMode;
             List<Conflict> conflicts = new List<Conflict>();
@@ -290,7 +290,8 @@ namespace Dissect.Parser.LALR1.Analysis
                                             // unless the rule has given precedence
                                             if (rulePrecedence == null)
                                             {
-                                                foreach (string c in item.Rule.Components.Reverse())
+                                                var reversedComponents = Enumerable.Reverse(item.Rule.Components);
+                                                foreach (string c in reversedComponents)
                                                 {
                                                     // try to extract it from the rightmost terminal
                                                     if (grammar.HasOperator(c))
@@ -431,7 +432,7 @@ namespace Dissect.Parser.LALR1.Analysis
         *
         *  Calculated FIRST sets.
         */
-        protected Dictionary<string, List<string>> CalculateFirstSets(Dictionary<string, List<Rule>> rules)
+        private static Dictionary<string, List<string>> CalculateFirstSets(Dictionary<string, List<Rule>> rules)
         {
             // initialize
             Dictionary<string, List<string>> firstSets = new Dictionary<string, List<string>>();
@@ -452,7 +453,7 @@ namespace Dissect.Parser.LALR1.Analysis
                     {
                         string[] components = rule.Components;
                         string[] newArray = Array.Empty<string>();
-                        if (!components.Any())
+                        if (components.Length == 0)
                         {
                             newArray = new string[] { Grammar.EPSILON };
                         }

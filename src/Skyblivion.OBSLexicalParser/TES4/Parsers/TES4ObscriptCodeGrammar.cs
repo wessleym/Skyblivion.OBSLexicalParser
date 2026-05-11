@@ -10,6 +10,7 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value.ObjectAccess;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES4.AST.VariableDeclaration;
 using Skyblivion.OBSLexicalParser.TES4.Types;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -58,7 +59,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             __invoke("LocalVariableDeclaration")
                 .Is("LocalVariableDeclarationType", "VariableName").Call((CommonToken variableDeclarationType, CommonToken variableName) =>
                 {
-                    return new TES4VariableDeclaration(variableName.Value, TES4Type.GetFirst(variableDeclarationType.Value.ToLower()));
+                    return new TES4VariableDeclaration(variableName.Value, TES4Type.GetFirst(variableDeclarationType.Value));
                 });
 
             __invoke("Branch")
@@ -310,7 +311,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 })
                 .Is("Boolean").Call((CommonToken token) =>
                 {
-                    if (token.Value.ToLower() == "true")
+                    if (token.Value.Equals("true", StringComparison.OrdinalIgnoreCase))
                     {
                         return new TES4Integer(1);
                     }

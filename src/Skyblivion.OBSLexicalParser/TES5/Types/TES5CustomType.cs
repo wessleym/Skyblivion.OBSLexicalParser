@@ -1,4 +1,3 @@
-using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;

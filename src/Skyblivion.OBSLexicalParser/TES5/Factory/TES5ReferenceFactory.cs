@@ -26,8 +26,20 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private const string tContainerName = "tContainer";
         private const string cyrodiilCrimeFactionName = "CyrodiilCrimeFaction";
         private const string TES4Attr = TES5TypeFactory.TES4Prefix + "Attr";
-        public const string qf_Prefix = "qf_";
-        public const string tif_Prefix = "tif_";
+        public const string QF_Prefix =
+#if !PRESERVECASES
+            "qf_"
+#else
+            "QF_"
+#endif
+            ;
+        public const string TIF_Prefix =
+#if !PRESERVECASES
+            "tif_"
+#else
+            "TIF_"
+#endif
+            ;
         //The below are not valid Actor Value names in Skyrim, so we are using GlobalVariables instead. https://ck.uesp.net/wiki/Actor_Value
         private static readonly string[] globalVariableActorValueNames = ["Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance", "Personality", "Luck"];
         //Those are used to hook in the internal Skyblivion systems.
@@ -228,7 +240,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateReference(referenceName, null, tes4ReferenceNameForType, globalScope, multipleScriptsScope, localScope);
         }
 
-        private readonly static Regex fileNameRE = new Regex(@"(qf|tif)_[A-Za-z0-9]*_([0-9a-f]+)(_([0-9]+)_([0-9]+))?", RegexOptions.Compiled);
+        private readonly static Regex fileNameRE = new Regex(@"(QF|TIF)_[A-Za-z0-9]*_([0-9a-f]+)(_([0-9]+)_([0-9]+))?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private static Tuple<int, StageIndexAndLogIndex?> GetTES4FormIDStageIndexAndLogIndex(string fileNameNoExt, TES5FragmentType fragmentType)
         {
             Match fileNameMatch = fileNameRE.Match(fileNameNoExt);
@@ -265,7 +277,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         private static TES5FragmentType? GetFragmentType(string edidOrFileNameNoExt)
         {
-            return edidOrFileNameNoExt.StartsWith(qf_Prefix) ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith(tif_Prefix) ? TES5FragmentType.T_TIF : null;
+            return edidOrFileNameNoExt.StartsWith(QF_Prefix, StringComparison.OrdinalIgnoreCase) ? TES5FragmentType.T_QF : edidOrFileNameNoExt.StartsWith(TIF_Prefix) ? TES5FragmentType.T_TIF : null;
         }
 
         public static TES5Reference CreateTimerInterval(TES5CodeScope codeScope, float interval)

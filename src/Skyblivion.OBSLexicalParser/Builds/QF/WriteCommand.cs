@@ -3,6 +3,7 @@ using Skyblivion.OBSLexicalParser.Builds.QF.Factory;
 using Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -22,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
         {
             var scripts = buildTracker.GetBuiltScripts(target.Name).Values;
             List<TES5Target> connectedQuestFragments = new List<TES5Target>();
-            Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>();
+            Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>(StringComparer.OrdinalIgnoreCase);
             /*
              * Scan manually for .map files in the QF scripts folder
              * Reason is that in case we've got a quest with no fragments to anything whatsoever, we'll have to go

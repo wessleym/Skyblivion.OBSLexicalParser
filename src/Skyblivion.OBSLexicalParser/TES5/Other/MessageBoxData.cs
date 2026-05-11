@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Other
 {

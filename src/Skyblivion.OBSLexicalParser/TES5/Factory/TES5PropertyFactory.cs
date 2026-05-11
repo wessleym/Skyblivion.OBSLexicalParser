@@ -114,18 +114,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         */
         public void CreateAndAddProperties(IEnumerable<ITES4ScriptHeaderVariableDeclarationOrComment> variablesAndComments, TES5GlobalScope globalScope, TES5GlobalVariableCollection globalVariables)
         {
-            Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>> alreadyDefinedVariables = new Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>>();
+            Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>> alreadyDefinedVariables = new Dictionary<string, Tuple<TES4VariableDeclaration, TES5Property>>(StringComparer.OrdinalIgnoreCase);
             foreach (ITES4ScriptHeaderVariableDeclarationOrComment variableOrComment in variablesAndComments)
             {
                 TES4VariableDeclaration? variable = variableOrComment as TES4VariableDeclaration;
                 if (variable != null)
                 {
                     string variableName = variable.VariableName;
-                    string variableNameLower = variableName.ToLower();
                     TES4Type variableType = variable.VariableType;
                     Tuple<TES4VariableDeclaration, TES5Property>? alreadyDefinedVariable;
                     TES5Comment? variableComment = variable.Comment != null ? TES5CommentFactory.Construct(variable.Comment) : null;
-                    if (alreadyDefinedVariables.TryGetValue(variableNameLower, out alreadyDefinedVariable))
+                    if (alreadyDefinedVariables.TryGetValue(variableName, out alreadyDefinedVariable))
                     {
                         TES4Type alreadyDefinedVariableType = alreadyDefinedVariable.Item1.VariableType;
                         if (variableType == alreadyDefinedVariableType)
@@ -140,7 +139,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     }
 
                     TES5Property property = CreateAndAddProperty(variable, globalScope, globalVariables);
-                    alreadyDefinedVariables.Add(variableNameLower, new Tuple<TES4VariableDeclaration, TES5Property>(variable, property));
+                    alreadyDefinedVariables.Add(variableName, new Tuple<TES4VariableDeclaration, TES5Property>(variable, property));
                     if (variableComment != null) { property.AddComment(variableComment); }
                     continue;
                 }

@@ -1,9 +1,11 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
 {
-    class TES4CodeBlock : ITES4CodeBlockOrComment
+    class TES4CodeBlock : ITES4CodeBlockOrComment, ITES4CodeChunkContainer
     {
         public string BlockType { get; }
         public List<TES4BlockParameter> BlockParameterList { get; }
@@ -13,6 +15,15 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Block
             this.BlockType = blockType;
             this.BlockParameterList = blockParameterList;
             this.Chunks = chunks;
+        }
+
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        {
+            return this.BlockParameterList.Concat(this.Chunks).GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

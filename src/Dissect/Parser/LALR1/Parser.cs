@@ -27,15 +27,7 @@ namespace Dissect.Parser.LALR1
         public Parser(Grammar grammar, ActionAndGoTo? parseTable = null)
         {
             this.Grammar = grammar;
-            if (parseTable != null)
-            {
-                this.ParseTable = parseTable;
-            }
-            else
-            {
-                Analyzer analyzer = new Analyzer();
-                this.ParseTable = analyzer.Analyze(grammar).ParseTable;
-            }
+            this.ParseTable = parseTable ?? Analyzer.Analyze(grammar).ParseTable;
         }
 
         protected override object Parse(ITokenStream stream)
@@ -69,7 +61,7 @@ namespace Dissect.Parser.LALR1
                         // reduce
                         Rule rule = this.Grammar.GetRule(-action);
                         int popCount = rule.Components.Length;
-                        stateStack.Pop(popCount).ToArray();
+                        _ = stateStack.Pop(popCount).ToArray();//ToArray() forces Pop(popCount) to be executed.
                         object[] newArgs = args.Pop(popCount).Reverse().ToArray();
                         var callback = rule.Callback;
                         if (callback != null)

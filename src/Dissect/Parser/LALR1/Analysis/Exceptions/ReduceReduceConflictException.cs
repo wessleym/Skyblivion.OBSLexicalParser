@@ -1,5 +1,3 @@
-using Dissect.Parser.LALR1.Analysis;
-using Dissect.Parser;
 using System.Linq;
 
 namespace Dissect.Parser.LALR1.Analysis.Exceptions

@@ -17,7 +17,11 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory.Map
             preprocessed = false;
             string sourcePath = target.GetSourceFromPath(resultingFragmentName);
             //ToLower() is needed for Linux's case-sensitive file system since these files seem to all be lowercase.
-            string scriptName = Path.GetFileNameWithoutExtension(sourcePath).ToLower();
+            string scriptName = Path.GetFileNameWithoutExtension(sourcePath)
+#if !PRESERVECASES
+                .ToLower()
+#endif
+                ;
             string? sourceDirectory = Path.GetDirectoryName(sourcePath);
             if (sourceDirectory == null) { throw new NullableException(nameof(sourceDirectory)); }
             string stageMapFile = Path.Combine(sourceDirectory, scriptName + ".map");

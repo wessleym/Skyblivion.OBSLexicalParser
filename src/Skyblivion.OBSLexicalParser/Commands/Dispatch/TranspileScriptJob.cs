@@ -2,6 +2,7 @@ using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.Context;
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -29,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
             TES5GlobalVariableCollection globalVariables = this.esmAnalyzer.GlobalVariables;
             foreach (var buildTarget in this.buildTargets)
             {
-                Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>();
+                Dictionary<string, TES5GlobalScope> scriptsScopes = new Dictionary<string, TES5GlobalScope>(StringComparer.OrdinalIgnoreCase);
                 foreach (var buildScript in scripts)
                 {
                     string scriptName = Path.GetFileNameWithoutExtension(buildScript);

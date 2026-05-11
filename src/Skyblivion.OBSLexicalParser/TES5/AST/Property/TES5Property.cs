@@ -84,7 +84,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Property
             {
                 throw new ArgumentException(nameof(propertyName) + " already ended with suffix (" + PROPERTY_SUFFIX + "):  " + propertyName);
             }
-            return propertyName + PROPERTY_SUFFIX;//we're adding _p prefix because papyrus compiler complains about property names named after other scripts, _p makes sure we won't conflict.
+            return propertyName + PROPERTY_SUFFIX;//Without the suffix, PapyrusCompiler complains about property names named after other scripts.
         }
 
         public ITES5Type TES5Type

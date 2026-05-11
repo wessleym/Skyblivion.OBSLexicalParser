@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly TES5ReferenceFactory referenceFactory;
         private readonly ESMAnalyzer esmAnalyzer;
-        private readonly Dictionary<string, IFunctionFactory> functionFactories = new Dictionary<string, IFunctionFactory>();
+        private readonly Dictionary<string, IFunctionFactory> functionFactories = new Dictionary<string, IFunctionFactory>(StringComparer.OrdinalIgnoreCase);
         public TES5ValueFactory(TES5ObjectCallFactory objectCallFactory, TES5ReferenceFactory referenceFactory, ESMAnalyzer esmAnalyzer)
         {
             this.objectCallFactory = objectCallFactory;
@@ -37,8 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         }
         public void AddFunctionFactory(string functionName, IFunctionFactory factory)
         {
-            string key = functionName.ToLower();
-            this.functionFactories.Add(key, factory);
+            this.functionFactories.Add(functionName, factory);
         }
         public void AddFunctionFactory(IEnumerable<string> functionNames, IFunctionFactory factory)
         {
@@ -500,13 +499,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             TES4Function function = chunk.Function;
             ITES5Referencer calledOnReference = this.CreateCalledOnReferenceOfCalledFunction(chunk, codeScope, globalScope, multipleScriptsScope);
             string functionName = function.FunctionCall.FunctionName;
-            string functionKey = functionName.ToLower();
             IFunctionFactory? factory;
-            if (!this.functionFactories.TryGetValue(functionKey, out factory))
+            if (!this.functionFactories.TryGetValue(functionName, out factory))
             {
                 throw new ConversionException("Cannot convert function " + functionName + " as conversion handler is not defined.");
             }
-            TES5FunctionFactoryUseTracker.Add(functionKey, factory, globalScope.ScriptHeader.OriginalScriptName);
+            TES5FunctionFactoryUseTracker.Add(functionName, factory, globalScope.ScriptHeader.OriginalScriptName);
             ITES5CodeChunk codeChunk = factory.ConvertFunction(calledOnReference, function, codeScope, globalScope, multipleScriptsScope);
             return codeChunk;
         }

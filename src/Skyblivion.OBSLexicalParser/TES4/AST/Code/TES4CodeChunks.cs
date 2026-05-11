@@ -1,14 +1,24 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
-    class TES4CodeChunks : ITES4CodeChunk
+    class TES4CodeChunks : ITES4CodeChunk, IEnumerable<ITES4CodeChunk>
     {
         public List<ITES4CodeChunk> Chunks { get; }
         public TES4CodeChunks()
         {
             Chunks = new List<ITES4CodeChunk>();
+        }
+
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        {
+            return Chunks.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public void Add(ITES4CodeChunk chunk)

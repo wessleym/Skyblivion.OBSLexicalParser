@@ -1,4 +1,7 @@
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES4.Types;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
 {
@@ -15,5 +18,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
         public string StringValue => IntValue.ToString();
 
         public TES4Type Type => TES4Type.T_INT;
+
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        {
+            yield return this;
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

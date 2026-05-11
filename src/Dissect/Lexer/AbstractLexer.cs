@@ -1,7 +1,5 @@
 using Dissect.Lexer.Exceptions;
 using Dissect.Lexer.TokenStream;
-using Dissect.Parser;
-using Dissect.Util;
 using System.Collections.Generic;
 using System.Linq;
 

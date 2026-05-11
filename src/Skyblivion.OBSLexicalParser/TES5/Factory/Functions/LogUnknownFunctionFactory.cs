@@ -23,7 +23,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5CodeChunk CreateLogCall(ITES5Referencer calledOn, TES4Function function, TES5GlobalScope globalScope, string? reason = null)
         {
-            string message = globalScope.ScriptHeader.PrefixedScriptName + ": OBScript called " + calledOn.OutputSingle + "." + function.FunctionCall.FunctionName + "(" + string.Join(", ", function.Arguments.Select(a => a.StringValue)) + "), but script converter didn't know a conversion." + (reason != null ? "  " + reason : "");
+            string calledOnOutput = calledOn.OutputSingle;
+            string message = globalScope.ScriptHeader.PrefixedScriptName + ": OBScript called " + (calledOnOutput != TES5SelfReference.Self ? calledOnOutput + "." : "") + function.FunctionCall.FunctionName + "(" + string.Join(", ", function.Arguments.Select(a => a.StringValue)) + "), but script converter didn't know a conversion." + (reason != null ? "  " + reason : "");
             TES5CodeChunkCollection codeChunks = new TES5CodeChunkCollection();
             TES5ObjectCallArguments arguments = new TES5ObjectCallArguments() { new TES5String(message) };
             codeChunks.Add(objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Debug, "Trace", arguments, comment: function.Comment));

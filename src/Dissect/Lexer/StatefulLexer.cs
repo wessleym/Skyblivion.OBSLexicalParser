@@ -147,7 +147,7 @@ namespace Dissect.Lexer
 
         protected override IToken? ExtractToken(string str)
         {
-            if (!this.StateStack.Any())
+            if (this.StateStack.Count == 0)
             {
                 throw new InvalidOperationException("You must set a starting state before lexing.");
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.Utilities
                     string oldCalledOn = m.Groups[2].Value;
                     if (oldCalledOn == newStaticClass) { return m.Value; }
                     string oldArguments = m.Groups[3].Value;
-                    string newArguments = (oldCalledOn != "" ? oldCalledOn : "self") + (!string.IsNullOrWhiteSpace(oldArguments) ? ", " + oldArguments : "");
+                    string newArguments = (oldCalledOn != "" ? oldCalledOn : TES5SelfReference.Self) + (!string.IsNullOrWhiteSpace(oldArguments) ? ", " + oldArguments : "");
                     return newStaticClass + "." + newMethod + "(" + newArguments + ")";
                 });
             });

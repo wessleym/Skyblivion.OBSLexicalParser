@@ -30,7 +30,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         private Dictionary<string, ITES5Type> ScriptTypes => scriptTypesLazy.Value;
         private readonly Lazy<TES5GlobalVariableCollection> globalVariablesLazy;
         public TES5GlobalVariableCollection GlobalVariables => globalVariablesLazy.Value;
-        private readonly Dictionary<string, ITES5Type> edidLowerCache = new Dictionary<string, ITES5Type>();
+        private readonly Dictionary<string, ITES5Type> edidLowerCache = new Dictionary<string, ITES5Type>(StringComparer.OrdinalIgnoreCase);
         private ESMAnalyzer(TES5ScriptHeaderFactory scriptHeaderFactory, Func<ESCollection> tes4CollectionFactory, bool loadLazily)
         {
             this.scriptHeaderFactory = scriptHeaderFactory;
@@ -60,7 +60,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
 
         private Dictionary<string, ITES5Type> GetScriptTypes()
         {
-            Dictionary<string, ITES5Type> scriptTypes = new Dictionary<string, ITES5Type>();
+            Dictionary<string, ITES5Type> scriptTypes = new Dictionary<string, ITES5Type>(StringComparer.OrdinalIgnoreCase);
             IEnumerable<ESRecord> scpts = ESM.GetGrupRecords(TES4RecordType.SCPT);
             foreach (ESRecord scpt in scpts)
             {
@@ -98,7 +98,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                     }
                     */
                 }
-                scriptTypes.Add(edid.ToLower(), scriptType);
+                scriptTypes.Add(edid, scriptType);
             }
             return scriptTypes;
         }
@@ -236,12 +236,11 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type GetScriptTypeByScriptNameFromCache(string scriptName)
         {
-            string scriptNameLower = scriptName.ToLower();
             ITES5Type? value;
-            if (ScriptTypes.TryGetValue(scriptNameLower, out value)) { return value; }
-            string scriptNameLowerNoPoundSymbols = scriptNameLower.Replace("#", "");
-            if (ScriptTypes.TryGetValue(scriptNameLowerNoPoundSymbols, out value)) { return value; }
-            throw new ConversionException("Script " + scriptNameLower + " not found in ESM - cannot find its script type.");
+            if (ScriptTypes.TryGetValue(scriptName, out value)) { return value; }
+            string scriptNameNoPoundSymbols = scriptName.Replace("#", "");
+            if (ScriptTypes.TryGetValue(scriptNameNoPoundSymbols, out value)) { return value; }
+            throw new ConversionException("Script " + scriptName + " not found in ESM - cannot find its script type.");
         }
 
         public TES5BasicType GetScriptNativeTypeByScriptNameFromCache(string scriptName)
@@ -313,9 +312,8 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
         */
         public ITES5Type GetScriptTypeByEDID(string edid)
         {
-            string edidLower = edid.ToLower();
             ITES5Type? value;
-            if (this.edidLowerCache.TryGetValue(edidLower, out value)) { return value; }
+            if (this.edidLowerCache.TryGetValue(edid, out value)) { return value; }
             ESRecord attachedNameRecord = GetRecordByEDIDAndFollowNAME(edid);
 
             Nullable<int> scriptFormid = attachedNameRecord.TryGetSubrecordAsFormID("SCRI");
@@ -326,7 +324,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
 
             string scriptRecordEDID = GetEDIDByFormID(scriptFormid.Value);
             TES5ScriptHeader scriptHeader = scriptHeaderFactory.GetFromCacheOrConstructByBasicType(scriptRecordEDID, TypeMapper.GetTES5BasicType(attachedNameRecord.RecordType), TES5TypeFactory.TES4Prefix, false);
-            this.edidLowerCache.Add(edidLower, scriptHeader.ScriptType);
+            this.edidLowerCache.Add(edid, scriptHeader.ScriptType);
             return scriptHeader.ScriptType;
         }
 

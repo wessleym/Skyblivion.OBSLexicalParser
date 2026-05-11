@@ -1,5 +1,4 @@
 using Skyblivion.ESReader.Extensions;
-using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;

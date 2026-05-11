@@ -18,5 +18,14 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive
         public string StringValue => this.data;
 
         public TES4Type Type => TES4Type.T_STRING;
+
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        {
+            yield return this;
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

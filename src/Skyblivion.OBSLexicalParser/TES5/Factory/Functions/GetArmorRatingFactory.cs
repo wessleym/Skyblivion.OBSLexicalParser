@@ -24,7 +24,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 
         public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            globalScope.AddFunction(GetGetArmorRatingOfWornFormFunctionCodeBlock(calledOn, codeScope, function.Comment));
+            globalScope.AddFunction(GetGetArmorRatingOfWornFormFunctionCodeBlock(calledOn, function.Comment));
             ITES5Value? accumulatedStatement = null;
             for (int slotMask = 0x00000004; slotMask <= 0x00000200; slotMask *= 2)//From body to shield
             {
@@ -42,7 +42,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             return accumulatedStatement;
         }
 
-        private TES5FunctionCodeBlock GetGetArmorRatingOfWornFormFunctionCodeBlock(ITES5Referencer calledOn, TES5CodeScope codeScope, TES4Comment? comment)
+        private TES5FunctionCodeBlock GetGetArmorRatingOfWornFormFunctionCodeBlock(ITES5Referencer calledOn, TES4Comment? comment)
         {
             TES5FunctionScope functionScope = new TES5FunctionScope(functionName);
             TES5FunctionCodeBlock functionCodeBlock = new TES5FunctionCodeBlock(functionScope, TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope), TES5BasicType.T_INT, false, false);

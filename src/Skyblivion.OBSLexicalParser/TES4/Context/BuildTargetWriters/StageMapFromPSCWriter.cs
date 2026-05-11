@@ -49,10 +49,17 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
         {
             string fileNameNoExt = Path.GetFileNameWithoutExtension(pscPath);
             string newFileNameNoExt;
+#if !PRESERVECASES
             if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "1bf7d09a7523fede20dd74f0c224167e") { newFileNameNoExt = "qf_bladesmartinconvsystem_01067dbc"; }
             else if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "894694c5f17fb6e2afc84ed1b5da2776") { newFileNameNoExt = "qf_imperiallegiondialogue_0118b11c"; }
             else if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "89e50284d52a5ae8b066499bc8ff2829") { newFileNameNoExt = "qf_arenaspectatorcombatant_0101e691"; }
             else { newFileNameNoExt = fileNameNoExt.Replace(TES5TypeFactory.TES4_Prefix, "").ToLower(); }
+#else
+            if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "1bf7d09a7523fede20dd74f0c224167e") { newFileNameNoExt = "QF_BladesMartinConvSystem_01067DBC"; }
+            else if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "894694c5f17fb6e2afc84ed1b5da2776") { newFileNameNoExt = "QF_ImperialLegionDialogue_0118B11C"; }
+            else if (fileNameNoExt == TES5TypeFactory.TES4_Prefix + "89e50284d52a5ae8b066499bc8ff2829") { newFileNameNoExt = "QF_ArenaSpectatorCombatant_0101E691"; }
+            else { newFileNameNoExt = fileNameNoExt.Replace(TES5TypeFactory.TES4_Prefix, ""); }
+#endif
             string mapPath = sourcePath + newFileNameNoExt + ".map2";
             string mapContents = string.Join("\r\n", BuildStageMapDictionaryFromFile(pscPath).Select(l => l.Key + " - " + string.Join(" ", l.Value)));
             FileSystemEntryUtility.WriteAllTextOrThrowIfExists(mapPath, mapContents);
@@ -71,7 +78,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
             IEnumerable<ESRecord> qustRecords = collection.GetGrupRecords(ESRecordType.QUST);
             foreach (ESRecord qust in qustRecords)
             {
-                string path = sourcePath + BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.qf_Prefix, qust, true, null) + ".map2";
+                string path = sourcePath + BuildTargetsWriter.GetFileNameNoExt(TES5ReferenceFactory.QF_Prefix, qust, true, null) + ".map2";
                 FileSystemEntryUtility.WriteAllTextIfNotExists(path, "");
             }
         }

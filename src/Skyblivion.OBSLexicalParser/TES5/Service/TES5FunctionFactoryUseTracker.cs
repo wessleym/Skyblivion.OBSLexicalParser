@@ -11,7 +11,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Service
         private static readonly Dictionary<Tuple<string, Type>, List<string>> dictionary = new Dictionary<Tuple<string, Type>, List<string>>();
         public static void Add(string functionName, IFunctionFactory functionFactory, string scriptName)
         {
-            dictionary.AddNewListIfNotContainsKeyAndAddValueToList(new Tuple<string, Type>(functionName.ToLower(), functionFactory.GetType()), scriptName.ToLower());
+            dictionary.AddNewListIfNotContainsKeyAndAddValueToList(new Tuple<string, Type>(functionName, functionFactory.GetType()), scriptName);
         }
 
         public static void WriteTableOfUnknownFunctions()

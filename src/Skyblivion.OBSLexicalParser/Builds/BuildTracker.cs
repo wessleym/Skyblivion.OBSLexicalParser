@@ -1,4 +1,5 @@
 using Skyblivion.OBSLexicalParser.TES5.AST;
+using System;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.Builds
@@ -18,7 +19,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             //this.buildTargetCollection = buildTargetCollection;
             foreach (var buildTarget in buildTargets)
             {
-                this.builtScripts.Add(buildTarget.Name, new Dictionary<string, TES5Target>());
+                this.builtScripts.Add(buildTarget.Name, new Dictionary<string, TES5Target>(StringComparer.OrdinalIgnoreCase));
             }
         }
 

@@ -1,9 +1,11 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
 {
-    class TES4VariableAssignation : ITES4CodeChunk
+    class TES4VariableAssignation : ITES4CodeChunk, ITES4CodeChunkContainer
     {
         public ITES4Reference Reference { get; }
         public ITES4Value Value { get; }
@@ -19,6 +21,16 @@ namespace Skyblivion.OBSLexicalParser.TES4.AST.Code
         {
             if (Comment != null) { throw new InvalidOperationException(nameof(Comment) + " was already set."); }
             Comment = comment;
+        }
+
+        public IEnumerator<ITES4CodeChunk> GetEnumerator()
+        {
+            yield return this.Reference;
+            yield return this.Value;
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
