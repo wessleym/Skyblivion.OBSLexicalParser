@@ -21,7 +21,13 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context.BuildTargetWriters
 #if !PRESERVECASES
                 .ToLower()
 #endif
-                + (includeFormID ? "_" + (record.FormID + 0x01000000).ToString("x").PadLeft(8, '0') : "");
+                + (includeFormID ? "_" + (record.FormID + 0x01000000).ToString(
+#if !PRESERVECASES
+                    "x8"
+#else
+                    "X8"
+#endif
+                    ) : "");
             string indexPlusFileNumber = stageIndexAndLogIndex != null ? "_" + stageIndexAndLogIndex.StageIndex.ToString() + "_" + stageIndexAndLogIndex.LogIndex.ToString() : "";
             return prefix + editorID_formID + indexPlusFileNumber;
         }

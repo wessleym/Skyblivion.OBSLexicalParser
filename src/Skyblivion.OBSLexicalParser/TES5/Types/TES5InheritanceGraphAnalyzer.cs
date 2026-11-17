@@ -1498,6 +1498,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_INT
                             }, TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("TempClone", [], TES5BasicType.T_FORM)
+#if GETSECONDSPASSED
+                ,
+                new TES5InheritanceFunctionSignature("GetSecondsPassed", [], TES5BasicType.T_FLOAT)
+#endif
             }
         },
         /*{ "FormType", [] },*///WTM:  Change:  Commented

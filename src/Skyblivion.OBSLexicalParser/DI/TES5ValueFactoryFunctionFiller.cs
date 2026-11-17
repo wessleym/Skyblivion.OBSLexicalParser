@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.DI
             NotSupportedFactory notSupportedFactory = new NotSupportedFactory();
             AddOrRemoveItemFactory addOrRemoveItemFactory = new AddOrRemoveItemFactory(valueFactory, objectCallFactory, objectCallArgumentsFactory);
             CellToLocationFinder cellToLocationFinder = new CellToLocationFinder();
-            GetSecondsPassedFactory getSecondsPassedFactory = new GetSecondsPassedFactory();
+            GetSecondsPassedFactory getSecondsPassedFactory = new GetSecondsPassedFactory(objectCallFactory);
             valueFactory.AddFunctionFactory("activate", new ActivateFactory(valueFactory, objectCallFactory));
             valueFactory.AddFunctionFactory("addachievement", logUnknownFunctionFactory);
             valueFactory.AddFunctionFactory("additem", addOrRemoveItemFactory);

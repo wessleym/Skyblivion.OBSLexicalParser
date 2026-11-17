@@ -31,7 +31,13 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                 if (names.Length > 0)
                 {
                     string fragment0Name = TES5FragmentFactory.GetFragmentName(0);
-                    string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString("x8");
+                    string nameTES5FormIDHex = (infoRecord.FormID + 0x01000000).ToString(
+#if !PRESERVECASES
+                        "x8"
+#else
+                        "X8"
+#endif
+                        );
                     string scriptName = TES5ReferenceFactory.TIF_Prefix + "_" + nameTES5FormIDHex;
                     TES5Script? infoTIF = builtTIFs.Where(s => s.Key == scriptName).Select(s => s.Value.Script).FirstOrDefault();
                     TES5FunctionCodeBlock fragment0;

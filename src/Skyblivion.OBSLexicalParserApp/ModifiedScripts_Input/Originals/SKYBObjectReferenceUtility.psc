@@ -25,14 +25,14 @@ Bool Function ContainsItem(ObjectReference objectRef, Form soughtObject) Global
     Float time2 = Utility.GetCurrentRealTime()
     Bool contains2 = ContainsItem2(objectRef, soughtObject)
     Float time3 = Utility.GetCurrentRealTime()
-    String message = "ContainsItem 1 (" + contains1 + ", " + (time2 - time1) + " secs) and 2 (" + contains2 + ", " + (time3 - time2) + " secs) "
+    String msg = "ContainsItem 1 (" + contains1 + ", " + (time2 - time1) + " secs) and 2 (" + contains2 + ", " + (time3 - time2) + " secs) "
     If (contains1 == contains2)
-        message += "matched"
+        msg += "matched"
     Else
-        message += "did not match"
+        msg += "did not match"
     EndIf
-    message += "."
-    Debug.Notification(message)
+    msg += "."
+    Debug.Notification(msg)
     return contains1
 EndFunction
 

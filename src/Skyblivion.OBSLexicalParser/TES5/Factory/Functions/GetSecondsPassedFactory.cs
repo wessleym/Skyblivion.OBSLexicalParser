@@ -1,15 +1,23 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+#if !GETSECONDSPASSED
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
+#endif
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+#if !GETSECONDSPASSED
 using System;
+#endif
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
     class GetSecondsPassedFactory : IFunctionFactory
     {
-        public GetSecondsPassedFactory() { }
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        public GetSecondsPassedFactory(TES5ObjectCallFactory objectCallFactory)
+        {
+            this.objectCallFactory = objectCallFactory;
+        }
 
         public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
@@ -20,7 +28,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES5Referencer localTimeReference = this.referenceFactory.CreateGSPLocalTimerReadReference(globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments() { calledOn };
             return this.objectCallFactory.CreateObjectCall(timerReference, "getSecondsPassed", multipleScriptsScope, methodArguments);*/
-            //const string newFunctionName = "GetSecondsPassed";
+#if GETSECONDSPASSED
+            const string newFunctionName = "GetSecondsPassed";
+#endif
             //Second Attempt:
             /*TES5BasicType returnType = TES5BasicType.T_FLOAT;
             globalScope.AddFunctionIfNotExists(newFunctionName, () =>
@@ -43,8 +53,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 getSecondsPassedLocalFunction.AddChunk(branch);
                 return getSecondsPassedLocalFunction;
             });*/
+#if GETSECONDSPASSED
             //Third attempt:
-            //return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
+            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
+#else
             //Fourth attempt:
             //return logUnknownFunctionFactory.CreateReplacement(calledOn, function, new TES5Integer(1000), codeScope, globalScope);
             //Fifth attempt:
@@ -55,6 +67,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 return TES5ReferenceFactory.CreateTimerInterval(codeScope, timerInterval.Value);
             }
             return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty!);
+#endif
         }
     }
 }
