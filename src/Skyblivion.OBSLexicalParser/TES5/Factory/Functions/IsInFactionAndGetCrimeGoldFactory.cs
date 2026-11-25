@@ -14,15 +14,22 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         private readonly TES5ReferenceFactory referenceFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
         private readonly bool violent;
-        public IsInFactionAndGetCrimeGoldFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory, bool violent)
+        private readonly LogUnknownFunctionWithReplacementFactory logUnknownFunctionWithFalseFactory;
+        public IsInFactionAndGetCrimeGoldFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory, bool violent, LogUnknownFunctionWithReplacementFactory logUnknownFunctionWithFalseFactory)
         {
             this.referenceFactory = referenceFactory;
             this.objectCallFactory = objectCallFactory;
             this.violent = violent;
+            this.logUnknownFunctionWithFalseFactory = logUnknownFunctionWithFalseFactory;
         }
 
         public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
+            if (this is GetPCFactionMurderFactory)
+            {
+                return logUnknownFunctionWithFalseFactory.ConvertFunction(calledOn, function, codeScope, globalScope, multipleScriptsScope);
+            }
+
             if (function.Comment != null)
             {
                 throw new ConversionException(function.FunctionCall.FunctionName + "'s comment could not be retained.");

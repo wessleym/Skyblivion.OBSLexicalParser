@@ -27,11 +27,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             Actor has no AI process, cannot start combat. [I might need to use Actor.IsAIEnabled or even Actor.EnableAI(True).]
             */
             TES5ObjectCall isDeadCall = this.objectCallFactory.CreateObjectCall(calledOn, "IsDead");
-            TES5ComparisonExpression isNotDead = TES5ExpressionFactory.CreateComparisonExpression(isDeadCall, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false));
+            TES5ComparisonExpression isNotDead = TES5ExpressionFactory.CreateFalseBooleanExpression(isDeadCall);
             TES5ObjectCall startCombatCall = this.objectCallFactory.CreateObjectCall(calledOn, function, "StartCombat", objectCallArgumentsFactory, codeScope, globalScope, multipleScriptsScope);
-            TES5Branch ifNotDeadStartCombat = TES5BranchFactory.CreateSimpleBranch(isNotDead, codeScope.LocalScope);
-            ifNotDeadStartCombat.MainBranch.CodeScope.AddChunk(startCombatCall);
-            return ifNotDeadStartCombat;
+            TES5IfElseChain ifNotDeadStartCombatChain = TES5IfElseFactory.CreateIfElseChain(isNotDead, codeScope.LocalScope);
+            ifNotDeadStartCombatChain.IfClause.CodeScope.AddChunk(startCombatCall);
+            return ifNotDeadStartCombatChain;
         }
     }
 }

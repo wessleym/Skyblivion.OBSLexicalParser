@@ -63,8 +63,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                     { TES5BasicType.T_PROJECTILE },
                     { TES5BasicType.T_ENCHANTMENT },
                     { TES5BasicType.T_QUEST, new TES5InheritanceItemCollection(){
-                        TES5BasicType.T_SKYBTIMERHELPER,
-                        TES5BasicType.T_SKYBCONTAINER
+                        TES5BasicType.T_SKYBTimerHelper,
+                        TES5BasicType.T_SKYBContainer
                     } },
                     { TES5BasicType.T_ENCOUNTERZONE },
                     { TES5BasicType.T_RACE },
@@ -1498,10 +1498,6 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                                 TES5BasicType.T_INT
                             }, TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("TempClone", [], TES5BasicType.T_FORM)
-#if GETSECONDSPASSED
-                ,
-                new TES5InheritanceFunctionSignature("GetSecondsPassed", [], TES5BasicType.T_FLOAT)
-#endif
             }
         },
         /*{ "FormType", [] },*///WTM:  Change:  Commented
@@ -3539,7 +3535,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         },
         { TES5BasicType.T_KEY, [] },
         { TES5BasicType.T_MISCOBJECT, [] },
-        { TES5BasicType.T_AMMO, [] },
+        { TES5BasicType.T_AMMO,
+            [
+                new TES5InheritanceFunctionSignature("GetProjectile", [], TES5BasicType.T_PROJECTILE)
+            ]
+        },
         { TES5BasicType.T_ASSOCIATIONTYPE, [] },
         { TES5BasicType.T_MUSICTYPE,
             new TES5InheritanceFunctionSignature[] {
@@ -3604,6 +3604,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                             }, TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("SendAssaultAlarm", [], TES5VoidType.Instance),
                 new TES5InheritanceFunctionSignature("SendPlayerToJail", new TES5BasicType[] {
+                                TES5BasicType.T_BOOL,
+                                TES5BasicType.T_BOOL
+                            }, TES5VoidType.Instance),
+                new TES5InheritanceFunctionSignature("SetAlly", new TES5BasicType[] {
+                                TES5BasicType.T_FACTION,
                                 TES5BasicType.T_BOOL,
                                 TES5BasicType.T_BOOL
                             }, TES5VoidType.Instance),
@@ -3852,13 +3857,17 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
         { TES5BasicType.T_WORDOFPOWER, [] },
         { TES5BasicType.T_WORLDSPACE, [] },
         //SKSE plugin:
-        { TES5BasicType.T_SKYBTIMERHELPER,
-            new TES5InheritanceFunctionSignature[] {
-                new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT)
-                /*new TES5InheritanceFunctionSignature("GetSecondsPassed", new TES5BasicType[] {
-                        TES5BasicType.T_FLOAT
-                    }, TES5BasicType.T_FLOAT),*///WTM:  Change:  Deleted
-            }
+        { TES5BasicType.T_SKYBDispositionUtil,
+            [
+                new TES5InheritanceFunctionSignature("GetDisposition", [TES5BasicType.T_ACTOR], TES5BasicType.T_INT),
+                new TES5InheritanceFunctionSignature("ModDisposition", [TES5BasicType.T_ACTOR, TES5BasicType.T_INT], TES5BasicType.T_INT)
+            ]
+        },
+        { TES5BasicType.T_SKYBFormUtility,
+            [
+                new TES5InheritanceFunctionSignature("GetSecondsPassed", [TES5BasicType.T_FORM], TES5BasicType.T_FLOAT),
+                new TES5InheritanceFunctionSignature("GetSecondsPassedByActiveEffect", [TES5BasicType.T_ACTIVEMAGICEFFECT], TES5BasicType.T_FLOAT)
+            ]
         },
         { TES5BasicType.T_SKYBGameUtility,
             [
@@ -3876,11 +3885,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
                 new TES5InheritanceFunctionSignature("LegacySayTo", [TES5BasicType.T_OBJECTREFERENCE, TES5BasicType.T_ACTOR, TES5BasicType.T_TOPIC, TES5BasicType.T_BOOL], TES5BasicType.T_FLOAT)
             ]
         },
-        { TES5BasicType.T_SKYBDISPOSITIONUTIL,
-            [
-                new TES5InheritanceFunctionSignature("GetDisposition", [TES5BasicType.T_ACTOR], TES5BasicType.T_INT),
-                new TES5InheritanceFunctionSignature("ModDisposition", [TES5BasicType.T_ACTOR, TES5BasicType.T_INT], TES5BasicType.T_INT)
-            ]
+        { TES5BasicType.T_SKYBTimerHelper,
+            new TES5InheritanceFunctionSignature[] {
+                new TES5InheritanceFunctionSignature("GetDayOfWeek", Array.Empty<TES5BasicType>(), TES5BasicType.T_INT)
+                /*new TES5InheritanceFunctionSignature("GetSecondsPassed", new TES5BasicType[] {
+                        TES5BasicType.T_FLOAT
+                    }, TES5BasicType.T_FLOAT),*///WTM:  Change:  Deleted
+            }
         }
         };
 
@@ -4108,6 +4119,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             {
                 yield return baseType;
             }
+        }
+
+        public static TES5BasicType GetUltimateBaseClass(TES5BasicType type)
+        {
+            return GetSelfAndBaseClassesWithoutCache(type).Last();
         }
 
         [Obsolete("Unused")]

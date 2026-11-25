@@ -39,7 +39,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
 #endif
                         );
                     string scriptName = TES5ReferenceFactory.TIF_Prefix + "_" + nameTES5FormIDHex;
-                    TES5Script? infoTIF = builtTIFs.Where(s => s.Key == scriptName).Select(s => s.Value.Script).FirstOrDefault();
+                    TES5Script? infoTIF = builtTIFs.Where(s => s.Key == scriptName).Select(s => s.Value).FirstOrDefault();
                     TES5FunctionCodeBlock fragment0;
                     if (infoTIF != null)
                     {
@@ -56,9 +56,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
                         fragment0 = new TES5FunctionCodeBlock(functionScope, codeScope, TES5VoidType.Instance, false, true);
                         ITES5CodeBlock[] blocks = new ITES5CodeBlock[] { fragment0 };
                         infoTIF = new TES5Script(globalScope, blocks, true);
-                        string outputPath = tifBuildTarget.GetTranspileToPath(scriptName);
-                        TES5Target target = new TES5Target(infoTIF, outputPath);
-                        buildTracker.RegisterBuiltScript(tifBuildTarget, target);
+                        buildTracker.RegisterBuiltScript(tifBuildTarget, infoTIF);
                     }
                     foreach (var name in names)
                     {

@@ -52,7 +52,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST
         private static readonly Regex fragmentRE = new Regex("^Fragment_([0-9]+)(_[0-9]+)?$", RegexOptions.Compiled);
         private int GetNextFragmentIndex()
         {
-            if (!Blocks.Any()) { return 0; }
+            if (Blocks.Count == 0) { return 0; }
             return Blocks.Select(b =>
             {
                 Match fragmentMatch = fragmentRE.Match(b.BlockName);

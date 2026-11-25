@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Skyblivion.OBSLexicalParser.Builds;
+using System;
 using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Other
@@ -22,7 +23,9 @@ namespace Skyblivion.OBSLexicalParser.TES5.Other
             { "resistdisease", "DiseaseResist" },
             { "resistmagic", "MagicResist" },
             { "resistpoison", "PoisonResist" },
-            { "resistshock", "ElectricResist" }
+            { "resistshock", "ElectricResist" },
+            { "handtohand", "UnarmedDamage" },
+            { "athletics", "WeaponSpeedMult" }
         };
 
         public static string GetRevisedName(string actorValueName)

@@ -25,12 +25,13 @@ namespace Skyblivion.OBSLexicalParser.Builds
             }
         }
 
-        protected static void Write(IEnumerable<TES5Target> targets, ProgressWriter progressWriter)
+        protected static void Write(IEnumerable<TES5Script> scripts, ProgressWriter progressWriter, IBuildTarget buildTarget)
         {
-            foreach (TES5Target target in targets)
+            foreach (TES5Script script in scripts)
             {
-                string[] outputString = target.Script.Output.ToArray();
-                Write(target.OutputPath, outputString);
+                string outputPath = buildTarget.GetTranspileToPath(script.ScriptHeader.EscapedScriptName);
+                string[] outputArray = script.Output.ToArray();
+                Write(outputPath, outputArray);
                 progressWriter.IncrementAndWrite();
             }
         }

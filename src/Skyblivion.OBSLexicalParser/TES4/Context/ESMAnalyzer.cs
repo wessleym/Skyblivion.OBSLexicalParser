@@ -197,7 +197,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
 
         private static TES5BasicType? GetCommonBaseTES5Type(IReadOnlyList<ESRecord> tes4Records)
         {
-            if (!tes4Records.Any()) { return null; }
+            if (tes4Records.Count == 0) { return null; }
             TES5BasicType[] tes5Types = tes4Records.Select(r =>
             {
                 TES5BasicType basicType = TypeMapper.GetTES5BasicType(r.RecordType);
@@ -372,7 +372,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Context
                         */
                         tes5Type = TypeMapper.GetTES5BasicType(record.RecordType);
                         //It seems Oblivion.esm's scroll BOOK records are now SCRL records in Skyblivion.esm with the same form ID.
-                        if (tes5Type == TES5BasicType.T_BOOK && edid.IndexOf("scroll", StringComparison.OrdinalIgnoreCase) != -1 &&
+                        if (tes5Type == TES5BasicType.T_BOOK && edid.Contains("scroll", StringComparison.OrdinalIgnoreCase) &&
                             !(edid == "MG05FingersScroll" || edid == "TG11ElderScroll" || edid == "TG04ElderScrollsHistory")/*These actually are BOOKs.*/)
                         {
                             tes5Type = TES5BasicType.T_SCROLL;

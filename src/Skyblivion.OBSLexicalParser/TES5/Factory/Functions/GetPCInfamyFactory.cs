@@ -16,7 +16,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES5LocalScope localScope = codeScope.LocalScope;
-            return this.referenceFactory.CreateReadReference("Infamy", globalScope, multipleScriptsScope, localScope);
+            return this.referenceFactory.CreateInfamyReadReference(globalScope, multipleScriptsScope, localScope);
         }
     }
 }

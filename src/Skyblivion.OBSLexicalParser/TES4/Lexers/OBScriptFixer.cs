@@ -524,10 +524,14 @@ Float NewScale");
             {
                 str = str.Replace("PlayerRef.AddItem Gold001 300", "Player.AddItem Gold001 300");
             }
+            else if (str.Contains("If GetIsCurrentPackage SESheogorathWander1 == 1 || GetIsCurrentPackage SESheogorathWander2 == 1 || SESheogorathWander3 == 1"))//sesheogorathscript
+            {
+                str = str.Replace("If GetIsCurrentPackage SESheogorathWander1 == 1 || GetIsCurrentPackage SESheogorathWander2 == 1 || SESheogorathWander3 == 1", "If GetIsCurrentPackage SESheogorathWander1 == 1 || GetIsCurrentPackage SESheogorathWander2 == 1 || GetIsCurrentPackage SESheogorathWander3 == 1");
+            }
             return str.Trim() + "\r\n";
         }
 
-        private static string MatchSourceFiles(string str)//WTM:  Added:  meant to make files modified source files from Monocleus
+        private static string MatchSourceFiles(string str)//WTM:  Added:  meant to make files match modified source files from Monocleus
         {
             if (str.StartsWith("scn CGAkaviriLongswordScript"))
             {

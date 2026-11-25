@@ -7,8 +7,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Block
 {
     class TES5EventCodeBlock : TES5CodeBlock
     {
-        public override TES5CodeScope CodeScope { get; set; }
         public override TES5FunctionScope FunctionScope { get; protected set; }
+        public override TES5CodeScope CodeScope { get; set; }
         public TES5EventCodeBlock(TES5FunctionScope functionScope, TES5CodeScope codeScope)
         {
             this.FunctionScope = functionScope;

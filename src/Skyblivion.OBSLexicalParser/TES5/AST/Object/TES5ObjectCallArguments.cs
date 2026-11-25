@@ -40,6 +40,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Object
             }
         }
 
+        public int Count => arguments.Count;
+
         public IEnumerator<ITES5Value> GetEnumerator()
         {
             return arguments.GetEnumerator();

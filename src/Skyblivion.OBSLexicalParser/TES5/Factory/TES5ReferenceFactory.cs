@@ -15,6 +15,7 @@ using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
@@ -48,7 +49,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             specialConversions = new Dictionary<string, ITES5Type>()
             {
-                { tContainerName, TES5BasicType.T_SKYBCONTAINER },//Data container
+                { tContainerName, TES5BasicType.T_SKYBContainer },//Data container
                 { cyrodiilCrimeFactionName, TES5BasicType.T_FACTION },//global cyrodiil faction
                 { MESSAGEBOX_VARIABLE_CONST, TES5BasicType.T_INT },//set by script instead of original messageBox
                 { TES5PlayerReference.PlayerRefName, TES5PlayerReference.TES5TypeStatic }
@@ -153,6 +154,26 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public ITES5Referencer CreateCyrodiilCrimeFactionReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
         {
             return CreateReadReference(cyrodiilCrimeFactionName, globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateFameReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return CreateReference("Fame", globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateFameReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return CreateReadReference("Fame", globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateInfamyReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return CreateReference("Infamy", globalScope, multipleScriptsScope, localScope);
+        }
+
+        public ITES5Referencer CreateInfamyReadReference(TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, TES5LocalScope localScope)
+        {
+            return CreateReadReference("Infamy", globalScope, multipleScriptsScope, localScope);
         }
 
         private ITES5Type GetPropertyTypeAndFormID(string referenceName, string? tes4ReferenceNameForType, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope, out Nullable<int> tes4FormID)

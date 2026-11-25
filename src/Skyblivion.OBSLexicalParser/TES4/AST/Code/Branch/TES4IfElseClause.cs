@@ -5,19 +5,19 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
-    class TES4SubBranch : ITES4CodeChunkContainer
+    class TES4IfElseClause : ITES4CodeChunkContainer
     {
-        public ITES4Value Expression { get; }
+        public ITES4Value Condition { get; }
         public TES4CodeChunks CodeChunks { get; }
-        public TES4SubBranch(ITES4Value expression, TES4CodeChunks codeChunks)
+        public TES4IfElseClause(ITES4Value expression, TES4CodeChunks codeChunks)
         {
-            this.Expression = expression;
+            this.Condition = expression;
             this.CodeChunks = codeChunks;
         }
 
         public IEnumerator<ITES4CodeChunk> GetEnumerator()
         {
-            return new ITES4CodeChunk[] { this.Expression }.Concat(CodeChunks).GetEnumerator();
+            return new ITES4CodeChunk[] { this.Condition }.Concat(CodeChunks).GetEnumerator();
         }
         IEnumerator IEnumerable.GetEnumerator()
         {

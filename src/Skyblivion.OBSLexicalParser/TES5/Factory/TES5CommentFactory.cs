@@ -3,7 +3,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
+namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
     static class TES5CommentFactory
     {

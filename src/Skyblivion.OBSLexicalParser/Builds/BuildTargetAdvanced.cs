@@ -20,9 +20,9 @@ namespace Skyblivion.OBSLexicalParser.Builds
             this.writeCommand = writeCommand;
         }
 
-        public TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
+        public TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope compilingScope)
         {
-            return this.transpileCommand.Transpile(sourcePath, outputPath, globalScope, compilingScope);
+            return this.transpileCommand.Transpile(sourcePath, globalScope, compilingScope);
         }
 
         public TES5GlobalScope BuildScope(string sourcePath, TES5GlobalVariableCollection globalVariables)

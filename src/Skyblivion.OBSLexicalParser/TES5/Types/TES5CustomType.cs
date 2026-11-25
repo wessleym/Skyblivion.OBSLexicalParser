@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
@@ -43,23 +44,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
 
         public override int GetHashCode()
         {
-            int hashCode = 1325511845;
-            hashCode = hashCode * -1521134295 + EqualityComparer<ITES5Type>.Default.GetHashCode(NativeType);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(prefix);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value);
-            return hashCode;
+            return HashCode.Combine(NativeType, prefix, Value);
         }
 
         public string Value { get; }
 
-        public string OutputSingle
-        {
-            get
-            {
-                bool includePrefix = this.Value != TES5BasicType.SKYBTimerHelperName && this.Value != TES5BasicType.SKYBContainerName;//no time to refactor now, later.
-                return (includePrefix ? this.prefix : "") + this.Value;
-            }
-        }
+        public string OutputSingle => this.prefix + this.Value;
 
         public IEnumerable<string> Output => [OutputSingle];
 

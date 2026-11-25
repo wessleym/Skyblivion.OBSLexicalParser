@@ -4,9 +4,9 @@ namespace Skyblivion.OBSLexicalParser.Builds.TIF
 {
     class WriteCommand : WriteCommandBase, IWriteCommand
     {
-        public void Write(IBuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
+        public void Write(IBuildTarget buildTarget, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            Write(buildTracker.GetBuiltScripts(target.Name).Values, progressWriter);
+            Write(buildTracker.GetBuiltScripts(buildTarget.Name).Values, progressWriter, buildTarget);
         }
     }
 }

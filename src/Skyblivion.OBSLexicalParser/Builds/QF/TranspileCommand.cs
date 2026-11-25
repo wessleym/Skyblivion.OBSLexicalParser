@@ -1,5 +1,4 @@
 using Skyblivion.OBSLexicalParser.Builds.Service;
-using Skyblivion.OBSLexicalParser.TES4.AST;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
@@ -17,11 +16,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             converter = new TES4ToTES5ASTQFFragmentConverter(fragmentFactory);
         }
 
-        public override TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public override TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4CodeChunks ast = ParseOrGetFromCache(sourcePath);
-            TES4FragmentTarget fragmentTarget = new TES4FragmentTarget(ast, outputPath);
-            TES5Target convertedScript = this.converter.Convert(fragmentTarget, globalScope, multipleScriptsScope);
+            TES5Script convertedScript = this.converter.Convert(ast, globalScope, multipleScriptsScope);
             return convertedScript;
         }
     }

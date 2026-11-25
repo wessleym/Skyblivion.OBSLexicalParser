@@ -9,7 +9,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Object;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
-using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 using System;
 using System.Collections.Generic;
@@ -37,9 +36,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         * 
         * @throws ConversionException
         */
-        public TES5Target Convert(TES4Target target, bool isStandalone, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Script Convert(TES4Script script, bool isStandalone, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4Script script = target.Script;
             Dictionary<string, List<ITES5CodeBlock>> createdBlocks = new Dictionary<string, List<ITES5CodeBlock>>();
             TES5EventCodeBlock? onUpdateBlockOfNonQuestOrAME = null;
             List<TES5Comment> waitingComments = new List<TES5Comment>();//Collects comments of the upcoming block.
@@ -106,13 +104,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                 })
                 .Concat(waitingComments)//Concat remaining comments at the bottom of the file
                 .ToArray();
-            TES5Target result = new TES5Target(new TES5Script(globalScope, blockList, blocksWithComments, false), target.OutputPath);
-            return result;
+            return new TES5Script(globalScope, blockList, blocksWithComments, false);
         }
 
         private IEnumerable<TES5CodeBlock> CombineRepeatedEventCodeBlockNames(List<ITES5CodeBlock> blocks, string blockType, bool isStandalone, TES5GlobalScope globalScope)
         {
-            ITES5CodeBlock[] nonEvents = blocks.Where(b => !(b is TES5EventCodeBlock)).ToArray();
+            ITES5CodeBlock[] nonEvents = blocks.Where(b => b is not TES5EventCodeBlock).ToArray();
             if (nonEvents.Length > 0)
             {
                 throw new ConversionException("Some non-event code blocks were present in " + nameof(CombineRepeatedEventCodeBlockNames) + ":  " + string.Join("; ", nonEvents.Select(b => b.GetType().FullName)));
@@ -129,6 +126,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
                     newFunctionScope.AddParameter(parameter);
                 }
 
+                //WTM:  Note:  Ideally, each plain "Return" within function each would be "Return False," and the proxyBlock would call each function like "If Not OnEvent_1()\r\nReturn\r\nEndIf."
                 TES5FunctionCodeBlock function = new TES5FunctionCodeBlock(newFunctionScope, block.CodeScope, TES5VoidType.Instance, isStandalone, false);
                 functions.Add(function);
                 if (localScopeArguments == null)

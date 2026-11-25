@@ -5,6 +5,6 @@ namespace Skyblivion.OBSLexicalParser.Builds
 {
     interface ITranspileCommand
     {
-        TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
+        TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
     }
 }

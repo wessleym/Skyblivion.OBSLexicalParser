@@ -38,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
         * Joins N QF subfragments into one QF fragment that can be properly binded into Skyrim VM
         * @throws ConversionException
         */
-        public TES5Target JoinQFFragments(IBuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
+        public TES5Script JoinQFFragments(IBuildTarget target, string resultingFragmentName, List<QuestStageScript> subfragmentsTrees)
         {
             int tes4FormID = GetTES4FormID(resultingFragmentName);
             StageMap stageMap = StageMapBuilder.Build(target, resultingFragmentName, esmAnalyzer, tes4FormID);
@@ -61,8 +61,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             HashSet<string> propertiesNamesDeclared = new HashSet<string>();
             foreach (var subfragment in subfragmentsTrees)
             {
-                TES5Target subfragmentsTree = subfragment.Script;
-                TES5Script subfragmentScript = subfragmentsTree.Script;
+                TES5Script subfragmentScript = subfragment.Script;
                 TES5GlobalScope subfragmentGlobalScope = subfragmentScript.GlobalScope;
                 foreach (TES5Property subfragmentProperty in subfragmentGlobalScope.Properties)
                 {
@@ -154,9 +153,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF.Factory
             }
 
             IReadOnlyList<ITES5CodeBlock> resultingBlocks = questStageBlocks.OrderBy(b => b.StageID).ThenBy(b => b.LogIndex).Select(b => b.CodeBlock).ToArray();
-            TES5Script resultingTree = new TES5Script(resultingGlobalScope, resultingBlocks, true);
-            string outputPath = target.GetTranspileToPath(resultingFragmentName);
-            return new TES5Target(resultingTree, outputPath);
+            return new TES5Script(resultingGlobalScope, resultingBlocks, true);
         }
 
         private static string GeneratePropertyName(TES5ScriptHeader header, TES5Property property)

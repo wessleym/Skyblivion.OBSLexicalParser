@@ -10,6 +10,7 @@ using Skyblivion.OBSLexicalParser.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
 {
@@ -43,6 +44,7 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                     foreach (var buildScript in buildScripts)
                     {
                         string scriptName = Path.GetFileNameWithoutExtension(buildScript);
+                        bool allLower = scriptName.All(c => char.IsLower(c));
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
                         TES5GlobalScope globalScope = buildTarget.BuildScope(sourcePath, globalVariables);
                         scriptsScopes.Add(scriptName, globalScope);
@@ -71,10 +73,10 @@ namespace Skyblivion.OBSLexicalParser.Commands.Dispatch
                         TES5GlobalScope globalScope = scriptsScopes[scriptName];
                         string sourcePath = buildTarget.GetSourceFromPath(scriptName);
                         string outputPath = buildTarget.GetTranspileToPath(scriptName);
-                        TES5Target? convertedScript = null;
+                        TES5Script? convertedScript = null;
                         try
                         {
-                            convertedScript = buildTarget.Transpile(sourcePath, outputPath, globalScope, multipleScriptsScope);
+                            convertedScript = buildTarget.Transpile(sourcePath, globalScope, multipleScriptsScope);
                         }
                         catch (EOFOnlyException) { }//Ignore files that are empty.
 #if !DEBUG || LOGEXCEPTIONS

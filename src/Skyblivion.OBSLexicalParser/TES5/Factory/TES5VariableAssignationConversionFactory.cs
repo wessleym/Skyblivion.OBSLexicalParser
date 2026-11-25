@@ -1,4 +1,5 @@
 using Skyblivion.ESReader.Extensions;
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
@@ -9,7 +10,6 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Property;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
-using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 using Skyblivion.OBSLexicalParser.TES5.Service;
 using Skyblivion.OBSLexicalParser.TES5.Types;
 
@@ -83,9 +83,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     TES5Integer negativeOne = new TES5Integer(-1);
                     TES5ComparisonExpression expression = TES5ExpressionFactory.CreateComparisonExpression(reference, TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, negativeOne);
                     TES5VariableAssignation reassignation = TES5VariableAssignationFactory.CreateAssignation(referencerValue, negativeOne);
-                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(expression, codeScope.LocalScope);
-                    branch.MainBranch.CodeScope.AddChunk(reassignation);
-                    codeChunkCollection.Add(branch);
+                    TES5IfElseChain ifElseChain = TES5IfElseFactory.CreateIfElseChain(expression, codeScope.LocalScope);
+                    ifElseChain.IfClause.CodeScope.AddChunk(reassignation);
+                    codeChunkCollection.Add(ifElseChain);
+                }
+                if (reference.TES5Type.NativeType == TES5BasicType.T_FLOAT && (value as TES5ObjectCall)?.AccessedObject.Name == TES5Property.AddPropertyNameSuffix("GameDaysPassed"))
+                {
+                    ((TES5Castable)value).ManualCastTo = TES5BasicType.T_INT;
                 }
             }
 

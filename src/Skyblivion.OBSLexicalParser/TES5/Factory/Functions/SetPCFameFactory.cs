@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             TES5LocalScope localScope = codeScope.LocalScope;
             TES4FunctionArguments functionArguments = function.Arguments;
             //This has to be a write-action reference, not a read reference!
-            ITES5Referencer fameReference = this.referenceFactory.CreateReference("Fame", globalScope, multipleScriptsScope, localScope);
+            ITES5Referencer fameReference = this.referenceFactory.CreateFameReference(globalScope, multipleScriptsScope, localScope);
             var setValueArgument = this.valueFactory.CreateValue(functionArguments[0], codeScope, globalScope, multipleScriptsScope);
             TES5ObjectCallArguments fameArguments = new TES5ObjectCallArguments() { setValueArgument };
             TES5ObjectCall newFunction = this.objectCallFactory.CreateObjectCall(fameReference, "SetValue", fameArguments, comment: function.Comment);

@@ -21,11 +21,10 @@ namespace Skyblivion.OBSLexicalParser.Builds.Standalone
             converter = new TES4ToTES5ASTConverter(blockFactory, objectCallFactory);
         }
 
-        public override TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public override TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             TES4Script script = ParseOrGetFromCache(sourcePath);
-            TES4Target tes4Target = new TES4Target(script, outputPath);
-            TES5Target target = this.converter.Convert(tes4Target, true, globalScope, multipleScriptsScope);
+            TES5Script target = this.converter.Convert(script, true, globalScope, multipleScriptsScope);
             return target;
         }
     }

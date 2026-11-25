@@ -18,6 +18,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         public static TES5StaticReference Game => Create("Game");
         public static TES5StaticReference Keyword => Create("Keyword");
         public static TES5StaticReference StringUtil => Create("StringUtil");
+        public static TES5StaticReference UI => Create("UI");//SKSE
         public static TES5StaticReference Utility => Create("Utility");
         public static TES5StaticReference Weather => Create("Weather");
     }

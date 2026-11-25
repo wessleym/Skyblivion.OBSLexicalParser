@@ -4,19 +4,19 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
-    class TES5SubBranch
+    class TES5IfElseClause
     {
-        private readonly ITES5Value expression;
+        private readonly ITES5Value condition;
         public TES5CodeScope CodeScope { get; }
-        public TES5SubBranch(ITES5Value expression, TES5CodeScope codeScope)
+        public TES5IfElseClause(ITES5Value condition, TES5CodeScope codeScope)
         {
-            this.expression = expression;
+            this.condition = condition;
             this.CodeScope = codeScope;
         }
 
         private string GetConditionLineOutput(string ifOrElseIf)
         {
-            return ifOrElseIf + " " + this.expression.OutputSingle;
+            return ifOrElseIf + " " + this.condition.OutputSingle;
         }
 
         public IEnumerable<string> GetOutput(string ifOrElseIf)

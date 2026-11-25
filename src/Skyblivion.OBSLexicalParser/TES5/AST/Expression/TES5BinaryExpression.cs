@@ -1,4 +1,5 @@
-﻿using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
+﻿using Skyblivion.OBSLexicalParser.Builds;
+using Skyblivion.OBSLexicalParser.TES5.AST.Expression.Operators;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value;
 using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
@@ -105,23 +106,41 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Expression
                 else
                 {
                     var binaryExpression = potentiallyNonBooleanValue as TES5BinaryExpression;
-                    return (affirm ? "" : "!") + (binaryExpression != null ? binaryExpression.GetOutputSingle(false) : potentiallyNonBooleanValue.OutputSingle);
+                    bool wrap = !affirm && (potentiallyNonBooleanValue as TES5LogicalExpression)?.LeftValue is TES5LogicalExpression;
+                    return (affirm ? "" : "!") + (binaryExpression != null ? (wrap ? "(" : "") + binaryExpression.GetOutputSingle(false) + (wrap ? ")" : "") : potentiallyNonBooleanValue.OutputSingle);
                 }
             }
             string leftOutput = this.LeftValue.OutputSingle;
             string rightOutput = this.RightValue.OutputSingle;
-            if (this is TES5ArithmeticExpression)
+            string combinedOutput = leftOutput + " " + this.Operator.Name + " " + rightOutput;
+            if (this is TES5ArithmeticExpression arithmeticExpression)
             {
-                if (this.LeftValue is TES5ArithmeticExpression)
+                //This is not ideal. But the TES4 parser doesn't collect parentheses, and nothing before this point understands parentheses operators in arithmetic.
+                //So I'm just writing special cases for these few occassions when they matter, which are all in Shivering Isles.
+                //TES4SE08XedQuestScript.psc:
+                if (combinedOutput == "RumbMin_p + Utility.RandomInt(0, 99) * RumbMax_p - RumbMin_p / 99")
                 {
-                    leftOutput = "(" + leftOutput + ")";
+                    combinedOutput = "RumbMin_p + Utility.RandomInt(0, 99) * (RumbMax_p - RumbMin_p) / 99";
                 }
-                if (this.RightValue is TES5ArithmeticExpression)
+                if (combinedOutput == "SFXmin_p + Utility.RandomInt(0, 99) * SFXmax_p - SFXmin_p / 99")
                 {
-                    rightOutput = "(" + rightOutput + ")";
+                    combinedOutput = "SFXmin_p + Utility.RandomInt(0, 99) * (SFXmax_p - SFXmin_p) / 99";
+                }
+                if (combinedOutput == "timerMin_p + Utility.RandomInt(0, 99) * timerMax_p - timerMin_p / 99")
+                {
+                    combinedOutput = "timerMin_p + Utility.RandomInt(0, 99) * (timerMax_p - timerMin_p) / 99";
+                }
+                //TES4SE12GnarlOrderedScript.psc, TES4SE12GnarlScript.psc, TES4SE14AttackCountScript.psc, and TES4SEGnarlGrow.psc:
+                if (combinedOutput == "1.5 - GrowTimer_p - 13 / 6")
+                {
+                    combinedOutput = "1.5 - (GrowTimer_p - 13) / 6";
+                }
+                if (arithmeticExpression.OutputParentheses)
+                {
+                    combinedOutput = "(" + combinedOutput + ")";
                 }
             }
-            return leftOutput + " " + this.Operator.Name + " " + rightOutput;
+            return combinedOutput;
         }
 
         public string OutputSingle => GetOutputSingle(true);

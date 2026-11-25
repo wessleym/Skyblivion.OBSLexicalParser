@@ -9,12 +9,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
     class GetDetectedFactory : IFunctionFactory
     {
         private readonly TES5ReferenceFactory referenceFactory;
-        private readonly TES5ValueFactory valueFactory;
         private readonly TES5ObjectCallFactory objectCallFactory;
-        public GetDetectedFactory(TES5ReferenceFactory referenceFactory, TES5ValueFactory valueFactory, TES5ObjectCallFactory objectCallFactory)
+        public GetDetectedFactory(TES5ReferenceFactory referenceFactory, TES5ObjectCallFactory objectCallFactory)
         {
             this.referenceFactory = referenceFactory;
-            this.valueFactory = valueFactory;
             this.objectCallFactory = objectCallFactory;
         }
 

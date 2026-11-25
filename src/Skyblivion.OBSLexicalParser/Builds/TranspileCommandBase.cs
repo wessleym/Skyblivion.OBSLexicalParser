@@ -23,7 +23,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             return parserService.ParseOrGetFromCache(sourcePath);
         }
 
-        public abstract TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
+        public abstract TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope);
 
         private static void GetFactories(MetadataLogService metadataLogService, ESMAnalyzer esmAnalyzer, out TES5ObjectCallFactory objectCallFactory, out TES5ChainedCodeChunkFactory chainedCodeChunkFactory, out TES5AdditionalBlockChangesPass additionalBlockChangesPass)
         {
@@ -33,7 +33,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
             TES5ReferenceFactory referenceFactory = new TES5ReferenceFactory(objectCallFactory, objectPropertyFactory, esmAnalyzer);
             TES5ValueFactory valueFactory = new TES5ValueFactory(objectCallFactory, referenceFactory, esmAnalyzer);
             TES5ObjectCallArgumentsFactory objectCallArgumentsFactory = new TES5ObjectCallArgumentsFactory(valueFactory);
-            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, objectPropertyFactory, metadataLogService, esmAnalyzer);
+            TES5ValueFactoryFunctionFiller.FillFunctions(valueFactory, objectCallFactory, objectCallArgumentsFactory, referenceFactory, metadataLogService, esmAnalyzer);
             TES5VariableAssignationConversionFactory assignationConversionFactory = new TES5VariableAssignationConversionFactory(objectCallFactory, referenceFactory, valueFactory);
             TES5ReturnFactory returnFactory = new TES5ReturnFactory(objectCallFactory);
             chainedCodeChunkFactory = new TES5ChainedCodeChunkFactory(valueFactory, returnFactory, assignationConversionFactory);

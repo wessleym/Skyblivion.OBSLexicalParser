@@ -10,7 +10,7 @@ namespace Skyblivion.OBSLexicalParser.Builds
         /*
              * Map build target => built TES5 scripts
         */
-        private readonly Dictionary<string, Dictionary<string, TES5Target>> builtScripts = new Dictionary<string, Dictionary<string, TES5Target>>();
+        private readonly Dictionary<string, Dictionary<string, TES5Script>> builtScripts = new Dictionary<string, Dictionary<string, TES5Script>>();
         /*
         * BuildTracker constructor.
         */
@@ -19,16 +19,16 @@ namespace Skyblivion.OBSLexicalParser.Builds
             //this.buildTargetCollection = buildTargetCollection;
             foreach (var buildTarget in buildTargets)
             {
-                this.builtScripts.Add(buildTarget.Name, new Dictionary<string, TES5Target>(StringComparer.OrdinalIgnoreCase));
+                this.builtScripts.Add(buildTarget.Name, new Dictionary<string, TES5Script>(StringComparer.OrdinalIgnoreCase));
             }
         }
 
-        public void RegisterBuiltScript(IBuildTarget buildTarget, TES5Target script)
+        public void RegisterBuiltScript(IBuildTarget buildTarget, TES5Script script)
         {
-            this.builtScripts[buildTarget.Name][script.Script.ScriptHeader.OriginalScriptName] = script;
+            this.builtScripts[buildTarget.Name][script.ScriptHeader.OriginalScriptName] = script;
         }
 
-        public Dictionary<string, TES5Target> GetBuiltScripts(string targetName)
+        public Dictionary<string, TES5Script> GetBuiltScripts(string targetName)
         {
             return builtScripts[targetName];
         }

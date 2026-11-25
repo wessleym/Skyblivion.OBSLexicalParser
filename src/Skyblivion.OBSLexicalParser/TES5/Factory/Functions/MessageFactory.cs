@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
@@ -36,7 +37,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 //Pack the printf syntax
                 //TODO - Perhaps we can use sprintf?
                 functionArguments = functionArguments.RemoveInNew(0);
-                if (!(arg0 is TES4String))
+                if (arg0 is not TES4String)
                 { //hacky
                     throw new ConversionException("Cannot transform printf like syntax to concat on string loaded dynamically");
                 }
@@ -96,6 +97,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     {
                         combinedValues.Add(variablesStack.Pop());
                     }
+                }
+
+                if (combinedValues.Count > 0 && combinedValues[^1] is TES5Integer)
+                {
+                    combinedValues.RemoveAt(combinedValues.Count - 1);
                 }
 
                 arguments = new TES5ObjectCallArguments()

@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES5.AST.Block;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch;
@@ -26,24 +27,24 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
          * 
          *  Scope in which we want for conversion to happen
         */
-        public TES5CodeScope AddInitialCode(TES5GlobalScope globalScope, TES5EventCodeBlock eventCodeBlock)
+        public TES5CodeScope AddInitialCode(TES5GlobalScope globalScope, TES5EventCodeBlock eventCodeBlock, string oldBlockType)
         {
             if (eventCodeBlock.BlockName == "OnUpdate")
             {
                 if (globalScope.ScriptHeader.ScriptType.NativeType == TES5BasicType.T_QUEST)
                 {
                     //Even though we'd like this script to not do anything at this time, it seems like sometimes condition races, so we're putting it into a loop anyways but with early return bailout
-                    TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(TES5ExpressionFactory.CreateComparisonExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", new TES5ObjectCallArguments()), TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false)), eventCodeBlock.CodeScope.LocalScope);
+                    TES5IfElseChain ifElseChain = TES5IfElseFactory.CreateIfElseChain(TES5ExpressionFactory.CreateFalseBooleanExpression(this.objectCallFactory.CreateObjectCall(TES5ReferenceFactory.CreateReferenceToSelf(globalScope), "IsRunning", new TES5ObjectCallArguments())), eventCodeBlock.CodeScope.LocalScope);
                     if (!globalScope.QuestHasOnUpdateRegisterForSingleUpdate)//WTM:  Change:  Added
                     {
                         //If quest has RegisterForSingleUpdate already, preventing adding it again.
                         //Previously, RegisterForSingleUpdate was being called multiple times in OnUpdate because of how CombineRepeatedEventCodeBlockNames splits multiple OnUpdate methods into separate functions.
                         //See TES4tutorialscript.psc for an example.
                         globalScope.QuestHasOnUpdateRegisterForSingleUpdate = true;
-                        branch.MainBranch.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(branch.MainBranch.CodeScope, globalScope));
+                        ifElseChain.IfClause.CodeScope.AddChunk(this.objectCallFactory.CreateRegisterForSingleUpdate(ifElseChain.IfClause.CodeScope, globalScope));
                     }
-                    branch.MainBranch.CodeScope.AddChunk(new TES5Return());
-                    eventCodeBlock.AddChunk(branch);
+                    ifElseChain.IfClause.CodeScope.AddChunk(new TES5Return());
+                    eventCodeBlock.AddChunk(ifElseChain);
                     return eventCodeBlock.CodeScope;
                 }
                 /*else if (globalScope.ScriptHeader.BasicScriptType == TES5BasicType.T_OBJECTREFERENCE)
@@ -53,6 +54,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                     eventCodeBlock.AddChunk(branch);
                     return branch.MainBranch.CodeScope;
                 }*/
+            }
+            else if (eventCodeBlock.BlockName == "OnContainerChanged")
+            {
+                bool onAdd = oldBlockType.Equals("OnAdd", System.StringComparison.OrdinalIgnoreCase);
+                bool onDrop = oldBlockType.Equals("OnDrop", System.StringComparison.OrdinalIgnoreCase);
+                if (onAdd || onDrop)
+                {
+                    ITES5Referencer akNewContainer = TES5ReferenceFactory.CreateReferenceToVariableOrProperty(eventCodeBlock.FunctionScope.GetParameter("akNewContainer"));
+                    TES5IfElseChain ifElseChain = TES5IfElseFactory.CreateIfElseChain(TES5ExpressionFactory.CreateComparisonExpression(akNewContainer, onAdd ? TES5ComparisonExpressionOperator.OPERATOR_EQUAL : TES5ComparisonExpressionOperator.OPERATOR_NOT_EQUAL, new TES5None()), eventCodeBlock.CodeScope.LocalScope);
+                    ifElseChain.IfClause.CodeScope.AddChunk(new TES5Return());
+                    eventCodeBlock.AddChunk(ifElseChain);
+                    return eventCodeBlock.CodeScope;
+                }
             }
             return eventCodeBlock.CodeScope;
         }

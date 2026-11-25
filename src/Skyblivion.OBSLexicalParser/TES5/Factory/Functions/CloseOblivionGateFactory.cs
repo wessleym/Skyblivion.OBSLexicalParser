@@ -1,0 +1,22 @@
+﻿using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
+using Skyblivion.OBSLexicalParser.TES5.AST.Code;
+using Skyblivion.OBSLexicalParser.TES5.AST.Object;
+using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
+using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
+
+namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
+{
+    internal class CloseOblivionGateFactory : IFunctionFactory
+    {
+        private readonly TES5ObjectCallFactory objectCallFactory;
+        public CloseOblivionGateFactory(TES5ObjectCallFactory objectCallFactory)
+        {
+            this.objectCallFactory = objectCallFactory;
+        }
+
+        public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        {
+            return objectCallFactory.CreateObjectCall(calledOn, "SetDestroyed", new TES5ObjectCallArguments() { new TES5Bool(true) });
+        }
+    }
+}

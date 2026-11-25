@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -7,6 +8,7 @@ using Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
 using Skyblivion.OBSLexicalParser.TES5.Other;
 using Skyblivion.OBSLexicalParser.TES5.Types;
+using System;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -31,10 +33,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string firstArgString = firstArg.StringValue;
             if (TES5ReferenceFactory.IsGlobalVariableActorValueName(firstArgString))
             {
-                if (!TES5PlayerReference.EqualsPlayer(calledOn))
+                if ((firstArgString.Equals("speed", StringComparison.OrdinalIgnoreCase)) || !TES5PlayerReference.EqualsPlayer(calledOn))
                 {
                     if (calledOn.TES5Type.NativeType == TES5BasicType.T_ACTOR)//WTM:  Change:  I added this if branch.
                     {
+                        if (firstArgString.Equals("speed", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return SpeedMultFactory.CreateGetActorValue(calledOn, objectCallFactory, function.FunctionCall.FunctionName.Contains("getbaseav", StringComparison.OrdinalIgnoreCase));
+                        }
                         return this.objectCallFactory.CreateObjectCall(calledOn, functionName, new TES5ObjectCallArguments() { new TES5String(firstArgString) }, comment: function.Comment);
                     }
                     throw new ConversionException(nameof(GetActorValueFactory) + ":  Cannot get attributes on non-player.  Name:  " + calledOn.Name + ", Argument:  " + firstArgString);

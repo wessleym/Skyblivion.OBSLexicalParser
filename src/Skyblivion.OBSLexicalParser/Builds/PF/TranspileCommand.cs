@@ -6,7 +6,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.PF
 {
     class TranspileCommand : ITranspileCommand
     {
-        public TES5Target Transpile(string sourcePath, string outputPath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Script Transpile(string sourcePath, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             // TODO: Implement Transpile() method.
             throw new NotImplementedException();

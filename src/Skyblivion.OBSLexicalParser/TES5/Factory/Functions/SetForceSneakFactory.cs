@@ -27,10 +27,10 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 //WTM:  Change:  Since StartSneaking toggles sneaking, we check if the TES4 code wants the user to stop sneaking.
                 //If so, if the user is sneaking, call StartSneaking, which actually stops sneaking if already sneaking.
                 TES5ObjectCall isSneaking = this.objectCallFactory.CreateObjectCall(calledOn, "IsSneaking");
-                TES5ComparisonExpression playerIsNotSneaking = TES5ExpressionFactory.CreateComparisonExpression(isSneaking, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
-                TES5Branch branch = TES5BranchFactory.CreateSimpleBranch(playerIsNotSneaking, codeScope.LocalScope);
-                branch.MainBranch.CodeScope.AddChunk(startSneaking);
-                return branch;
+                TES5ComparisonExpression playerIsNotSneaking = TES5ExpressionFactory.CreateTrueBooleanExpression(isSneaking);
+                TES5IfElseChain ifElseChain = TES5IfElseFactory.CreateIfElseChain(playerIsNotSneaking, codeScope.LocalScope);
+                ifElseChain.IfClause.CodeScope.AddChunk(startSneaking);
+                return ifElseChain;
             }
             return startSneaking;
         }

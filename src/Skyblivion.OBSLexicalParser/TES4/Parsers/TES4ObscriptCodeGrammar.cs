@@ -38,9 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 })
                 .Is("Code").Call((ITES4CodeChunk code) =>
                 {
-                    TES4CodeChunks chunks = new TES4CodeChunks();
-                    chunks.Add(code);
-                    return chunks;
+                    return new TES4CodeChunks() { code };
                 });
 
             __invoke("Code").Is("Branch").Is("SetValue(OptionalComment)", "CRLF").Is("FunctionCallAndArguments(OptionalComment)", "CRLF").Is("ObjectCall(OptionalComment)", "CRLF").Is("LocalVariableDeclaration+").Is("Return").Is("Comment");
@@ -63,35 +61,35 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 });
 
             __invoke("Branch")
-                .Is("BranchStart", "BranchEndToken").Call((TES4SubBranch branchStart, object end) =>
+                .Is("BranchStart", "BranchEndToken").Call((TES4IfElseClause ifElseClause, object end) =>
                 {
-                    return new TES4Branch(branchStart, null, null);
+                    return new TES4IfElseChain(ifElseClause, null, null);
                 })
-                .Is("BranchStart", "BranchSubBranch+", "BranchEndToken").Call((TES4SubBranch branchStart, List<TES4SubBranch> subbranches, object end) =>
+                .Is("BranchStart", "BranchSubBranch+", "BranchEndToken").Call((TES4IfElseClause ifElseClause, List<TES4IfElseClause> ifElseClauses, object end) =>
                 {
-                    return new TES4Branch(branchStart, subbranches, null);
+                    return new TES4IfElseChain(ifElseClause, ifElseClauses, null);
                 })
-                .Is("BranchStart", "BranchElse", "BranchEndToken").Call((TES4SubBranch branchStart, TES4ElseSubBranch branchElse, object end) =>
+                .Is("BranchStart", "BranchElse", "BranchEndToken").Call((TES4IfElseClause ifElseClause, TES4ElseClause elseClause, object end) =>
                 {
-                    return new TES4Branch(branchStart, null, branchElse);
+                    return new TES4IfElseChain(ifElseClause, null, elseClause);
                 })
-                .Is("BranchStart", "BranchSubBranch+", "BranchElse", "BranchEndToken").Call((TES4SubBranch branchStart, List<TES4SubBranch> subbranches, TES4ElseSubBranch branchElse, object end) =>
+                .Is("BranchStart", "BranchSubBranch+", "BranchElse", "BranchEndToken").Call((TES4IfElseClause ifElseClause, List<TES4IfElseClause> ifElseClauses, TES4ElseClause elseClause, object end) =>
                 {
-                    return new TES4Branch(branchStart, subbranches, branchElse);
+                    return new TES4IfElseChain(ifElseClause, ifElseClauses, elseClause);
                 });
 
             __invoke("BranchElse")
                 .Is("BranchElseToken", "Code+").Call((object branchElseToken, TES4CodeChunks code) =>
                 {
-                    return new TES4ElseSubBranch(code);
+                    return new TES4ElseClause(code);
                 })
                 .Is("BranchElseToken").Call((object branchElseToken) =>
                 {
-                    return new TES4ElseSubBranch(new TES4CodeChunks());
+                    return new TES4ElseClause(new TES4CodeChunks());
                 });
 
             __invoke("BranchStart")
-                .Is("BranchStartLine", "Code+").Call((TES4SubBranch subBranch, TES4CodeChunks code) =>
+                .Is("BranchStartLine", "Code+").Call((TES4IfElseClause subBranch, TES4CodeChunks code) =>
                 {
                     subBranch.CodeChunks.AddRange(code);
                     return subBranch;
@@ -101,44 +99,42 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
             __invoke("BranchStartLine")
                 .Is("BranchStartToken", "Value", "CRLF").Call((object branchStart, ITES4Value expression, object crlf) =>
                 {
-                    return new TES4SubBranch(expression, new TES4CodeChunks());
+                    return new TES4IfElseClause(expression, new TES4CodeChunks());
                 })
                 .Is("BranchStartToken", "Value", "Comment", "CRLF").Call((object branchStart, ITES4Value expression, TES4Comment comment, object crlf) =>
                 {
-                    TES4CodeChunks chunks = new TES4CodeChunks();
-                    chunks.Add(comment);
-                    return new TES4SubBranch(expression, chunks);
+                    TES4CodeChunks chunks = new TES4CodeChunks() { comment };
+                    return new TES4IfElseClause(expression, chunks);
                 });
 
             __invoke("BranchSubBranch+")
-                .Is("BranchSubBranch+", "BranchSubBranch").Call((List<TES4SubBranch> list, TES4SubBranch branchSubBranchDeclaration) =>
+                .Is("BranchSubBranch+", "BranchSubBranch").Call((List<TES4IfElseClause> ifElseClauses, TES4IfElseClause ifElseClause) =>
                 {
-                    list.Add(branchSubBranchDeclaration);
-                    return list;
+                    ifElseClauses.Add(ifElseClause);
+                    return ifElseClauses;
                 })
-                .Is("BranchSubBranch").Call((TES4SubBranch branchSubBranchDeclaration) =>
+                .Is("BranchSubBranch").Call((TES4IfElseClause ifElseClause) =>
                 {
-                    return new List<TES4SubBranch>() { branchSubBranchDeclaration };
+                    return new List<TES4IfElseClause>() { ifElseClause };
                 });
 
             __invoke("BranchSubBranch")
-                .Is("BranchSubBranchLine", "Code+").Call((TES4SubBranch subBranch, TES4CodeChunks codeChunks) =>
+                .Is("BranchSubBranchLine", "Code+").Call((TES4IfElseClause ifElseClause, TES4CodeChunks codeChunks) =>
                 {
-                    subBranch.CodeChunks.AddRange(codeChunks);
-                    return subBranch;
+                    ifElseClause.CodeChunks.AddRange(codeChunks);
+                    return ifElseClause;
                 }).
                 Is("BranchSubBranchLine");
 
             __invoke("BranchSubBranchLine")
                 .Is("BranchElseifToken", "Value", "CRLF").Call((object branchElseif, ITES4Value expression, object crlf) =>
                 {
-                    return new TES4SubBranch(expression, new TES4CodeChunks());
+                    return new TES4IfElseClause(expression, new TES4CodeChunks());
                 })
                 .Is("BranchElseifToken", "Value", "Comment", "CRLF").Call((object branchElseif, ITES4Value expression, TES4Comment comment, object crlf) =>
                 {
-                    TES4CodeChunks codeChunks = new TES4CodeChunks();
-                    codeChunks.Add(comment);
-                    return new TES4SubBranch(expression, codeChunks);
+                    TES4CodeChunks codeChunks = new TES4CodeChunks() { comment };
+                    return new TES4IfElseClause(expression, codeChunks);
                 });
 
             __invoke("MathOperator")
@@ -319,7 +315,7 @@ namespace Skyblivion.OBSLexicalParser.TES4.Parsers
                 })
                 .Is("String").Call((CommonToken str) =>
                 {
-                    return new TES4String(str.Value);
+                    return new TES4String(str.Value.Trim('"'));
                 });
 
             __invoke("Return").Is("ReturnToken").Call((object returnToken) =>

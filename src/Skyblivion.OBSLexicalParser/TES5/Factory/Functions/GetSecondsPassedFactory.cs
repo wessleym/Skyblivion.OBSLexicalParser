@@ -1,13 +1,10 @@
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Object;
-#if !GETSECONDSPASSED
 using Skyblivion.OBSLexicalParser.TES5.AST.Property;
-#endif
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
-#if !GETSECONDSPASSED
-using System;
-#endif
+using Skyblivion.OBSLexicalParser.TES5.Exceptions;
+using Skyblivion.OBSLexicalParser.TES5.Types;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
 {
@@ -22,17 +19,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         public ITES5CodeChunk ConvertFunction(ITES5Referencer calledOn, TES4Function function, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             //First Attempt:
-            /*
-            TES5LocalScope localScope = codeScope.LocalScope;
+            /*TES5LocalScope localScope = codeScope.LocalScope;
             ITES5Referencer timerReference = this.referenceFactory.CreateTimerReadReference(globalScope, multipleScriptsScope, localScope);
             ITES5Referencer localTimeReference = this.referenceFactory.CreateGSPLocalTimerReadReference(globalScope, multipleScriptsScope, localScope);
             TES5ObjectCallArguments methodArguments = new TES5ObjectCallArguments() { calledOn };
             return this.objectCallFactory.CreateObjectCall(timerReference, "getSecondsPassed", multipleScriptsScope, methodArguments);*/
-#if GETSECONDSPASSED
-            const string newFunctionName = "GetSecondsPassed";
-#endif
             //Second Attempt:
-            /*TES5BasicType returnType = TES5BasicType.T_FLOAT;
+            /*const string newFunctionName = "GetSecondsPassed";
+            TES5BasicType returnType = TES5BasicType.T_FLOAT;
             globalScope.AddFunctionIfNotExists(newFunctionName, () =>
             {
                 const string getCurrentRealTime = "GetCurrentRealTime";
@@ -53,21 +47,31 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 getSecondsPassedLocalFunction.AddChunk(branch);
                 return getSecondsPassedLocalFunction;
             });*/
-#if GETSECONDSPASSED
             //Third attempt:
-            return this.objectCallFactory.CreateObjectCall(calledOn, newFunctionName, comment: function.Comment);
-#else
+            const string secondsPassedName = "secondsPassed";
+            TES5LocalScope parentScope = codeScope.LocalScope.GetUltimateParentScope();
+            ITES5LocalVariable? secondsPassedExisting = parentScope.TryGetVariable(secondsPassedName);
+            if (secondsPassedExisting != null) { return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(secondsPassedExisting); }
+            //For ActiveMagicEffect, calledOn will have been transformed into GetTargetActor() by this point.
+            TES5BasicType scriptBaseType = TES5InheritanceGraphAnalyzer.GetUltimateBaseClass(globalScope.ScriptHeader.ScriptType.NativeType);
+            ITES5Referencer fixedCalledOn = scriptBaseType == TES5BasicType.T_ACTIVEMAGICEFFECT ? TES5ReferenceFactory.CreateReferenceToSelf(globalScope) : calledOn;
+            string functionName =
+                scriptBaseType == TES5BasicType.T_FORM ? "GetSecondsPassed" :
+                scriptBaseType == TES5BasicType.T_ACTIVEMAGICEFFECT ? "GetSecondsPassedByActiveEffect" :
+                throw new ConversionException("Unknown GetSecondsPassed Type: " + scriptBaseType.Name);
+            TES5ObjectCall getSecondsPassed = this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBFormUtility), functionName, arguments: [fixedCalledOn], comment: function.Comment);
+            TES5Reference secondsPassed = TES5LocalVariableFactory.CreateWithInitialization(TES5BasicType.T_FLOAT, secondsPassedName, getSecondsPassed, parentScope);
+            return secondsPassed;
             //Fourth attempt:
             //return logUnknownFunctionFactory.CreateReplacement(calledOn, function, new TES5Integer(1000), codeScope, globalScope);
             //Fifth attempt:
-            TES5Property? questDelayTimeProperty;
+            /*TES5Property? questDelayTimeProperty;
             Nullable<float> timerInterval = globalScope.GetTimerIntervalIfNoQuestDelayTime(out questDelayTimeProperty);
             if (timerInterval != null)
             {
                 return TES5ReferenceFactory.CreateTimerInterval(codeScope, timerInterval.Value);
             }
-            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty!);
-#endif
+            return TES5ReferenceFactory.CreateReferenceToVariableOrProperty(questDelayTimeProperty!);*/
         }
     }
 }

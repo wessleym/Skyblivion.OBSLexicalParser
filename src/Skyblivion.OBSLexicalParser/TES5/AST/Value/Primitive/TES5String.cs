@@ -8,12 +8,19 @@ namespace Skyblivion.OBSLexicalParser.TES5.AST.Value.Primitive
         public string StringValue { get; }
         public TES5String(string str)
         {
-            if (!str.StartsWith("\"")) { str = "\"" + str; }
-            if (!str.EndsWith("\"")) { str += "\""; }
             this.StringValue = str;
         }
 
-        public string OutputSingle => this.StringValue;
+        public string OutputSingle
+        {
+            get
+            {
+                string str = StringValue;
+                if (!str.StartsWith('"')) { str = "\"" + str; }
+                if (!str.EndsWith('"')) { str += "\""; }
+                return str;
+            }
+        }
 
         public IEnumerable<string> Output => [OutputSingle];
 

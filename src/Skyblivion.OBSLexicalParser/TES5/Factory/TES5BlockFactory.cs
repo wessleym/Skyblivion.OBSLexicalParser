@@ -263,9 +263,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             bool notAllCommentsAndNotInferable = InferEventBlockContainingType(functionScope.BlockName, globalScope, allComments: allComments);
             if (!notAllCommentsAndNotInferable) { return null; }
-            TES5CodeScope codeScope = TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope);
-            TES5EventCodeBlock newBlock = new TES5EventCodeBlock(functionScope, codeScope);
-            return newBlock;
+            return CreateEventCodeBlock(functionScope);
         }
         public static TES5EventCodeBlock CreateEventCodeBlock(TES5FunctionScope functionScope, TES5GlobalScope globalScope)
         {
@@ -277,6 +275,11 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
         {
             TES5FunctionScope functionScope = new TES5FunctionScope(eventName);
             return CreateEventCodeBlock(functionScope, globalScope);
+        }
+
+        private static TES5EventCodeBlock CreateEventCodeBlock(TES5FunctionScope functionScope)
+        {
+            return new TES5EventCodeBlock(functionScope, TES5CodeScopeFactory.CreateCodeScopeRoot(functionScope));
         }
 
         public static TES5StateCodeBlock CreateState(string name, bool auto)
@@ -323,7 +326,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
                         return new List<ITES5CodeBlock>();
                     }
                     targetEventBlock = targetEventBlockNullable;
-                    targetCodeScope = this.initialBlockCodeFactory.AddInitialCode(globalScope, targetEventBlock);
+                    targetCodeScope = this.initialBlockCodeFactory.AddInitialCode(globalScope, targetEventBlock, blockType);
                 }
                 TES5CodeScope newScope = TES5CodeScopeFactory.CreateCodeScopeRecursive(targetCodeScope.LocalScope);
                 TES5CodeScope convertedCodeScope = this.ConvertTES4CodeChunksToTES5CodeScope(chunks, newScope, globalScope, multipleScriptsScope);
@@ -365,11 +368,15 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return newCodeScope;
         }
 
+        public static TES5EventCodeBlock CreateEventCodeBlock(string blockType)
+        {
+            TES5FunctionScope onInitFunctionScope = TES5FunctionScopeFactory.CreateFromBlockType(blockType);
+            return CreateEventCodeBlock(onInitFunctionScope);
+        }
+
         public static TES5EventCodeBlock CreateOnInit()
         {
-            TES5FunctionScope onInitFunctionScope = TES5FunctionScopeFactory.CreateFromBlockType("OnInit");
-            TES5EventCodeBlock newInitBlock = new TES5EventCodeBlock(onInitFunctionScope, TES5CodeScopeFactory.CreateCodeScopeRoot(onInitFunctionScope));
-            return newInitBlock;
+            return CreateEventCodeBlock("OnInit");
         }
 
         private void CreateActiveStateBlock(TES5GlobalScope globalScope, out TES5StateCodeBlock state, out TES5EventCodeBlock onUpdate)

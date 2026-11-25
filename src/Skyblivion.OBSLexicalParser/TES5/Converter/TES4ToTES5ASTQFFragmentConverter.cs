@@ -1,4 +1,4 @@
-using Skyblivion.OBSLexicalParser.TES4.AST;
+using Skyblivion.OBSLexicalParser.TES4.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Factory;
@@ -20,7 +20,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Converter
         /*
              * @throws ConversionException
         */
-        public TES5Target Convert(TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Script Convert(TES4CodeChunks fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
             return fragmentFactory.Convert(TES5FragmentType.T_QF, fragmentTarget, globalScope, multipleScriptsScope);
         }

@@ -4,7 +4,6 @@ using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
 using Skyblivion.OBSLexicalParser.TES5.AST.Scope;
 using Skyblivion.OBSLexicalParser.TES5.Exceptions;
-using Skyblivion.OBSLexicalParser.TES5.Factory.Functions;
 
 namespace Skyblivion.OBSLexicalParser.TES5.Factory
 {
@@ -22,8 +21,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
 
         public TES5CodeChunkCollection CreateCodeChunk(ITES4CodeChunk chunk, TES5CodeScope codeScope, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES4Branch? branch = chunk as TES4Branch;
-            if (branch != null) { return TES5BranchFactory.CreateCodeChunk(branch, codeScope, globalScope, multipleScriptsScope, this, valueFactory); }
+            TES4IfElseChain? ifElseChain = chunk as TES4IfElseChain;
+            if (ifElseChain != null) { return TES5IfElseFactory.CreateCodeChunk(ifElseChain, codeScope, globalScope, multipleScriptsScope, this, valueFactory); }
             TES4Return? returnChunk = chunk as TES4Return;
             if (returnChunk != null) { return this.returnFactory.CreateCodeChunkCollection(codeScope, globalScope); }
             ITES4Callable? callable = chunk as ITES4Callable;

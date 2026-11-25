@@ -38,13 +38,12 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return CreateFragment(fragmentType, fragmentName, globalScope, multipleScriptsScope, chunks);
         }
 
-        public TES5Target Convert(TES5FragmentType fragmentType, TES4FragmentTarget fragmentTarget, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
+        public TES5Script Convert(TES5FragmentType fragmentType, TES4CodeChunks codeChunks, TES5GlobalScope globalScope, TES5MultipleScriptsScope multipleScriptsScope)
         {
-            TES5FunctionCodeBlock fragment = CreateFragment(fragmentType, 0, globalScope, multipleScriptsScope, fragmentTarget.CodeChunks);
+            TES5FunctionCodeBlock fragment = CreateFragment(fragmentType, 0, globalScope, multipleScriptsScope, codeChunks);
             ITES5CodeBlock[] blocks = new ITES5CodeBlock[] { fragment };
             TES5Script script = new TES5Script(globalScope, blocks, true);
-            TES5Target target = new TES5Target(script, fragmentTarget.OutputPath);
-            return target;
+            return script;
         }
 
         public static string GetFragmentName(int stageIndex, int logIndex = 0)

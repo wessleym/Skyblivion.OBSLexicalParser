@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.Primitive;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -19,11 +20,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
         {
             //WTM:  Change:  This used to output an argument of 2 always.
             int forceRunFlag = ((TES4Integer)function.Arguments[0]).IntValue;
+            if (forceRunFlag == 0)
+            {
+                return this.objectCallFactory.CreateObjectCall(calledOn, "ClearForcedMovement");
+            }
             bool run = forceRunFlag == 1;
             int afSpeedMult = !run ? 1 : 2;
-            const string functionName = "ForceMovementSpeed";
             TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { new TES5Float(afSpeedMult) };
-            return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
+            return this.objectCallFactory.CreateObjectCall(calledOn, "ForceMovementSpeed", convertedArguments, comment: function.Comment);
         }
     }
 }

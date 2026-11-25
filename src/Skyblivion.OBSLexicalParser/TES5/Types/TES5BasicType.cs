@@ -124,12 +124,13 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE = new TES5BasicType("SKSE"),
             T_STRINGUTIL = new TES5BasicType("StringUtil"),
             T_UI = new TES5BasicType("UI"),
+            T_SKYBContainer = new TES5BasicType(SKYBContainerName, allowInference: false),
+            T_SKYBDispositionUtil = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "DispositionUtil", allowInference: false),
+            T_SKYBFormUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "FormUtility", allowInference: false),
             T_SKYBGameUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "GameUtility", allowInference: false),
             T_SKYBObjectReferenceUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "ObjectReferenceUtility", allowInference: false),
             T_SKYBQuestUtility = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "QuestUtility", allowInference: false),
-            T_SKYBTIMERHELPER = new TES5BasicType(SKYBTimerHelperName, allowInference: false),
-            T_SKYBCONTAINER = new TES5BasicType(SKYBContainerName, allowInference: false),
-            T_SKYBDISPOSITIONUTIL = new TES5BasicType(TES5TypeFactory.SKYBPrefix + "DispositionUtil", allowInference: false),
+            T_SKYBTimerHelper = new TES5BasicType(SKYBTimerHelperName, allowInference: false),
             T_ART = new TES5BasicType("Art", allowInference: false),//WTM:  Change:  Added:  SKSE
             T_SOUNDDESCRIPTOR = new TES5BasicType("SoundDescriptor", allowInference: false)//WTM:  Change:  Added:  SKSE
             ;
@@ -226,8 +227,8 @@ namespace Skyblivion.OBSLexicalParser.TES5.Types
             T_SKSE,
             T_STRINGUTIL,
             T_UI,
-            T_SKYBTIMERHELPER,
-            T_SKYBCONTAINER,
+            T_SKYBTimerHelper,
+            T_SKYBContainer,
             T_ART,
             T_SOUNDDESCRIPTOR
         };

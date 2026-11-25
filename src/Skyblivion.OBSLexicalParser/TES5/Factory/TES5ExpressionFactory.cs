@@ -22,9 +22,14 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory
             return new TES5ComparisonExpression(valueToBeTrue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(true));
         }
 
-        public static TES5ArithmeticExpression CreateArithmeticExpression(ITES5Value left, TES5ArithmeticExpressionOperator op, ITES5Value right)
+        public static TES5ComparisonExpression CreateFalseBooleanExpression(ITES5Value valueToBeTrue)
         {
-            return new TES5ArithmeticExpression(left, op, right);
+            return new TES5ComparisonExpression(valueToBeTrue, TES5ComparisonExpressionOperator.OPERATOR_EQUAL, new TES5Bool(false));
+        }
+
+        public static TES5ArithmeticExpression CreateArithmeticExpression(ITES5Value left, TES5ArithmeticExpressionOperator op, ITES5Value right, bool outputParentheses = false)
+        {
+            return new TES5ArithmeticExpression(left, op, right, outputParentheses: outputParentheses);
         }
     }
 }

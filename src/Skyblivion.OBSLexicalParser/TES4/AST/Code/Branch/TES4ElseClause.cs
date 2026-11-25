@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Skyblivion.OBSLexicalParser.TES4.AST.Code.Branch
 {
-    class TES4ElseSubBranch : ITES4CodeChunk, ITES4CodeChunkContainer
+    class TES4ElseClause : ITES4CodeChunk, ITES4CodeChunkContainer
     {
         public TES4CodeChunks CodeChunks { get; }
-        public TES4ElseSubBranch(TES4CodeChunks codeChunks)
+        public TES4ElseClause(TES4CodeChunks codeChunks)
         {
             CodeChunks = codeChunks;
         }

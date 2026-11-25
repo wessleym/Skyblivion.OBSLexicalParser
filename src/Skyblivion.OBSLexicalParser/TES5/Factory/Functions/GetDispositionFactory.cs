@@ -22,7 +22,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             if (TES5PlayerReference.EqualsPlayer(functionArguments[0].StringValue))
             {
                 var arguments = new TES5ObjectCallArguments() { calledOn };
-                return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBDISPOSITIONUTIL), "GetDisposition", arguments);
+                return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBDispositionUtil), "GetDisposition", arguments);
             }
             return logUnknownFunctionFactory.CreateLogCall(calledOn, function, globalScope);
         }

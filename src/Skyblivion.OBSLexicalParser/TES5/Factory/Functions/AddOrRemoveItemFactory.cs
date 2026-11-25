@@ -28,7 +28,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             ITES5Value firstArg = newObjectCallArguments[0];
             if (firstArg.TES5Type == TES5BasicType.T_STRING)
             {
-                newObjectCallArguments[0] = valueFactory.CreateValue(new TES4ApiToken(((TES5String)firstArg).StringValue.Trim('"')), codeScope, globalScope, multipleScriptsScope);
+                newObjectCallArguments[0] = valueFactory.CreateValue(new TES4ApiToken(((TES5String)firstArg).StringValue), codeScope, globalScope, multipleScriptsScope);
             }
             return this.objectCallFactory.CreateObjectCall(calledOn, function, newObjectCallArguments);
         }

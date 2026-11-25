@@ -1,3 +1,4 @@
+using Skyblivion.OBSLexicalParser.Builds;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value;
 using Skyblivion.OBSLexicalParser.TES4.AST.Value.FunctionCall;
 using Skyblivion.OBSLexicalParser.TES5.AST.Code;
@@ -38,92 +39,64 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
             string firstArgString = functionArguments[0].StringValue;
             if (firstArgString.Equals("Aggression", StringComparison.OrdinalIgnoreCase))
             {
-                const string functionName = "ModActorValue";
                 ITES4ValueString secondArg = functionArguments[1];
                 int secondArgData = (int)secondArg.Constant;
-                int newValue;
-                if (secondArgData < -80)
+                int newValue = secondArgData < -80 ? -3 :
+                    secondArgData < -50 ? -2 :
+                    secondArgData < 0 ? -1 :
+                    secondArgData == 0 ? 0 :
+                    secondArgData < 50 ? 1 :
+                    secondArgData < 80 ? 2 :
+                    3;
+                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments
                 {
-                    newValue = -3;
-                }
-                else if (secondArgData >= -80 && secondArgData < -50)
-                {
-                    newValue = -2;
-                }
-                else if (secondArgData >= -50 && secondArgData < 0)
-                {
-                    newValue = -1;
-                }
-                else
-                if (secondArgData == 0)
-                {
-                    newValue = 0;
-                }
-                else if (secondArgData > 0 && secondArgData < 50)
-                {
-                    newValue = 1;
-                }
-                else if (secondArgData >= 50 && secondArgData < 80)
-                {
-                    newValue = 2;
-                }
-                else
-                {
-                    newValue = 3;
-                }
-
-                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-                convertedArguments.Add(new TES5String(firstArgString));
-                convertedArguments.Add(new TES5Float(newValue));
-                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
+                    new TES5String(firstArgString),
+                    new TES5Float(newValue)
+                };
+                return this.objectCallFactory.CreateObjectCall(calledOn, "ModActorValue", convertedArguments, comment: function.Comment);
             }
             if (firstArgString.Equals("Confidence", StringComparison.OrdinalIgnoreCase))
             {
-                const string functionName = "ModActorValue";
                 ITES4ValueString secondArg = functionArguments[1];
                 int secondArgData = (int)secondArg.Constant;
-                int newValue;
-                if (secondArgData == -100)
+                int newValue =
+                    secondArgData == -100 ? -4 :
+                    secondArgData <= -70 ? -3 :
+                    secondArgData <= -30 ? -2 :
+                    secondArgData < 0 ? -1 :
+                    secondArgData == 0 ? 0 :
+                    secondArgData < 30 ? 1 :
+                    secondArgData < 70 ? 2 :
+                    secondArgData < 99 ? 3 :
+                    4;
+                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments
                 {
-                    newValue = -4;
-                }
-                else if (secondArgData <= -70 && secondArgData > -100)
+                    new TES5String(firstArgString),
+                    new TES5Float(newValue)
+                };
+                return this.objectCallFactory.CreateObjectCall(calledOn, "ModActorValue", convertedArguments, comment: function.Comment);
+            }
+            if (firstArgString.Equals("Responsibility", StringComparison.OrdinalIgnoreCase))
+            {
+                ITES4ValueString secondArg = functionArguments[1];
+                int secondArgData = (int)secondArg.Constant;
+                int newValue =
+                    secondArgData == 0 ? 0 :
+                    secondArgData < 50 ? 1 :
+                    secondArgData < 80 ? 2 :
+                    3;
+                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments
                 {
-                    newValue = -3;
-                }
-                else if (secondArgData <= -30 && secondArgData > -70)
-                {
-                    newValue = -2;
-                }
-                else if (secondArgData < 0 && secondArgData > -30)
-                {
-                    newValue = -1;
-                }
-                else if (secondArgData == 0)
-                {
-                    newValue = 0;
-                }
-                else if (secondArgData > 0 && secondArgData < 30)
-                {
-                    newValue = 1;
-                }
-                else if (secondArgData >= 30 && secondArgData < 70)
-                {
-                    newValue = 2;
-                }
-                else if (secondArgData >= 70 && secondArgData < 99)
-                {
-                    newValue = 3;
-                }
-                else
-                {
-                    newValue = 4;
-                }
-
-                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-                convertedArguments.Add(new TES5String(firstArgString));
-                convertedArguments.Add(new TES5Float(newValue));
-                return this.objectCallFactory.CreateObjectCall(calledOn, functionName, convertedArguments, comment: function.Comment);
+                    new TES5String("Morality"),
+                    new TES5Float(newValue)
+                };
+                return this.objectCallFactory.CreateObjectCall(calledOn, "ModActorValue", convertedArguments, comment: function.Comment);
+            }
+            if (firstArgString.Equals("Speed", StringComparison.OrdinalIgnoreCase))
+            {
+                ITES4ValueString secondArg = functionArguments[1];
+                ITES5Value newSpeedAttribute = this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope);
+                return SpeedMultFactory.CreateModActorValueCodeChunks(calledOn, function, newSpeedAttribute, objectCallFactory);
             }
             if (TES5ReferenceFactory.IsGlobalVariableActorValueName(firstArgString))
             {
@@ -140,12 +113,25 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                 TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { argument };
                 return this.objectCallFactory.CreateObjectCall(newCalledOn, "Mod", convertedArguments, comment: function.Comment);
             }
-            else
+            else if (TES5PlayerReference.EqualsPlayer(calledOn))
+            {
+                bool isFame = firstArgString.Contains("Fame", StringComparison.OrdinalIgnoreCase);
+                bool isInfamy = firstArgString.Contains("Infamy", StringComparison.OrdinalIgnoreCase);
+                if (isFame || isInfamy)
+                {
+                    ITES4ValueString secondArg = functionArguments[1];
+                    ITES5Value argument = this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope);
+                    TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments() { argument };
+                    return this.objectCallFactory.CreateObjectCall(isFame ? referenceFactory.CreateFameReference(globalScope, multipleScriptsScope, localScope) : referenceFactory.CreateInfamyReference(globalScope, multipleScriptsScope, localScope), "Mod", convertedArguments, comment: function.Comment);
+                }
+            }
             {
                 ITES4ValueString secondArg = functionArguments[1];
-                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments();
-                convertedArguments.Add(new TES5String(ActorValueMap.GetRevisedName(firstArgString)));
-                convertedArguments.Add(this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope));
+                TES5ObjectCallArguments convertedArguments = new TES5ObjectCallArguments
+                {
+                    new TES5String(ActorValueMap.GetRevisedName(firstArgString)),
+                    this.valueFactory.CreateValue(secondArg, codeScope, globalScope, multipleScriptsScope)
+                };
                 return this.objectCallFactory.CreateObjectCall(calledOn, "ModActorValue", convertedArguments, comment: function.Comment);
             }
         }

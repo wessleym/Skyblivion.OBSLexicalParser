@@ -38,7 +38,7 @@ namespace Skyblivion.OBSLexicalParser.TES5.Factory.Functions
                     TES4FunctionArguments argumentsAfterFirst = functionArguments.RemoveInNew(0);
                     var arguments = this.objectCallArgumentsFactory.CreateArgumentList(argumentsAfterFirst, codeScope, globalScope, multipleScriptsScope);
                     arguments.Insert(0, calledOn);
-                    return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBDISPOSITIONUTIL), "ModDisposition", arguments);
+                    return this.objectCallFactory.CreateObjectCall(TES5StaticReferenceFactory.Create(TES5BasicType.T_SKYBDispositionUtil), "ModDisposition", arguments);
                 }
                 return logUnknownFunctionFactory.CreateLogCall(calledOn, function, globalScope);
             }

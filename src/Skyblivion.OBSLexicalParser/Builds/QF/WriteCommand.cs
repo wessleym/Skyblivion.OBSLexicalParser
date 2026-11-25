@@ -19,17 +19,17 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             this.QFFragmentFactory = QFFragmentFactory;
         }
 
-        public void Write(IBuildTarget target, BuildTracker buildTracker, ProgressWriter progressWriter)
+        public void Write(IBuildTarget buildTarget, BuildTracker buildTracker, ProgressWriter progressWriter)
         {
-            var scripts = buildTracker.GetBuiltScripts(target.Name).Values;
-            List<TES5Target> connectedQuestFragments = new List<TES5Target>();
+            var scripts = buildTracker.GetBuiltScripts(buildTarget.Name).Values;
+            List<TES5Script> connectedQuestFragments = new List<TES5Script>();
             Dictionary<string, List<QuestStageScript>> jointScripts = new Dictionary<string, List<QuestStageScript>>(StringComparer.OrdinalIgnoreCase);
             /*
              * Scan manually for .map files in the QF scripts folder
              * Reason is that in case we've got a quest with no fragments to anything whatsoever, we'll have to go
              * through it too ( just with empty subfragments trees ), to generate the objective handlings
              */
-            string sourcePath = target.GetSourcePath();
+            string sourcePath = buildTarget.GetSourcePath();
             foreach (var mapFilePath in
                 Directory.EnumerateFiles(sourcePath, "*.map")
                 .Concat(Directory.EnumerateFiles(sourcePath, "*.map2")))
@@ -43,7 +43,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
              */
             foreach (var script in scripts)
             {
-                string[] parts = script.Script.ScriptHeader.OriginalScriptName.Split('_');
+                string[] parts = script.ScriptHeader.OriginalScriptName.Split('_');
                 if (parts.Length < 3)
                 {
                     //Not able to categorize, probably wrong name of the fragment.
@@ -56,11 +56,14 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
 
             const string joiningQFFragments = "Joining QF Fragments...";
             progressWriter.Write(joiningQFFragments);
+            string[] scriptNames = scripts.Select(s => s.ScriptHeader.EscapedScriptName).ToArray();
             foreach (var kvp in jointScripts)
             {
-                var resultingFragmentName = kvp.Key;
+                var resultingFragmentName = BuildScopeCommandQFOrTIF.ImproveScriptNameCase(kvp.Key);
+                string? correctedScriptName = scriptNames.Where(s => s.StartsWith(resultingFragmentName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                if (correctedScriptName != null) { resultingFragmentName = correctedScriptName.Substring(0, resultingFragmentName.Length); }
                 var subfragmentsTrees = kvp.Value;
-                TES5Target joinedQF = this.QFFragmentFactory.JoinQFFragments(target, resultingFragmentName, subfragmentsTrees);
+                TES5Script joinedQF = this.QFFragmentFactory.JoinQFFragments(buildTarget, resultingFragmentName, subfragmentsTrees);
                 connectedQuestFragments.Add(joinedQF);
             }
             progressWriter.ClearByPreviousProgress(joiningQFFragments);
@@ -68,7 +71,7 @@ namespace Skyblivion.OBSLexicalParser.Builds.QF
             int totalAddend = -scripts.Count + connectedQuestFragments.Count;
             progressWriter.ModifyTotalAndWrite(totalAddend);
 
-            Write(connectedQuestFragments, progressWriter);
+            Write(connectedQuestFragments, progressWriter, buildTarget);
         }
     }
 }

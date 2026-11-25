@@ -3,10 +3,10 @@ using System.Linq;
 
 namespace Skyblivion.OBSLexicalParser.TES5.AST.Code.Branch
 {
-    class TES5ElseSubBranch : ITES5Outputtable
+    class TES5ElseClause : ITES5Outputtable
     {
         private readonly TES5CodeScope codeScope;
-        public TES5ElseSubBranch(TES5CodeScope codeScope)
+        public TES5ElseClause(TES5CodeScope codeScope)
         {
             this.codeScope = codeScope;
         }
